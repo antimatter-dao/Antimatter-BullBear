@@ -1,6 +1,4 @@
-# antimatter-finance.github.io
-
-Antimatter – Does it matter?
+# Antimatter – Does it matter?
 
 I do not need to tell you what defi means. For developers, it means a series of codes that turns traditional finance into automation. For investors, it means financial freedom and free money to grab. For outsiders, it means WTF. For me, it means simplicity and useability. 
 
@@ -8,7 +6,7 @@ Let’s start with a question: Do you prefer complexity or simplicity?
 
 To be honest, many people in this space prefer complexity. When someone throws you a whitepaper with many complicated equations, you will appraise it even though you do not understand anything and you will put your money in it. In defi, many people came up with so-called better solutions for DEXes, derivatives, borrowing and lending, and they added complexity. Guess what: most of these platforms would have no users except for the boring liquidity mining. The king of each defi sector is quite simple. Look at Uniswap, it is only a few simple equations and it dominates the DEX division in defi. Finance is already a complex subject and defi is here to break the complexity. 
 
-So why Antimatter matters?
+# So why Antimatter matters?
 
 I have read and learnt through defi protocols for options, and all of them are just rocket science. I mean it is good, but I think I learnt more about options by searching on Investopedia. In short, it is just two forces competing against each other, and two forces should be responsible for their decision making, just like marriage. What if we create an option mechanism that is very simple to adopt and easy to understand?  What if we abandon the time factor of options and make it easy to trade and hold? Here comes Antimatter which is a simple but abnormal option mechanism for decentralized finance.
 
