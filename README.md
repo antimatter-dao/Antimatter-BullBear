@@ -59,3 +59,58 @@ Due to the complexity of this concept, there is a lot of work to be done at the 
 More details will be shared in the form of codes. The first version will be live before April 1st. We will start with build perpetual put option product and then build call option product.
  
 
+# Community Feedback
+Since we released the design of our option mechanism, we have received some feedback from the community, including:
+
+1.	The logic is too complicated, involving two layers such as long and short together with call and put. 
+2.	The market demand always has two sides. If you launch the put option first, how are you going to fulfill the needs of the call option?
+3.	If the funding fee is always going from long token holders to short token holders, it puts long token holders into a long term disadvantage. Thus the incentive to hold long tokens reduces dramatically.
+
+This feedback is valuable for our backend design. In the process of product development, we decided to adjust our model to improve the design of our option.
+
+# Rethinking two forces: Call and Put
+Firstly, the launch of ETH option will have both call and put options. In our previous design, we separated the call option from put options and designed two tokens for each call and put options. The flaw was the short put option token and the short call option token have bare demand in nature so that one side of the market will always have less incentive than the other. To merge together call and put options, we bring more integrity and less complexity to the product and user experience.
+
+# A more generalized and simplistic option token model
+There will only be two tokens for each option: the token representing CALL and the other token representing PUT. Holding call tokens means you are positive about the underlying asset price, holding PUT tokens mean you are negative about the underlying asset price. (We eliminate long and short tokens to further simplify the model)
+
+Each option product has one underlying asset and two parameters. The asset can be any crypto asset with liquidity and volume such as ETH. Two parameters mean option price floor and option price ceiling. Let’s take ETH as an example: we can create an option with parameters of 1000 USD and 2000 USD. The call token for this option always has the right to purchase ETH at 1000 USD, and the put token for this option always has the right to sell ETH at 2000 USD. If the market price for ETH is currently at 1500, then the call token holders can use the call token right to purchase ETH at 1000 and sell for 1500, making 500 USD profit. 
+
+Conversely, the put token holders can use the put token right to sell ETH at 2000 purchase back ETH at 1500, making 500 USD profit. In an efficient market, the sum of call token value and the put token value equal to the difference between floor and ceiling (in our example 1000). If ETH price increases, the call token price increases as well, since the underlying right for call becomes more valuable and vice versa.
+
+The value of call option token and put option token have restraints. Both token prices cannot exceed 1000 USD in our example because that is the maximum benefit the underlying asset profit can go.
+
+
+# Option creation and redemption
+To generate an option token pair, you only need to deposit 1000 USD and you will get a call token and a put token. To redeem an option token pair, you need to deposit a call and a put token to receive 1000 USD back at any time.
+
+Arbitrage opportunities will make sure the creation and redemption balance equation always holds. If the aggregate price of call and put tokens exceeds the balance amount, then market makers will create more option tokens to supply the market, and vice versa.
+
+Unlike our previous model, the new model supports redemption of only one token. You can deposit the call token and 1000 USD to receive 1 ETH from the underlying pool asset. The call token will be burned. You can also deposit the put token and 1 ETH to receive 2000 USD from the underlying option pool asset. The put token will be burned. This means the amount of call and put tokens could be unequal if one side burn is more frequent than the other.
+
+
+# Price peg and maintenance
+The issue now is if the underlying assets for the put and call tokens are not the option assets, the put and call tokens prices might not be pegged with optioned assets. For instance, if we only use USDT to generate and redeem for ETH option, then put and call tokens might not follow ETH price movement. So we need to bring in option assets as the underlying asset. For the ETH option, the underlying asset needs to partially be ETH. 
+
+The underlying asset pool consists of both stable coins and ETH (for ETH option). The ratio between these two assets is based on the number of call and put tokens. If the call to put tokens number is 2:1, then the ETH to stablecoin ratio in the underlying assets pool is 2:1.
+
+The ratio will always be maintained so that the call and put token prices will be pegged with underlying assets and reflect ETH price movement. 
+
+The underlying assets in the option pool will be purchased and sold into each other to maintain the ratio. But the total value of the underlying assets is maintained (Just like Uniswap’s LP pool)
+
+
+# Underlying asset pool
+The underlying asset pool consists of the native option asset and stablecoins. The native option asset is different for each type of option. For example, the underlying asset for ETH option will be partially ETH. We will support as many stablecoins as we could and that includes DAI, USDC, USDT, PAX, USDT, 3CRV, USD5, UU, UP etc. The option creator can choose to deposit one or more assets together and the Antimatter container will sort out the assets with the correct underlying ratio.
+
+
+
+# Funding fees
+In this model, both call option token holders and put option token holders have the same rights and use the same amount of resources in the environment. So the fair level ground means there is no funding fees going from one to the other. The funding fee is 0 for both sides forever.
+
+
+# Liquidation
+In this model, the minimum price each token can go to is 0. But this does not mean you are liquidated. If the price of underlying assets drops back to the option capture range, a token holder still has rights to buy or sell the asset at the range and make profit. So our model does not have liquidation.
+
+
+# What is next
+We will start building with this newly adjusted model.
