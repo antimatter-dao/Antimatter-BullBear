@@ -21,7 +21,7 @@ import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
 import SwapHeader from '../../components/swap/SwapHeader'
 
-import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
+// import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { getTradeVersion } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
@@ -30,7 +30,7 @@ import useENSAddress from '../../hooks/useENSAddress'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useToggledVersion'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
-import { useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks'
+import { /*useToggleSettingsMenu,*/ useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
 import {
   useDefaultsFromURLSearch,
@@ -43,7 +43,7 @@ import { LinkStyledButton, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody'
-import { ClickableText } from '../Pool/styleds'
+// import { ClickableText } from '../Pool/styleds'
 import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
@@ -82,7 +82,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const toggleWalletModal = useWalletModalToggle()
 
   // for expert mode
-  const toggleSettings = useToggleSettingsMenu()
+  // const toggleSettings = useToggleSettingsMenu()
   const [isExpertMode] = useExpertModeManager()
 
   // get custom setting values for user
@@ -310,7 +310,7 @@ export default function Swap({ history }: RouteComponentProps) {
       <SwapPoolTabs active={'swap'} />
       <AppBody>
         <SwapHeader />
-        <Wrapper id="swap-page">
+        <Wrapper id="swap-page" style={{ padding: '1rem 0' }}>
           <ConfirmSwapModal
             isOpen={showConfirm}
             trade={trade}
@@ -341,7 +341,7 @@ export default function Swap({ history }: RouteComponentProps) {
               <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                 <ArrowWrapper clickable>
                   <ArrowDown
-                    size="16"
+                    size="30"
                     onClick={() => {
                       setApprovalSubmitted(false) // reset 2 step UI for approvals
                       onSwitchTokens()
@@ -396,7 +396,7 @@ export default function Swap({ history }: RouteComponentProps) {
                       />
                     </RowBetween>
                   )}
-                  {allowedSlippage !== INITIAL_ALLOWED_SLIPPAGE && (
+                  {/* {allowedSlippage !== INITIAL_ALLOWED_SLIPPAGE && (
                     <RowBetween align="center">
                       <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
                         Slippage Tolerance
@@ -405,31 +405,34 @@ export default function Swap({ history }: RouteComponentProps) {
                         {allowedSlippage / 100}%
                       </ClickableText>
                     </RowBetween>
-                  )}
+                  )} */}
                 </AutoColumn>
               </Card>
             )}
           </AutoColumn>
           <BottomGrouping>
             {swapIsUnsupported ? (
-              <ButtonPrimary disabled={true}>
+              <ButtonPrimary disabled={true} borderRadius="49px">
                 <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
               </ButtonPrimary>
             ) : !account ? (
-              <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+              <ButtonLight onClick={toggleWalletModal} borderRadius="49px">
+                Connect Wallet
+              </ButtonLight>
             ) : showWrap ? (
-              <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
+              <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap} borderRadius="49px">
                 {wrapInputError ??
                   (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
               </ButtonPrimary>
             ) : noRoute && userHasSpecifiedInputOutput ? (
-              <GreyCard style={{ textAlign: 'center' }}>
+              <GreyCard style={{ textAlign: 'center', borderRadius: '49px' }}>
                 <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
                 {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
               </GreyCard>
             ) : showApproveFlow ? (
               <RowBetween>
                 <ButtonConfirmed
+                  borderRadius="49px"
                   onClick={approveCallback}
                   disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
                   width="48%"
@@ -447,6 +450,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   )}
                 </ButtonConfirmed>
                 <ButtonError
+                  borderRadius="49px"
                   onClick={() => {
                     if (isExpertMode) {
                       handleSwap()
@@ -476,6 +480,7 @@ export default function Swap({ history }: RouteComponentProps) {
               </RowBetween>
             ) : (
               <ButtonError
+                borderRadius="49px"
                 onClick={() => {
                   if (isExpertMode) {
                     handleSwap()

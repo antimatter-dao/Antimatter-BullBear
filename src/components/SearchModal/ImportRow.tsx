@@ -8,7 +8,7 @@ import ListLogo from 'components/ListLogo'
 import { useActiveWeb3React } from 'hooks'
 import { useCombinedInactiveList } from 'state/lists/hooks'
 import useTheme from 'hooks/useTheme'
-import { ButtonPrimary } from 'components/Button'
+import { ButtonOutlined } from 'components/Button'
 import styled from 'styled-components'
 import { useIsUserAddedToken, useIsTokenActive } from 'hooks/Tokens'
 import { CheckCircle } from 'react-feather'
@@ -85,7 +85,7 @@ export default function ImportRow({
         )}
       </AutoColumn>
       {!isActive && !isAdded ? (
-        <ButtonPrimary
+        <ButtonOutlined
           width="fit-content"
           padding="6px 12px"
           fontWeight={500}
@@ -94,9 +94,10 @@ export default function ImportRow({
             setImportToken && setImportToken(token)
             showImportView()
           }}
+          style={{ borderColor: theme.primary1, color: theme.primary1 }}
         >
           Import
-        </ButtonPrimary>
+        </ButtonOutlined>
       ) : (
         <RowFixed style={{ minWidth: 'fit-content' }}>
           <CheckIcon />

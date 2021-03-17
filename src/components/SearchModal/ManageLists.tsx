@@ -22,7 +22,7 @@ import Column, { AutoColumn } from '../Column'
 import ListLogo from '../ListLogo'
 import Row, { RowFixed, RowBetween } from '../Row'
 import { PaddedColumn, SearchInput, Separator, SeparatorDark } from './styleds'
-import { useListColor } from 'hooks/useColor'
+// import { useListColor } from 'hooks/useColor'
 import useTheme from '../../hooks/useTheme'
 import ListToggle from '../Toggle/ListToggle'
 import Card from 'components/Card'
@@ -98,7 +98,8 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
   const { current: list, pendingUpdate: pending } = listsByUrl[listUrl]
 
   const theme = useTheme()
-  const listColor = useListColor(list?.logoURI)
+  // const listColor = useListColor(list?.logoURI)
+  const listColor = 'transparent'
   const isActive = useIsListActive(listUrl)
 
   const [open, toggle] = useToggle(false)

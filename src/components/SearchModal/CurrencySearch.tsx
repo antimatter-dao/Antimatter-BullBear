@@ -6,7 +6,7 @@ import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import { useActiveWeb3React } from '../../hooks'
 import { useAllTokens, useToken, useIsUserAddedToken, useFoundOnInactiveList } from '../../hooks/Tokens'
-import { CloseIcon, TYPE, ButtonText, IconWrapper } from '../../theme'
+import { CloseIcon, TYPE, ButtonText } from '../../theme'
 import { isAddress } from '../../utils'
 import Column from '../Column'
 import Row, { RowBetween, RowFixed } from '../Row'
@@ -21,7 +21,6 @@ import useToggle from 'hooks/useToggle'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import useTheme from 'hooks/useTheme'
 import ImportRow from './ImportRow'
-import { Edit } from 'react-feather'
 import useDebounce from 'hooks/useDebounce'
 
 const ContentWrapper = styled(Column)`
@@ -32,11 +31,7 @@ const ContentWrapper = styled(Column)`
 
 const Footer = styled.div`
   width: 100%;
-  border-radius: 20px;
   padding: 20px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  background-color: ${({ theme }) => theme.bg1};
   border-top: 1px solid ${({ theme }) => theme.bg2};
 `
 
@@ -163,6 +158,7 @@ export function CurrencySearch({
     <ContentWrapper>
       <PaddedColumn gap="16px">
         <RowBetween>
+          <div></div>
           <Text fontWeight={500} fontSize={16}>
             Select a token
           </Text>
@@ -170,6 +166,13 @@ export function CurrencySearch({
         </RowBetween>
         <Row>
           <SearchInput
+            style={{
+              background: theme.bg3,
+              margin: '1rem',
+              padding: '14px 20px',
+              borderRadius: '14px',
+              border: `1px solid ${theme.text3}`
+            }}
             type="text"
             id="token-search-input"
             placeholder={t('tokenSearchPlaceholder')}
@@ -219,12 +222,9 @@ export function CurrencySearch({
       )}
       <Footer>
         <Row justify="center">
-          <ButtonText onClick={showManageView} color={theme.blue1} className="list-token-manage-button">
+          <ButtonText onClick={showManageView} color={theme.text1} className="list-token-manage-button">
             <RowFixed>
-              <IconWrapper size="16px" marginRight="6px">
-                <Edit />
-              </IconWrapper>
-              <TYPE.main color={theme.blue1}>Manage</TYPE.main>
+              <TYPE.main color={theme.text1}>Manage</TYPE.main>
             </RowFixed>
           </ButtonText>
         </Row>

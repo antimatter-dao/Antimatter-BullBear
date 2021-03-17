@@ -21,14 +21,14 @@ enum DeadlineError {
 const FancyButton = styled.button`
   color: ${({ theme }) => theme.text1};
   align-items: center;
-  height: 2rem;
-  border-radius: 36px;
+  height: 3rem;
+  border-radius: 14px;
   font-size: 1rem;
   width: auto;
   min-width: 3.5rem;
   border: 1px solid ${({ theme }) => theme.bg3};
   outline: none;
-  background: ${({ theme }) => theme.bg1};
+  background: ${({ theme }) => theme.bg3};
   :hover {
     border: 1px solid ${({ theme }) => theme.bg4};
   }
@@ -42,12 +42,12 @@ const Option = styled(FancyButton)<{ active: boolean }>`
   :hover {
     cursor: pointer;
   }
-  background-color: ${({ active, theme }) => active && theme.primary1};
+  border: 1px solid ${({ active, theme }) => (active ? theme.primary1 : 'transparent')};
   color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
 `
 
 const Input = styled.input`
-  background: ${({ theme }) => theme.bg1};
+  background: transparent;
   font-size: 16px;
   width: auto;
   outline: none;
@@ -56,11 +56,11 @@ const Input = styled.input`
     -webkit-appearance: none;
   }
   color: ${({ theme, color }) => (color === 'red' ? theme.red1 : theme.text1)};
-  text-align: right;
+  text-align: left;
 `
 
 const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }>`
-  height: 2rem;
+  height: 3rem;
   position: relative;
   padding: 0 0.75rem;
   flex: 1;
@@ -231,7 +231,7 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
           <QuestionHelper text="Your transaction will revert if it is pending for more than this long." />
         </RowFixed>
         <RowFixed>
-          <OptionCustom style={{ width: '80px' }} tabIndex={-1}>
+          <OptionCustom style={{ width: '10rem', marginRight: '12px' }} tabIndex={-1}>
             <Input
               color={!!deadlineError ? 'red' : undefined}
               onBlur={() => {

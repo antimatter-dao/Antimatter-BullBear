@@ -306,7 +306,7 @@ export default function AccountDetails({
             <InfoCard>
               <AccountGroupingRow>
                 {formatConnectorName()}
-                {/* <div>
+                <div>
                   {connector !== injected && connector !== walletlink && (
                     <WalletAction
                       style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
@@ -317,7 +317,7 @@ export default function AccountDetails({
                       Disconnect
                     </WalletAction>
                   )}
-                </div> */}
+                </div>
               </AccountGroupingRow>
               <AccountGroupingRow id="web3-account-identifier-row">
                 <AccountControl>

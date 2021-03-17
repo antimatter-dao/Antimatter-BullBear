@@ -6,6 +6,10 @@ import { RowBetween } from '../Row'
 import { ChevronDown } from 'react-feather'
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
 
+interface StyleProp {
+  borderRadius?: string
+}
+
 const Base = styled(RebassButton)<{
   padding?: string
   width?: string
@@ -16,7 +20,7 @@ const Base = styled(RebassButton)<{
   width: ${({ width }) => (width ? width : '100%')};
   font-weight: 500;
   text-align: center;
-  border-radius: 20px;
+  border-radius: 49px;
   border-radius: ${({ borderRadius }) => borderRadius && borderRadius};
   outline: none;
   border: 1px solid transparent;
@@ -53,13 +57,14 @@ export const ButtonPrimary = styled(Base)`
     background-color: ${({ theme }) => darken(0.1, theme.primary1)};
   }
   &:disabled {
-    background-color: ${({ theme, altDisabledStyle, disabled }) =>
-      altDisabledStyle ? (disabled ? theme.bg3 : theme.primary1) : theme.bg3};
     color: ${({ theme, altDisabledStyle, disabled }) =>
       altDisabledStyle ? (disabled ? theme.text3 : 'white') : theme.text3};
     cursor: auto;
     box-shadow: none;
-    border: 1px solid transparent;
+    background: transparent;
+    border: 1px solid
+      ${({ theme, altDisabledStyle, disabled }) =>
+        altDisabledStyle ? (disabled ? theme.bg3 : theme.primary1) : theme.bg3};
     outline: none;
     opacity: ${({ altDisabledStyle }) => (altDisabledStyle ? '0.5' : '1')};
   }
@@ -281,7 +286,7 @@ export function ButtonConfirmed({
   confirmed,
   altDisabledStyle,
   ...rest
-}: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps) {
+}: { confirmed?: boolean; altDisabledStyle?: boolean } & ButtonProps & StyleProp) {
   if (confirmed) {
     return <ButtonConfirmedStyle {...rest} />
   } else {
@@ -289,7 +294,7 @@ export function ButtonConfirmed({
   }
 }
 
-export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonProps) {
+export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonProps & StyleProp) {
   if (error) {
     return <ButtonErrorStyle {...rest} />
   } else {
@@ -297,7 +302,11 @@ export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonProp
   }
 }
 
-export function ButtonDropdown({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
+export function ButtonDropdown({
+  disabled = false,
+  children,
+  ...rest
+}: { disabled?: boolean } & ButtonProps & StyleProp) {
   return (
     <ButtonPrimary {...rest} disabled={disabled}>
       <RowBetween>
@@ -308,7 +317,11 @@ export function ButtonDropdown({ disabled = false, children, ...rest }: { disabl
   )
 }
 
-export function ButtonDropdownGrey({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
+export function ButtonDropdownGrey({
+  disabled = false,
+  children,
+  ...rest
+}: { disabled?: boolean } & ButtonProps & StyleProp) {
   return (
     <ButtonGray {...rest} disabled={disabled} style={{ borderRadius: '20px' }}>
       <RowBetween>
@@ -319,7 +332,11 @@ export function ButtonDropdownGrey({ disabled = false, children, ...rest }: { di
   )
 }
 
-export function ButtonDropdownLight({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
+export function ButtonDropdownLight({
+  disabled = false,
+  children,
+  ...rest
+}: { disabled?: boolean } & ButtonProps & StyleProp) {
   return (
     <ButtonOutlined {...rest} disabled={disabled}>
       <RowBetween>
@@ -330,7 +347,7 @@ export function ButtonDropdownLight({ disabled = false, children, ...rest }: { d
   )
 }
 
-export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonProps) {
+export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonProps & StyleProp) {
   if (!active) {
     return <ButtonWhite {...rest} />
   } else {
