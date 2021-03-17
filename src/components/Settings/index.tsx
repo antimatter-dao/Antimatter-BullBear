@@ -81,7 +81,6 @@ const StyledMenu = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
   border: none;
   text-align: left;
 `
@@ -96,7 +95,7 @@ const MenuFlyout = styled.span`
   flex-direction: column;
   font-size: 1rem;
   position: absolute;
-  top: 0;
+  top: -1px;
   right: -10px;
   z-index: 100;
 
@@ -105,18 +104,11 @@ const MenuFlyout = styled.span`
   `};
 `
 
-const Break = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: ${({ theme }) => theme.bg3};
-`
-
 const ModalContentWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 0;
-  background-color: ${({ theme }) => theme.bg2};
   border-radius: 20px;
 `
 
@@ -148,28 +140,28 @@ export default function SettingsTab() {
   return (
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
     <StyledMenu ref={node as any}>
-      <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
+      <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100} maxWidth={500}>
         <ModalContentWrapper>
-          <AutoColumn gap="lg">
-            <RowBetween style={{ padding: '0 2rem' }}>
+          <AutoColumn gap="sm">
+            <RowBetween style={{ padding: '0 24px' }}>
               <div />
-              <Text fontWeight={500} fontSize={20}>
+              <Text fontWeight={500} fontSize={18}>
                 Are you sure?
               </Text>
               <StyledCloseIcon onClick={() => setShowConfirmation(false)} />
             </RowBetween>
-            <Break />
-            <AutoColumn gap="lg" style={{ padding: '0 2rem' }}>
-              <Text fontWeight={500} fontSize={20}>
+            <AutoColumn gap="sm" style={{ padding: '0 1rem' }}>
+              <Text fontWeight={500} fontSize={14}>
                 Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result
                 in bad rates and lost funds.
               </Text>
-              <Text fontWeight={600} fontSize={20}>
+              <Text fontWeight={600} fontSize={14}>
                 ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING.
               </Text>
               <ButtonError
-                error={true}
-                padding={'12px'}
+                style={{ marginTop: '1rem' }}
+                error={false}
+                padding={'14px'}
                 onClick={() => {
                   if (window.prompt(`Please type the word "confirm" to enable expert mode.`) === 'confirm') {
                     toggleExpertMode()
@@ -177,7 +169,7 @@ export default function SettingsTab() {
                   }
                 }}
               >
-                <Text fontSize={20} fontWeight={500} id="confirm-expert-mode">
+                <Text fontSize={16} fontWeight={500} id="confirm-expert-mode" color={theme.bg1}>
                   Turn On Expert Mode
                 </Text>
               </ButtonError>

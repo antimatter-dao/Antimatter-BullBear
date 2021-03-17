@@ -10,12 +10,13 @@ import { ManageLists } from './ManageLists'
 import ManageTokens from './ManageTokens'
 import { TokenList } from '@uniswap/token-lists'
 import { CurrencyModalView } from './CurrencySearchModal'
+import useTheme from 'hooks/useTheme'
 
 const Wrapper = styled.div`
   width: 100%;
   position: relative;
   padding-bottom: 80px;
-  background: ${({ theme }) => theme.gradient1};
+  background: ${({ theme }) => theme.bg1} ${({ theme }) => theme.gradient1};
   border-radius: 42px;
 `
 
@@ -34,7 +35,7 @@ const ToggleOption = styled.div<{ active?: boolean }>`
   border-radius: 14px;
   font-weight: 600;
   background-color: ${({ theme, active }) => (active ? theme.primary1 : 'transparent')};
-  color: ${({ theme, active }) => (active ? theme.text1 : theme.text2)};
+  color: ${({ theme, active }) => (active ? theme.bg1 : theme.text2)};
   user-select: none;
 
   :hover {
@@ -58,16 +59,17 @@ export default function Manage({
 }) {
   // toggle between tokens and lists
   const [showLists, setShowLists] = useState(true)
+  const theme = useTheme()
 
   return (
     <Wrapper>
       <PaddedColumn>
         <RowBetween>
           <ArrowLeft style={{ cursor: 'pointer' }} onClick={() => setModalView(CurrencyModalView.search)} />
-          <Text fontWeight={500} fontSize={20}>
+          <Text fontWeight={500} fontSize={18}>
             Select a token
           </Text>
-          <CloseIcon onClick={onDismiss} />
+          <CloseIcon onClick={onDismiss} style={{ color: theme.text3 }} />
         </RowBetween>
       </PaddedColumn>
       <Separator />

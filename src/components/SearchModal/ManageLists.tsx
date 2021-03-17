@@ -72,20 +72,21 @@ const StyledTitleText = styled.div<{ active: boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 600;
-  color: ${({ theme, active }) => (active ? theme.white : theme.text2)};
+  color: ${({ theme }) => theme.text1};
 `
 
 const StyledListUrlText = styled(TYPE.main)<{ active: boolean }>`
   font-size: 12px;
-  color: ${({ theme, active }) => (active ? theme.white : theme.text2)};
+  color: ${({ theme }) => theme.text2};
 `
 
 const RowWrapper = styled(Row)<{ bgColor: string; active: boolean }>`
-  background-color: ${({ bgColor, active, theme }) => (active ? bgColor ?? 'transparent' : theme.bg2)};
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid ${({ bgColor, active, theme }) => (active ? bgColor ?? 'transparent' : theme.bg2)};
   transition: 200ms;
   align-items: center;
-  padding: 1rem;
-  border-radius: 20px;
+  padding: 0.5rem;
+  border-radius: 14px;
 `
 
 function listUrlRowHTMLId(listUrl: string) {
@@ -162,9 +163,9 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
   if (!list) return null
 
   return (
-    <RowWrapper active={isActive} bgColor={listColor} key={listUrl} id={listUrlRowHTMLId(listUrl)}>
+    <RowWrapper active={isActive} bgColor={listColor} key={listUrl} id={listUrlRowHTMLId(listUrl)} width="100%">
       {list.logoURI ? (
-        <ListLogo size="40px" style={{ marginRight: '1rem' }} logoURI={list.logoURI} alt={`${list.name} list logo`} />
+        <ListLogo size="36px" style={{ marginRight: '1rem' }} logoURI={list.logoURI} alt={`${list.name} list logo`} />
       ) : (
         <div style={{ width: '24px', height: '24px', marginRight: '1rem' }} />
       )}
@@ -178,7 +179,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
           </StyledListUrlText>
           <StyledMenu ref={node as any}>
             <ButtonEmpty onClick={toggle} ref={setReferenceElement} padding="0">
-              <Settings stroke={isActive ? theme.bg1 : theme.text1} size={12} />
+              <Settings stroke={theme.text1} size={12} />
             </ButtonEmpty>
             {open && (
               <PopoverContainer show={true} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
@@ -208,10 +209,11 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
 })
 
 const ListContainer = styled.div`
-  padding: 1rem;
+  padding: 20px;
   height: 100%;
   overflow: auto;
   padding-bottom: 80px;
+  borderradius: 42px;
 `
 
 export function ManageLists({
@@ -325,6 +327,7 @@ export function ManageLists({
             placeholder="https:// or ipfs:// or ENS name"
             value={listUrlInput}
             onChange={handleInput}
+            style={{ height: '48px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '14px', border: 'none' }}
           />
         </Row>
         {addError ? (
@@ -353,7 +356,7 @@ export function ManageLists({
                 </RowFixed>
               ) : (
                 <ButtonPrimary
-                  style={{ fontSize: '14px' }}
+                  style={{ fontSize: '14px', background: 'transparent', border: `1px solid ${theme.primary1}` }}
                   padding="6px 8px"
                   width="fit-content"
                   onClick={handleImport}
@@ -367,7 +370,7 @@ export function ManageLists({
       )}
       <Separator />
       <ListContainer>
-        <AutoColumn gap="md">
+        <AutoColumn gap="md" justify="center">
           {sortedLists.map(listUrl => (
             <ListRow key={listUrl} listUrl={listUrl} />
           ))}

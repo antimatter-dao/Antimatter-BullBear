@@ -135,7 +135,7 @@ export default function ManageTokens({
           {tokenList}
         </PaddedColumn>
       </Column>
-      <Footer>
+      <Footer style={{ padding: '12px 12px 0' }}>
         <TYPE.darkGray>Tip: Custom tokens are stored locally in your browser</TYPE.darkGray>
       </Footer>
     </Wrapper>

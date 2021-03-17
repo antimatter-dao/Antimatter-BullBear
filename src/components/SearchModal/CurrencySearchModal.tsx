@@ -99,13 +99,6 @@ export default function CurrencySearchModal({
       ) : (
         ''
       )}
-      <Manage
-        onDismiss={onDismiss}
-        setModalView={setModalView}
-        setImportToken={setImportToken}
-        setImportList={setImportList}
-        setListUrl={setListUrl}
-      />
     </Modal>
   )
 }
