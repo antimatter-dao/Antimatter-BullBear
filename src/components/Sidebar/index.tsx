@@ -1,8 +1,19 @@
 import React from 'react'
+// import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { NavLink } from 'react-router-dom'
-const tabs = ['optionMarket', 'marketStrategy', 'liquidity', 'matterToken', 'governance', 'info']
+const tabs = [
+  { title: 'Option Market', route: 'swap' },
+  { title: 'Market Strategy', route: 'markeStrategy' },
+  { title: 'Liquidity', route: 'pool' },
+  { title: 'Matter Token', route: 'matterToken' },
+  { title: 'Governance', route: 'governance' },
+  { title: 'Info', route: 'info' }
+]
+
+// import Logo from '../../assets/svg/logo.svg'
+// import LogoDark from '../../assets/svg/logo_white.svg'
 
 const StyledSidebar = styled.div`
   width: 212px;
@@ -20,7 +31,7 @@ const StyledSidebar = styled.div`
 `
 const Tab = styled(NavLink)`
   width: 100%;
-  border-left: 4px solid rgba(0, 0, 0, 0);
+  border-left: 4px solid transparent;
   color: ${({ theme }) => theme.text1};
   font-size: 1rem;
   padding: 16px 30px;
@@ -39,14 +50,38 @@ const StyledLogo = styled(Logo)`
   width: 150px;
   margin: 38px auto 120px auto;
 `
+// const UniIcon = styled.div`
+//   transition: transform 0.3s ease;
+//   :hover {
+//     transform: rotate(-5deg);
+//   }
+// `
+// const Title = styled.a`
+//   display: flex;
+//   align-items: center;
+//   pointer-events: auto;
+//   justify-self: flex-start;
+//   margin-right: 12px;
+//   ${({ theme }) => theme.mediaWidth.upToSmall`
+//     justify-self: center;
+//   `};
+//   :hover {
+//     cursor: pointer;
+//   }
+//   `
 
 export default function Sidebar() {
   return (
     <StyledSidebar>
+      {/* <Title href=".">
+        <UniIcon>
+          <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+        </UniIcon>
+      </Title> */}
       <StyledLogo />
-      {tabs.map(tab => (
-        <Tab key={tab} id={tab} to={`/${tab}`}>
-          {tab}
+      {tabs.map(({ title, route }) => (
+        <Tab key={title} to={`/${route}`}>
+          {title}
         </Tab>
       ))}
     </StyledSidebar>

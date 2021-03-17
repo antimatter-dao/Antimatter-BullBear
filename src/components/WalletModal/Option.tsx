@@ -3,23 +3,23 @@ import styled from 'styled-components'
 import { ExternalLink } from '../../theme'
 
 const InfoCard = styled.button<{ active?: boolean }>`
-  background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
+  background-color: transparent;
   padding: 1rem;
   outline: none;
   border: 1px solid;
-  border-radius: 12px;
+  border-radius: 49px;
   width: 100% !important;
   &:focus {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.primary1};
   }
-  border-color: ${({ theme, active }) => (active ? 'transparent' : theme.bg3)};
+  border-color: ${({ theme, active }) => (active ? 'transparent' : theme.text1)};
 `
 
 const OptionCard = styled(InfoCard as any)`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-top: 2rem;
   padding: 1rem;
 `
@@ -48,7 +48,7 @@ const GreenCircle = styled.div`
     height: 8px;
     width: 8px;
     margin-right: 8px;
-    background-color: ${({ theme }) => theme.green1};
+    background-color: ${({ theme }) => theme.primary1};
     border-radius: 50%;
   }
 `
@@ -85,6 +85,7 @@ const IconWrapper = styled.div<{ size?: number | null }>`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     align-items: flex-end;
   `};
+  margin-right: 20px;
 `
 
 export default function Option({
@@ -112,6 +113,9 @@ export default function Option({
 }) {
   const content = (
     <OptionCardClickable id={id} onClick={onClick} clickable={clickable && !active} active={active}>
+      <IconWrapper size={size}>
+        <img src={icon} alt={'Icon'} />
+      </IconWrapper>
       <OptionCardLeft>
         <HeaderText color={color}>
           {active ? (
@@ -127,9 +131,6 @@ export default function Option({
         </HeaderText>
         {subheader && <SubHeader>{subheader}</SubHeader>}
       </OptionCardLeft>
-      <IconWrapper size={size}>
-        <img src={icon} alt={'Icon'} />
-      </IconWrapper>
     </OptionCardClickable>
   )
   if (link) {

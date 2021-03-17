@@ -17,9 +17,10 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
-import { ButtonSecondary } from '../Button'
+import { ButtonOutlined } from '../Button'
+import Copy from '../AccountDetails/Copy'
 
-import Identicon from '../Identicon'
+// import Identicon from '../Identicon'
 import Loader from '../Loader'
 
 import { RowBetween } from '../Row'
@@ -35,12 +36,12 @@ const IconWrapper = styled.div<{ size?: number }>`
   }
 `
 
-const Web3StatusGeneric = styled(ButtonSecondary)`
+const Web3StatusGeneric = styled(ButtonOutlined)`
   ${({ theme }) => theme.flexRowNoWrap}
   width: 100%;
   align-items: center;
   padding: 0.5rem;
-  border-radius: 12px;
+  border-radius: 4px;
   cursor: pointer;
   user-select: none;
   :focus {
@@ -59,36 +60,36 @@ const Web3StatusError = styled(Web3StatusGeneric)`
 `
 
 const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
-  background-color: ${({ theme }) => theme.primary4};
-  border: none;
-  color: ${({ theme }) => theme.primaryText1};
+  border: 1px solid ${({ theme }) => theme.text1};
+  border-color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text1};
   font-weight: 500;
 
   :hover,
   :focus {
-    border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
+    border: 1px solid ${({ theme }) => darken(0.05, theme.text1)};
     color: ${({ theme }) => theme.primaryText1};
   }
 
   ${({ faded }) =>
     faded &&
     css`
-      background-color: ${({ theme }) => theme.primary5};
-      border: 1px solid ${({ theme }) => theme.primary5};
-      color: ${({ theme }) => theme.primaryText1};
+      background-color: ${({ theme }) => theme.bg1};
+      border: 1px solid ${({ theme }) => theme.text1};
+      color: ${({ theme }) => theme.text1};
 
       :hover,
       :focus {
-        border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-        color: ${({ theme }) => darken(0.05, theme.primaryText1)};
+        border: 1px solid ${({ theme }) => darken(0.05, theme.text1)};
+        color: ${({ theme }) => darken(0.05, theme.text1)};
       }
     `}
 `
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
-  background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg2)};
-  border: 1px solid ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg3)};
-  color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
+  color: ${({ pending, theme }) => (pending ? theme.white : theme.text3)};
+  padding: 0;
+  border: none
   font-weight: 500;
   :hover,
   :focus {
@@ -97,6 +98,10 @@ const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
     :focus {
       border: 1px solid ${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : darken(0.1, theme.bg3))};
     }
+  }
+  & p{
+    margin: 0;
+    margin-left:.5rem
   }
 `
 
@@ -118,6 +123,15 @@ const NetworkIcon = styled(Activity)`
   height: 16px;
 `
 
+const Dot = styled.span`
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #ffffff 4.17%, rgba(255, 255, 255, 0) 75%);
+  border: 0.6px solid #ffffff;
+  box-sizing: border-box;
+  border-radius: 50%;
+`
+
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
   return b.addedTime - a.addedTime
@@ -132,7 +146,7 @@ const SOCK = (
 // eslint-disable-next-line react/prop-types
 function StatusIcon({ connector }: { connector: AbstractConnector }) {
   if (connector === injected) {
-    return <Identicon />
+    return <Dot />
   } else if (connector === walletconnect) {
     return (
       <IconWrapper size={16}>
@@ -182,19 +196,22 @@ function Web3StatusInner() {
 
   if (account) {
     return (
-      <Web3StatusConnected id="web3-status-connected" onClick={toggleWalletModal} pending={hasPendingTransactions}>
-        {hasPendingTransactions ? (
-          <RowBetween>
-            <Text>{pending?.length} Pending</Text> <Loader stroke="white" />
-          </RowBetween>
-        ) : (
-          <>
-            {hasSocks ? SOCK : null}
-            <Text>{ENSName || shortenAddress(account)}</Text>
-          </>
-        )}
-        {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}
-      </Web3StatusConnected>
+      <>
+        <Web3StatusConnected id="web3-status-connected" onClick={toggleWalletModal} pending={hasPendingTransactions}>
+          {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}
+          {hasPendingTransactions ? (
+            <RowBetween>
+              <Text>{pending?.length} Pending</Text> <Loader stroke="white" />
+            </RowBetween>
+          ) : (
+            <>
+              {hasSocks ? SOCK : null}
+              <Text>{ENSName || shortenAddress(account)}</Text>
+            </>
+          )}
+        </Web3StatusConnected>
+        {account && <Copy toCopy={account}></Copy>}
+      </>
     )
   } else if (error) {
     return (
