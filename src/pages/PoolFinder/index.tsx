@@ -2,7 +2,7 @@ import { Currency, ETHER, JSBI, TokenAmount } from '@uniswap/sdk'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Plus } from 'react-feather'
 import { Text } from 'rebass'
-import { ButtonDropdownLight } from '../../components/Button'
+import ButtonSelect from '../../components/Button/ButtonSelect'
 import { LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import CurrencyLogo from '../../components/CurrencyLogo'
@@ -18,7 +18,7 @@ import { StyledInternalLink } from '../../theme'
 import { currencyId } from '../../utils/currencyId'
 import AppBody from '../AppBody'
 import { Dots } from '../Pool/styleds'
-import { BlueCard } from '../../components/Card'
+import { OutlineCard } from '../../components/Card'
 import { TYPE } from '../../theme'
 
 enum Fields {
@@ -81,15 +81,15 @@ export default function PoolFinder() {
   return (
     <AppBody>
       <FindPoolTabs />
-      <AutoColumn style={{ padding: '1rem' }} gap="md">
-        <BlueCard>
+      <AutoColumn style={{ padding: '1rem' }} gap="24px">
+        <OutlineCard>
           <AutoColumn gap="10px">
-            <TYPE.link fontWeight={400} color={'primaryText1'}>
+            <TYPE.small fontWeight={700}>
               <b>Tip:</b> Use this tool to find pairs that don&apos;t automatically appear in the interface.
-            </TYPE.link>
+            </TYPE.small>
           </AutoColumn>
-        </BlueCard>
-        <ButtonDropdownLight
+        </OutlineCard>
+        <ButtonSelect
           onClick={() => {
             setShowSearch(true)
             setActiveField(Fields.TOKEN0)
@@ -98,22 +98,22 @@ export default function PoolFinder() {
           {currency0 ? (
             <Row>
               <CurrencyLogo currency={currency0} />
-              <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
+              <Text fontWeight={500} fontSize={16} marginLeft={'12px'}>
                 {currency0.symbol}
               </Text>
             </Row>
           ) : (
-            <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
+            <Text fontWeight={500} fontSize={16} marginLeft={'12px'}>
               Select a Token
             </Text>
           )}
-        </ButtonDropdownLight>
+        </ButtonSelect>
 
         <ColumnCenter>
-          <Plus size="16" color="#888D9B" />
+          <Plus size="28" color="#888D9B" />
         </ColumnCenter>
 
-        <ButtonDropdownLight
+        <ButtonSelect
           onClick={() => {
             setShowSearch(true)
             setActiveField(Fields.TOKEN1)
@@ -122,20 +122,20 @@ export default function PoolFinder() {
           {currency1 ? (
             <Row>
               <CurrencyLogo currency={currency1} />
-              <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
+              <Text fontWeight={500} fontSize={16} marginLeft={'12px'}>
                 {currency1.symbol}
               </Text>
             </Row>
           ) : (
-            <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
+            <Text fontWeight={500} fontSize={16} marginLeft={'12px'}>
               Select a Token
             </Text>
           )}
-        </ButtonDropdownLight>
+        </ButtonSelect>
 
         {hasPosition && (
           <ColumnCenter
-            style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px', borderRadius: '12px' }}
+            style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px', borderRadius: '14px' }}
           >
             <Text textAlign="center" fontWeight={500}>
               Pool Found!

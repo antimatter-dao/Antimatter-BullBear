@@ -6,6 +6,9 @@ import { RowBetween, RowFixed } from '../../components/Row'
 import CurrencyLogo from '../../components/CurrencyLogo'
 import { Field } from '../../state/mint/actions'
 import { TYPE } from '../../theme'
+import useTheme from 'hooks/useTheme'
+import { OutlineCard } from 'components/Card'
+import { AutoColumn } from 'components/Column'
 
 export function ConfirmAddModalBottom({
   noLiquidity,
@@ -22,43 +25,48 @@ export function ConfirmAddModalBottom({
   poolTokenPercentage?: Percent
   onAdd: () => void
 }) {
+  const theme = useTheme()
   return (
     <>
-      <RowBetween>
-        <TYPE.body>{currencies[Field.CURRENCY_A]?.symbol} Deposited</TYPE.body>
-        <RowFixed>
-          <CurrencyLogo currency={currencies[Field.CURRENCY_A]} style={{ marginRight: '8px' }} />
-          <TYPE.body>{parsedAmounts[Field.CURRENCY_A]?.toSignificant(6)}</TYPE.body>
-        </RowFixed>
-      </RowBetween>
-      <RowBetween>
-        <TYPE.body>{currencies[Field.CURRENCY_B]?.symbol} Deposited</TYPE.body>
-        <RowFixed>
-          <CurrencyLogo currency={currencies[Field.CURRENCY_B]} style={{ marginRight: '8px' }} />
-          <TYPE.body>{parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)}</TYPE.body>
-        </RowFixed>
-      </RowBetween>
-      <RowBetween>
-        <TYPE.body>Rates</TYPE.body>
-        <TYPE.body>
-          {`1 ${currencies[Field.CURRENCY_A]?.symbol} = ${price?.toSignificant(4)} ${
-            currencies[Field.CURRENCY_B]?.symbol
-          }`}
-        </TYPE.body>
-      </RowBetween>
-      <RowBetween style={{ justifyContent: 'flex-end' }}>
-        <TYPE.body>
-          {`1 ${currencies[Field.CURRENCY_B]?.symbol} = ${price?.invert().toSignificant(4)} ${
-            currencies[Field.CURRENCY_A]?.symbol
-          }`}
-        </TYPE.body>
-      </RowBetween>
-      <RowBetween>
-        <TYPE.body>Share of Pool:</TYPE.body>
-        <TYPE.body>{noLiquidity ? '100' : poolTokenPercentage?.toSignificant(4)}%</TYPE.body>
-      </RowBetween>
+      <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)' }}>
+        <AutoColumn gap="8px" style={{ color: theme.text1 }}>
+          <RowBetween>
+            <TYPE.small color={theme.text3}>{currencies[Field.CURRENCY_A]?.symbol} Deposited</TYPE.small>
+            <RowFixed>
+              <CurrencyLogo currency={currencies[Field.CURRENCY_A]} style={{ marginRight: '8px' }} size="16px" />
+              <TYPE.small>{parsedAmounts[Field.CURRENCY_A]?.toSignificant(6)}</TYPE.small>
+            </RowFixed>
+          </RowBetween>
+          <RowBetween>
+            <TYPE.small color={theme.text3}>{currencies[Field.CURRENCY_B]?.symbol} Deposited</TYPE.small>
+            <RowFixed>
+              <CurrencyLogo currency={currencies[Field.CURRENCY_B]} style={{ marginRight: '8px' }} size="16px" />
+              <TYPE.small>{parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)}</TYPE.small>
+            </RowFixed>
+          </RowBetween>
+          <RowBetween>
+            <TYPE.small color={theme.text3}>Rates</TYPE.small>
+            <TYPE.small>
+              {`1 ${currencies[Field.CURRENCY_A]?.symbol} = ${price?.toSignificant(4)} ${
+                currencies[Field.CURRENCY_B]?.symbol
+              }`}
+            </TYPE.small>
+          </RowBetween>
+          <RowBetween style={{ justifyContent: 'flex-end' }}>
+            <TYPE.small>
+              {`1 ${currencies[Field.CURRENCY_B]?.symbol} = ${price?.invert().toSignificant(4)} ${
+                currencies[Field.CURRENCY_A]?.symbol
+              }`}
+            </TYPE.small>
+          </RowBetween>
+          <RowBetween>
+            <TYPE.small color={theme.text3}>Share of Pool:</TYPE.small>
+            <TYPE.small>{noLiquidity ? '100' : poolTokenPercentage?.toSignificant(4)}%</TYPE.small>
+          </RowBetween>
+        </AutoColumn>
+      </OutlineCard>
       <ButtonPrimary style={{ margin: '20px 0 0 0' }} onClick={onAdd}>
-        <Text fontWeight={500} fontSize={20}>
+        <Text fontWeight={500} fontSize={16}>
           {noLiquidity ? 'Create Pool & Supply' : 'Confirm Supply'}
         </Text>
       </ButtonPrimary>

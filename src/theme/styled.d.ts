@@ -48,6 +48,9 @@ export interface Colors {
 
   //gradient
   gradient1: Color
+
+  //opacity
+  translucent: Color
 }
 
 export interface Grids {

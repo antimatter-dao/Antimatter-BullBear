@@ -338,10 +338,10 @@ export function ButtonDropdownLight({
   ...rest
 }: { disabled?: boolean } & ButtonProps & StyleProp) {
   return (
-    <ButtonOutlined {...rest} disabled={disabled}>
+    <ButtonOutlined {...rest} disabled={disabled} borderRadius="14px">
       <RowBetween>
         <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
-        <ChevronDown size={24} />
+        <ChevronDown size={14} />
       </RowBetween>
     </ButtonOutlined>
   )
