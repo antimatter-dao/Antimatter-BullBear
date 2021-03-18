@@ -31,6 +31,8 @@ import Swap from './Swap'
 import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import Vote from './Vote'
 import VotePage from './Vote/VotePage'
+import MarketStrategy from './MarketStrategy'
+import Generate from './Generate'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -97,6 +99,8 @@ export default function App() {
             <Web3ReactManager>
               <Switch>
                 <Route exact strict path="/swap" component={Swap} />
+                <Route exact strict path="/markeStrategy" component={MarketStrategy} />
+                <Route exact strict path="/generate" component={Generate} />
                 <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                 <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
