@@ -5,7 +5,8 @@ import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from '../../components/AddressInputPanel'
-import { ButtonError, ButtonLight, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
+import { ButtonError, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
+import ButtonSelect from '../../components/Button/ButtonSelect'
 import Card, { GreyCard } from '../../components/Card'
 import Column, { AutoColumn } from '../../components/Column'
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
@@ -310,7 +311,7 @@ export default function Swap({ history }: RouteComponentProps) {
       <SwapPoolTabs active={'swap'} />
       <AppBody>
         <SwapHeader />
-        <Wrapper id="swap-page" style={{ padding: '1rem 0' }}>
+        <Wrapper id="swap-page" style={{ padding: '1rem 0', marginTop: '20px' }}>
           <ConfirmSwapModal
             isOpen={showConfirm}
             trade={trade}
@@ -325,7 +326,8 @@ export default function Swap({ history }: RouteComponentProps) {
             onDismiss={handleConfirmDismiss}
           />
 
-          <AutoColumn gap={'md'}>
+          <AutoColumn gap="30px">
+            <ButtonSelect label="Option Type">Long Put Option</ButtonSelect>
             <CurrencyInputPanel
               label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
               value={formattedAmounts[Field.INPUT]}
@@ -365,6 +367,7 @@ export default function Swap({ history }: RouteComponentProps) {
               onCurrencySelect={handleOutputSelect}
               otherCurrency={currencies[Field.INPUT]}
               id="swap-currency-output"
+              negativeMarginTop="-30px"
             />
 
             {recipient !== null && !showWrap ? (
@@ -386,7 +389,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 <AutoColumn gap="8px" style={{ padding: '0 16px' }}>
                   {Boolean(trade) && (
                     <RowBetween align="center">
-                      <Text fontWeight={500} fontSize={14} color={theme.text2}>
+                      <Text fontWeight={500} fontSize={14} color={theme.text3}>
                         Price
                       </Text>
                       <TradePrice
@@ -416,16 +419,24 @@ export default function Swap({ history }: RouteComponentProps) {
                 <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
               </ButtonPrimary>
             ) : !account ? (
-              <ButtonLight onClick={toggleWalletModal} borderRadius="49px">
+              <ButtonPrimary onClick={toggleWalletModal} borderRadius="49px">
                 Connect Wallet
-              </ButtonLight>
+              </ButtonPrimary>
             ) : showWrap ? (
               <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap} borderRadius="49px">
                 {wrapInputError ??
                   (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
               </ButtonPrimary>
             ) : noRoute && userHasSpecifiedInputOutput ? (
-              <GreyCard style={{ textAlign: 'center', borderRadius: '49px' }}>
+              <GreyCard
+                style={{
+                  textAlign: 'center',
+                  borderRadius: '49px',
+                  padding: '14px',
+                  borderColor: theme.text1,
+                  fontSize: '1rem'
+                }}
+              >
                 <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
                 {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
               </GreyCard>
@@ -498,7 +509,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
                 error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
               >
-                <Text fontSize={20} fontWeight={500}>
+                <Text fontSize={16} fontWeight={500}>
                   {swapInputError
                     ? swapInputError
                     : priceImpactSeverity > 3 && !isExpertMode

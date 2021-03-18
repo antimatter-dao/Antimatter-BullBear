@@ -81,16 +81,15 @@ export const SearchInput = styled.input`
   align-items: center;
   width: 100%;
   white-space: nowrap;
-  background: none;
+  background: ${({ theme }) => theme.translucent};
+  height: 48px;
   border: none;
   outline: none;
   border-radius: 14px;
   color: ${({ theme }) => theme.text1};
-  border-style: solid;
-  border: 1px solid ${({ theme }) => theme.bg3};
+  border: 1px solid none;
   -webkit-appearance: none;
-
-  font-size: 18px;
+  font-size: 16px;
 
   ::placeholder {
     color: ${({ theme }) => theme.text3};

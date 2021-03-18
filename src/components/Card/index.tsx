@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { CardProps, Text } from 'rebass'
 import { Box } from 'rebass/styled-components'
+// import useTheme from 'hooks/useTheme'
 
 const Card = styled(Box)<{ width?: string; padding?: string; border?: string; borderRadius?: string }>`
   width: ${({ width }) => width ?? '100%'};
@@ -28,6 +29,7 @@ export const GreyCard = styled(Card)`
 
 export const OutlineCard = styled(Card)`
   border: 1px solid ${({ theme }) => theme.bg3};
+  color: ${({ theme }) => theme.text3};
 `
 
 export const YellowCard = styled(Card)`
@@ -52,9 +54,7 @@ const BlueCardStyled = styled(Card)`
 export const BlueCard = ({ children, ...rest }: CardProps) => {
   return (
     <BlueCardStyled {...rest}>
-      <Text fontWeight={500} color="#2172E5">
-        {children}
-      </Text>
+      <Text fontWeight={500}>{children}</Text>
     </BlueCardStyled>
   )
 }

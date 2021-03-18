@@ -72,7 +72,7 @@ const EmptyProposals = styled.div`
   align-items: center;
 `
 
-export default function Pool() {
+export default function MarketStrategy() {
   const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
 
@@ -156,19 +156,19 @@ export default function Pool() {
             <AutoColumn gap="lg" style={{ width: '100%' }}>
               <TitleRow padding={'0'}>
                 <HideSmall>
-                  <TYPE.mediumHeader style={{ justifySelf: 'flex-start' }}>Your liquidity</TYPE.mediumHeader>
+                  <TYPE.mediumHeader style={{ justifySelf: 'flex-start' }}>Your Options</TYPE.mediumHeader>
                   <TYPE.white fontSize={14} style={{ justifySelf: 'flex-start', color: theme.text2, marginTop: '4px' }}>
-                    Please chose option what you need
+                    Please choose your market strategy
                   </TYPE.white>
                 </HideSmall>
               </TitleRow>
               <ButtonRow>
                 <ResponsiveButtonPrimary as={Link} padding="14px 10px" to="/create/ETH">
-                  Create a pair
+                  Option generation
                 </ResponsiveButtonPrimary>
                 <ResponsiveButtonPrimary id="join-pool-button" as={Link} padding="14px 10px" to="/add/ETH">
                   <Text fontWeight={500} fontSize={16}>
-                    Add Liquidity
+                    Option redemption
                   </Text>
                 </ResponsiveButtonPrimary>
               </ButtonRow>

@@ -166,13 +166,6 @@ export function CurrencySearch({
         </RowBetween>
         <Row>
           <SearchInput
-            style={{
-              background: theme.bg3,
-              margin: '1rem',
-              padding: '14px 20px',
-              borderRadius: '14px',
-              border: `1px solid ${theme.text3}`
-            }}
             type="text"
             id="token-search-input"
             placeholder={t('tokenSearchPlaceholder')}

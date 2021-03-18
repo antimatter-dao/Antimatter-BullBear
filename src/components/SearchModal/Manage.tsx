@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   width: 100%;
   position: relative;
   padding-bottom: 80px;
-  background: ${({ theme }) => theme.bg1} ${({ theme }) => theme.gradient1};
+  background: ${({ theme }) => theme.gradient1};
   border-radius: 42px;
 `
 

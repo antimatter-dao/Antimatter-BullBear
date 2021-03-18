@@ -44,7 +44,7 @@ const Base = styled(RebassButton)<{
 
 export const ButtonPrimary = styled(Base)`
   background-color: ${({ theme }) => theme.primary1};
-  color: white;
+  color: black;
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
     background-color: ${({ theme }) => darken(0.05, theme.primary1)};
@@ -64,7 +64,7 @@ export const ButtonPrimary = styled(Base)`
     background: transparent;
     border: 1px solid
       ${({ theme, altDisabledStyle, disabled }) =>
-        altDisabledStyle ? (disabled ? theme.bg3 : theme.primary1) : theme.bg3};
+        altDisabledStyle ? (disabled ? theme.bg3 : theme.primary1) : theme.bg5};
     outline: none;
     opacity: ${({ altDisabledStyle }) => (altDisabledStyle ? '0.5' : '1')};
   }
@@ -338,10 +338,10 @@ export function ButtonDropdownLight({
   ...rest
 }: { disabled?: boolean } & ButtonProps & StyleProp) {
   return (
-    <ButtonOutlined {...rest} disabled={disabled}>
+    <ButtonOutlined {...rest} disabled={disabled} borderRadius="14px">
       <RowBetween>
         <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
-        <ChevronDown size={24} />
+        <ChevronDown size={14} />
       </RowBetween>
     </ButtonOutlined>
   )

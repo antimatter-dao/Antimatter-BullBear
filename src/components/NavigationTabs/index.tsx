@@ -105,3 +105,25 @@ export function AddRemoveTabs({ adding, creating }: { adding: boolean; creating:
     </Tabs>
   )
 }
+
+export function MarketStrategyTabs({ generation }: { generation: boolean }) {
+  // reset states on back
+  //const dispatch = useDispatch<AppDispatch>()
+
+  return (
+    <Tabs>
+      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
+        <HistoryLink
+          to="/pool"
+          onClick={() => {
+            //adding && dispatch(resetMintState())
+          }}
+        >
+          <StyledArrowLeft />
+        </HistoryLink>
+        <ActiveText>{generation ? 'Generation' : 'Redemption'}</ActiveText>
+        <Settings />
+      </RowBetween>
+    </Tabs>
+  )
+}

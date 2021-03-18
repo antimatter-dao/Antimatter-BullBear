@@ -78,7 +78,9 @@ const HeaderControls = styled.div`
   `};
 `
 
-const HeaderElement = styled.div`
+const HeaderElement = styled.div<{
+  show?: boolean
+}>`
   display: flex;
   align-items: center;
 
@@ -92,7 +94,7 @@ const HeaderElement = styled.div`
     align-items: center;
   `};
   & > div {
-    border: 1px solid #ffffff;
+    border: 1px solid ${({ theme, show }) => (show ? theme.text1 : 'transparent')};
     border-radius: 4px;
     height: 32px;
     padding: 0 16px;
@@ -353,7 +355,7 @@ export default function Header() {
         </HeaderLinks> */}
       </HeaderRow>
       <HeaderControls>
-        <HeaderElement>
+        <HeaderElement show={!!account}>
           <HideSmall>
             {chainId && NETWORK_LABELS[chainId] && (
               <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
@@ -370,7 +372,7 @@ export default function Header() {
                 <CardNoise />
               </UNIWrapper>
             )}
-            {!availableClaim && aggregateBalance && (
+            {!!account && !availableClaim && aggregateBalance && (
               <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
                 <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
                   {account && (

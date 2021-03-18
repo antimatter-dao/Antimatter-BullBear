@@ -11,7 +11,7 @@ export const Wrapper = styled.div`
 `
 
 export const ArrowWrapper = styled.div<{ clickable: boolean }>`
-  height: 20px;
+  height: 30px;
   ${({ clickable }) =>
     clickable
       ? css`
@@ -30,7 +30,7 @@ export const SectionBreak = styled.div`
 `
 
 export const BottomGrouping = styled.div`
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 `
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`

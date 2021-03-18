@@ -327,7 +327,6 @@ export function ManageLists({
             placeholder="https:// or ipfs:// or ENS name"
             value={listUrlInput}
             onChange={handleInput}
-            style={{ height: '48px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '14px', border: 'none' }}
           />
         </Row>
         {addError ? (

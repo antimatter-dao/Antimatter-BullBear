@@ -19,6 +19,8 @@ import { ReactComponent as TransactionSubmitted } from '../../assets/svg/transac
 
 const Wrapper = styled.div`
   width: 100%;
+  max-width: 480px;
+  border-radius: 42px;
   background: ${({ theme }) => theme.gradient1};
 `
 const Section = styled(AutoColumn)`
@@ -28,13 +30,14 @@ const Section = styled(AutoColumn)`
 const BottomSection = styled(Section)`
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+  padding: 0 3rem 2rem;
 `
 
 const ConfirmedIcon = styled(ColumnCenter)`
   padding-bottom: 28px;
 `
 const Close = styled(CloseIcon)`
-  color: ${({ theme }) => theme.text3};
+  color: ${({ theme }) => theme.text2};
 `
 
 const StyledLogo = styled.img`
@@ -95,7 +98,7 @@ function TransactionSubmittedContent({
       <Section>
         <RowBetween>
           <div />
-          <CloseIcon onClick={onDismiss} />
+          <Close onClick={onDismiss} />
         </RowBetween>
         <ConfirmedIcon>
           <TransactionSubmitted style={{ strokeWidth: 0.5, color: theme.primary1 }} />
@@ -158,14 +161,15 @@ export function ConfirmationModalContent({
     <Wrapper>
       <Section>
         <RowBetween>
-          <Text fontWeight={500} fontSize={20}>
+          <div></div>
+          <Text fontWeight={500} fontSize={18}>
             {title}
           </Text>
-          <CloseIcon onClick={onDismiss} />
+          <Close onClick={onDismiss} />
         </RowBetween>
         {topContent()}
       </Section>
-      <BottomSection gap="12px">{bottomContent()}</BottomSection>
+      <BottomSection gap="8px">{bottomContent()}</BottomSection>
     </Wrapper>
   )
 }
