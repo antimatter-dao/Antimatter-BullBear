@@ -15,19 +15,19 @@ import { useActiveWeb3React } from '../../hooks'
 import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
 
-const InputRow = styled.div<{ selected: boolean }>`
+const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   padding: ${({ selected }) => (selected ? '0 0.5rem 0 1rem' : '0 0.75rem 0 1rem')};
-  width: 60%;
+  width: ${({ halfWidth }) => (halfWidth ? '48%' : '60%')}};
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 14px;
   height: 3rem;
 `
 
-const CurrencySelect = styled.button<{ selected: boolean }>`
+const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>`
   align-items: center;
-  width: 35%;
+  width: ${({ halfWidth }) => (halfWidth ? '48%' : '35%')}};
   height: 3rem;
   font-weight: 500;
   background-color: ${({ theme }) => theme.bg2};
@@ -39,7 +39,7 @@ const CurrencySelect = styled.button<{ selected: boolean }>`
   user-select: none;
   border: none;
   padding: 0 0.3rem;
-  margin-right: 20px;
+  border: 1px solid transparent;
   :focus,
   :hover {
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};
@@ -61,6 +61,7 @@ const LabelRow = styled.div`
     cursor: pointer;
     color: ${({ theme }) => darken(0.2, theme.text2)};
   }
+  margin-bottom: 4px;
 `
 
 const Aligner = styled.span`
@@ -79,17 +80,15 @@ const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
   }
 `
 
-const InputPanel = styled.div<{ hideInput?: boolean }>`
+const InputPanel = styled.div<{ hideInput?: boolean; negativeMarginTop?: string }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background-color: ${({ theme }) => theme.bg2};
   z-index: 1;
+  ${({ negativeMarginTop }) => `${negativeMarginTop ? 'margin-top: ' + negativeMarginTop : ''}`}
 `
 
-const Container = styled.div<{ hideInput: boolean }>`
-  background-color: ${({ theme }) => theme.bg1};
-`
+const Container = styled.div<{ hideInput: boolean }>``
 
 const StyledTokenName = styled.span<{ active?: boolean }>`
   ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
@@ -136,6 +135,8 @@ interface CurrencyInputPanelProps {
   id: string
   showCommonBases?: boolean
   customBalanceText?: string
+  halfWidth?: boolean
+  negativeMarginTop?: string
 }
 
 export default function CurrencyInputPanel({
@@ -153,7 +154,9 @@ export default function CurrencyInputPanel({
   otherCurrency,
   id,
   showCommonBases,
-  customBalanceText
+  customBalanceText,
+  halfWidth,
+  negativeMarginTop
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation()
 
@@ -167,24 +170,24 @@ export default function CurrencyInputPanel({
   }, [setModalOpen])
 
   return (
-    <InputPanel id={id}>
+    <InputPanel id={id} negativeMarginTop={negativeMarginTop}>
       <Container hideInput={hideInput}>
         {!hideInput && (
           <LabelRow>
-            <AutoRow>
-              <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
+            <AutoRow justify="space-between">
+              <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
                 {label}
               </TYPE.body>
               {account && (
                 <TYPE.body
                   onClick={onMax}
-                  color={theme.text2}
+                  color={theme.text3}
                   fontWeight={500}
                   fontSize={14}
                   style={{ display: 'inline', cursor: 'pointer' }}
                 >
                   {!hideBalance && !!currency && selectedCurrencyBalance
-                    ? (customBalanceText ?? 'Balance: ') + selectedCurrencyBalance?.toSignificant(6)
+                    ? (customBalanceText ?? 'Your balance: ') + selectedCurrencyBalance?.toSignificant(6)
                     : ' -'}
                 </TYPE.body>
               )}
@@ -200,6 +203,7 @@ export default function CurrencyInputPanel({
                 setModalOpen(true)
               }
             }}
+            halfWidth={halfWidth}
           >
             <Aligner>
               <Aligner>
@@ -225,7 +229,11 @@ export default function CurrencyInputPanel({
               {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
             </Aligner>
           </CurrencySelect>
-          <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableCurrencySelect}>
+          <InputRow
+            style={hideInput ? { padding: '0', borderRadius: '8px' } : {}}
+            halfWidth={halfWidth}
+            selected={disableCurrencySelect}
+          >
             {!hideInput && (
               <>
                 <CustomNumericalInput

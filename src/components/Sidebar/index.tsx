@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { NavLink } from 'react-router-dom'
 const tabs = [
-  { title: 'Option Market', route: 'swap' },
+  { title: 'Option Trading', route: 'swap' },
   { title: 'Market Strategy', route: 'markeStrategy' },
   { title: 'Liquidity', route: 'pool' },
   { title: 'Matter Token', route: 'matterToken' },

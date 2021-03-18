@@ -18,19 +18,19 @@ import { useActiveWeb3React } from '../../hooks'
 import { usePairs } from '../../data/Reserves'
 import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks'
 import { Dots } from '../../components/swap/styleds'
-import { CardSection, DataCard, CardNoise, CardBGImage } from '../../components/earn/styled'
+// import { CardSection, DataCard, CardNoise, CardBGImage } from '../../components/earn/styled'
 import { useStakingInfo } from '../../state/stake/hooks'
 import { BIG_INT_ZERO } from '../../constants'
+import AppBody from 'pages/AppBody'
 
 const PageWrapper = styled(AutoColumn)`
-  max-width: 640px;
   width: 100%;
 `
 
-const VoteCard = styled(DataCard)`
-  background: radial-gradient(76.02% 75.41% at 1.84% 0%, #27ae60 0%, #000000 100%);
-  overflow: hidden;
-`
+// const VoteCard = styled(DataCard)`
+//   background: radial-gradient(76.02% 75.41% at 1.84% 0%, #27ae60 0%, #000000 100%);
+//   overflow: hidden;
+// `
 
 const TitleRow = styled(RowBetween)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -43,26 +43,24 @@ const TitleRow = styled(RowBetween)`
 
 const ButtonRow = styled(RowFixed)`
   gap: 8px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 100%;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-  `};
+
+  width: 100%;
+  flex-direction: row-reverse;
+  justify-content: space-between;
 `
 
 const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   width: fit-content;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 48%;
-  `};
+
+  width: 48%;
 `
 
-const ResponsiveButtonSecondary = styled(ButtonSecondary)`
-  width: fit-content;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 48%;
-  `};
-`
+// const ResponsiveButtonSecondary = styled(ButtonSecondary)`
+//   width: fit-content;
+//   ${({ theme }) => theme.mediaWidth.upToSmall`
+//     width: 48%;
+//   `};
+// `
 
 const EmptyProposals = styled.div`
   border: 1px solid ${({ theme }) => theme.text4};
@@ -125,9 +123,10 @@ export default function Pool() {
 
   return (
     <>
-      <PageWrapper>
-        <SwapPoolTabs active={'pool'} />
-        <VoteCard>
+      <AppBody>
+        <PageWrapper>
+          <SwapPoolTabs active={'pool'} />
+          {/* <VoteCard>
           <CardBGImage />
           <CardNoise />
           <CardSection>
@@ -151,89 +150,89 @@ export default function Pool() {
           </CardSection>
           <CardBGImage />
           <CardNoise />
-        </VoteCard>
+        </VoteCard> */}
 
-        <AutoColumn gap="lg" justify="center">
-          <AutoColumn gap="lg" style={{ width: '100%' }}>
-            <TitleRow style={{ marginTop: '1rem' }} padding={'0'}>
-              <HideSmall>
-                <TYPE.mediumHeader style={{ marginTop: '0.5rem', justifySelf: 'flex-start' }}>
-                  Your liquidity
-                </TYPE.mediumHeader>
-              </HideSmall>
+          <AutoColumn gap="lg" justify="center">
+            <AutoColumn gap="lg" style={{ width: '100%' }}>
+              <TitleRow padding={'0'}>
+                <HideSmall>
+                  <TYPE.mediumHeader style={{ justifySelf: 'flex-start' }}>Your liquidity</TYPE.mediumHeader>
+                  <TYPE.white fontSize={14} style={{ justifySelf: 'flex-start', color: theme.text2, marginTop: '4px' }}>
+                    Please chose option what you need
+                  </TYPE.white>
+                </HideSmall>
+              </TitleRow>
               <ButtonRow>
-                <ResponsiveButtonSecondary as={Link} padding="6px 8px" to="/create/ETH">
+                <ResponsiveButtonPrimary as={Link} padding="14px 10px" to="/create/ETH">
                   Create a pair
-                </ResponsiveButtonSecondary>
-                <ResponsiveButtonPrimary
-                  id="join-pool-button"
-                  as={Link}
-                  padding="6px 8px"
-                  borderRadius="12px"
-                  to="/add/ETH"
-                >
+                </ResponsiveButtonPrimary>
+                <ResponsiveButtonPrimary id="join-pool-button" as={Link} padding="14px 10px" to="/add/ETH">
                   <Text fontWeight={500} fontSize={16}>
                     Add Liquidity
                   </Text>
                 </ResponsiveButtonPrimary>
               </ButtonRow>
-            </TitleRow>
 
-            {!account ? (
-              <Card padding="40px">
-                <TYPE.body color={theme.text3} textAlign="center">
-                  Connect to a wallet to view your liquidity.
-                </TYPE.body>
-              </Card>
-            ) : v2IsLoading ? (
-              <EmptyProposals>
-                <TYPE.body color={theme.text3} textAlign="center">
-                  <Dots>Loading</Dots>
-                </TYPE.body>
-              </EmptyProposals>
-            ) : allV2PairsWithLiquidity?.length > 0 || stakingPairs?.length > 0 ? (
-              <>
-                <ButtonSecondary>
-                  <RowBetween>
-                    <ExternalLink href={'https://uniswap.info/account/' + account}>
-                      Account analytics and accrued fees
-                    </ExternalLink>
-                    <span> ↗</span>
-                  </RowBetween>
-                </ButtonSecondary>
-                {v2PairsWithoutStakedAmount.map(v2Pair => (
-                  <FullPositionCard key={v2Pair.liquidityToken.address} pair={v2Pair} />
-                ))}
-                {stakingPairs.map(
-                  (stakingPair, i) =>
-                    stakingPair[1] && ( // skip pairs that arent loaded
-                      <FullPositionCard
-                        key={stakingInfosWithBalance[i].stakingRewardAddress}
-                        pair={stakingPair[1]}
-                        stakedBalance={stakingInfosWithBalance[i].stakedAmount}
-                      />
-                    )
-                )}
-              </>
-            ) : (
-              <EmptyProposals>
-                <TYPE.body color={theme.text3} textAlign="center">
-                  No liquidity found.
-                </TYPE.body>
-              </EmptyProposals>
-            )}
+              {!account ? (
+                <Card padding="12px" border={`1px solid ${theme.text3}`} borderRadius="14px">
+                  <TYPE.body color={theme.text3} textAlign="center">
+                    Connect to a wallet to view your liquidity.
+                  </TYPE.body>
+                </Card>
+              ) : v2IsLoading ? (
+                <EmptyProposals>
+                  <TYPE.body color={theme.text3} textAlign="center">
+                    <Dots>Loading</Dots>
+                  </TYPE.body>
+                </EmptyProposals>
+              ) : allV2PairsWithLiquidity?.length > 0 || stakingPairs?.length > 0 ? (
+                <>
+                  <ButtonSecondary>
+                    <RowBetween>
+                      <ExternalLink href={'https://uniswap.info/account/' + account}>
+                        Account analytics and accrued fees
+                      </ExternalLink>
+                      <span> ↗</span>
+                    </RowBetween>
+                  </ButtonSecondary>
+                  {v2PairsWithoutStakedAmount.map(v2Pair => (
+                    <FullPositionCard key={v2Pair.liquidityToken.address} pair={v2Pair} />
+                  ))}
+                  {stakingPairs.map(
+                    (stakingPair, i) =>
+                      stakingPair[1] && ( // skip pairs that arent loaded
+                        <FullPositionCard
+                          key={stakingInfosWithBalance[i].stakingRewardAddress}
+                          pair={stakingPair[1]}
+                          stakedBalance={stakingInfosWithBalance[i].stakedAmount}
+                        />
+                      )
+                  )}
+                </>
+              ) : (
+                <EmptyProposals>
+                  <TYPE.body color={theme.text3} textAlign="center">
+                    No liquidity found.
+                  </TYPE.body>
+                </EmptyProposals>
+              )}
 
-            <AutoColumn justify={'center'} gap="md">
-              <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
-                {hasV1Liquidity ? 'Uniswap V1 liquidity found!' : "Don't see a pool you joined?"}{' '}
-                <StyledInternalLink id="import-pool-link" to={hasV1Liquidity ? '/migrate/v1' : '/find'}>
-                  {hasV1Liquidity ? 'Migrate now.' : 'Import it.'}
-                </StyledInternalLink>
-              </Text>
+              <AutoColumn justify={'center'} gap="md" style={{ marginTop: '20px' }}>
+                <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
+                  {hasV1Liquidity ? 'Uniswap V1 liquidity found!' : "Don't see a pool you joined?"}{' '}
+                  <StyledInternalLink
+                    id="import-pool-link"
+                    to={hasV1Liquidity ? '/migrate/v1' : '/find'}
+                    style={{ color: theme.text1, textDecoration: 'underline' }}
+                  >
+                    {hasV1Liquidity ? 'Migrate now.' : 'Import it.'}
+                  </StyledInternalLink>
+                </Text>
+              </AutoColumn>
             </AutoColumn>
           </AutoColumn>
-        </AutoColumn>
-      </PageWrapper>
+        </PageWrapper>
+      </AppBody>
     </>
   )
 }

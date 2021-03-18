@@ -7,8 +7,8 @@ import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
-import { ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
-import { BlueCard, LightCard } from '../../components/Card'
+import { ButtonError, ButtonPrimary } from '../../components/Button'
+import { OutlineCard, LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
@@ -330,35 +330,35 @@ export default function AddLiquidity({
             pendingText={pendingText}
             currencyToAdd={pair?.liquidityToken}
           />
-          <AutoColumn gap="20px">
+          <AutoColumn gap="30px">
             {noLiquidity ||
               (isCreate ? (
-                <ColumnCenter>
-                  <BlueCard>
+                <ColumnCenter style={{ marginBottom: '1rem' }}>
+                  <OutlineCard>
                     <AutoColumn gap="10px">
-                      <TYPE.link fontWeight={600} color={'primaryText1'}>
+                      <TYPE.link fontWeight={600} fontSize={12}>
                         You are the first liquidity provider.
                       </TYPE.link>
-                      <TYPE.link fontWeight={400} color={'primaryText1'}>
+                      <TYPE.link fontWeight={400} fontSize={12}>
                         The ratio of tokens you add will set the price of this pool.
                       </TYPE.link>
-                      <TYPE.link fontWeight={400} color={'primaryText1'}>
+                      <TYPE.link fontWeight={400} fontSize={12}>
                         Once you are happy with the rate click supply to review.
                       </TYPE.link>
                     </AutoColumn>
-                  </BlueCard>
+                  </OutlineCard>
                 </ColumnCenter>
               ) : (
-                <ColumnCenter>
-                  <BlueCard>
+                <ColumnCenter style={{ marginTop: '1rem' }}>
+                  <OutlineCard padding="14px 20px">
                     <AutoColumn gap="10px">
-                      <TYPE.link fontWeight={400} color={'primaryText1'}>
+                      <TYPE.link fontWeight={400} fontSize={12} color={theme.text3}>
                         <b>Tip:</b> When you add liquidity, you will receive pool tokens representing your position.
                         These tokens automatically earn fees proportional to your share of the pool, and can be redeemed
                         at any time.
                       </TYPE.link>
                     </AutoColumn>
-                  </BlueCard>
+                  </OutlineCard>
                 </ColumnCenter>
               ))}
             <CurrencyInputPanel
@@ -372,9 +372,10 @@ export default function AddLiquidity({
               currency={currencies[Field.CURRENCY_A]}
               id="add-liquidity-input-tokena"
               showCommonBases
+              halfWidth={true}
             />
             <ColumnCenter>
-              <Plus size="16" color={theme.text2} />
+              <Plus size="28" color={theme.text2} />
             </ColumnCenter>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
@@ -387,6 +388,8 @@ export default function AddLiquidity({
               currency={currencies[Field.CURRENCY_B]}
               id="add-liquidity-input-tokenb"
               showCommonBases
+              halfWidth={true}
+              negativeMarginTop="-30px"
             />
             {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && pairState !== PairState.INVALID && (
               <>
@@ -395,7 +398,7 @@ export default function AddLiquidity({
                     <TYPE.subHeader fontWeight={500} fontSize={14}>
                       {noLiquidity ? 'Initial prices' : 'Prices'} and pool share
                     </TYPE.subHeader>
-                  </RowBetween>{' '}
+                  </RowBetween>
                   <LightCard padding="1rem" borderRadius={'20px'}>
                     <PoolPriceBar
                       currencies={currencies}
@@ -413,7 +416,9 @@ export default function AddLiquidity({
                 <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
               </ButtonPrimary>
             ) : !account ? (
-              <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+              <ButtonPrimary onClick={toggleWalletModal} borderRadius="49px">
+                Connect Wallet
+              </ButtonPrimary>
             ) : (
               <AutoColumn gap={'md'}>
                 {(approvalA === ApprovalState.NOT_APPROVED ||
@@ -457,7 +462,7 @@ export default function AddLiquidity({
                   disabled={!isValid || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED}
                   error={!isValid && !!parsedAmounts[Field.CURRENCY_A] && !!parsedAmounts[Field.CURRENCY_B]}
                 >
-                  <Text fontSize={20} fontWeight={500}>
+                  <Text fontSize={16} fontWeight={500}>
                     {error ?? 'Supply'}
                   </Text>
                 </ButtonError>

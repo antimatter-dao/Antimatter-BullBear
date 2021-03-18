@@ -1,14 +1,13 @@
-import React from 'react'
-/*, { useCallback, useContext } */
-// import { useDispatch } from 'react-redux'
-import styled /*{ ThemeContext } */ from 'styled-components'
+import React, { useCallback, useContext } from 'react'
+import { useDispatch } from 'react-redux'
+import styled, { ThemeContext } from 'styled-components'
 import { useActiveWeb3React } from '../../hooks'
-// import { AppDispatch } from '../../state'
-// import { clearAllTransactions } from '../../state/transactions/actions'
+import { AppDispatch } from '../../state'
+import { clearAllTransactions } from '../../state/transactions/actions'
 import { shortenAddress } from '../../utils'
-// import { AutoRow } from '../Row'
+import { AutoRow } from '../Row'
 import Copy from './Copy'
-// import Transaction from './Transaction'
+import Transaction from './Transaction'
 
 import { SUPPORTED_WALLETS } from '../../constants'
 // import { getEtherscanLink } from '../../utils'
@@ -21,7 +20,7 @@ import PortisIcon from '../../assets/images/portisIcon.png'
 import { ButtonSecondary, ButtonOutlined } from '../Button'
 
 // import { ExternalLink as LinkIcon } from 'react-feather'
-// import { ExternalLink /*LinkStyledButton, TYPE */ } from '../../theme'
+import { /*ExternalLink*/ LinkStyledButton, TYPE } from '../../theme'
 
 // const HeaderRow = styled.div`
 //   ${({ theme }) => theme.flexRowNoWrap};
@@ -176,9 +175,9 @@ const Dot = styled.span`
   border-radius: 50%;
 `
 
-// const TransactionListWrapper = styled.div`
-//   ${({ theme }) => theme.flexColumnNoWrap};
-// `
+const TransactionListWrapper = styled.div`
+  ${({ theme }) => theme.flexColumnNoWrap};
+`
 
 const WalletAction = styled(ButtonSecondary)`
   width: fit-content;
@@ -207,15 +206,15 @@ const MainWalletAction = styled(WalletAction)`
   color: ${({ theme }) => theme.primary1};
 `
 
-// function renderTransactions(transactions: string[]) {
-//   return (
-//     <TransactionListWrapper>
-//       {transactions.map((hash, i) => {
-//         return <Transaction key={i} hash={hash} />
-//       })}
-//     </TransactionListWrapper>
-//   )
-// }
+function renderTransactions(transactions: string[]) {
+  return (
+    <TransactionListWrapper>
+      {transactions.map((hash, i) => {
+        return <Transaction key={i} hash={hash} />
+      })}
+    </TransactionListWrapper>
+  )
+}
 
 interface AccountDetailsProps {
   toggleWalletModal: () => void
@@ -227,14 +226,14 @@ interface AccountDetailsProps {
 
 export default function AccountDetails({
   toggleWalletModal,
-  // pendingTransactions,
-  // confirmedTransactions,
+  pendingTransactions,
+  confirmedTransactions,
   ENSName,
   openOptions
 }: AccountDetailsProps) {
-  const { /*chainId,*/ account, connector } = useActiveWeb3React()
-  // const theme = useContext(ThemeContext)
-  // const dispatch = useDispatch<AppDispatch>()
+  const { chainId, account, connector } = useActiveWeb3React()
+  const theme = useContext(ThemeContext)
+  const dispatch = useDispatch<AppDispatch>()
 
   function formatConnectorName() {
     const { ethereum } = window
@@ -293,9 +292,9 @@ export default function AccountDetails({
     return null
   }
 
-  // const clearAllTransactionsCallback = useCallback(() => {
-  //   if (chainId) dispatch(clearAllTransactions({ chainId }))
-  // }, [dispatch, chainId])
+  const clearAllTransactionsCallback = useCallback(() => {
+    if (chainId) dispatch(clearAllTransactions({ chainId }))
+  }, [dispatch, chainId])
 
   return (
     <>
@@ -401,7 +400,7 @@ export default function AccountDetails({
           Change
         </ActionButton>
       </LowerSection>
-      {/* {!!pendingTransactions.length || !!confirmedTransactions.length ? (
+      {!!pendingTransactions.length || !!confirmedTransactions.length ? (
         <LowerSection>
           <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
             <TYPE.body>Recent Transactions</TYPE.body>
@@ -414,7 +413,7 @@ export default function AccountDetails({
         <LowerSection>
           <TYPE.body color={theme.text1}>Your transactions will appear here...</TYPE.body>
         </LowerSection>
-      )} */}
+      )}
     </>
   )
 }
