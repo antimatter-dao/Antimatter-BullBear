@@ -29,7 +29,7 @@ export const GreyCard = styled(Card)`
 
 export const OutlineCard = styled(Card)`
   border: 1px solid ${({ theme }) => theme.bg3};
-  color: ${({ theme }) => theme.bg3};
+  color: ${({ theme }) => theme.text3};
 `
 
 export const YellowCard = styled(Card)`
@@ -58,15 +58,6 @@ export const BlueCard = ({ children, ...rest }: CardProps) => {
     </BlueCardStyled>
   )
 }
-
-// export const OutlinedTextCard = ({ children, borderColor, ...rest }: CardProps & { borderColor?: string }) => {
-//   const theme = useTheme()
-//   return (
-//     <OutlineCard {...rest} style={{ borderColor: borderColor ?? theme.primary1 }}>
-//       <Text fontWeight={500}>{children}</Text>
-//     </OutlineCard>
-//   )
-// }
 
 export const GradientCard = styled(Card)`
   background: linear-gradient(

@@ -85,7 +85,7 @@ export function colors(darkMode: boolean): Colors {
     // dont wanna forget these blue yet
     // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
     // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
-
+    translucent: 'rgba(255, 255, 255, 0.08)',
     gradient1:
       '#000000 linear-gradient(283.31deg, rgba(255, 255, 255, 0.18) -2.53%, rgba(255, 255, 255, 0.17) 18.66%, rgba(255, 255, 255, 0) 98.68%)'
   }
@@ -157,7 +157,7 @@ export const TYPE = {
     return <TextWrapper fontWeight={400} fontSize={14} {...props} />
   },
   small(props: TextProps) {
-    return <TextWrapper fontWeight={500} fontSize={11} {...props} />
+    return <TextWrapper fontWeight={500} fontSize={12} {...props} />
   },
   blue(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'blue1'} {...props} />

@@ -81,7 +81,7 @@ export const SearchInput = styled.input`
   align-items: center;
   width: 100%;
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.08);
+  background: ${({ theme }) => theme.translucent};
   height: 48px;
   border: none;
   outline: none;
