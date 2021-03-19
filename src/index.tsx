@@ -12,11 +12,11 @@ import './i18n'
 import App from './pages/App'
 import store from './state'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
-// import ApplicationUpdater from './state/application/updater'
-// import ListsUpdater from './state/lists/updater'
-// import MulticallUpdater from './state/multicall/updater'
-// import TransactionUpdater from './state/transactions/updater'
-// import UserUpdater from './state/user/updater'
+import ApplicationUpdater from './state/application/updater'
+import ListsUpdater from './state/lists/updater'
+import MulticallUpdater from './state/multicall/updater'
+import TransactionUpdater from './state/transactions/updater'
+import UserUpdater from './state/user/updater'
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from './theme'
 import getLibrary from './utils/getLibrary'
 
@@ -43,17 +43,17 @@ window.addEventListener('error', error => {
   })
 })
 
-// function Updaters() {
-//   return (
-//     <>
-//       <ListsUpdater />
-//       <UserUpdater />
-//       <ApplicationUpdater />
-//       <TransactionUpdater />
-//       <MulticallUpdater />
-//     </>
-//   )
-// }
+function Updaters() {
+  return (
+    <>
+      <ListsUpdater />
+      <UserUpdater />
+      <ApplicationUpdater />
+      <TransactionUpdater />
+      <MulticallUpdater />
+    </>
+  )
+}
 
 ReactDOM.render(
   <StrictMode>
@@ -62,7 +62,7 @@ ReactDOM.render(
       <Web3ProviderNetwork getLibrary={getLibrary}>
         <Blocklist>
           <Provider store={store}>
-            {/* <Updaters /> */}
+            <Updaters />
             <ThemeProvider>
               <ThemedGlobalStyle />
               <HashRouter>
