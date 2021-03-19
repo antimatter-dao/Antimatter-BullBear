@@ -42,17 +42,17 @@ export function colors(darkMode: boolean): Colors {
 
     // text
     text1: darkMode ? '#FFFFFF' : '#000000',
-    text2: darkMode ? '#C3C5CB' : '#565A69',
-    text3: darkMode ? '#6C7284' : '#888D9B',
-    text4: darkMode ? '#565A69' : '#C3C5CB',
-    text5: darkMode ? '#2C2F36' : '#EDEEF2',
+    text2: darkMode ? '#CCCCCC' : '#565A69',
+    text3: darkMode ? '#999999' : '#888D9B',
+    text4: darkMode ? '#727272' : '#C3C5CB',
+    text5: darkMode ? '#333333' : '#EDEEF2',
 
     // backgrounds / greys
     bg1: darkMode ? '#000000' : '#FFFFFF',
-    bg2: darkMode ? '#2C2F36' : '#F7F8FA',
-    bg3: darkMode ? '#40444F' : '#EDEEF2',
-    bg4: darkMode ? '#565A69' : '#CED0D9',
-    bg5: darkMode ? '#6C7284' : '#888D9B',
+    bg2: darkMode ? '#191919' : '#F7F8FA',
+    bg3: darkMode ? '#252525' : '#EDEEF2',
+    bg4: darkMode ? '#303030' : '#CED0D9',
+    bg5: darkMode ? '#A1A1A1' : '#888D9B',
 
     //specialty colors
     modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
@@ -61,22 +61,22 @@ export function colors(darkMode: boolean): Colors {
     //primary colors
     primary1: darkMode ? '#B2F355' : '#ff007a',
     primary2: darkMode ? '#B2F355' : '#FF8CC3',
-    primary3: darkMode ? '#4D8FEA' : '#FF99C9',
-    primary4: darkMode ? '#376bad70' : '#F6DDE8',
-    primary5: darkMode ? '#153d6f70' : '#FDEAF1',
+    primary3: darkMode ? '#B2F355' : '#FF99C9',
+    primary4: darkMode ? '#739A3B' : '#F6DDE8',
+    primary5: darkMode ? '#2B3A14' : '#FDEAF1',
 
     // color text
-    primaryText1: darkMode ? '#6da8ff' : '#ff007a',
+    primaryText1: darkMode ? '#B2F355' : '#ff007a',
 
     // secondary colors
-    secondary1: darkMode ? '#2172E5' : '#ff007a',
-    secondary2: darkMode ? '#17000b26' : '#F6DDE8',
-    secondary3: darkMode ? '#17000b26' : '#FDEAF1',
+    secondary1: darkMode ? '#739A3B' : '#ff007a',
+    secondary2: darkMode ? '#191919' : '#F6DDE8',
+    secondary3: darkMode ? '#252525' : '#FDEAF1',
 
     // other
-    red1: '#FD4040',
-    red2: '#F82D3A',
-    red3: '#D60000',
+    red1: '#FF0000',
+    red2: '#FF2828',
+    red3: '#FF4B4B ',
     green1: '#27AE60',
     yellow1: '#FFE270',
     yellow2: '#F3841E',
