@@ -18,8 +18,8 @@ import useTheme from '../../hooks/useTheme'
 const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
-  padding: ${({ selected }) => (selected ? '0 0.5rem 0 1rem' : '0 0.75rem 0 1rem')};
-  width: ${({ halfWidth }) => (halfWidth ? '48%' : '60%')}};
+  padding: ${({ selected }) => (selected ? '0 0.5rem 0 1rem' : '0 0.65rem 0 0.75rem')};
+  width: ${({ halfWidth }) => (halfWidth ? '48%' : '55%')}};
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 14px;
   height: 3rem;
@@ -27,7 +27,7 @@ const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean }>`
 
 const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>`
   align-items: center;
-  width: ${({ halfWidth }) => (halfWidth ? '48%' : '35%')}};
+  width: ${({ halfWidth }) => (halfWidth ? '48%' : '40%')}};
   height: 3rem;
   font-weight: 500;
   background-color: ${({ theme }) => theme.bg2};
@@ -38,11 +38,11 @@ const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>
   cursor: pointer;
   user-select: none;
   border: none;
-  padding: 0 0.3rem;
+  padding: 0 10px;
   border: 1px solid transparent;
   :focus,
   :hover {
-    border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};
+    border: 1px solid ${({ theme }) => theme.primary1};
   }
 `
 
@@ -71,9 +71,7 @@ const Aligner = styled.span`
 `
 
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
-  margin: 0 0.25rem 0 0;
-  height: 35%;
-
+  width: 13px;
   path {
     stroke: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
     stroke-width: 1.5px;
@@ -104,7 +102,6 @@ const StyledBalanceMax = styled.button`
   padding: 0 1rem
   font-weight: 500;
   cursor: pointer;
-  margin-right: 0.5rem;
   color: ${({ theme }) => theme.text1};
   :hover {
     border: 1px solid ${({ theme }) => theme.primary1};

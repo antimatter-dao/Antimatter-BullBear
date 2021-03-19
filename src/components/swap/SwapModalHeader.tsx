@@ -12,6 +12,7 @@ import { AutoColumn } from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
 import { RowBetween, RowFixed } from '../Row'
 import { TruncatedText, SwapShowAcceptChanges } from './styleds'
+import Card from 'components/Card'
 
 export default function SwapModalHeader({
   trade,
@@ -36,50 +37,56 @@ export default function SwapModalHeader({
   const theme = useContext(ThemeContext)
 
   return (
-    <AutoColumn gap={'md'} style={{ marginTop: '20px' }}>
-      <RowBetween align="flex-end">
-        <RowFixed gap={'0px'}>
-          <CurrencyLogo currency={trade.inputAmount.currency} size={'24px'} style={{ marginRight: '12px' }} />
-          <TruncatedText
-            fontSize={24}
-            fontWeight={500}
-            color={showAcceptChanges && trade.tradeType === TradeType.EXACT_OUTPUT ? theme.primary1 : ''}
-          >
-            {trade.inputAmount.toSignificant(6)}
-          </TruncatedText>
-        </RowFixed>
-        <RowFixed gap={'0px'}>
-          <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
-            {trade.inputAmount.currency.symbol}
-          </Text>
-        </RowFixed>
-      </RowBetween>
+    <AutoColumn gap={'md'} style={{ marginTop: '20px', padding: '0 1rem' }} justify="center">
+      <Card style={{ backgroundColor: theme.translucent }} padding="24px">
+        <RowBetween justify="space-between">
+          <RowFixed gap={'0px'}>
+            <Text color={theme.text2}>From: </Text>
+            <CurrencyLogo currency={trade.inputAmount.currency} size={'28px'} style={{ margin: '0 12px' }} />
+            <Text fontSize={16} fontWeight={500} style={{ marginLeft: '10px' }}>
+              {trade.inputAmount.currency.symbol}
+            </Text>
+          </RowFixed>
+          <RowFixed gap={'0px'}>
+            <TruncatedText
+              fontSize={16}
+              fontWeight={500}
+              color={showAcceptChanges && trade.tradeType === TradeType.EXACT_OUTPUT ? theme.primary1 : ''}
+            >
+              {trade.inputAmount.toSignificant(6)}
+            </TruncatedText>
+          </RowFixed>
+        </RowBetween>
+      </Card>
       <RowFixed>
-        <ArrowDown size="16" color={theme.text2} style={{ marginLeft: '4px', minWidth: '16px' }} />
+        <ArrowDown size="30" color={theme.text1} style={{ marginLeft: '4px', minWidth: '14px' }} />
       </RowFixed>
-      <RowBetween align="flex-end">
-        <RowFixed gap={'0px'}>
-          <CurrencyLogo currency={trade.outputAmount.currency} size={'24px'} style={{ marginRight: '12px' }} />
-          <TruncatedText
-            fontSize={24}
-            fontWeight={500}
-            color={
-              priceImpactSeverity > 2
-                ? theme.red1
-                : showAcceptChanges && trade.tradeType === TradeType.EXACT_INPUT
-                ? theme.primary1
-                : ''
-            }
-          >
-            {trade.outputAmount.toSignificant(6)}
-          </TruncatedText>
-        </RowFixed>
-        <RowFixed gap={'0px'}>
-          <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
-            {trade.outputAmount.currency.symbol}
-          </Text>
-        </RowFixed>
-      </RowBetween>
+      <Card style={{ backgroundColor: theme.translucent }} padding="24px">
+        <RowBetween justify="space-between">
+          <RowFixed gap={'0px'}>
+            <Text color={theme.text2}>To: </Text>
+            <CurrencyLogo currency={trade.outputAmount.currency} size={'28px'} style={{ margin: '0 12px' }} />
+            <Text fontSize={16} fontWeight={500} style={{ marginLeft: '10px' }}>
+              {trade.outputAmount.currency.symbol}
+            </Text>
+          </RowFixed>
+          <RowFixed gap={'0px'}>
+            <TruncatedText
+              fontSize={16}
+              fontWeight={500}
+              color={
+                priceImpactSeverity > 2
+                  ? theme.red1
+                  : showAcceptChanges && trade.tradeType === TradeType.EXACT_INPUT
+                  ? theme.primary1
+                  : ''
+              }
+            >
+              {trade.outputAmount.toSignificant(6)}
+            </TruncatedText>
+          </RowFixed>
+        </RowBetween>
+      </Card>
       {showAcceptChanges ? (
         <SwapShowAcceptChanges justify="flex-start" gap={'0px'}>
           <RowBetween>
@@ -98,21 +105,21 @@ export default function SwapModalHeader({
       ) : null}
       <AutoColumn justify="flex-start" gap="sm" style={{ padding: '12px 0 0 0px' }}>
         {trade.tradeType === TradeType.EXACT_INPUT ? (
-          <TYPE.italic textAlign="left" style={{ width: '100%' }}>
+          <TYPE.small textAlign="left" style={{ width: '100%' }} padding={'8px 0 0 0 '} color={theme.text3}>
             {`Output is estimated. You will receive at least `}
             <b>
               {slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(6)} {trade.outputAmount.currency.symbol}
             </b>
             {' or the transaction will revert.'}
-          </TYPE.italic>
+          </TYPE.small>
         ) : (
-          <TYPE.italic textAlign="left" style={{ width: '100%' }}>
+          <TYPE.small textAlign="left" style={{ width: '100%' }} padding={'8px 0 0 0 '} color={theme.text3}>
             {`Input is estimated. You will sell at most `}
             <b>
               {slippageAdjustedAmounts[Field.INPUT]?.toSignificant(6)} {trade.inputAmount.currency.symbol}
             </b>
             {' or the transaction will revert.'}
-          </TYPE.italic>
+          </TYPE.small>
         )}
       </AutoColumn>
       {recipient !== null ? (

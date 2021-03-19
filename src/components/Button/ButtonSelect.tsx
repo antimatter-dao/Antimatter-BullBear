@@ -10,7 +10,7 @@ import useTheme from '../../hooks/useTheme'
 
 const StyledDropDown = styled(DropDown)`
   margin: 0 0.25rem 0 0;
-  height: 35%;
+  width: 13px;
 
   path {
     stroke: ${({ theme }) => theme.text1};
@@ -27,6 +27,7 @@ const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; width?: s
   border: none;
   padding: 0 0.3rem;
   margin-right: 20px;
+  padding: 0 10px;
   border: 1px solid transparent;
   :focus,
   :hover {

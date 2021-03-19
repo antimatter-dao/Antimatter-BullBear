@@ -31,14 +31,14 @@ export function ConfirmAddModalBottom({
       <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)' }}>
         <AutoColumn gap="8px" style={{ color: theme.text1 }}>
           <RowBetween>
-            <TYPE.small color={theme.text3}>{currencies[Field.CURRENCY_A]?.symbol} Deposited</TYPE.small>
+            <TYPE.small color={theme.text2}>{currencies[Field.CURRENCY_A]?.symbol} Deposited</TYPE.small>
             <RowFixed>
               <CurrencyLogo currency={currencies[Field.CURRENCY_A]} style={{ marginRight: '8px' }} size="16px" />
               <TYPE.small>{parsedAmounts[Field.CURRENCY_A]?.toSignificant(6)}</TYPE.small>
             </RowFixed>
           </RowBetween>
           <RowBetween>
-            <TYPE.small color={theme.text3}>{currencies[Field.CURRENCY_B]?.symbol} Deposited</TYPE.small>
+            <TYPE.small color={theme.text2}>{currencies[Field.CURRENCY_B]?.symbol} Deposited</TYPE.small>
             <RowFixed>
               <CurrencyLogo currency={currencies[Field.CURRENCY_B]} style={{ marginRight: '8px' }} size="16px" />
               <TYPE.small>{parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)}</TYPE.small>
@@ -60,7 +60,7 @@ export function ConfirmAddModalBottom({
             </TYPE.small>
           </RowBetween>
           <RowBetween>
-            <TYPE.small color={theme.text3}>Share of Pool:</TYPE.small>
+            <TYPE.small color={theme.text2}>Share of Pool:</TYPE.small>
             <TYPE.small>{noLiquidity ? '100' : poolTokenPercentage?.toSignificant(4)}%</TYPE.small>
           </RowBetween>
         </AutoColumn>

@@ -6,7 +6,7 @@ import { TYPE } from '../../theme'
 
 const StyledSwapHeader = styled.div`
   margin-bottom: -4px;
-  font-size: 22px
+  font-size: 22px;
   width: 100%;
   max-width: 480px;
   font-weight: 500;
