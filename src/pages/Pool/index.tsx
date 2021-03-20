@@ -226,7 +226,7 @@ export default function Pool() {
                   <StyledInternalLink
                     id="import-pool-link"
                     to={hasV1Liquidity ? '/migrate/v1' : '/find'}
-                    style={{ color: theme.text1, textDecoration: 'underline' }}
+                    style={{ color: theme.text1 }}
                   >
                     {hasV1Liquidity ? 'Migrate now' : 'Import it'}
                   </StyledInternalLink>
