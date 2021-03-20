@@ -3,10 +3,14 @@ import React from 'react'
 import styled from 'styled-components'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { NavLink } from 'react-router-dom'
+
 const tabs = [
   { title: 'Option Trading', route: 'swap' },
   { title: 'Market Strategy', route: 'markeStrategy' },
-  { title: 'Liquidity', route: 'pool' },
+  {
+    title: 'Liquidity',
+    route: 'pool'
+  },
   { title: 'Matter Token', route: 'matterToken' },
   { title: 'Governance', route: 'governance' },
   { title: 'Info', route: 'info' }
@@ -29,6 +33,8 @@ const StyledSidebar = styled.div`
   display: flex;
   flex-direction: column;
 `
+
+const activeClassName = 'active'
 const Tab = styled(NavLink)`
   width: 100%;
   border-left: 4px solid transparent;
@@ -39,10 +45,11 @@ const Tab = styled(NavLink)`
   cursor: pointer;
   text-decoration: none;
 
-  &:hover {
+  &.${activeClassName}, :hover,
+  :focus {
     border-left: 4px solid;
     border-color: ${({ theme }) => theme.primary1};
-    background-color: ${({ theme }) => theme.bg2};
+    background-color: ${({ theme }) => theme.translucent};
     opacity: 1;
   }
 `
@@ -79,11 +86,27 @@ export default function Sidebar() {
         </UniIcon>
       </Title> */}
       <StyledLogo />
-      {tabs.map(({ title, route }) => (
-        <Tab key={title} to={`/${route}`}>
-          {title}
-        </Tab>
-      ))}
+      {tabs.map(({ title, route }) =>
+        route === 'pool' ? (
+          <Tab
+            key={title}
+            to={`/${route}`}
+            isActive={(match, { pathname }) =>
+              Boolean(match) ||
+              pathname.startsWith('/add') ||
+              pathname.startsWith('/remove') ||
+              pathname.startsWith('/create') ||
+              pathname.startsWith('/find')
+            }
+          >
+            {title}
+          </Tab>
+        ) : (
+          <Tab key={title} to={`/${route}`}>
+            {title}
+          </Tab>
+        )
+      )}
     </StyledSidebar>
   )
 }

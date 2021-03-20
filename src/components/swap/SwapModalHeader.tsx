@@ -38,7 +38,7 @@ export default function SwapModalHeader({
 
   return (
     <AutoColumn gap={'md'} style={{ marginTop: '20px', padding: '0 1rem' }} justify="center">
-      <Card style={{ backgroundColor: theme.translucent }} padding="24px">
+      <Card style={{ backgroundColor: theme.translucent }} padding="14px">
         <RowBetween justify="space-between">
           <RowFixed gap={'0px'}>
             <Text color={theme.text2}>From: </Text>
@@ -61,7 +61,7 @@ export default function SwapModalHeader({
       <RowFixed>
         <ArrowDown size="30" color={theme.text1} style={{ marginLeft: '4px', minWidth: '14px' }} />
       </RowFixed>
-      <Card style={{ backgroundColor: theme.translucent }} padding="24px">
+      <Card style={{ backgroundColor: theme.translucent }} padding="14px">
         <RowBetween justify="space-between">
           <RowFixed gap={'0px'}>
             <Text color={theme.text2}>To: </Text>

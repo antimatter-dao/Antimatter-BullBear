@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Link as HistoryLink } from 'react-router-dom'
-
 import { ArrowLeft } from 'react-feather'
 import { RowBetween } from '../Row'
 // import QuestionHelper from '../QuestionHelper'
@@ -11,6 +10,7 @@ import Settings from '../Settings'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { resetMintState } from 'state/mint/actions'
+import { TYPE } from 'theme'
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -47,11 +47,6 @@ const StyledNavLink = styled(NavLink).attrs({
   }
 `
 
-const ActiveText = styled.div`
-  font-weight: 500;
-  font-size: 20px;
-`
-
 const StyledArrowLeft = styled(ArrowLeft)`
   color: ${({ theme }) => theme.text1};
 `
@@ -77,7 +72,7 @@ export function FindPoolTabs() {
         <HistoryLink to="/pool">
           <StyledArrowLeft />
         </HistoryLink>
-        <ActiveText>Import Pool</ActiveText>
+        <TYPE.mediumHeader>Import Pool</TYPE.mediumHeader>
         <Settings />
       </RowBetween>
     </Tabs>
@@ -99,7 +94,9 @@ export function AddRemoveTabs({ adding, creating }: { adding: boolean; creating:
         >
           <StyledArrowLeft />
         </HistoryLink>
-        <ActiveText>{creating ? 'Create a pair' : adding ? 'Add Liquidity' : 'Remove Liquidity'}</ActiveText>
+        <TYPE.mediumHeader>
+          {creating ? 'Create a pair' : adding ? 'Add Liquidity' : 'Remove Liquidity'}
+        </TYPE.mediumHeader>
         <Settings />
       </RowBetween>
     </Tabs>
@@ -121,7 +118,7 @@ export function MarketStrategyTabs({ generation }: { generation: boolean }) {
         >
           <StyledArrowLeft />
         </HistoryLink>
-        <ActiveText>{generation ? 'Generation' : 'Redemption'}</ActiveText>
+        <TYPE.mediumHeader>{generation ? 'Generation' : 'Redemption'}</TYPE.mediumHeader>
         <Settings />
       </RowBetween>
     </Tabs>

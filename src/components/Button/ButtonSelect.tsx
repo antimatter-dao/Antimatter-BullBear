@@ -29,9 +29,13 @@ const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; width?: s
   margin-right: 20px;
   padding: 0 10px;
   border: 1px solid transparent;
+
   :focus,
-  :hover {
+  :active {
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};
+  }
+  :hover {
+    border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.bg5))};
   }
 `
 

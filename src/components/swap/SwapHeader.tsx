@@ -10,14 +10,14 @@ const StyledSwapHeader = styled.div`
   width: 100%;
   max-width: 480px;
   font-weight: 500;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.text1};
 `
 
 export default function SwapHeader() {
   return (
     <StyledSwapHeader>
       <RowBetween>
-        <TYPE.black fontWeight={500}>Option Trading</TYPE.black>
+        <TYPE.mediumHeader>Option Trading</TYPE.mediumHeader>
         <Settings />
       </RowBetween>
     </StyledSwapHeader>

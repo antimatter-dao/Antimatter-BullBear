@@ -308,7 +308,7 @@ export default function AccountDetails({
                 <div>
                   {connector !== injected && connector !== walletlink && (
                     <WalletAction
-                      style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
+                      style={{ fontSize: '18px', fontWeight: 400, marginRight: '8px' }}
                       onClick={() => {
                         ;(connector as any).close()
                       }}
@@ -391,7 +391,7 @@ export default function AccountDetails({
       <LowerSection>
         <ActionButton onClick={toggleWalletModal}>Close</ActionButton>
         <ActionButton
-          style={{ fontSize: '.825rem', fontWeight: 400 }}
+          style={{ fontSize: '18px', fontWeight: 400 }}
           onClick={() => {
             openOptions()
           }}

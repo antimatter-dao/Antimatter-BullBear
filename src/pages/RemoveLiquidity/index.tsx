@@ -9,14 +9,14 @@ import { RouteComponentProps } from 'react-router'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonPrimary, ButtonLight, ButtonError, ButtonConfirmed } from '../../components/Button'
-import { BlueCard, LightCard } from '../../components/Card'
+import { LightCard, OutlineCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { AddRemoveTabs } from '../../components/NavigationTabs'
 import { MinimalPositionCard } from '../../components/PositionCard'
-import Row, { RowBetween, RowFixed } from '../../components/Row'
+import { RowBetween, RowFixed } from '../../components/Row'
 
 import Slider from '../../components/Slider'
 import CurrencyLogo from '../../components/CurrencyLogo'
@@ -368,10 +368,10 @@ export default function RemoveLiquidity({
           </RowFixed>
         </RowBetween>
 
-        <TYPE.italic fontSize={12} color={theme.text2} textAlign="left" padding={'12px 0 0 0'}>
+        <TYPE.small color={theme.text2} textAlign="left" padding={'12px 0 0 0'}>
           {`Output is estimated. If the price changes by more than ${allowedSlippage /
             100}% your transaction will revert.`}
-        </TYPE.italic>
+        </TYPE.small>
       </AutoColumn>
     )
   }
@@ -492,36 +492,34 @@ export default function RemoveLiquidity({
             pendingText={pendingText}
           />
           <AutoColumn gap="md">
-            <BlueCard>
+            <OutlineCard padding="24px">
               <AutoColumn gap="10px">
-                <TYPE.link fontWeight={400} color={'primaryText1'}>
+                <TYPE.small fontWeight={400}>
                   <b>Tip:</b> Removing pool tokens converts your position back into underlying tokens at the current
                   rate, proportional to your share of the pool. Accrued fees are included in the amounts you receive.
-                </TYPE.link>
+                </TYPE.small>
               </AutoColumn>
-            </BlueCard>
+            </OutlineCard>
             <LightCard>
               <AutoColumn gap="20px">
                 <RowBetween>
-                  <Text fontWeight={500}>Amount</Text>
+                  <TYPE.small fontWeight={500}>Amount</TYPE.small>
                   <ClickableText
                     fontWeight={500}
                     onClick={() => {
                       setShowDetailed(!showDetailed)
                     }}
+                    fontSize={12}
                   >
                     {showDetailed ? 'Simple' : 'Detailed'}
                   </ClickableText>
                 </RowBetween>
-                <Row style={{ alignItems: 'flex-end' }}>
-                  <Text fontSize={72} fontWeight={500}>
+                <RowBetween>
+                  <Text fontSize={36} fontWeight={500} style={{ marginRight: '50px' }}>
                     {formattedAmounts[Field.LIQUIDITY_PERCENT]}%
                   </Text>
-                </Row>
-                {!showDetailed && (
-                  <>
-                    <Slider value={innerLiquidityPercentage} onChange={setInnerLiquidityPercentage} />
-                    <RowBetween>
+                  {!showDetailed && (
+                    <RowBetween justify="flex-end">
                       <MaxButton onClick={() => onUserInput(Field.LIQUIDITY_PERCENT, '25')} width="20%">
                         25%
                       </MaxButton>
@@ -535,6 +533,25 @@ export default function RemoveLiquidity({
                         Max
                       </MaxButton>
                     </RowBetween>
+                  )}
+                </RowBetween>
+                {!showDetailed && (
+                  <>
+                    {/* <RowBetween>
+                      <MaxButton onClick={() => onUserInput(Field.LIQUIDITY_PERCENT, '25')} width="20%">
+                        25%
+                      </MaxButton>
+                      <MaxButton onClick={() => onUserInput(Field.LIQUIDITY_PERCENT, '50')} width="20%">
+                        50%
+                      </MaxButton>
+                      <MaxButton onClick={() => onUserInput(Field.LIQUIDITY_PERCENT, '75')} width="20%">
+                        75%
+                      </MaxButton>
+                      <MaxButton onClick={() => onUserInput(Field.LIQUIDITY_PERCENT, '100')} width="20%">
+                        Max
+                      </MaxButton>
+                    </RowBetween> */}
+                    <Slider value={innerLiquidityPercentage} onChange={setInnerLiquidityPercentage} />
                   </>
                 )}
               </AutoColumn>

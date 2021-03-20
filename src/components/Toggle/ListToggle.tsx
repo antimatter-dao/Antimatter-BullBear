@@ -1,25 +1,25 @@
 import React from 'react'
 import styled from 'styled-components'
+import { ButtonOutlined } from 'components/Button'
 import { TYPE } from '../../theme'
 
-const Wrapper = styled.button<{ isActive?: boolean; activeElement?: boolean }>`
-  border-radius: 20px;
+const Wrapper = styled(ButtonOutlined)<{ isActive?: boolean; activeElement?: boolean }>`
   background: transparent
-  border: 1px solid ${({ theme, isActive }) => (isActive ? theme.primary1 : theme.text2)};
+  border-color:${({ theme, isActive }) => isActive && theme.primary1};
   display: flex;
   width: 80px;
   cursor: pointer;
-  outline: none;
   padding: 0.4rem 0.5rem;
   align-items: center;
-  justify-content: space-between
+  justify-content: space-between;
+  font-size: 14px;
 `
 
 const ToggleElement = styled.span<{ isActive?: boolean; bgColor?: string }>`
   border-radius: 50%;
   height: 20px;
   width: 20px;
-  background-color: ${({ isActive, bgColor, theme }) => (isActive ? theme.primary1 : theme.bg4)};
+  background-color: ${({ isActive, bgColor, theme }) => (isActive ? theme.primary1 : theme.bg5)};
   :hover {
     opacity: 0.8;
   }
@@ -42,13 +42,13 @@ export default function ListToggle({ id, isActive, bgColor, toggle }: ToggleProp
   return (
     <Wrapper id={id} isActive={isActive} onClick={toggle}>
       {isActive && (
-        <StatusText fontWeight="600" margin="0 6px" isActive={true}>
+        <StatusText margin="0 6px" isActive={true}>
           ON
         </StatusText>
       )}
       <ToggleElement isActive={isActive} bgColor={bgColor} />
       {!isActive && (
-        <StatusText fontWeight="600" margin="0 6px" isActive={false}>
+        <StatusText margin="0 6px" isActive={false}>
           OFF
         </StatusText>
       )}

@@ -33,9 +33,9 @@ const MobilePopupInner = styled.div`
 
 const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean }>`
   position: fixed;
-  top: ${({ extraPadding }) => (extraPadding ? '108px' : '88px')};
+  top: ${({ extraPadding }) => (extraPadding ? '58px' : '38px')};
   right: 1rem;
-  max-width: 355px !important;
+  max-width: 340px !important;
   width: 100%;
   z-index: 3;
 
@@ -47,6 +47,62 @@ const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean }>`
 export default function Popups() {
   // get all popups
   const activePopups = useActivePopups()
+
+  // const activePopups = [
+  //   {
+  //     removeAfterMs: 1,
+  //     content: {
+  //       txn: {
+  //         hash: '045983485739458733145',
+  //         success: true,
+  //         summary: '23857jhsjhaasfdsdaf'
+  //       }
+  //     },
+  //     key: 'asaaaaaa'
+  //   },
+  //   {
+  //     removeAfterMs: 1,
+  //     content: {
+  //       listUrl: 'listUrl',
+  //       oldList: [
+  //         {
+  //           name: 'cccccc',
+  //           timestamp: 'cccccccc',
+  //           version: 'cccccccc',
+  //           tokens: [],
+  //           keywords: [],
+  //           tags: {
+  //             tagID: {
+  //               name: 'name',
+  //               description: 'description'
+  //             }
+  //           },
+
+  //           logoURI: 'logoURI'
+  //         }
+  //       ],
+  //       newList: [
+  //         {
+  //           name: 'cccccc',
+  //           timestamp: 'cccccccc',
+  //           version: 'cccccccc',
+  //           tokens: [],
+  //           keywords: [],
+  //           tags: {
+  //             tagID: {
+  //               name: 'name',
+  //               description: 'description'
+  //             }
+  //           },
+
+  //           logoURI: 'logoURI'
+  //         }
+  //       ],
+  //       auto: true
+  //     },
+  //     key: 'asaaaaaavbbbbb'
+  //   }
+  // ]
 
   const urlWarningActive = useURLWarningVisible()
 

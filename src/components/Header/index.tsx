@@ -8,15 +8,15 @@ import { Text } from 'rebass'
 import styled from 'styled-components'
 
 import { useActiveWeb3React } from '../../hooks'
-import { useDarkModeManager } from '../../state/user/hooks'
+// import { useDarkModeManager } from '../../state/user/hooks'
 import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
 import { TYPE /*ExternalLink*/ } from '../../theme'
 
 // import { YellowCard } from '../Card'
-import { Moon, Sun } from 'react-feather'
-import Menu from '../Menu'
+// import { Moon, Sun } from 'react-feather'
+// import Menu from '../Menu'
 
 import { /*Row,*/ RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
@@ -104,10 +104,10 @@ const HeaderElement = styled.div<{
   }
 `
 
-const HeaderElementWrap = styled.div`
-  display: flex;
-  align-items: center;
-`
+// const HeaderElementWrap = styled.div`
+//   display: flex;
+//   align-items: center;
+// `
 
 const HeaderRow = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -199,6 +199,12 @@ const BalanceText = styled(Text)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `};
+  ::after {
+    content: '';
+    border-right: 1px solid ${({ theme }) => theme.text1};
+    margin: 0 16px;
+    height: 16px;
+  }
 `
 
 // const activeClassName = 'ACTIVE'
@@ -303,7 +309,7 @@ export default function Header() {
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   // const [isDark] = useDarkModeManager()
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
+  // const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   const toggleClaimModal = useToggleSelfClaimModal()
 
@@ -400,7 +406,7 @@ export default function Header() {
             )}
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
               {account && userEthBalance ? (
-                <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+                <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
                   {userEthBalance?.toSignificant(4)} ETH
                 </BalanceText>
               ) : null}
@@ -408,12 +414,12 @@ export default function Header() {
             </AccountElement>
           </div>
         </HeaderElement>
-        <HeaderElementWrap>
+        {/* <HeaderElementWrap>
           <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </StyledMenuButton>
           <Menu />
-        </HeaderElementWrap>
+        </HeaderElementWrap> */}
       </HeaderControls>
     </HeaderFrame>
   )
