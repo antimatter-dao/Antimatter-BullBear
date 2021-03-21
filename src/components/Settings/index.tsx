@@ -20,6 +20,8 @@ import { RowBetween, RowFixed, AutoRow } from '../Row'
 import Toggle from '../Toggle'
 import TransactionSettings from '../TransactionSettings'
 import { ReactComponent as Settings } from '../../assets/svg/setting.svg'
+import { Filler, Wrapper } from '../Modal'
+import { Marginer } from 'pages/App'
 
 const StyledMenuIcon = styled(Settings)`
   height: 20px;
@@ -42,13 +44,12 @@ const StyledCloseIcon = styled(X)`
   }
 
   > * {
-    stroke: ${({ theme }) => theme.text1};
+    stroke: ${({ theme }) => theme.text3};
   }
 `
 
 const StyledMenuButton = styled.button`
   position: relative;
-  width: 100%;
   height: 100%;
   border: none;
   background-color: transparent;
@@ -76,16 +77,42 @@ const EmojiWrapper = styled.div`
   font-size: 14px;
 `
 
-const StyledMenu = styled.div`
-  margin-left: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: none;
-  text-align: left;
+// const StyledMenu = styled.div`
+//   margin-left: 0.5rem;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   border: none;
+//   text-align: left;
+// `
+
+const Overlay = styled.div`
+  z-index: ;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0
+  left: 0
+  background-color: ${({ theme }) => theme.modalBG};
+`
+// ${({ theme }) => theme.mediaWidth.upToMedium`
+
+// `}
+const OverlayWrapper = styled.div`
+width: 100%;
+display: flex;
+align-items: center;
+justify-content: center;
+position: absolute;
+width: 100vw;
+height: 100vh;
+top: 0
+left: 0
+z-index: 2;
 `
 
 const MenuFlyout = styled.span`
+  position: relative;
   min-width: 500px;
   background: ${({ theme }) => theme.gradient1};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
@@ -94,10 +121,6 @@ const MenuFlyout = styled.span`
   display: flex;
   flex-direction: column;
   font-size: 1rem;
-  position: absolute;
-  top: -1px;
-  right: -10px;
-  z-index: 100;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: 18.125rem;
@@ -139,7 +162,8 @@ export default function SettingsTab() {
 
   return (
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
-    <StyledMenu ref={node as any}>
+    // <StyledMenu>
+    <>
       <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100} maxWidth={500}>
         <ModalContentWrapper>
           <AutoColumn gap="sm">
@@ -187,62 +211,72 @@ export default function SettingsTab() {
           </EmojiWrapper>
         ) : null}
       </StyledMenuButton>
+      {(open || showConfirmation) && <Overlay />}
       {open && (
-        <MenuFlyout>
-          <AutoColumn gap="lg" style={{ padding: '3rem' }} justify="center">
-            <Text fontWeight={600} fontSize={14}>
-              Transaction Settings
-            </Text>
-            <TransactionSettings
-              rawSlippage={userSlippageTolerance}
-              setRawSlippage={setUserslippageTolerance}
-              deadline={ttl}
-              setDeadline={setTtl}
-            />
-            <Text fontWeight={600} fontSize={14}>
-              Interface Settings
-            </Text>
-            <CustomizedAutoRow>
-              <Column>
-                <RowFixed>
-                  <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                    Toggle Expert Mode
-                  </TYPE.black>
-                  <QuestionHelper text="Bypasses confirmation modals and allows high slippage trades. Use at your own risk." />
-                </RowFixed>
-                <Toggle
-                  id="toggle-expert-mode-button"
-                  isActive={expertMode}
-                  toggle={
-                    expertMode
-                      ? () => {
-                          toggleExpertMode()
-                          setShowConfirmation(false)
-                        }
-                      : () => {
-                          toggle()
-                          setShowConfirmation(true)
-                        }
-                  }
+        <OverlayWrapper>
+          <Filler />
+          <Wrapper>
+            <MenuFlyout ref={node as any}>
+              <AutoColumn gap="28px" style={{ padding: '30px 30px 48px' }} justify="center">
+                <StyledCloseIcon onClick={toggle} style={{ position: 'absolute', top: '26px', right: '30px' }} />
+                <Text fontWeight={400} fontSize={18}>
+                  Transaction Settings
+                </Text>
+                <TransactionSettings
+                  rawSlippage={userSlippageTolerance}
+                  setRawSlippage={setUserslippageTolerance}
+                  deadline={ttl}
+                  setDeadline={setTtl}
                 />
-              </Column>
-              <Column>
-                <RowFixed>
-                  <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                    Disable Multihops
-                  </TYPE.black>
-                  <QuestionHelper text="Restricts swaps to direct pairs only." />
-                </RowFixed>
-                <Toggle
-                  id="toggle-disable-multihop-button"
-                  isActive={singleHopOnly}
-                  toggle={() => (singleHopOnly ? setSingleHopOnly(false) : setSingleHopOnly(true))}
-                />
-              </Column>
-            </CustomizedAutoRow>
-          </AutoColumn>
-        </MenuFlyout>
+                <Text fontWeight={400} fontSize={18} style={{ marginTop: '16px' }}>
+                  Interface Settings
+                </Text>
+                <CustomizedAutoRow>
+                  <Column>
+                    <RowFixed style={{ marginBottom: '11px' }}>
+                      <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                        Toggle Expert Mode
+                      </TYPE.black>
+                      <QuestionHelper text="Bypasses confirmation modals and allows high slippage trades. Use at your own risk." />
+                    </RowFixed>
+                    <Toggle
+                      id="toggle-expert-mode-button"
+                      isActive={expertMode}
+                      toggle={
+                        expertMode
+                          ? () => {
+                              toggleExpertMode()
+                              setShowConfirmation(false)
+                            }
+                          : () => {
+                              toggle()
+                              setShowConfirmation(true)
+                            }
+                      }
+                    />
+                  </Column>
+                  <Column>
+                    <RowFixed style={{ marginBottom: '11px' }}>
+                      <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                        Disable Multihops
+                      </TYPE.black>
+                      <QuestionHelper text="Restricts swaps to direct pairs only." />
+                    </RowFixed>
+                    <Toggle
+                      id="toggle-disable-multihop-button"
+                      isActive={singleHopOnly}
+                      toggle={() => (singleHopOnly ? setSingleHopOnly(false) : setSingleHopOnly(true))}
+                    />
+                  </Column>
+                </CustomizedAutoRow>
+              </AutoColumn>
+            </MenuFlyout>
+            <Marginer />
+          </Wrapper>
+        </OverlayWrapper>
       )}
-    </StyledMenu>
+
+      {/* </StyledMenu> */}
+    </>
   )
 }

@@ -4,8 +4,10 @@ import { animated, useTransition, useSpring } from 'react-spring'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 import { isMobile } from 'react-device-detect'
 import '@reach/dialog/styles.css'
-import { transparentize } from 'polished'
 import { useGesture } from 'react-use-gesture'
+import { transparentize } from 'polished'
+import { Marginer } from '../../pages/App'
+// import { headerHeightDisplacement } from '../Header'
 
 const AnimatedDialogOverlay = animated(DialogOverlay)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,13 +24,15 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     background-color: ${({ theme }) => theme.modalBG};
   }
 `
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 `
-const Filler = styled.div`
+
+export const Filler = styled.div`
   width: 212px;
 `
 
@@ -157,6 +161,7 @@ export default function Modal({
                   {!initialFocusRef && isMobile ? <div tabIndex={1} /> : null}
                   {children}
                 </StyledDialogContent>
+                <Marginer />
               </Wrapper>
             </StyledDialogOverlay>
           )

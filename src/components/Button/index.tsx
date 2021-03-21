@@ -326,6 +326,7 @@ export function ButtonError({
   if (error) {
     return <ButtonErrorStyle {...rest} />
   } else if (outlined) {
+    console.log(outlined, 11111)
     return <ButtonOutlined {...rest} />
   } else {
     return <ButtonPrimary {...rest} />

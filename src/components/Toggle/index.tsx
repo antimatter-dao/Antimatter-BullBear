@@ -7,7 +7,6 @@ const ToggleElement = styled.span<{ isActive?: boolean; isOnSwitch?: boolean }>`
   line-height: 48px;
   border-radius: 14px;
   background: ${({ theme, isActive }) => (isActive ? theme.primary1 : 'none')};
-  border: 1px solid ${({ theme, isActive }) => (isActive ? theme.primary1 : 'transparent')};
   color: ${({ theme, isActive }) => (isActive ? theme.black : theme.white)};
   font-size: 1rem;
   font-weight: 400;
@@ -16,8 +15,7 @@ const ToggleElement = styled.span<{ isActive?: boolean; isOnSwitch?: boolean }>`
   font-weight: ${({ isOnSwitch }) => (isOnSwitch ? '500' : '400')};
   :hover {
     user-select: ${({ isOnSwitch }) => (isOnSwitch ? 'none' : 'initial')};
-    background: ${({ theme, isActive, isOnSwitch }) =>
-      isActive ? (isOnSwitch ? theme.primary1 : theme.text3) : 'none'};
+    background: ${({ theme, isActive }) => (isActive ? theme.primary4 : 'none')};
     color: ${({ theme, isActive, isOnSwitch }) => (isActive ? (isOnSwitch ? theme.white : theme.text2) : theme.text3)};
   }
 `

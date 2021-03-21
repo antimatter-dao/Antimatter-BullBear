@@ -561,26 +561,26 @@ export default function RemoveLiquidity({
                 <ColumnCenter>
                   <ArrowDown size="16" color={theme.text2} />
                 </ColumnCenter>
-                <LightCard>
-                  <AutoColumn gap="10px">
+                <LightCard padding="16px 0">
+                  <AutoColumn gap="14px" style={{ padding: '24px' }}>
                     <RowBetween>
-                      <Text fontSize={24} fontWeight={500}>
+                      <Text fontSize={16} fontWeight={500}>
                         {formattedAmounts[Field.CURRENCY_A] || '-'}
                       </Text>
                       <RowFixed>
                         <CurrencyLogo currency={currencyA} style={{ marginRight: '12px' }} />
-                        <Text fontSize={24} fontWeight={500} id="remove-liquidity-tokena-symbol">
+                        <Text fontSize={16} fontWeight={500} id="remove-liquidity-tokena-symbol">
                           {currencyA?.symbol}
                         </Text>
                       </RowFixed>
                     </RowBetween>
                     <RowBetween>
-                      <Text fontSize={24} fontWeight={500}>
+                      <Text fontSize={16} fontWeight={500}>
                         {formattedAmounts[Field.CURRENCY_B] || '-'}
                       </Text>
                       <RowFixed>
                         <CurrencyLogo currency={currencyB} style={{ marginRight: '12px' }} />
-                        <Text fontSize={24} fontWeight={500} id="remove-liquidity-tokenb-symbol">
+                        <Text fontSize={16} fontWeight={500} id="remove-liquidity-tokenb-symbol">
                           {currencyB?.symbol}
                         </Text>
                       </RowFixed>
@@ -592,6 +592,7 @@ export default function RemoveLiquidity({
                             to={`/remove/${currencyA === ETHER ? WETH[chainId].address : currencyIdA}/${
                               currencyB === ETHER ? WETH[chainId].address : currencyIdB
                             }`}
+                            style={{ fontSize: '12px' }}
                           >
                             Receive WETH
                           </StyledInternalLink>
@@ -600,12 +601,31 @@ export default function RemoveLiquidity({
                             to={`/remove/${
                               currencyA && currencyEquals(currencyA, WETH[chainId]) ? 'ETH' : currencyIdA
                             }/${currencyB && currencyEquals(currencyB, WETH[chainId]) ? 'ETH' : currencyIdB}`}
+                            style={{ fontSize: '12px' }}
                           >
                             Receive ETH
                           </StyledInternalLink>
                         ) : null}
                       </RowBetween>
                     ) : null}
+                    {pair && (
+                      <>
+                        <RowBetween style={{ borderTop: `1px solid ${theme.text5}` }}>
+                          Price:
+                          <div>
+                            1 {currencyA?.symbol} = {tokenA ? pair.priceOf(tokenA).toSignificant(6) : '-'}{' '}
+                            {currencyB?.symbol}
+                          </div>
+                        </RowBetween>
+                        <RowBetween>
+                          <div />
+                          <div>
+                            1 {currencyB?.symbol} = {tokenB ? pair.priceOf(tokenB).toSignificant(6) : '-'}{' '}
+                            {currencyA?.symbol}
+                          </div>
+                        </RowBetween>
+                      </>
+                    )}
                   </AutoColumn>
                 </LightCard>
               </>
@@ -655,22 +675,7 @@ export default function RemoveLiquidity({
                 />
               </>
             )}
-            {pair && (
-              <div style={{ padding: '10px 20px' }}>
-                <RowBetween>
-                  Price:
-                  <div>
-                    1 {currencyA?.symbol} = {tokenA ? pair.priceOf(tokenA).toSignificant(6) : '-'} {currencyB?.symbol}
-                  </div>
-                </RowBetween>
-                <RowBetween>
-                  <div />
-                  <div>
-                    1 {currencyB?.symbol} = {tokenB ? pair.priceOf(tokenB).toSignificant(6) : '-'} {currencyA?.symbol}
-                  </div>
-                </RowBetween>
-              </div>
-            )}
+
             <div style={{ position: 'relative' }}>
               {!account ? (
                 <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>

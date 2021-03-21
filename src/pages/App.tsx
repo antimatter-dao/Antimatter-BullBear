@@ -71,7 +71,7 @@ const BodyWrapper = styled.div`
   z-index: 1;
 `
 
-const Marginer = styled.div`
+export const Marginer = styled.div`
   margin-top: 5rem;
 `
 

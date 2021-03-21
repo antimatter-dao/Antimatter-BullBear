@@ -35,9 +35,9 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
-import { ConfirmAddModalBottom } from './ConfirmAddModalBottom'
+import { ConfirmAddModalBottom } from '../AddLiquidity/ConfirmAddModalBottom'
 import { currencyId } from '../../utils/currencyId'
-import { PoolPriceBar } from './PoolPriceBar'
+import { PoolPriceBar } from '../AddLiquidity/PoolPriceBar'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 
@@ -392,23 +392,13 @@ export default function Generate({
               negativeMarginTop="-30px"
             />
             {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && pairState !== PairState.INVALID && (
-              <>
-                <LightCard padding="0px" borderRadius={'20px'}>
-                  <RowBetween padding="1rem">
-                    <TYPE.subHeader fontWeight={500} fontSize={14}>
-                      {noLiquidity ? 'Initial prices' : 'Prices'} and pool share
-                    </TYPE.subHeader>
-                  </RowBetween>
-                  <LightCard padding="1rem" borderRadius={'20px'}>
-                    <PoolPriceBar
-                      currencies={currencies}
-                      poolTokenPercentage={poolTokenPercentage}
-                      noLiquidity={noLiquidity}
-                      price={price}
-                    />
-                  </LightCard>
-                </LightCard>
-              </>
+              <PoolPriceBar
+                currencies={currencies}
+                poolTokenPercentage={poolTokenPercentage}
+                noLiquidity={noLiquidity}
+                price={price}
+                cardTitle={`${noLiquidity ? 'Initial prices' : 'Prices'} and pool share`}
+              />
             )}
 
             {addIsUnsupported ? (
