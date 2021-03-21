@@ -8,7 +8,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonPrimary } from '../../components/Button'
-import { OutlineCard, LightCard } from '../../components/Card'
+import { LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
@@ -78,6 +78,8 @@ export default function Generate({
     poolTokenPercentage,
     error
   } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
+
+  console.log('currencies', currencies)
 
   const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
 
@@ -272,10 +274,12 @@ export default function Generate({
   const handleCurrencyASelect = useCallback(
     (currencyA: Currency) => {
       const newCurrencyIdA = currencyId(currencyA)
+      console.log('newCurrency', newCurrencyIdA, currencyIdB)
+
       if (newCurrencyIdA === currencyIdB) {
-        history.push(`/add/${currencyIdB}/${currencyIdA}`)
+        history.push(`/generate/${currencyIdB}/${currencyIdA}`)
       } else {
-        history.push(`/add/${newCurrencyIdA}/${currencyIdB}`)
+        history.push(`/generate/${newCurrencyIdA}/${currencyIdB}`)
       }
     },
     [currencyIdB, history, currencyIdA]
@@ -285,12 +289,12 @@ export default function Generate({
       const newCurrencyIdB = currencyId(currencyB)
       if (currencyIdA === newCurrencyIdB) {
         if (currencyIdB) {
-          history.push(`/add/${currencyIdB}/${newCurrencyIdB}`)
+          history.push(`/generate/${currencyIdB}/${newCurrencyIdB}`)
         } else {
-          history.push(`/add/${newCurrencyIdB}`)
+          history.push(`/generate/${newCurrencyIdB}`)
         }
       } else {
-        history.push(`/add/${currencyIdA ? currencyIdA : 'ETH'}/${newCurrencyIdB}`)
+        history.push(`/generate/${currencyIdA ? currencyIdA : 'ETH'}/${newCurrencyIdB}`)
       }
     },
     [currencyIdA, history, currencyIdB]
@@ -304,8 +308,6 @@ export default function Generate({
     }
     setTxHash('')
   }, [onFieldAInput, txHash])
-
-  const isCreate = history.location.pathname.includes('/create')
 
   const addIsUnsupported = useIsTransactionUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
 
@@ -331,36 +333,6 @@ export default function Generate({
             currencyToAdd={pair?.liquidityToken}
           />
           <AutoColumn gap="30px">
-            {noLiquidity ||
-              (isCreate ? (
-                <ColumnCenter style={{ marginBottom: '1rem' }}>
-                  <OutlineCard>
-                    <AutoColumn gap="10px">
-                      <TYPE.link fontWeight={600} fontSize={12}>
-                        You are the first liquidity provider.
-                      </TYPE.link>
-                      <TYPE.link fontWeight={400} fontSize={12}>
-                        The ratio of tokens you add will set the price of this pool.
-                      </TYPE.link>
-                      <TYPE.link fontWeight={400} fontSize={12}>
-                        Once you are happy with the rate click supply to review.
-                      </TYPE.link>
-                    </AutoColumn>
-                  </OutlineCard>
-                </ColumnCenter>
-              ) : (
-                <ColumnCenter style={{ marginTop: '1rem' }}>
-                  <OutlineCard padding="14px 20px">
-                    <AutoColumn gap="10px">
-                      <TYPE.link fontWeight={400} fontSize={12} color={theme.text3}>
-                        <b>Tip:</b> When you add liquidity, you will receive pool tokens representing your position.
-                        These tokens automatically earn fees proportional to your share of the pool, and can be redeemed
-                        at any time.
-                      </TYPE.link>
-                    </AutoColumn>
-                  </OutlineCard>
-                </ColumnCenter>
-              ))}
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               onUserInput={onFieldAInput}
@@ -396,7 +368,7 @@ export default function Generate({
                 <LightCard padding="0px" borderRadius={'20px'}>
                   <RowBetween padding="1rem">
                     <TYPE.subHeader fontWeight={500} fontSize={14}>
-                      {noLiquidity ? 'Initial prices' : 'Prices'} and pool share
+                      You will generate
                     </TYPE.subHeader>
                   </RowBetween>
                   <LightCard padding="1rem" borderRadius={'20px'}>

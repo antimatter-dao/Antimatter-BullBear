@@ -102,6 +102,7 @@ export default function App() {
                 <Route exact strict path="/swap" component={Swap} />
                 <Route exact strict path="/markeStrategy" component={MarketStrategy} />
                 <Route exact strict path="/generate" component={Generate} />
+                <Route exact strict path="/generate/:currencyIdA/:currencyIdB" component={Generate} />
                 <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                 <Route exact strict path="/send" component={RedirectPathToSwapOnly} />

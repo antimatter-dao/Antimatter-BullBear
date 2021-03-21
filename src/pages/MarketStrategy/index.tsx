@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 
 import FullPositionCard from '../../components/PositionCard'
-import { useUserHasLiquidityInAllTokens } from '../../data/V1'
+// import { useUserHasLiquidityInAllTokens } from '../../data/V1'
 import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
-import { StyledInternalLink, ExternalLink, TYPE, HideSmall } from '../../theme'
+import { ExternalLink, TYPE, HideSmall } from '../../theme'
 import { Text } from 'rebass'
 import Card from '../../components/Card'
 import { RowBetween, RowFixed } from '../../components/Row'
@@ -105,7 +105,7 @@ export default function MarketStrategy() {
 
   const allV2PairsWithLiquidity = v2Pairs.map(([, pair]) => pair).filter((v2Pair): v2Pair is Pair => Boolean(v2Pair))
 
-  const hasV1Liquidity = useUserHasLiquidityInAllTokens()
+  // const hasV1Liquidity = useUserHasLiquidityInAllTokens()
 
   // show liquidity even if its deposited in rewards contract
   const stakingInfo = useStakingInfo()
@@ -163,12 +163,12 @@ export default function MarketStrategy() {
                 </HideSmall>
               </TitleRow>
               <ButtonRow>
-                <ResponsiveButtonPrimary as={Link} padding="14px 10px" to="/create/ETH">
-                  Option generation
+                <ResponsiveButtonPrimary as={Link} padding="14px 10px" to="/generate">
+                  Option redemption
                 </ResponsiveButtonPrimary>
-                <ResponsiveButtonPrimary id="join-pool-button" as={Link} padding="14px 10px" to="/add/ETH">
+                <ResponsiveButtonPrimary id="join-pool-button" as={Link} padding="14px 10px" to="/generate">
                   <Text fontWeight={500} fontSize={16}>
-                    Option redemption
+                    Option generation
                   </Text>
                 </ResponsiveButtonPrimary>
               </ButtonRow>
@@ -212,23 +212,23 @@ export default function MarketStrategy() {
               ) : (
                 <EmptyProposals>
                   <TYPE.body color={theme.text3} textAlign="center">
-                    No liquidity found.
+                    No token found.
                   </TYPE.body>
                 </EmptyProposals>
               )}
 
-              <AutoColumn justify={'center'} gap="md" style={{ marginTop: '20px' }}>
-                <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
-                  {hasV1Liquidity ? 'Uniswap V1 liquidity found!' : "Don't see a pool you joined?"}{' '}
-                  <StyledInternalLink
-                    id="import-pool-link"
-                    to={hasV1Liquidity ? '/migrate/v1' : '/find'}
-                    style={{ color: theme.text1, textDecoration: 'underline' }}
-                  >
-                    {hasV1Liquidity ? 'Migrate now.' : 'Import it.'}
-                  </StyledInternalLink>
-                </Text>
-              </AutoColumn>
+              {/*<AutoColumn justify={'center'} gap="md" style={{ marginTop: '20px' }}>*/}
+              {/*  <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>*/}
+              {/*    {hasV1Liquidity ? 'Uniswap V1 liquidity found!' : "Don't see a pool you joined?"}{' '}*/}
+              {/*    <StyledInternalLink*/}
+              {/*      id="import-pool-link"*/}
+              {/*      to={hasV1Liquidity ? '/migrate/v1' : '/find'}*/}
+              {/*      style={{ color: theme.text1, textDecoration: 'underline' }}*/}
+              {/*    >*/}
+              {/*      {hasV1Liquidity ? 'Migrate now.' : 'Import it.'}*/}
+              {/*    </StyledInternalLink>*/}
+              {/*  </Text>*/}
+              {/*</AutoColumn>*/}
             </AutoColumn>
           </AutoColumn>
         </PageWrapper>
