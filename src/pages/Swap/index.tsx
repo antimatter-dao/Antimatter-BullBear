@@ -508,6 +508,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 id="swap-button"
                 disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
                 error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
+                outlined={true}
               >
                 <Text fontSize={16} fontWeight={500}>
                   {swapInputError

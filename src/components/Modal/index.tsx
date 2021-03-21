@@ -22,6 +22,15 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     background-color: ${({ theme }) => theme.modalBG};
   }
 `
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+const Filler = styled.div`
+  width: 212px;
+`
 
 const AnimatedDialogContent = animated(DialogContent)
 // destructure to not pass custom props to Dialog DOM element
@@ -129,23 +138,26 @@ export default function Modal({
               initialFocusRef={initialFocusRef}
               unstable_lockFocusAcrossFrames={false}
             >
-              <StyledDialogContent
-                {...(isMobile
-                  ? {
-                      ...bind(),
-                      style: { transform: y.interpolate(y => `translateY(${y > 0 ? y : 0}px)`) }
-                    }
-                  : {})}
-                aria-label="dialog content"
-                minHeight={minHeight}
-                maxHeight={maxHeight}
-                mobile={isMobile}
-                maxWidth={maxWidth}
-              >
-                {/* prevents the automatic focusing of inputs on mobile by the reach dialog */}
-                {!initialFocusRef && isMobile ? <div tabIndex={1} /> : null}
-                {children}
-              </StyledDialogContent>
+              <Filler />
+              <Wrapper>
+                <StyledDialogContent
+                  {...(isMobile
+                    ? {
+                        ...bind(),
+                        style: { transform: y.interpolate(y => `translateY(${y > 0 ? y : 0}px)`) }
+                      }
+                    : {})}
+                  aria-label="dialog content"
+                  minHeight={minHeight}
+                  maxHeight={maxHeight}
+                  mobile={isMobile}
+                  maxWidth={maxWidth}
+                >
+                  {/* prevents the automatic focusing of inputs on mobile by the reach dialog */}
+                  {!initialFocusRef && isMobile ? <div tabIndex={1} /> : null}
+                  {children}
+                </StyledDialogContent>
+              </Wrapper>
             </StyledDialogOverlay>
           )
       )}

@@ -55,7 +55,7 @@ export function colors(darkMode: boolean): Colors {
     bg5: darkMode ? '#A1A1A1' : '#888D9B',
 
     //specialty colors
-    modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
+    modalBG: darkMode ? 'rgba(0,0,0,.5)' : 'rgba(0,0,0,0.3)',
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
 
     //primary colors
@@ -77,7 +77,7 @@ export function colors(darkMode: boolean): Colors {
     red1: '#FF0000',
     red2: '#FF2828',
     red3: '#FF4B4B ',
-    green1: '#27AE60',
+    green1: ' #24FF00',
     yellow1: '#FFE270',
     yellow2: '#F3841E',
     blue1: '#2172E5',
@@ -148,10 +148,13 @@ export const TYPE = {
     return <TextWrapper fontWeight={400} fontSize={16} color={'text1'} {...props} />
   },
   largeHeader(props: TextProps) {
-    return <TextWrapper fontWeight={600} fontSize={24} {...props} />
+    return <TextWrapper fontWeight={600} fontSize={24} {...props} fontFamily="Futura PT" />
   },
   mediumHeader(props: TextProps) {
-    return <TextWrapper fontWeight={500} fontSize={20} {...props} />
+    return <TextWrapper fontWeight={500} fontSize={22} {...props} fontFamily="Futura PT" />
+  },
+  smallHeader(props: TextProps) {
+    return <TextWrapper fontWeight={500} fontSize={16} {...props} fontFamily="Futura PT" />
   },
   subHeader(props: TextProps) {
     return <TextWrapper fontWeight={400} fontSize={14} {...props} />
@@ -181,12 +184,12 @@ export const TYPE = {
 
 export const FixedGlobalStyle = createGlobalStyle`
 html, input, textarea, button {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-display: fallback;
 }
 @supports (font-variation-settings: normal) {
   html, input, textarea, button {
-    font-family: 'Inter var', sans-serif;
+    font-family: 'Roboto', sans-serif;
   }
 }
 

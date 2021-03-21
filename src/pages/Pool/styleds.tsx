@@ -13,19 +13,19 @@ export const ClickableText = styled(Text)`
   color: ${({ theme }) => theme.primary1};
 `
 export const MaxButton = styled.button<{ width: string }>`
-  padding: 0.5rem 1rem;
-  background-color: ${({ theme }) => theme.primary5};
-  border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: 0.5rem;
-  font-size: 1rem;
+  padding: 0.3rem 0.5rem;
+  background-color: ${({ theme }) => theme.bg4};
+  border: none;
+  border-radius: 14px;
+  font-size: 14px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 0.25rem 0.5rem;
   `};
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
   margin: 0.25rem;
   overflow: hidden;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.text1};
   :hover {
     border: 1px solid ${({ theme }) => theme.primary1};
   }

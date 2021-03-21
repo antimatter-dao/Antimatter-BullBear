@@ -1,29 +1,29 @@
-import React, { useCallback, useContext, useEffect } from 'react'
-import { X } from 'react-feather'
+import React, { useCallback, useEffect /*, useContext*/ } from 'react'
+// import { X } from 'react-feather'
 import { useSpring } from 'react-spring/web'
-import styled, { ThemeContext } from 'styled-components'
+import styled /*, { ThemeContext }*/ from 'styled-components'
 import { animated } from 'react-spring'
-import { PopupContent } from '../../state/application/actions'
+// import { PopupContent } from '../../state/application/actions'
 import { useRemovePopup } from '../../state/application/hooks'
 import ListUpdatePopup from './ListUpdatePopup'
 import TransactionPopup from './TransactionPopup'
 
-export const StyledClose = styled(X)`
-  position: absolute;
-  right: 10px;
-  top: 10px;
+// export const StyledClose = styled(X)`
+//   position: absolute;
+//   right: 10px;
+//   top: 10px;
 
-  :hover {
-    cursor: pointer;
-  }
-`
+//   :hover {
+//     cursor: pointer;
+//   }
+// `
 export const Popup = styled.div`
   display: inline-block;
   width: 100%;
   padding: 1em;
-  background-color: ${({ theme }) => theme.bg1};
+  background-color: ${({ theme }) => theme.bg2};
   position: relative;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 20px;
   padding-right: 35px;
   overflow: hidden;
@@ -52,7 +52,7 @@ export default function PopupItem({
   popKey
 }: {
   removeAfterMs: number | null
-  content: PopupContent
+  content: any
   popKey: string
 }) {
   const removePopup = useRemovePopup()
@@ -69,7 +69,7 @@ export default function PopupItem({
     }
   }, [removeAfterMs, removeThisPopup])
 
-  const theme = useContext(ThemeContext)
+  // const theme = useContext(ThemeContext)
 
   let popupContent
   if ('txn' in content) {
@@ -92,7 +92,7 @@ export default function PopupItem({
 
   return (
     <Popup>
-      <StyledClose color={theme.text2} onClick={removeThisPopup} />
+      {/* <StyledClose color={theme.text2} onClick={removeThisPopup} /> */}
       {popupContent}
       {removeAfterMs !== null ? <AnimatedFader style={faderStyle} /> : null}
     </Popup>

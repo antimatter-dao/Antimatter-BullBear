@@ -17,7 +17,7 @@ import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
 import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
 import PortisIcon from '../../assets/images/portisIcon.png'
 // import Identicon from '../Identicon'
-import { ButtonSecondary, ButtonOutlined } from '../Button'
+import { ButtonSecondary, ButtonOutlinedPrimary, ButtonPrimary } from '../Button'
 
 // import { ExternalLink as LinkIcon } from 'react-feather'
 import { /*ExternalLink*/ LinkStyledButton, TYPE } from '../../theme'
@@ -190,17 +190,17 @@ const WalletAction = styled(ButtonSecondary)`
     text-decoration: underline;
   }
 `
-const ActionButton = styled(ButtonOutlined)`
-  border-radius: 49px;
-  border: 1px solid ${({ theme }) => theme.primary1};
-  color: ${({ theme }) => theme.primary1};
+// const ActionButton = styled(ButtonOutlined)`
+//   border-radius: 49px;
+//   border: 1px solid ${({ theme }) => theme.primary1};
+//   color: ${({ theme }) => theme.primary1};
 
-  &.colored {
-    background-color: ${({ theme }) => theme.primary1};
-    margin-left: 20px;
-    color: ${({ theme }) => theme.bg1};
-  }
-`
+//   &.colored {
+//     background-color: ${({ theme }) => theme.primary1};
+
+//     color: ${({ theme }) => theme.bg1};
+//   }
+// `
 
 const MainWalletAction = styled(WalletAction)`
   color: ${({ theme }) => theme.primary1};
@@ -308,7 +308,7 @@ export default function AccountDetails({
                 <div>
                   {connector !== injected && connector !== walletlink && (
                     <WalletAction
-                      style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
+                      style={{ fontSize: '18px', fontWeight: 400, marginRight: '8px' }}
                       onClick={() => {
                         ;(connector as any).close()
                       }}
@@ -389,16 +389,15 @@ export default function AccountDetails({
         </AccountSection>
       </UpperSection>
       <LowerSection>
-        <ActionButton onClick={toggleWalletModal}>Close</ActionButton>
-        <ActionButton
-          style={{ fontSize: '.825rem', fontWeight: 400 }}
+        <ButtonOutlinedPrimary onClick={toggleWalletModal}>Close</ButtonOutlinedPrimary>
+        <ButtonPrimary
           onClick={() => {
             openOptions()
           }}
-          className="colored"
+          style={{ marginLeft: '20px' }}
         >
           Change
-        </ActionButton>
+        </ButtonPrimary>
       </LowerSection>
       {!!pendingTransactions.length || !!confirmedTransactions.length ? (
         <LowerSection>

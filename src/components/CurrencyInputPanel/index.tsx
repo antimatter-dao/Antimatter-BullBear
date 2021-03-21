@@ -41,8 +41,11 @@ const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>
   padding: 0 10px;
   border: 1px solid transparent;
   :focus,
+  :active {
+    border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};
+  }
   :hover {
-    border: 1px solid ${({ theme }) => theme.primary1};
+    border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.bg5))};
   }
 `
 

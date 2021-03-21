@@ -153,7 +153,7 @@ export default function Pool() {
         </VoteCard> */}
 
           <AutoColumn gap="lg" justify="center">
-            <AutoColumn gap="lg" style={{ width: '100%' }}>
+            <AutoColumn gap="32px" style={{ width: '100%' }}>
               <TitleRow padding={'0'}>
                 <HideSmall>
                   <TYPE.mediumHeader style={{ justifySelf: 'flex-start' }}>Your liquidity</TYPE.mediumHeader>
@@ -216,20 +216,19 @@ export default function Pool() {
               ) : (
                 <EmptyProposals>
                   <TYPE.body color={theme.text3} textAlign="center">
-                    No liquidity found.
+                    No liquidity found
                   </TYPE.body>
                 </EmptyProposals>
               )}
-
-              <AutoColumn justify={'center'} gap="md" style={{ marginTop: '20px' }}>
+              <AutoColumn justify={'center'} gap="md">
                 <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
                   {hasV1Liquidity ? 'Uniswap V1 liquidity found!' : "Don't see a pool you joined?"}{' '}
                   <StyledInternalLink
                     id="import-pool-link"
                     to={hasV1Liquidity ? '/migrate/v1' : '/find'}
-                    style={{ color: theme.text1, textDecoration: 'underline' }}
+                    style={{ color: theme.text1 }}
                   >
-                    {hasV1Liquidity ? 'Migrate now.' : 'Import it.'}
+                    {hasV1Liquidity ? 'Migrate now' : 'Import it'}
                   </StyledInternalLink>
                 </Text>
               </AutoColumn>
