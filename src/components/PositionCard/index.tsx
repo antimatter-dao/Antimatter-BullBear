@@ -338,7 +338,6 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
               <RowBetween marginTop="10px">
                 <ButtonOutlined
                   padding="4px"
-                  borderRadius="32px"
                   as={Link}
                   to={`/add/${currencyId(currency0)}/${currencyId(currency1)}`}
                   width="48%"
@@ -349,7 +348,6 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                 <ButtonOutlined
                   style={{ color: theme.primary1, borderColor: theme.primary1 }}
                   padding="4px"
-                  borderRadius="32px"
                   as={Link}
                   width="48%"
                   to={`/remove/${currencyId(currency0)}/${currencyId(currency1)}`}

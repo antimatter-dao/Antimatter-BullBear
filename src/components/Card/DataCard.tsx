@@ -10,6 +10,16 @@ interface DataType {
   content: JSX.Element | string | undefined
 }
 
+export function DataRow({ data: { title, content } }: { data: DataType }) {
+  const theme = useTheme()
+  return (
+    <RowBetween>
+      <TYPE.small color={theme.text3}>{title}</TYPE.small>
+      <TYPE.small color={theme.text1}>{content}</TYPE.small>
+    </RowBetween>
+  )
+}
+
 export default function DataCard({
   data,
   cardTitle,
@@ -32,11 +42,8 @@ export default function DataCard({
         </RowBetween>
       )}
       <AutoColumn gap="8px" style={{ padding: '12px 24px' }}>
-        {data.map(({ title, content }) => (
-          <RowBetween>
-            <TYPE.small color={theme.text3}>{title}</TYPE.small>
-            <TYPE.small color={theme.text1}>{content}</TYPE.small>
-          </RowBetween>
+        {data.map(data => (
+          <DataRow data={data} />
         ))}
       </AutoColumn>
       {cardBottom && (
