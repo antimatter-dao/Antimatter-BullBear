@@ -54,7 +54,7 @@ const OptionWrapper = styled.div<{ isOpen: boolean }>`
 `
 const SelectOption = styled(Base)<{ selected: boolean }>`
   border: none;
-  border-radius: none;
+  border-radius: unset;
   border-bottom: 1px solid ${({ theme }) => theme.bg3};
   color: ${({ theme }) => theme.text1};
   padding: 14px;

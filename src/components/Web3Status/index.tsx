@@ -26,6 +26,7 @@ import Loader from '../Loader'
 import { RowBetween } from '../Row'
 import WalletModal from '../WalletModal'
 import { TYPE } from 'theme'
+import useTheme from 'hooks/useTheme'
 
 const IconWrapper = styled.div<{ size?: number }>`
   ${({ theme }) => theme.flexColumnNoWrap};
@@ -193,7 +194,7 @@ function Web3StatusInner() {
   const hasPendingTransactions = !!pending.length
   const hasSocks = useHasSocks()
   const toggleWalletModal = useWalletModalToggle()
-
+  const theme = useTheme()
   if (account) {
     return (
       <>
@@ -201,7 +202,7 @@ function Web3StatusInner() {
           {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}
           {hasPendingTransactions ? (
             <RowBetween>
-              <Text>{pending?.length} Pending</Text> <Loader stroke="white" />
+              <Loader stroke={theme.text1} /> <Text style={{ marginLeft: '12px' }}>{pending?.length} Pending</Text>
             </RowBetween>
           ) : (
             <>

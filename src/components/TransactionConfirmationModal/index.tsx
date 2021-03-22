@@ -59,11 +59,11 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
           <CustomLightSpinner src={Circle} alt="loader" size={'48px'} />
         </ConfirmedIcon>
         <AutoColumn gap="12px" justify={'center'}>
-          <Text fontWeight={500} fontSize={18}>
+          <Text fontWeight={400} fontSize={18}>
             Waiting For Confirmation
           </Text>
           <AutoColumn gap="12px" justify={'center'}>
-            <Text fontWeight={600} fontSize={14} textAlign="center" color={theme.text2}>
+            <Text fontWeight={400} fontSize={14} textAlign="center" color={theme.text2}>
               {pendingText}
             </Text>
           </AutoColumn>
@@ -104,18 +104,24 @@ function TransactionSubmittedContent({
           <TransactionSubmitted style={{ strokeWidth: 0.5, color: theme.primary1 }} />
         </ConfirmedIcon>
         <AutoColumn gap="12px" justify={'center'}>
-          <Text fontWeight={500} fontSize={20} marginBottom="32px">
+          <Text fontWeight={400} fontSize={18} marginBottom="32px">
             Transaction Submitted
           </Text>
           {chainId && hash && (
-            <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>
-              <Text fontWeight={500} fontSize={14} color={theme.primary1}>
+            <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')} style={{ color: theme.primary1 }}>
+              <Text fontWeight={400} fontSize={14} color={theme.primary1}>
                 View on Etherscan
               </Text>
             </ExternalLink>
           )}
           {currencyToAdd && library?.provider?.isMetaMask && (
-            <ButtonGray mt="12px" padding="8px 15px" width="fit-content" onClick={addToken} style={{ margin: 0 }}>
+            <ButtonGray
+              mt="12px"
+              padding="8px 15px"
+              width="fit-content"
+              onClick={addToken}
+              style={{ margin: 0, background: theme.translucent }}
+            >
               {!success ? (
                 <RowFixed>
                   <Text fontSize={13} lineHeight="17.36px" color={theme.text1}>
@@ -131,12 +137,8 @@ function TransactionSubmittedContent({
               )}
             </ButtonGray>
           )}
-          <ButtonPrimary
-            onClick={onDismiss}
-            style={{ margin: '20px 0 0 0', height: '48px', width: '240px' }}
-            borderRadius="49px"
-          >
-            <Text fontWeight={500} fontSize={20} color={theme.bg1}>
+          <ButtonPrimary onClick={onDismiss} style={{ marginTop: '20px', width: '240px' }}>
+            <Text fontWeight={500} fontSize={16} color={theme.bg1}>
               Close
             </Text>
           </ButtonPrimary>
