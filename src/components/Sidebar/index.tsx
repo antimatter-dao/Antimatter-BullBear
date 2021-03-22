@@ -1,8 +1,9 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 // import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
-import { NavLink } from 'react-router-dom'
+import { headerHeight } from '../Header'
 
 const tabs = [
   { title: 'Option Trading', route: 'swap' },
@@ -11,6 +12,7 @@ const tabs = [
     title: 'Liquidity',
     route: 'pool'
   },
+  { title: 'Option Exercise', route: 'option exercise' },
   { title: 'Matter Token', route: 'matterToken' },
   { title: 'Governance', route: 'governance' },
   { title: 'Info', route: 'info' }
@@ -32,6 +34,9 @@ const StyledSidebar = styled.div`
     #000000;
   display: flex;
   flex-direction: column;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  height:  calc(100vh - ${headerHeight});
+  `}
 `
 
 const activeClassName = 'active'

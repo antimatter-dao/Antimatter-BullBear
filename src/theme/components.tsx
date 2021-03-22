@@ -55,6 +55,9 @@ export const Button = styled.button.attrs<{ warning: boolean }, { backgroundColo
 
 export const CloseIcon = styled(X)<{ onClick: () => void }>`
   cursor: pointer;
+  > * {
+    stroke: ${({ theme }) => theme.text3};
+  }
 `
 
 // for wrapper react feather icons
@@ -97,7 +100,6 @@ export const LinkStyledButton = styled.button<{ disabled?: boolean }>`
 
 // An internal link from the react-router-dom library that is correctly styled
 export const StyledInternalLink = styled(Link)`
-  text-decoration: underline;
   cursor: pointer;
   color: ${({ theme }) => theme.primary1};
   font-weight: 500;

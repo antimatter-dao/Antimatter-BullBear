@@ -1,6 +1,6 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
 import React, { useState } from 'react'
-import { Text } from 'rebass'
+// import { Text } from 'rebass'
 // import { NavLink } from 'react-router-dom'
 // import { darken } from 'polished'
 // import { useTranslation } from 'react-i18next'
@@ -9,7 +9,7 @@ import styled from 'styled-components'
 
 import { useActiveWeb3React } from '../../hooks'
 // import { useDarkModeManager } from '../../state/user/hooks'
-import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
+import { /*useETHBalances,*/ useAggregateUniBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
 import { TYPE /*ExternalLink*/ } from '../../theme'
@@ -28,6 +28,9 @@ import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
+
+export const headerHeight = '65px',
+  headerHeightDisplacement = '32px'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -60,7 +63,7 @@ const HeaderControls = styled.div`
   align-items: center;
   justify-self: flex-end;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-  height: 65px;
+    height: ${headerHeight};
     flex-direction: row;
     justify-content: space-between;
     justify-self: center;
@@ -194,17 +197,17 @@ const NetworkCard = styled.div`
   font-weight: 500;
 `
 
-const BalanceText = styled(Text)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
-  ::after {
-    content: '';
-    border-right: 1px solid ${({ theme }) => theme.text1};
-    margin: 0 16px;
-    height: 16px;
-  }
-`
+// const BalanceText = styled(Text)`
+//   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+//     display: none;
+//   `};
+//   ::after {
+//     content: '';
+//     border-right: 1px solid ${({ theme }) => theme.text1};
+//     margin: 0 16px;
+//     height: 16px;
+//   }
+// `
 
 // const activeClassName = 'ACTIVE'
 
@@ -306,7 +309,7 @@ export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   // const { t } = useTranslation()
 
-  const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+  // const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   // const [isDark] = useDarkModeManager()
   // const [darkMode, toggleDarkMode] = useDarkModeManager()
 
@@ -404,11 +407,11 @@ export default function Header() {
               </UNIWrapper>
             )}
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-              {account && userEthBalance ? (
+              {/* {account && userEthBalance ? (
                 <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
                   {userEthBalance?.toSignificant(4)} ETH
                 </BalanceText>
-              ) : null}
+              ) : null} */}
               <Web3Status />
             </AccountElement>
           </div>

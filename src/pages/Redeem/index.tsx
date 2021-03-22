@@ -41,7 +41,7 @@ import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 
-export default function Generate({
+export default function Redeem({
   match: {
     params: { currencyIdA, currencyIdB }
   },
@@ -78,8 +78,6 @@ export default function Generate({
     poolTokenPercentage,
     error
   } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
-
-  console.log('currencies', currencies)
 
   const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
 
@@ -277,9 +275,9 @@ export default function Generate({
       console.log('newCurrency', newCurrencyIdA, currencyIdB)
 
       if (newCurrencyIdA === currencyIdB) {
-        history.push(`/generate/${currencyIdB}/${currencyIdA}`)
+        history.push(`/redeem/${currencyIdB}/${currencyIdA}`)
       } else {
-        history.push(`/generate/${newCurrencyIdA}/${currencyIdB}`)
+        history.push(`/redeem/${newCurrencyIdA}/${currencyIdB}`)
       }
     },
     [currencyIdB, history, currencyIdA]
@@ -289,12 +287,12 @@ export default function Generate({
       const newCurrencyIdB = currencyId(currencyB)
       if (currencyIdA === newCurrencyIdB) {
         if (currencyIdB) {
-          history.push(`/generate/${currencyIdB}/${newCurrencyIdB}`)
+          history.push(`/redeem/${currencyIdB}/${newCurrencyIdB}`)
         } else {
-          history.push(`/generate/${newCurrencyIdB}`)
+          history.push(`/redeem/${newCurrencyIdB}`)
         }
       } else {
-        history.push(`/generate/${currencyIdA ? currencyIdA : 'ETH'}/${newCurrencyIdB}`)
+        history.push(`/redeem/${currencyIdA ? currencyIdA : 'ETH'}/${newCurrencyIdB}`)
       }
     },
     [currencyIdA, history, currencyIdB]
@@ -314,7 +312,7 @@ export default function Generate({
   return (
     <>
       <AppBody>
-        <MarketStrategyTabs generation />
+        <MarketStrategyTabs generation={false} />
         <Wrapper>
           <TransactionConfirmationModal
             isOpen={showConfirm}

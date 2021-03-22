@@ -11,7 +11,6 @@ export const Wrapper = styled.div`
 `
 
 export const ArrowWrapper = styled.div<{ clickable: boolean }>`
-  height: 30px;
   ${({ clickable }) =>
     clickable
       ? css`

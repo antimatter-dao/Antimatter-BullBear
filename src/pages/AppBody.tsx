@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 export const BodyWrapper = styled.div`
-  position: relative;
   max-width: 480px;
   width: 100%;
   background: ${({ theme }) => theme.bg1}

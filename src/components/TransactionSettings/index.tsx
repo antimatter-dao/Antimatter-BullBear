@@ -28,7 +28,8 @@ const FancyButton = styled.button`
   min-width: 3.5rem;
   border: 1px solid ${({ theme }) => theme.bg3};
   outline: none;
-  background: ${({ theme }) => theme.bg3};
+  padding: 14px;
+  background: ${({ theme }) => theme.translucent};
   :hover {
     border: 1px solid ${({ theme }) => theme.bg4};
   }
@@ -60,9 +61,7 @@ const Input = styled.input`
 `
 
 const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }>`
-  height: 3rem;
   position: relative;
-  padding: 0 0.75rem;
   flex: 1;
   border: ${({ theme, active, warning }) => active && `1px solid ${warning ? theme.red1 : theme.primary1}`};
   :hover {
@@ -145,7 +144,7 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
   }
 
   return (
-    <AutoColumn gap="md">
+    <AutoColumn gap="24px">
       <AutoColumn gap="sm">
         <RowFixed>
           <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
