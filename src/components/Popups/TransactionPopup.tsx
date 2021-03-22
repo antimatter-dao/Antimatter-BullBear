@@ -35,7 +35,7 @@ export default function TransactionPopup({
         <TYPE.body fontWeight={400}>{summary ?? 'Hash: ' + hash.slice(0, 8) + '...' + hash.slice(58, 65)}</TYPE.body>{' '}
       </RowNoFlex>
       {chainId && (
-        <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')} style={{ marginLeft: '32px' }}>
+        <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')} style={{ margin: '9px 32px' }}>
           View on Etherscan
         </ExternalLink>
       )}

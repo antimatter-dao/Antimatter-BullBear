@@ -21,7 +21,7 @@ const OptionCard = styled(InfoCard as any)`
   align-items: center;
   justify-content: center;
   margin-top: 2rem;
-  padding: 1rem;
+  padding: 14px;
 `
 
 const OptionCardLeft = styled.div`

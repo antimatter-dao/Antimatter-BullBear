@@ -10,7 +10,7 @@ interface StyleProp {
   borderRadius?: string
 }
 
-const Base = styled(RebassButton)<{
+export const Base = styled(RebassButton)<{
   padding?: string
   width?: string
   borderRadius?: string

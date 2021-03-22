@@ -1,5 +1,5 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
-import React, { useState } from 'react'
+import React from 'react'
 // import { Text } from 'rebass'
 // import { NavLink } from 'react-router-dom'
 // import { darken } from 'polished'
@@ -10,7 +10,7 @@ import styled from 'styled-components'
 import { useActiveWeb3React } from '../../hooks'
 // import { useDarkModeManager } from '../../state/user/hooks'
 import { /*useETHBalances,*/ useAggregateUniBalance } from '../../state/wallet/hooks'
-import { CardNoise } from '../earn/styled'
+// import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
 import { TYPE /*ExternalLink*/ } from '../../theme'
 
@@ -21,12 +21,10 @@ import { TYPE /*ExternalLink*/ } from '../../theme'
 import { /*Row,*/ RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
-import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
+// import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
 import { useUserHasAvailableClaim } from '../../state/claim/hooks'
-import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
-import { Dots } from '../swap/styleds'
-import Modal from '../Modal'
-import UniBalanceContent from './UniBalanceContent'
+// import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
+// import { Dots } from '../swap/styleds'
 import usePrevious from '../../hooks/usePrevious'
 
 export const headerHeight = '65px',
@@ -155,15 +153,6 @@ const UNIAmount = styled(AccountElement)`
 const UNIWrapper = styled.span`
   width: fit-content;
   position: relative;
-  cursor: pointer;
-
-  :hover {
-    opacity: 0.8;
-  }
-
-  :active {
-    opacity: 0.9;
-  }
 `
 
 const HideSmall = styled.span`
@@ -313,16 +302,16 @@ export default function Header() {
   // const [isDark] = useDarkModeManager()
   // const [darkMode, toggleDarkMode] = useDarkModeManager()
 
-  const toggleClaimModal = useToggleSelfClaimModal()
+  // const toggleClaimModal = useToggleSelfClaimModal()
 
   const availableClaim: boolean = useUserHasAvailableClaim(account)
 
-  const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
+  // const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
 
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
-  const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
-  const showClaimPopup = useShowClaimPopup()
+  // const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
+  // const showClaimPopup = useShowClaimPopup()
 
   const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
@@ -330,9 +319,9 @@ export default function Header() {
   return (
     <HeaderFrame>
       <ClaimModal />
-      <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
+      {/* <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
-      </Modal>
+      </Modal> */}
       <HeaderRow>
         {/* <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
@@ -370,7 +359,7 @@ export default function Header() {
             )}
           </HideSmall>
           <div>
-            {availableClaim && !showClaimPopup && (
+            {/* {availableClaim && !showClaimPopup && (
               <UNIWrapper onClick={toggleClaimModal}>
                 <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
                   <TYPE.white padding="0 2px">
@@ -379,10 +368,11 @@ export default function Header() {
                 </UNIAmount>
                 <CardNoise />
               </UNIWrapper>
-            )}
+            )} */}
             {!!account && !availableClaim && aggregateBalance && (
-              <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
-                <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
+              // <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
+              <UNIWrapper>
+                <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'none' }}>
                   {account && (
                     <HideSmall>
                       <TYPE.white

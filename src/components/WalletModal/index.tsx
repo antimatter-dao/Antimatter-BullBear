@@ -1,6 +1,7 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
+import { ButtonOutlinedPrimary } from 'components/Button'
 import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
@@ -22,8 +23,8 @@ import PendingView from './PendingView'
 
 const CloseIcon = styled.div`
   position: absolute;
-  right: 1rem;
-  top: 14px;
+  right: 2rem;
+  top: 2rem;
   &:hover {
     cursor: pointer;
     opacity: 0.6;
@@ -285,6 +286,7 @@ export default function WalletModal({
             header={option.name}
             subheader={null} //use option.descriptio to bring back multi-line
             icon={require('../../assets/images/' + option.iconName)}
+            size={21}
           />
         )
       )
@@ -325,18 +327,7 @@ export default function WalletModal({
         <CloseIcon onClick={toggleWalletModal}>
           <CloseColor />
         </CloseIcon>
-        {walletView !== WALLET_VIEWS.ACCOUNT ? (
-          <HeaderRow color="blue">
-            <HoverText
-              onClick={() => {
-                setPendingError(false)
-                setWalletView(WALLET_VIEWS.ACCOUNT)
-              }}
-            >
-              Back
-            </HoverText>
-          </HeaderRow>
-        ) : (
+        {walletView === WALLET_VIEWS.ACCOUNT && (
           <HeaderRow>
             <HoverText>Connect to a wallet</HoverText>
           </HeaderRow>
@@ -348,7 +339,16 @@ export default function WalletModal({
               error={pendingError}
               setPendingError={setPendingError}
               tryActivation={tryActivation}
-            />
+            >
+              <ButtonOutlinedPrimary
+                onClick={() => {
+                  setPendingError(false)
+                  setWalletView(WALLET_VIEWS.ACCOUNT)
+                }}
+              >
+                Change Wallet
+              </ButtonOutlinedPrimary>
+            </PendingView>
           ) : (
             <OptionGrid>{getOptions()}</OptionGrid>
           )}

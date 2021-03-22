@@ -5,7 +5,6 @@ import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch } from '../../state'
 import { clearAllTransactions } from '../../state/transactions/actions'
 import { shortenAddress } from '../../utils'
-import { AutoRow } from '../Row'
 import Copy from './Copy'
 import Transaction from './Transaction'
 
@@ -21,6 +20,8 @@ import { ButtonSecondary, ButtonOutlinedPrimary, ButtonPrimary } from '../Button
 
 // import { ExternalLink as LinkIcon } from 'react-feather'
 import { /*ExternalLink*/ LinkStyledButton, TYPE } from '../../theme'
+import { AutoColumn } from 'components/Column'
+import { RowBetween } from 'components/Row'
 
 // const HeaderRow = styled.div`
 //   ${({ theme }) => theme.flexRowNoWrap};
@@ -401,12 +402,16 @@ export default function AccountDetails({
       </LowerSection>
       {!!pendingTransactions.length || !!confirmedTransactions.length ? (
         <LowerSection>
-          <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
-            <TYPE.body>Recent Transactions</TYPE.body>
-            <LinkStyledButton onClick={clearAllTransactionsCallback}>(clear all)</LinkStyledButton>
-          </AutoRow>
-          {renderTransactions(pendingTransactions)}
-          {renderTransactions(confirmedTransactions)}
+          <AutoColumn gap="16px" style={{ width: '100%' }}>
+            <RowBetween>
+              <TYPE.body>Recent Transactions</TYPE.body>
+              <LinkStyledButton onClick={clearAllTransactionsCallback}>(clear all)</LinkStyledButton>
+            </RowBetween>
+            <AutoColumn>
+              {renderTransactions(pendingTransactions)}
+              {renderTransactions(confirmedTransactions)}
+            </AutoColumn>
+          </AutoColumn>
         </LowerSection>
       ) : (
         <LowerSection>
