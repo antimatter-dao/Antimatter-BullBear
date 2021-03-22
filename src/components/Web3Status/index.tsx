@@ -1,6 +1,6 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { darken, lighten } from 'polished'
+import { darken } from 'polished'
 import React, { useMemo } from 'react'
 import { Activity } from 'react-feather'
 import { useTranslation } from 'react-i18next'
@@ -25,6 +25,7 @@ import Loader from '../Loader'
 
 import { RowBetween } from '../Row'
 import WalletModal from '../WalletModal'
+import { TYPE } from 'theme'
 
 const IconWrapper = styled.div<{ size?: number }>`
   ${({ theme }) => theme.flexColumnNoWrap};
@@ -60,6 +61,7 @@ const Web3StatusError = styled(Web3StatusGeneric)`
 `
 
 const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
+  padding: 8px 25px;
   border: 1px solid ${({ theme }) => theme.text1};
   border-color: ${({ theme }) => theme.text1};
   color: ${({ theme }) => theme.text1};
@@ -93,11 +95,9 @@ const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
   font-weight: 500;
   :hover,
   :focus {
-    background-color: ${({ pending, theme }) => (pending ? darken(0.05, theme.primary1) : lighten(0.05, theme.bg2))};
-
-    :focus {
-      border: 1px solid ${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : darken(0.1, theme.bg3))};
-    }
+    color:${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : theme.text1)};
+    border: none;
+    box-shadow: none
   }
   & p{
     margin: 0;
@@ -111,9 +111,9 @@ const Text = styled.p`
   text-overflow: ellipsis;
   white-space: nowrap;
   margin: 0 0.5rem 0 0.25rem;
-  font-size: 1rem;
+  font-size: 13px;
   width: fit-content;
-  font-weight: 500;
+  font-weight: 400;
 `
 
 const NetworkIcon = styled(Activity)`
@@ -223,7 +223,7 @@ function Web3StatusInner() {
   } else {
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
-        <Text>{t('Connect to a wallet')}</Text>
+        <TYPE.black fontSize={16}>{t('Connect Wallet')}</TYPE.black>
       </Web3StatusConnect>
     )
   }
