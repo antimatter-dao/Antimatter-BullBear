@@ -12,7 +12,7 @@ const tabs = [
     title: 'Liquidity',
     route: 'pool'
   },
-  { title: 'Option Exercise', route: 'option exercise' },
+  { title: 'Option Exercise', route: 'exercise' },
   { title: 'Matter Token', route: 'matterToken' },
   { title: 'Governance', route: 'governance' },
   { title: 'Info', route: 'info' }

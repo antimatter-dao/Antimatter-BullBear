@@ -102,7 +102,7 @@ const StyledBalanceMax = styled.button`
   border: 1px solid transparent;
   border-radius: 49px;
   font-size: 0.875rem;
-  padding: 0 1rem
+  padding: 0 1rem;
   font-weight: 500;
   cursor: pointer;
   color: ${({ theme }) => theme.text1};

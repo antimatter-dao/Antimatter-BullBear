@@ -1,5 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
+import { RowBetween } from '../components/Row'
+import { TYPE } from '../theme'
+import Settings from '../components/Settings'
 
 export const BodyWrapper = styled.div`
   max-width: 480px;
@@ -18,4 +21,24 @@ export const BodyWrapper = styled.div`
  */
 export default function AppBody({ children }: { children: React.ReactNode }) {
   return <BodyWrapper>{children}</BodyWrapper>
+}
+
+const StyledSwapHeader = styled.div`
+  margin-bottom: -4px;
+  font-size: 22px;
+  width: 100%;
+  max-width: 480px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.text1};
+`
+
+export function BodyHeader({ title }: { title: string }) {
+  return (
+    <StyledSwapHeader>
+      <RowBetween>
+        <TYPE.mediumHeader>{title}</TYPE.mediumHeader>
+        <Settings />
+      </RowBetween>
+    </StyledSwapHeader>
+  )
 }

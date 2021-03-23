@@ -34,6 +34,8 @@ import VotePage from './Vote/VotePage'
 import MarketStrategy from './MarketStrategy'
 import Generate from './Generate'
 import Redeem from './Redeem'
+import Exercise from './Exercise'
+
 
 const AppWrapper = styled.div`
   display: flex;
@@ -106,6 +108,7 @@ export default function App() {
                 <Route exact strict path="/generate/:currencyIdA/:currencyIdB" component={Generate} />
                 <Route exact strict path="/redeem" component={Redeem} />
                 <Route exact strict path="/redeem/:currencyIdA/:currencyIdB" component={Redeem} />
+                <Route exact strict path="/exercise" component={Exercise} />
                 <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                 <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
