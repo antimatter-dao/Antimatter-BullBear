@@ -27,7 +27,7 @@ export default function Exercise({ history }: RouteComponentProps) {
 
   return (
     <AppBody>
-      <BodyHeader title={'Option Execrise'} />
+      <BodyHeader title={'Option Exercise'} />
       <Wrapper id="swap-page" style={{ padding: '0 0', marginTop: '20px' }}>
         <AutoColumn gap="20px">
           <ButtonSelect

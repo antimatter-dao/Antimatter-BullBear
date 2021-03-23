@@ -119,7 +119,7 @@ export function MarketStrategyTabs({ generation }: { generation: boolean }) {
           <StyledArrowLeft />
         </HistoryLink>
         <TYPE.mediumHeader>{generation ? 'Generation' : 'Redemption'}</TYPE.mediumHeader>
-        <Settings />
+        <div />
       </RowBetween>
     </Tabs>
   )

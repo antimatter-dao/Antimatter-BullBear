@@ -1,8 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { RowBetween } from '../components/Row'
 import { TYPE } from '../theme'
-import Settings from '../components/Settings'
+import { ColumnCenter } from '../components/Column'
 
 export const BodyWrapper = styled.div`
   max-width: 480px;
@@ -35,10 +34,9 @@ const StyledSwapHeader = styled.div`
 export function BodyHeader({ title }: { title: string }) {
   return (
     <StyledSwapHeader>
-      <RowBetween>
+      <ColumnCenter>
         <TYPE.mediumHeader>{title}</TYPE.mediumHeader>
-        <Settings />
-      </RowBetween>
+      </ColumnCenter>
     </StyledSwapHeader>
   )
 }
