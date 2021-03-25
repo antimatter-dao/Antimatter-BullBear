@@ -40,6 +40,7 @@ import { currencyId } from '../../utils/currencyId'
 import { PoolPriceBar } from '../AddLiquidity/PoolPriceBar'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
+import TokenTypeRadioButton, { TOKEN_TYPES } from 'components/marketStrategy/TokenTypeRadioButton'
 
 export default function Generate({
   match: {
@@ -91,6 +92,9 @@ export default function Generate({
   const deadline = useTransactionDeadline() // custom from users settings
   const [allowedSlippage] = useUserSlippageTolerance() // custom from users
   const [txHash, setTxHash] = useState<string>('')
+
+  //Token Type
+  const [tokenType, setTokenType] = useState(TOKEN_TYPES.callPut)
 
   // get formatted amounts
   const formattedAmounts = {
@@ -361,6 +365,7 @@ export default function Generate({
                   </OutlineCard>
                 </ColumnCenter>
               ))}
+            <TokenTypeRadioButton selected={tokenType} onCheck={tokenType => setTokenType(tokenType)} />
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               onUserInput={onFieldAInput}

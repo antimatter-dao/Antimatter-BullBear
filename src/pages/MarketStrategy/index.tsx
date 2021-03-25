@@ -163,7 +163,7 @@ export default function MarketStrategy() {
                 </HideSmall>
               </TitleRow>
               <ButtonRow>
-                <ResponsiveButtonPrimary as={Link} padding="14px 10px" to="/create/ETH">
+                <ResponsiveButtonPrimary as={Link} padding="14px 10px" to="/generate">
                   Option generation
                 </ResponsiveButtonPrimary>
                 <ResponsiveButtonPrimary id="join-pool-button" as={Link} padding="14px 10px" to="/add/ETH">

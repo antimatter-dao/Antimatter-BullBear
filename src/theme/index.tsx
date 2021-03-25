@@ -87,7 +87,8 @@ export function colors(darkMode: boolean): Colors {
     // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
     translucent: 'rgba(255, 255, 255, 0.08)',
     gradient1:
-      '#000000 linear-gradient(283.31deg, rgba(255, 255, 255, 0.18) -2.53%, rgba(255, 255, 255, 0.17) 18.66%, rgba(255, 255, 255, 0) 98.68%)'
+      '#000000 linear-gradient(283.31deg, rgba(255, 255, 255, 0.18) -2.53%, rgba(255, 255, 255, 0.17) 18.66%, rgba(255, 255, 255, 0) 98.68%)',
+    gradient2: '#000000 linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%)'
   }
 }
 
@@ -106,6 +107,16 @@ export function theme(darkMode: boolean): DefaultTheme {
 
     // media queries
     mediaWidth: mediaWidthTemplates,
+
+    //rwd
+    mobile: css`
+      display: none;
+      ${mediaWidthTemplates.upToSmall`display:inherit;`}
+    `,
+    desktop: css`
+      ${mediaWidthTemplates.upToSmall`display:none;`}
+    `,
+    mobileHeaderHeight: '90px',
 
     // css snippets
     flexColumnNoWrap: css`

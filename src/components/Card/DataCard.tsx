@@ -42,8 +42,8 @@ export default function DataCard({
         </RowBetween>
       )}
       <AutoColumn gap="8px" style={{ padding: '12px 24px' }}>
-        {data.map(data => (
-          <DataRow data={data} />
+        {data.map((data, idx) => (
+          <DataRow data={data} key={`${data.title}${idx}`} />
         ))}
       </AutoColumn>
       {cardBottom && (
