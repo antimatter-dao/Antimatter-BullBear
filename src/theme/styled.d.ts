@@ -48,6 +48,7 @@ export interface Colors {
 
   //gradient
   gradient1: Color
+  gradient2: Color
 
   //opacity
   translucent: Color
@@ -77,5 +78,10 @@ declare module 'styled-components' {
     // css snippets
     flexColumnNoWrap: FlattenSimpleInterpolation
     flexRowNoWrap: FlattenSimpleInterpolation
+
+    //rwd
+    mobile: FlattenSimpleInterpolation
+    desktop: FlattenSimpleInterpolation
+    mobileHeaderHeight: string
   }
 }

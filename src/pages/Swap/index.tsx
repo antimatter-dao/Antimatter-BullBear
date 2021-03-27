@@ -5,7 +5,6 @@ import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonError, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
-import ButtonSelect from '../../components/Button/ButtonSelect'
 import Card, { GreyCard } from '../../components/Card'
 import Column, { AutoColumn } from '../../components/Column'
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
@@ -51,17 +50,8 @@ import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter
 import { isTradeBetter } from 'utils/trades'
 import { RouteComponentProps } from 'react-router-dom'
 
-const optionTypes = [
-  {
-    id: 'callOption',
-    option: 'Call option'
-  },
-  { id: 'putOption', option: 'Put Option' }
-]
-
 export default function Swap({ history }: RouteComponentProps) {
   const loadedUrlParams = useDefaultsFromURLSearch()
-  const [optionType, setOptionType] = useState(optionTypes[0].id)
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -309,13 +299,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
-  const handleOptionTypeSelect = useCallback(
-    (type: string) => {
-      setOptionType(type) // reset 2 step UI for approvals
-    },
-    [setOptionType]
-  )
-
   return (
     <>
       <TokenWarningModal
@@ -343,13 +326,6 @@ export default function Swap({ history }: RouteComponentProps) {
           />
 
           <AutoColumn gap="20px">
-            <ButtonSelect
-              label="Option Type"
-              onSelection={handleOptionTypeSelect}
-              options={optionTypes}
-              selectedId={optionType}
-            />
-
             <CurrencyInputPanel
               label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
               value={formattedAmounts[Field.INPUT]}

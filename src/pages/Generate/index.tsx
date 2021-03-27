@@ -16,7 +16,7 @@ import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
 import { MinimalPositionCard } from '../../components/PositionCard'
 import Row, { RowBetween, RowFlat } from '../../components/Row'
-
+import { useAllOptionTypes } from '../../state/market/hooks'
 import { ROUTER_ADDRESS } from '../../constants'
 import { PairState } from '../../data/Reserves'
 import { useActiveWeb3React } from '../../hooks'
@@ -40,6 +40,16 @@ import { currencyId } from '../../utils/currencyId'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
+import TokenTypeRadioButton, { TOKEN_TYPES } from '../../components/MarketStrategy/TokenTypeRadioButton'
+import ButtonSelect from '../../components/Button/ButtonSelect'
+
+// const optionTypes = [
+//   {
+//     id: 'callOption',
+//     option: 'Call option'
+//   },
+//   { id: 'putOption', option: 'Put Option' }
+// ]
 
 export default function Generate({
   match: {
@@ -49,7 +59,6 @@ export default function Generate({
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
   const { account, chainId, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
-
   const currencyA = useCurrency(currencyIdA)
   const currencyB = useCurrency(currencyIdB)
 
@@ -62,6 +71,8 @@ export default function Generate({
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
 
   const expertMode = useIsExpertMode()
+
+  const optionTypes = useAllOptionTypes()
 
   // mint state
   const { independentField, typedValue, otherTypedValue } = useMintState()
@@ -93,6 +104,18 @@ export default function Generate({
   const deadline = useTransactionDeadline() // custom from users settings
   const [allowedSlippage] = useUserSlippageTolerance() // custom from users
   const [txHash, setTxHash] = useState<string>('')
+
+  //Token Type
+  const [tokenType, setTokenType] = useState(TOKEN_TYPES.callPut)
+
+  //const [optionType, setOptionType] = useState(0)
+
+  const handleOptionTypeSelect = useCallback(
+    (type: string) => {
+      //setOptionType(type) // reset 2 step UI for approvals
+    },
+    []
+  )
 
   // get formatted amounts
   const formattedAmounts = {
@@ -332,9 +355,9 @@ export default function Generate({
             pendingText={pendingText}
             currencyToAdd={pair?.liquidityToken}
           />
-
-
-          <AutoColumn gap="24px">
+          <AutoColumn gap="30px">
+            <ButtonSelect label="Option Type" onSelection={handleOptionTypeSelect} options={optionTypes} />
+            <TokenTypeRadioButton selected={tokenType} onCheck={tokenType => setTokenType(tokenType)} />
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               onUserInput={onFieldAInput}

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { ReactComponent as Arrow } from '../../assets/svg/arrow_down.svg'
-import { ReactComponent as Cross } from '../../assets/svg/arrow_down.svg'
+import { ReactComponent as Cross } from '../../assets/svg/cross.svg'
 import { ReactComponent as CheckCircleIcon } from '../../assets/svg/check_circle.svg'
 import { ReactComponent as CrossCircleIcon } from '../../assets/svg/cross_circle.svg'
 
