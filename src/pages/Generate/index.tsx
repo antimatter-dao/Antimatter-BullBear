@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, JSBI, TokenAmount, WETH } from '@uniswap/sdk'
+import { currencyEquals, ETHER, JSBI, TokenAmount, WETH } from '@uniswap/sdk'
 import React, { useCallback, useContext, useState } from 'react'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -11,7 +11,7 @@ import { ButtonError, ButtonPrimary } from '../../components/Button'
 import { LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
-import CurrencyInputPanel from '../../components/CurrencyInputPanel'
+import CallOrPutInputPanel from '../../components/CallOrPutInputPanel'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
 import { MinimalPositionCard } from '../../components/PositionCard'
@@ -36,20 +36,11 @@ import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
 import { ConfirmAddModalBottom } from './ConfirmAddModalBottom'
-import { currencyId } from '../../utils/currencyId'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import TokenTypeRadioButton, { TOKEN_TYPES } from '../../components/MarketStrategy/TokenTypeRadioButton'
 import ButtonSelect from '../../components/Button/ButtonSelect'
-
-// const optionTypes = [
-//   {
-//     id: 'callOption',
-//     option: 'Call option'
-//   },
-//   { id: 'putOption', option: 'Put Option' }
-// ]
 
 export default function Generate({
   match: {
@@ -291,35 +282,6 @@ export default function Generate({
     currencies[Field.CURRENCY_A]?.symbol
   } and ${parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)} ${currencies[Field.CURRENCY_B]?.symbol}`
 
-  const handleCurrencyASelect = useCallback(
-    (currencyA: Currency) => {
-      const newCurrencyIdA = currencyId(currencyA)
-      console.log('newCurrency', newCurrencyIdA, currencyIdB)
-
-      if (newCurrencyIdA === currencyIdB) {
-        history.push(`/generate/${currencyIdB}/${currencyIdA}`)
-      } else {
-        history.push(`/generate/${newCurrencyIdA}/${currencyIdB}`)
-      }
-    },
-    [currencyIdB, history, currencyIdA]
-  )
-  const handleCurrencyBSelect = useCallback(
-    (currencyB: Currency) => {
-      const newCurrencyIdB = currencyId(currencyB)
-      if (currencyIdA === newCurrencyIdB) {
-        if (currencyIdB) {
-          history.push(`/generate/${currencyIdB}/${newCurrencyIdB}`)
-        } else {
-          history.push(`/generate/${newCurrencyIdB}`)
-        }
-      } else {
-        history.push(`/generate/${currencyIdA ? currencyIdA : 'ETH'}/${newCurrencyIdB}`)
-      }
-    },
-    [currencyIdA, history, currencyIdB]
-  )
-
   const handleDismissConfirmation = useCallback(() => {
     setShowConfirm(false)
     // if there was a tx hash, we want to clear the input
@@ -367,13 +329,12 @@ export default function Generate({
               })}
             />
             <TokenTypeRadioButton selected={tokenType} onCheck={tokenType => setTokenType(tokenType)} />
-            <CurrencyInputPanel
+            <CallOrPutInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               onUserInput={onFieldAInput}
               onMax={() => {
                 onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
               }}
-              onCurrencySelect={handleCurrencyASelect}
               showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
               currency={currencies[Field.CURRENCY_A]}
               id="add-liquidity-input-tokena"
@@ -383,10 +344,9 @@ export default function Generate({
             <ColumnCenter>
               <Plus size="28" color={theme.text2} />
             </ColumnCenter>
-            <CurrencyInputPanel
+            <CallOrPutInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               onUserInput={onFieldBInput}
-              onCurrencySelect={handleCurrencyBSelect}
               onMax={() => {
                 onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
               }}
