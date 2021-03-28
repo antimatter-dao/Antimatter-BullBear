@@ -62,8 +62,6 @@ export function useAllOptionTypes() {
       })
   }, [putAddressesRes])
 
-  console.log('putAddrsses', callAddresses, putAddresses)
-
   const allCalls = useMultipleContractSingleData(
     callAddresses,
     CALL_OR_PUT_INTERFACE,
