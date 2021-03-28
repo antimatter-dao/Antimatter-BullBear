@@ -41,7 +41,7 @@ export function useAllOptionTypes() {
   }
 
   const callAddressesRes = useSingleContractMultipleData(antimatterContract, 'allCalls', optionTypeIndexes)
-  const putAddressesRes = useSingleContractMultipleData(antimatterContract, 'allPuts', optionTypeIndexes)
+  //const putAddressesRes = useSingleContractMultipleData(antimatterContract, 'allPuts', optionTypeIndexes)
   const callAddresses = useMemo(() => {
     return callAddressesRes
       .filter(item => {
@@ -52,15 +52,15 @@ export function useAllOptionTypes() {
       })
   }, [callAddressesRes])
 
-  const putAddresses = useMemo(() => {
-    return putAddressesRes
-      .filter(item => {
-        return item.result
-      })
-      .map(item => {
-        return item?.result?.[0]
-      })
-  }, [putAddressesRes])
+  // const putAddresses = useMemo(() => {
+  //   return putAddressesRes
+  //     .filter(item => {
+  //       return item.result
+  //     })
+  //     .map(item => {
+  //       return item?.result?.[0]
+  //     })
+  // }, [putAddressesRes])
 
   const allCalls = useMultipleContractSingleData(
     callAddresses,
