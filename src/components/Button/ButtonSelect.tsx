@@ -68,7 +68,6 @@ const SelectOption = styled(Base)<{ selected: boolean }>`
 
 export default function ButtonSelect({
   children,
-
   label,
   options,
   onSelection,

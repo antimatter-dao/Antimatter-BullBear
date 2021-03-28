@@ -165,6 +165,34 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "attributes",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -351,6 +379,11 @@
       {
         "internalType": "uint256",
         "name": "undInMax",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "curInMax",
         "type": "uint256"
       }
     ],

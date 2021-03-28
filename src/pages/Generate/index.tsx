@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@uniswap/sdk'
+import { Currency, currencyEquals, ETHER, JSBI, TokenAmount, WETH } from '@uniswap/sdk'
 import React, { useCallback, useContext, useState } from 'react'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -110,12 +110,9 @@ export default function Generate({
 
   //const [optionType, setOptionType] = useState(0)
 
-  const handleOptionTypeSelect = useCallback(
-    (type: string) => {
-      //setOptionType(type) // reset 2 step UI for approvals
-    },
-    []
-  )
+  const handleOptionTypeSelect = useCallback((type: string) => {
+    //setOptionType(type) // reset 2 step UI for approvals
+  }, [])
 
   // get formatted amounts
   const formattedAmounts = {
@@ -356,7 +353,19 @@ export default function Generate({
             currencyToAdd={pair?.liquidityToken}
           />
           <AutoColumn gap="30px">
-            <ButtonSelect label="Option Type" onSelection={handleOptionTypeSelect} options={optionTypes} />
+            <ButtonSelect
+              label="Option Type"
+              onSelection={handleOptionTypeSelect}
+              options={optionTypes.map(item => {
+                return {
+                  id: item.id,
+                  option: `${item.underlyingSymbol}-${item.currencySymbol} ${JSBI.divide(
+                    JSBI.BigInt(item.priceFloor),
+                    JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))
+                  )}-${JSBI.divide(JSBI.BigInt(item.priceCap), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)))}`
+                }
+              })}
+            />
             <TokenTypeRadioButton selected={tokenType} onCheck={tokenType => setTokenType(tokenType)} />
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
