@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { Button } from 'rebass/styled-components'
 import { X } from 'react-feather'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
+import { ReactComponent as Menu } from '../../assets/svg/menu.svg'
 import { headerHeight } from '../Header'
 import { AutoColumn } from 'components/Column'
+import { Base } from '../Button'
 
 const tabs = [
   { title: 'Option Trading', route: 'swap' },
@@ -44,22 +45,27 @@ const StyledSidebar = styled.div`
 `
 
 const activeClassName = 'active'
-const Tab = styled(NavLink)`
+const TabBasic = styled(NavLink)`
   width: 100%;
-  border-left: 4px solid transparent;
-  color: ${({ theme }) => theme.text1};
   font-size: 1rem;
   padding: 16px 30px;
   opacity: 0.6;
   cursor: pointer;
   text-decoration: none;
+  color: ${({ theme }) => theme.text1};
+  :focus,
+  :hover {
+    opacity: 1;
+  }
+`
+const Tab = styled(TabBasic)`
+  border-left: 4px solid transparent;
 
   &.${activeClassName}, :hover,
   :focus {
     border-left: 4px solid;
     border-color: ${({ theme }) => theme.primary1};
     background-color: ${({ theme }) => theme.translucent};
-    opacity: 1;
   }
 `
 const StyledLogo = styled(Logo)`
@@ -95,8 +101,9 @@ const MobileHeader = styled.header`
   ${({ theme }) => theme.mobile}
   position:relative;
 `
-const ToggleMenuButton = styled(Button)`
+const ToggleMenuButton = styled(Base)`
   background: none;
+  width: auto;
   :active,
   :focus {
     border: none;
@@ -118,33 +125,15 @@ function ToggleMenu() {
 
   return (
     <>
-      <ToggleMenuButton onClick={() => setIsOpen(!isOpen)}>
-        <X />
-      </ToggleMenuButton>
+      <ToggleMenuButton onClick={() => setIsOpen(!isOpen)}>{isOpen ? <X /> : <Menu />}</ToggleMenuButton>
       {isOpen && (
         <TogggleMenuWrapper>
           <AutoColumn>
-            {tabs.map(({ title, route }) =>
-              route === 'pool' ? (
-                <Tab
-                  key={title}
-                  to={`/${route}`}
-                  isActive={(match, { pathname }) =>
-                    Boolean(match) ||
-                    pathname.startsWith('/add') ||
-                    pathname.startsWith('/remove') ||
-                    pathname.startsWith('/create') ||
-                    pathname.startsWith('/find')
-                  }
-                >
-                  {title}
-                </Tab>
-              ) : (
-                <Tab key={title} to={`/${route}`}>
-                  {title}
-                </Tab>
-              )
-            )}
+            {tabs.map(({ title, route }) => (
+              <TabBasic key={title} to={`/${route}`} onClick={() => setIsOpen(!isOpen)}>
+                {title}
+              </TabBasic>
+            ))}
           </AutoColumn>
         </TogggleMenuWrapper>
       )}
