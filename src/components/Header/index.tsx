@@ -18,7 +18,7 @@ import { TYPE /*ExternalLink*/ } from '../../theme'
 // import { Moon, Sun } from 'react-feather'
 // import Menu from '../Menu'
 
-import { /*Row,*/ RowFixed } from '../Row'
+// import { /*Row,*/ RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
 // import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
@@ -109,11 +109,11 @@ const HeaderElement = styled.div<{
 //   align-items: center;
 // `
 
-const HeaderRow = styled(RowFixed)`
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-   width: 100%;
-  `};
-`
+// const HeaderRow = styled(RowFixed)`
+//   ${({ theme }) => theme.mediaWidth.upToMedium`
+//    width: 100%;
+//   `};
+// `
 
 // const HeaderLinks = styled(Row)`
 //   justify-content: center;
@@ -322,8 +322,8 @@ export default function Header() {
       {/* <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
       </Modal> */}
-      <HeaderRow>
-        {/* <HeaderLinks>
+      {/* <HeaderRow> */}
+      {/* <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
           </StyledNavLink>
@@ -350,7 +350,7 @@ export default function Header() {
             Charts <span style={{ fontSize: '11px' }}>↗</span>
           </StyledExternalLink>
         </HeaderLinks> */}
-      </HeaderRow>
+      {/* </HeaderRow> */}
       <HeaderControls>
         <HeaderElement show={!!account}>
           <HideSmall>

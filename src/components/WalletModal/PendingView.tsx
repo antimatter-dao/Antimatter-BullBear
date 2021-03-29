@@ -11,6 +11,14 @@ import { ButtonPrimary } from 'components/Button'
 import { ReactComponent as CrossCircle } from 'assets/svg/cross_circle.svg'
 import { AutoColumn } from 'components/Column'
 
+const StyledAutoColumn = styled(AutoColumn)<{ error: boolean }>`
+  grid-gap: 32px;
+  margin: ${({ error }) => (error ? '-2rem' : '0')} -3rem -10px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  margin: 0;`}
+`
+
 const PendingSection = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
   align-items: center;
@@ -76,7 +84,7 @@ export default function PendingView({
   // const isMetamask = window?.ethereum?.isMetaMask
 
   return (
-    <AutoColumn style={{ margin: `${error ? '-2rem' : '0'} -3rem -10px` }} gap="32px">
+    <StyledAutoColumn error={!!error}>
       <PendingSection>
         {error ? (
           <AutoColumn justify="center" gap="16px">
@@ -136,6 +144,6 @@ export default function PendingView({
           )}
         </RowBetween>
       )}
-    </AutoColumn>
+    </StyledAutoColumn>
   )
 }
