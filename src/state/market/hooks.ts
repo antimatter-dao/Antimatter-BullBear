@@ -9,6 +9,12 @@ import { Interface } from '@ethersproject/abi'
 import CALL_OR_PUT_ABI from '../../constants/abis/callOrPut.json'
 import { useMemo } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
+import { Currency, CurrencyAmount, Pair } from '@uniswap/sdk'
+import { Field } from '../mint/actions'
+import { PairState, usePair } from '../../data/Reserves'
+import { useActiveWeb3React } from '../../hooks'
+import { useCurrencyBalances } from '../wallet/hooks'
+import { useMintState } from '../mint/hooks'
 const CALL_OR_PUT_INTERFACE = new Interface(CALL_OR_PUT_ABI)
 
 export interface OptionTypeData {
@@ -139,4 +145,62 @@ export function useAllOptionTypes() {
       console.log('optionTypeData', optionTypeData)
       return optionTypeData
     })
+}
+
+export function useDerivedStrategyInfo(
+  currencyA: Currency | undefined,
+  currencyB: Currency | undefined
+): {
+  dependentField: Field
+  currencies: { [field in Field]?: Currency }
+  pair?: Pair | null
+  pairState: PairState
+  currencyBalances: { [field in Field]?: CurrencyAmount }
+  error?: string
+} {
+  const { account } = useActiveWeb3React()
+
+  const { independentField } = useMintState()
+
+  const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A
+
+  // tokens
+  const currencies: { [field in Field]?: Currency } = useMemo(
+    () => ({
+      [Field.CURRENCY_A]: currencyA ?? undefined,
+      [Field.CURRENCY_B]: currencyB ?? undefined
+    }),
+    [currencyA, currencyB]
+  )
+
+  // pair
+  const [pairState, pair] = usePair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B])
+
+  // balances
+  const balances = useCurrencyBalances(account ?? undefined, [
+    currencies[Field.CURRENCY_A],
+    currencies[Field.CURRENCY_B]
+  ])
+  const currencyBalances: { [field in Field]?: CurrencyAmount } = {
+    [Field.CURRENCY_A]: balances[0],
+    [Field.CURRENCY_B]: balances[1]
+  }
+
+  let error: string | undefined
+  if (!account) {
+    error = 'Connect Wallet'
+  }
+
+  if (pairState === PairState.INVALID) {
+    error = error ?? 'Invalid pair'
+  }
+
+  return {
+    dependentField,
+    currencies,
+    pair,
+    pairState,
+    currencyBalances,
+    error
+  }
 }

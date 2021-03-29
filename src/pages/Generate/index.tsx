@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
-import { currencyEquals, ETHER, JSBI, TokenAmount, WETH } from '@uniswap/sdk'
+import { currencyEquals, ETHER, JSBI, WETH } from '@uniswap/sdk'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
@@ -25,13 +25,12 @@ import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallbac
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/mint/actions'
-import { useDerivedMintInfo, useMintActionHandlers, useMintState } from '../../state/mint/hooks'
+import { useDerivedMintInfo } from '../../state/mint/hooks'
 
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useIsExpertMode, useUserSlippageTolerance } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '../../utils'
-import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
@@ -48,6 +47,7 @@ export default function Generate({
   },
   history
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
+  const optionTypes = useAllOptionTypes()
   const [optionType, setOptionType] = useState('')
   const { account, chainId, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
@@ -64,16 +64,11 @@ export default function Generate({
 
   const expertMode = useIsExpertMode()
 
-  const optionTypes = useAllOptionTypes()
-
   // mint state
-  const { independentField, typedValue, otherTypedValue } = useMintState()
   const {
-    dependentField,
     currencies,
     pair,
     pairState,
-    currencyBalances,
     parsedAmounts,
     price,
     noLiquidity,
@@ -84,7 +79,7 @@ export default function Generate({
 
   console.log('currencies', currencies)
 
-  const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
+  // const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
 
   const isValid = !error
 
@@ -100,38 +95,18 @@ export default function Generate({
   //Token Type
   const [tokenType, setTokenType] = useState(TOKEN_TYPES.callPut)
 
-  //const [optionType, setOptionType] = useState(0)
+  const [callTyped, setCallTyped] = useState<string>()
+  const [putTyped, setPutTyped] = useState<string>()
 
-  const handleOptionTypeSelect = useCallback((type: string) => {
-    setOptionType(type)
-    // reset 2 step UI for approvals
-  }, [])
-
-  // get formatted amounts
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: noLiquidity ? otherTypedValue : parsedAmounts[dependentField]?.toSignificant(6) ?? ''
-  }
-
-  // get the max amounts user can add
-  const maxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field])
-      }
+  const handleOptionTypeSelect = useCallback(
+    (type: string) => {
+      setOptionType(type)
+      console.log('handleOptionTypeSelect', type, optionTypes[parseInt(optionType) ?? 0])
+      const { currencySymbol, underlyingSymbol } = optionTypes[parseInt(type) ?? 0]
+      history.push(`/generate/${underlyingSymbol}/${currencySymbol}`)
+      // reset 2 step UI for approvals
     },
-    {}
-  )
-
-  const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
-      }
-    },
-    {}
+    [optionTypes, optionType, history]
   )
 
   // check whether the user has approved the router on the tokens
@@ -233,8 +208,11 @@ export default function Generate({
           id: item.id,
           option: `${item.underlyingSymbol}-${item.currencySymbol} ${JSBI.divide(
             JSBI.BigInt(item.priceFloor),
-            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))
-          )}-${JSBI.divide(JSBI.BigInt(item.priceCap), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)))}`
+            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.underlyingDecimals ?? 18))
+          )}-${JSBI.divide(
+            JSBI.BigInt(item.priceCap),
+            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
+          )}`
         }
       }),
     [optionTypes]
@@ -301,10 +279,10 @@ export default function Generate({
     setShowConfirm(false)
     // if there was a tx hash, we want to clear the input
     if (txHash) {
-      onFieldAInput('')
+      //onFieldAInput('')
     }
     setTxHash('')
-  }, [onFieldAInput, txHash])
+  }, [txHash])
 
   const addIsUnsupported = useIsTransactionUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
 
@@ -338,14 +316,10 @@ export default function Generate({
             />
             <TokenTypeRadioButton selected={tokenType} onCheck={(tokenType: string) => setTokenType(tokenType)} />
             <CallOrPutInputPanel
-              value={formattedAmounts[Field.CURRENCY_A]}
-              onUserInput={onFieldAInput}
-              onMax={() => {
-                onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
-              }}
-              showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
+              value={callTyped ?? ''}
+              onUserInput={setCallTyped}
               currency={currencies[Field.CURRENCY_A]}
-              id="add-liquidity-input-tokena"
+              id="generate-output-token"
               showCommonBases
               halfWidth={true}
             />
@@ -355,12 +329,8 @@ export default function Generate({
                   <Plus size="28" color={theme.text2} />
                 </ColumnCenter>
                 <CallOrPutInputPanel
-                  value={formattedAmounts[Field.CURRENCY_B]}
-                  onUserInput={onFieldBInput}
-                  onMax={() => {
-                    onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
-                  }}
-                  showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
+                  value={putTyped ?? ''}
+                  onUserInput={setPutTyped}
                   currency={currencies[Field.CURRENCY_B]}
                   id="add-liquidity-input-tokenb"
                   showCommonBases

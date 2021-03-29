@@ -64,7 +64,6 @@ interface CallOrPutInputPanelProps {
   value: string
   onUserInput: (value: string) => void
   onMax?: () => void
-  showMaxButton: boolean
   label?: string
   currency?: Currency | undefined
   hideBalance?: boolean
