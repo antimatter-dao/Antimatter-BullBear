@@ -1,7 +1,7 @@
+import React, { useCallback, useContext, useState, useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
 import { currencyEquals, ETHER, JSBI, TokenAmount, WETH } from '@uniswap/sdk'
-import React, { useCallback, useContext, useState } from 'react'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
@@ -48,6 +48,7 @@ export default function Generate({
   },
   history
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
+  const [optionType, setOptionType] = useState('')
   const { account, chainId, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
   const currencyA = useCurrency(currencyIdA)
@@ -102,7 +103,8 @@ export default function Generate({
   //const [optionType, setOptionType] = useState(0)
 
   const handleOptionTypeSelect = useCallback((type: string) => {
-    //setOptionType(type) // reset 2 step UI for approvals
+    setOptionType(type)
+    // reset 2 step UI for approvals
   }, [])
 
   // get formatted amounts
@@ -224,6 +226,19 @@ export default function Generate({
       })
   }
 
+  const selectOptions = useMemo(
+    () =>
+      optionTypes.map(item => {
+        return {
+          id: item.id,
+          option: `${item.underlyingSymbol}-${item.currencySymbol} ${JSBI.divide(
+            JSBI.BigInt(item.priceFloor),
+            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))
+          )}-${JSBI.divide(JSBI.BigInt(item.priceCap), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)))}`
+        }
+      }),
+    [optionTypes]
+  )
   const modalHeader = () => {
     return noLiquidity ? (
       <AutoColumn gap="20px">
@@ -318,17 +333,10 @@ export default function Generate({
             <ButtonSelect
               label="Option Type"
               onSelection={handleOptionTypeSelect}
-              options={optionTypes.map(item => {
-                return {
-                  id: item.id,
-                  option: `${item.underlyingSymbol}-${item.currencySymbol} ${JSBI.divide(
-                    JSBI.BigInt(item.priceFloor),
-                    JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))
-                  )}-${JSBI.divide(JSBI.BigInt(item.priceCap), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)))}`
-                }
-              })}
+              options={selectOptions}
+              selectedId={optionType}
             />
-            <TokenTypeRadioButton selected={tokenType} onCheck={tokenType => setTokenType(tokenType)} />
+            <TokenTypeRadioButton selected={tokenType} onCheck={(tokenType: string) => setTokenType(tokenType)} />
             <CallOrPutInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               onUserInput={onFieldAInput}
@@ -341,22 +349,26 @@ export default function Generate({
               showCommonBases
               halfWidth={true}
             />
-            <ColumnCenter>
-              <Plus size="28" color={theme.text2} />
-            </ColumnCenter>
-            <CallOrPutInputPanel
-              value={formattedAmounts[Field.CURRENCY_B]}
-              onUserInput={onFieldBInput}
-              onMax={() => {
-                onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
-              }}
-              showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
-              currency={currencies[Field.CURRENCY_B]}
-              id="add-liquidity-input-tokenb"
-              showCommonBases
-              halfWidth={true}
-              negativeMarginTop="-30px"
-            />
+            {tokenType === TOKEN_TYPES.callPut && (
+              <>
+                <ColumnCenter>
+                  <Plus size="28" color={theme.text2} />
+                </ColumnCenter>
+                <CallOrPutInputPanel
+                  value={formattedAmounts[Field.CURRENCY_B]}
+                  onUserInput={onFieldBInput}
+                  onMax={() => {
+                    onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
+                  }}
+                  showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
+                  currency={currencies[Field.CURRENCY_B]}
+                  id="add-liquidity-input-tokenb"
+                  showCommonBases
+                  halfWidth={true}
+                  negativeMarginTop="-30px"
+                />
+              </>
+            )}
             {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && pairState !== PairState.INVALID && (
               <GenerateBar
                 cardTitle={`You will generate`}
