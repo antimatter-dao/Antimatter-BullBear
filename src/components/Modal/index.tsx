@@ -34,6 +34,7 @@ export const Wrapper = styled.div`
 
 export const Filler = styled.div`
   width: 212px;
+  ${({ theme }) => theme.desktop}
 `
 
 const AnimatedDialogContent = animated(DialogContent)
