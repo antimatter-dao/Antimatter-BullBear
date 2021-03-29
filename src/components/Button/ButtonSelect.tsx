@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import { ButtonProps, Text } from 'rebass/styled-components'
@@ -8,6 +8,7 @@ import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
 import { TYPE } from '../../theme'
 import useTheme from '../../hooks/useTheme'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
+import { Dots } from '../swap/styleds'
 
 const StyledDropDown = styled(DropDown)`
   margin: 0 0.25rem 0 0;
@@ -81,9 +82,21 @@ export default function ButtonSelect({
   const node = useRef<HTMLDivElement>()
   const theme = useTheme()
   const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   useOnClickOutside(node, () => setIsOpen(false))
+  const buttonContent = useMemo(() => {
+    if (options) {
+      if (options.length > 0) {
+        setIsLoading(false)
+        const selected = options.find(({ id }) => id === selectedId)
+        return selected ? selected.option : 'Select Option Type'
+      }
+      return 'Select Option Type'
+    }
+    return children
+  }, [options, children, setIsLoading, selectedId])
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       {label && (
         <AutoRow style={{ marginBottom: '4px' }}>
           <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
@@ -98,13 +111,18 @@ export default function ButtonSelect({
         selected={!!selectedId}
       >
         <RowBetween>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            {options ? options.find(({ id }) => id === selectedId)?.option : children}
-          </div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>{buttonContent}</div>
           <StyledDropDown />
         </RowBetween>
       </ButtonSelectStyle>
-      {options && onSelection && (
+      {isLoading && (
+        <OptionWrapper isOpen={isOpen} ref={node as any}>
+          <SelectOption selected={false}>
+            <Dots>Loading</Dots>
+          </SelectOption>
+        </OptionWrapper>
+      )}
+      {!isLoading && options && onSelection && (
         <OptionWrapper isOpen={isOpen} ref={node as any}>
           {options.map(({ id, option }) => (
             <SelectOption

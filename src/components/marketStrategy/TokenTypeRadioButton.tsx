@@ -35,8 +35,8 @@ function RadioButton({
   onCheck: () => void
 }) {
   return (
-    <Label checked={checked} onClick={onCheck}>
-      <input type="radio" name={name} checked={checked} />
+    <Label checked={checked}>
+      <input type="radio" name={name} checked={checked} onChange={onCheck} />
       {label}
     </Label>
   )
