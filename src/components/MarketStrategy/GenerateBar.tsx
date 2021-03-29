@@ -22,10 +22,14 @@ const TokenPanel = styled.div`
 
 export function GenerateBar({
   cardTitle,
+  callVol,
+  putVol,
   currency0,
   currency1
 }: {
   cardTitle: string
+  callVol?: string
+  putVol?: string
   currency0?: Currency | undefined
   currency1?: Currency | undefined
 }) {
@@ -42,7 +46,7 @@ export function GenerateBar({
         <AutoRow>
           <AutoColumn style={{ flex: 1 }} gap={'8px'}>
             <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
-              Put token
+              Input token
             </TYPE.subHeader>
             <TokenPanel>
               <CurrencyLogo currency={currency0} size={'20px'} />
@@ -53,6 +57,9 @@ export function GenerateBar({
                     currency0.symbol.slice(currency0.symbol.length - 5, currency0.symbol.length)
                   : currency0?.symbol) || ''}
               </TYPE.black>
+              <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
+                {callVol}
+              </TYPE.black>
             </TokenPanel>
           </AutoColumn>
 
@@ -60,7 +67,7 @@ export function GenerateBar({
 
           <AutoColumn style={{ flex: 1 }} gap={'8px'}>
             <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
-              Call token
+              Input token
             </TYPE.subHeader>
             <TokenPanel>
               <CurrencyLogo currency={currency1} size={'20px'} />
@@ -72,7 +79,7 @@ export function GenerateBar({
                   : currency1?.symbol) || ''}
               </TYPE.subHeader>
               <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
-                100
+                {putVol}
               </TYPE.black>
             </TokenPanel>
           </AutoColumn>

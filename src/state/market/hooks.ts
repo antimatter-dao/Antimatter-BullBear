@@ -9,16 +9,18 @@ import { Interface } from '@ethersproject/abi'
 import CALL_OR_PUT_ABI from '../../constants/abis/callOrPut.json'
 import { useMemo } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
-import { Currency, CurrencyAmount, Pair } from '@uniswap/sdk'
-import { Field } from '../mint/actions'
-import { PairState, usePair } from '../../data/Reserves'
 import { useActiveWeb3React } from '../../hooks'
-import { useCurrencyBalances } from '../wallet/hooks'
-import { useMintState } from '../mint/hooks'
+import { useUserSlippageTolerance } from '../user/hooks'
+import { ETHER, JSBI } from '@uniswap/sdk'
+import { tryParseAmount } from '../swap/hooks'
 const CALL_OR_PUT_INTERFACE = new Interface(CALL_OR_PUT_ABI)
 
 export interface OptionTypeData {
   id: string
+  callAddress: string
+  putAddress: string
+  callTotal: string
+  putTotal: string
   underlying: string
   currency: string
   priceFloor: string
@@ -27,6 +29,13 @@ export interface OptionTypeData {
   currencySymbol?: string
   underlyingDecimals: string
   currencyDecimals: string
+}
+
+export interface DeltaData {
+  dUnd: string
+  dCur: string
+  totalUnd: string
+  totalCur: string
 }
 
 export function useOptionTypeCount(): number | undefined {
@@ -47,7 +56,7 @@ export function useAllOptionTypes() {
   }
 
   const callAddressesRes = useSingleContractMultipleData(antimatterContract, 'allCalls', optionTypeIndexes)
-  //const putAddressesRes = useSingleContractMultipleData(antimatterContract, 'allPuts', optionTypeIndexes)
+  const putAddressesRes = useSingleContractMultipleData(antimatterContract, 'allPuts', optionTypeIndexes)
   const callAddresses = useMemo(() => {
     return callAddressesRes
       .filter(item => {
@@ -58,15 +67,15 @@ export function useAllOptionTypes() {
       })
   }, [callAddressesRes])
 
-  // const putAddresses = useMemo(() => {
-  //   return putAddressesRes
-  //     .filter(item => {
-  //       return item.result
-  //     })
-  //     .map(item => {
-  //       return item?.result?.[0]
-  //     })
-  // }, [putAddressesRes])
+  const putAddresses = useMemo(() => {
+    return putAddressesRes
+      .filter(item => {
+        return item.result
+      })
+      .map(item => {
+        return item?.result?.[0]
+      })
+  }, [putAddressesRes])
 
   const allCalls = useMultipleContractSingleData(
     callAddresses,
@@ -76,6 +85,22 @@ export function useAllOptionTypes() {
     NEVER_RELOAD
   )
   //const allPuts = useMultipleContractSingleData(putAddresses, CALL_OR_PUT_INTERFACE, 'attributes')
+
+  const callTotalsRes = useMultipleContractSingleData(
+    callAddresses,
+    CALL_OR_PUT_INTERFACE,
+    'totalSupply',
+    undefined,
+    NEVER_RELOAD
+  )
+
+  const putTotalsRes = useMultipleContractSingleData(
+    putAddresses,
+    CALL_OR_PUT_INTERFACE,
+    'totalSupply',
+    undefined,
+    NEVER_RELOAD
+  )
 
   const underlyingAddresses = useMemo(() => {
     return allCalls
@@ -133,6 +158,10 @@ export function useAllOptionTypes() {
     .map((item, index) => {
       const optionTypeData: OptionTypeData = {
         id: index.toString(),
+        callAddress: callAddresses[index],
+        putAddress: putAddresses[index],
+        callTotal: callTotalsRes[index].result?.[0],
+        putTotal: putTotalsRes[index].result?.[0],
         underlying: item.result?.[0],
         currency: item.result?.[1],
         priceFloor: item.result?.[2],
@@ -148,59 +177,70 @@ export function useAllOptionTypes() {
 }
 
 export function useDerivedStrategyInfo(
-  currencyA: Currency | undefined,
-  currencyB: Currency | undefined
+  optionType: OptionTypeData | undefined,
+  callTyped: string | undefined,
+  putTyped: string | undefined
 ): {
-  dependentField: Field
-  currencies: { [field in Field]?: Currency }
-  pair?: Pair | null
-  pairState: PairState
-  currencyBalances: { [field in Field]?: CurrencyAmount }
+  delta?: DeltaData
   error?: string
 } {
   const { account } = useActiveWeb3React()
+  const antimatterContract = useAntimatterContract()
+  const [allowedSlippage] = useUserSlippageTolerance() // custom from users
 
-  const { independentField } = useMintState()
+  const queryData = useMemo(() => {
+    if (
+      !optionType ||
+      !optionType.priceFloor ||
+      !optionType.priceCap ||
+      !optionType.callTotal ||
+      !optionType.putTotal ||
+      !callTyped ||
+      !putTyped
+    )
+      return undefined
+    return [
+      optionType?.priceFloor.toString(),
+      optionType?.priceCap.toString(),
+      optionType?.callTotal.toString(),
+      optionType?.putTotal.toString(),
+      tryParseAmount(callTyped, ETHER)?.raw.toString(),
+      tryParseAmount(putTyped, ETHER)?.raw.toString(),
+      JSBI.multiply(JSBI.BigInt(allowedSlippage ?? 50), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16))).toString()
+    ]
+  }, [optionType, callTyped, putTyped])
+  console.log('queryData--->', queryData)
+  const delta = useSingleCallResult(antimatterContract, 'calcDeltaWithFeeAndSlippage', queryData ?? [undefined])
 
-  const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A
-
-  // tokens
-  const currencies: { [field in Field]?: Currency } = useMemo(
-    () => ({
-      [Field.CURRENCY_A]: currencyA ?? undefined,
-      [Field.CURRENCY_B]: currencyB ?? undefined
-    }),
-    [currencyA, currencyB]
-  )
-
-  // pair
-  const [pairState, pair] = usePair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B])
-
-  // balances
-  const balances = useCurrencyBalances(account ?? undefined, [
-    currencies[Field.CURRENCY_A],
-    currencies[Field.CURRENCY_B]
-  ])
-  const currencyBalances: { [field in Field]?: CurrencyAmount } = {
-    [Field.CURRENCY_A]: balances[0],
-    [Field.CURRENCY_B]: balances[1]
-  }
+  const deltaResult = delta?.result?.dUnd
+    ? {
+        dUnd: delta.result?.dUnd,
+        dCur: delta.result?.dCur,
+        totalUnd: delta.result?.totalUnd,
+        totalCur: delta.result?.totalCur
+      }
+    : undefined
+  console.log('queryResult--->', deltaResult)
 
   let error: string | undefined
   if (!account) {
     error = 'Connect Wallet'
   }
 
-  if (pairState === PairState.INVALID) {
-    error = error ?? 'Invalid pair'
+  if (!optionType) {
+    error = 'Select a Option Type'
+  }
+
+  if (!callTyped) {
+    error = 'Enter call amount'
+  }
+
+  if (!callTyped) {
+    error = 'Enter put amount'
   }
 
   return {
-    dependentField,
-    currencies,
-    pair,
-    pairState,
-    currencyBalances,
+    delta: deltaResult,
     error
   }
 }

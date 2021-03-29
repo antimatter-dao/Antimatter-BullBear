@@ -1,74 +1,51 @@
-import { Currency, CurrencyAmount, Fraction, Percent } from '@uniswap/sdk'
 import React from 'react'
 import { Text } from 'rebass'
 import { ButtonPrimary } from '../../components/Button'
-import { RowBetween, RowFixed } from '../../components/Row'
-import CurrencyLogo from '../../components/CurrencyLogo'
-import { Field } from '../../state/mint/actions'
-import { TYPE } from '../../theme'
-import { AutoColumn } from '../../components/Column'
-import useTheme from '../../hooks/useTheme'
+import { DeltaData } from '../../state/market/hooks'
+import { Currency, Token, TokenAmount } from '@uniswap/sdk'
+import { ZERO_ADDRESS } from '../../constants'
+import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 
-export function ConfirmAddModalBottom({
-  noLiquidity,
-  price,
-  currencies,
-  parsedAmounts,
-  poolTokenPercentage,
-  onAdd
+export function ConfirmGenerationModalBottom({
+  delta,
+  callTyped,
+  putTyped,
+  currencyA,
+  currencyB,
+  onGenerate
 }: {
-  noLiquidity?: boolean
-  price?: Fraction
-  currencies: { [field in Field]?: Currency }
-  parsedAmounts: { [field in Field]?: CurrencyAmount }
-  poolTokenPercentage?: Percent
-  onAdd: () => void
+  delta?: DeltaData | undefined
+  callTyped?: string
+  putTyped?: string
+  currencyA?: Currency | undefined | null
+  currencyB?: Currency | undefined | null
+  onGenerate: () => void
 }) {
-  const theme = useTheme()
-
   return (
     <>
-      <AutoColumn>
-        <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
-          {'Input'}
-        </TYPE.body>
-      </AutoColumn>
-      <RowBetween>
-        <TYPE.body>{currencies[Field.CURRENCY_A]?.symbol} Deposited</TYPE.body>
-        <RowFixed>
-          <CurrencyLogo currency={currencies[Field.CURRENCY_A]} style={{ marginRight: '8px' }} />
-          <TYPE.body>{parsedAmounts[Field.CURRENCY_A]?.toSignificant(6)}</TYPE.body>
-        </RowFixed>
-      </RowBetween>
-      <RowBetween>
-        <TYPE.body>{currencies[Field.CURRENCY_B]?.symbol} Deposited</TYPE.body>
-        <RowFixed>
-          <CurrencyLogo currency={currencies[Field.CURRENCY_B]} style={{ marginRight: '8px' }} />
-          <TYPE.body>{parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)}</TYPE.body>
-        </RowFixed>
-      </RowBetween>
-      <RowBetween>
-        <TYPE.body>Rates</TYPE.body>
-        <TYPE.body>
-          {`1 ${currencies[Field.CURRENCY_A]?.symbol} = ${price?.toSignificant(4)} ${
-            currencies[Field.CURRENCY_B]?.symbol
-          }`}
-        </TYPE.body>
-      </RowBetween>
-      <RowBetween style={{ justifyContent: 'flex-end' }}>
-        <TYPE.body>
-          {`1 ${currencies[Field.CURRENCY_B]?.symbol} = ${price?.invert().toSignificant(4)} ${
-            currencies[Field.CURRENCY_A]?.symbol
-          }`}
-        </TYPE.body>
-      </RowBetween>
-      <RowBetween>
-        <TYPE.body>Share of Pool:</TYPE.body>
-        <TYPE.body>{noLiquidity ? '100' : poolTokenPercentage?.toSignificant(4)}%</TYPE.body>
-      </RowBetween>
-      <ButtonPrimary style={{ margin: '20px 0 0 0' }} onClick={onAdd}>
+      <GenerateBar
+        cardTitle={`You will pay`}
+        callVol={new TokenAmount(
+          new Token(1, ZERO_ADDRESS, currencyA?.decimals ?? 18),
+          delta?.dUnd.toString() ?? '0'
+        )?.toSignificant(4)}
+        putVol={new TokenAmount(
+          new Token(1, ZERO_ADDRESS, currencyB?.decimals ?? 18),
+          delta?.dCur.toString() ?? '0'
+        )?.toSignificant(4)}
+        currency0={currencyA ?? undefined}
+        currency1={currencyB ?? undefined}
+      />
+      <GenerateBar
+        cardTitle={`you will get`}
+        callVol={callTyped}
+        putVol={putTyped}
+        currency0={currencyA ?? undefined}
+        currency1={currencyB ?? undefined}
+      />
+      <ButtonPrimary style={{ margin: '20px 0 0 0' }} onClick={onGenerate}>
         <Text fontWeight={500} fontSize={20}>
-          {noLiquidity ? 'Create Pool & Supply' : 'Confirm Supply'}
+          Confirm Generation
         </Text>
       </ButtonPrimary>
     </>

@@ -7,7 +7,6 @@ import { AutoRow } from '../Row'
 import { TYPE } from '../../theme'
 import { Input as NumericalInput } from '../NumericalInput'
 
-import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
 
 const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean }>`
@@ -73,6 +72,7 @@ interface CallOrPutInputPanelProps {
   customBalanceText?: string
   halfWidth?: boolean
   negativeMarginTop?: string
+  defaultSymbol?: string
 }
 
 export default function CallOrPutInputPanel({
@@ -83,10 +83,9 @@ export default function CallOrPutInputPanel({
   hideInput = false,
   id,
   halfWidth,
+  defaultSymbol,
   negativeMarginTop
 }: CallOrPutInputPanelProps) {
-  const { t } = useTranslation()
-
   const theme = useTheme()
 
   return (
@@ -110,7 +109,7 @@ export default function CallOrPutInputPanel({
                   ? currency.symbol.slice(0, 4) +
                     '...' +
                     currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                  : currency?.symbol) || t('selectToken')}
+                  : currency?.symbol) || defaultSymbol}
               </StyledTokenName>
             </Aligner>
           </Aligner>

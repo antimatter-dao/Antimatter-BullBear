@@ -7,6 +7,7 @@ import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUnisw
 import { ROUTER_ADDRESS } from '../constants'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@uniswap/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
+import { tryParseAmount } from '../state/swap/hooks'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -60,7 +61,7 @@ export function shortenAddress(address: string, chars = 4): string {
 
 // add 10%
 export function calculateGasMargin(value: BigNumber): BigNumber {
-  return value.mul(BigNumber.from(10000).add(BigNumber.from(1000))).div(BigNumber.from(10000))
+  return value.mul(BigNumber.from(10000).add(BigNumber.from(8000))).div(BigNumber.from(10000))
 }
 
 // converts a basis points value to a sdk percent
@@ -109,4 +110,11 @@ export function escapeRegExp(string: string): string {
 export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currency): boolean {
   if (currency === ETHER) return true
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
+}
+
+export function getCallOrPutAmount(typed: string): string {
+  return JSBI.multiply(
+    JSBI.BigInt(tryParseAmount(typed, ETHER)?.raw ?? 0),
+    JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))
+  ).toString()
 }
