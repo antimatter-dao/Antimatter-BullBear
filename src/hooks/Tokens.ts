@@ -210,7 +210,6 @@ export function useMarketToken(tokenAddress?: string): Token | undefined | null 
     NEVER_RELOAD
   )
   const decimals = useSingleCallResult(!address ? undefined : tokenContract, 'decimals', undefined, NEVER_RELOAD)
-  console.log('tag---->', address, symbol, tokenName)
   return useMemo(() => {
     if (!chainId || !address) return undefined
     if (decimals.loading || symbol.loading || tokenName.loading) return null
