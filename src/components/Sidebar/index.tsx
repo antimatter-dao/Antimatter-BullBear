@@ -11,13 +11,10 @@ import { Base } from '../Button'
 
 const tabs = [
   { title: 'Option Trading', route: 'swap' },
-  { title: 'Market Strategy', route: 'markeStrategy' },
-  {
-    title: 'Liquidity',
-    route: 'pool'
-  },
+  { title: 'Market Strategy', route: 'market-strategy' },
+  { title: 'Liquidity', route: 'pool' },
   { title: 'Option Exercise', route: 'exercise' },
-  { title: 'Matter Token', route: 'matterToken' },
+  { title: 'Matter Token', route: 'matter-token' },
   { title: 'Governance', route: 'governance' },
   { title: 'Info', route: 'info' }
 ]
@@ -62,10 +59,12 @@ const Tab = styled(TabBasic)`
   border-left: 4px solid transparent;
 
   &.${activeClassName}, :hover,
-  :focus {
+  :focus,
+  :active {
     border-left: 4px solid;
     border-color: ${({ theme }) => theme.primary1};
     background-color: ${({ theme }) => theme.translucent};
+    opacity: 1;
   }
 `
 const StyledLogo = styled(Logo)`
@@ -166,6 +165,16 @@ export default function Sidebar() {
                 pathname.startsWith('/remove') ||
                 pathname.startsWith('/create') ||
                 pathname.startsWith('/find')
+              }
+            >
+              {title}
+            </Tab>
+          ) : route === 'market-strategy' ? (
+            <Tab
+              key={title}
+              to={`/${route}`}
+              isActive={(match, { pathname }) =>
+                Boolean(match) || pathname.startsWith('/generate') || pathname.startsWith('/redeem')
               }
             >
               {title}
