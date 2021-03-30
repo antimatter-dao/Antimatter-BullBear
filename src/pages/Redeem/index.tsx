@@ -22,7 +22,7 @@ import { Wrapper } from '../Pool/styleds'
 import ConfirmRedeemModalBottom from './ConfirmRedeemModalBottom'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useMarketCurrency } from '../../hooks/Tokens'
-import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
+import { useAllOptionTypes, useDerivedStrategyInfo, absolute } from '../../state/market/hooks'
 import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
 import TokenTypeRadioButton, { TOKEN_TYPES } from '../../components/MarketStrategy/TokenTypeRadioButton'
@@ -31,7 +31,11 @@ import { useAntimatterContract } from '../../hooks/useContract'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 
 const parseBalance = (val?: string, toSignificant?: number) => {
-  return val ? CurrencyAmount.ether(val?.toString()).toSignificant(toSignificant ?? 6) : ''
+  const string = val?.toString()
+  if (string && string![0] === '-') {
+    return '-' + CurrencyAmount.ether(absolute(string)).toSignificant(toSignificant ?? 6)
+  }
+  return val ? CurrencyAmount.ether(val).toSignificant(toSignificant ?? 6) : ''
 }
 const parsedGreaterThan = (userInput: string, balance: string) => {
   if (userInput && balance) {
@@ -68,11 +72,10 @@ export default function Redeem() {
 
   const { delta, error, balances } = useDerivedStrategyInfo(
     selectedOptionType ?? undefined,
-    callTypedAmount ?? undefined,
-    putTypedAmount ?? undefined,
+    callTypedAmount ? '-' + callTypedAmount : undefined,
+    putTypedAmount ? '-' + putTypedAmount : undefined,
     tokenType
   )
-
   const redeemError = useMemo(() => {
     if (
       balances &&
