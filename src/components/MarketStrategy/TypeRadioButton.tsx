@@ -7,13 +7,7 @@ export const TOKEN_TYPES = {
   callPut: 'CallAndPut'
 }
 
-export function TokenTypeRadioButton({
-  selected,
-  onCheck
-}: {
-  selected: string
-  onCheck: (tokenType: string) => void
-}) {
+export function TypeRadioButton({ selected, onCheck }: { selected: string; onCheck: (tokenType: string) => void }) {
   return (
     <fieldset id="tokeType" style={{ border: 'none', display: 'flex', justifyContent: 'space-between', padding: '0' }}>
       <RadioButton

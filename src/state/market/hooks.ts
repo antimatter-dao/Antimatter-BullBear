@@ -13,7 +13,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useUserSlippageTolerance } from '../user/hooks'
 import { ETHER, JSBI } from '@uniswap/sdk'
 import { tryParseAmount } from '../swap/hooks'
-import { TOKEN_TYPES } from 'components/MarketStrategy/TokenTypeRadioButton'
+import { TOKEN_TYPES } from 'components/MarketStrategy/TypeRadioButton'
 const CALL_OR_PUT_INTERFACE = new Interface(CALL_OR_PUT_ABI)
 
 export interface OptionTypeData {

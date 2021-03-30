@@ -25,7 +25,7 @@ import { useMarketCurrency } from '../../hooks/Tokens'
 import { useAllOptionTypes, useDerivedStrategyInfo, absolute } from '../../state/market/hooks'
 import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
-import { TokenTypeRadioButton, TOKEN_TYPES } from '../../components/MarketStrategy/TokenTypeRadioButton'
+import { TypeRadioButton, TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
 import { useAntimatterContract } from '../../hooks/useContract'
 // import { calculateGasMargin } from '../../utils'
 import { useTransactionAdder } from '../../state/transactions/hooks'
@@ -262,7 +262,7 @@ export default function Redeem() {
               options={selectOptions}
               selectedId={optionTypeIndex}
             />
-            <TokenTypeRadioButton selected={tokenType} onCheck={handleCheck} />
+            <TypeRadioButton selected={tokenType} onCheck={handleCheck} />
             {tokenType === TOKEN_TYPES.callPut ? (
               <>
                 <RedeemTokenPanel

@@ -24,7 +24,7 @@ import { calculateGasMargin } from '../../utils'
 import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
 import { ConfirmGenerationModalBottom } from './ConfirmAddModalBottom'
-import { TokenTypeRadioButton, TOKEN_TYPES } from '../../components/MarketStrategy/TokenTypeRadioButton'
+import { TypeRadioButton, TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
 import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
 import { TransactionResponse } from '@ethersproject/providers'
@@ -204,7 +204,7 @@ export default function Generate() {
               options={selectOptions}
               selectedId={optionType}
             />
-            <TokenTypeRadioButton selected={tokenType} onCheck={(tokenType: string) => setTokenType(tokenType)} />
+            <TypeRadioButton selected={tokenType} onCheck={(tokenType: string) => setTokenType(tokenType)} />
             <CallOrPutInputPanel
               value={callTyped ?? ''}
               onUserInput={setCallTyped}
