@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useState, useMemo } from 'react'
 import { ETHER, JSBI, Token, TokenAmount } from '@uniswap/sdk'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
-import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonPrimary } from '../../components/Button'
@@ -32,26 +31,20 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useAntimatterContract } from '../../hooks/useContract'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 
-export default function Generate({
-  match: {
-    params: { currencyIdA, currencyIdB }
-  },
-  history
-}: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
-  const optionTypes = useAllOptionTypes()
+export default function Generate() {
   const [optionType, setOptionType] = useState('')
-  const { account, chainId, library } = useActiveWeb3React()
+  const [callTyped, setCallTyped] = useState<string>()
+  const [putTyped, setPutTyped] = useState<string>()
+
   const theme = useContext(ThemeContext)
+
+  const { account, chainId, library } = useActiveWeb3React()
+  const optionTypes = useAllOptionTypes()
   const currencyA = useMarketCurrency(optionTypes[parseInt(optionType)]?.underlying)
   const currencyB = useMarketCurrency(optionTypes[parseInt(optionType)]?.currency)
   const antimatterContract = useAntimatterContract()
-
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
-
   const expertMode = useIsExpertMode()
-
-  const [callTyped, setCallTyped] = useState<string>()
-  const [putTyped, setPutTyped] = useState<string>()
 
   const selectedOptionType = useMemo(() => {
     if (!optionTypes || !optionType) return undefined
@@ -63,8 +56,6 @@ export default function Generate({
     callTyped ?? undefined,
     putTyped ?? undefined
   )
-
-  console.log('currencies', delta)
 
   // const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
 
@@ -162,9 +153,9 @@ export default function Generate({
       }),
     [optionTypes]
   )
-  const modalHeader = () => {
+  const modalHeader = useCallback(() => {
     return <AutoColumn gap="20px"></AutoColumn>
-  }
+  }, [])
 
   const modalBottom = () => {
     return (
@@ -178,8 +169,6 @@ export default function Generate({
       />
     )
   }
-
-  const pendingText = `Generating`
 
   const handleDismissConfirmation = useCallback(() => {
     setShowConfirm(false)
@@ -208,7 +197,7 @@ export default function Generate({
                 bottomContent={modalBottom}
               />
             )}
-            pendingText={pendingText}
+            pendingText="Generating"
           />
           <AutoColumn gap="30px">
             <ButtonSelect

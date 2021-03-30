@@ -36,7 +36,6 @@ import Generate from './Generate'
 import Redeem from './Redeem'
 import Exercise from './Exercise'
 
-
 const AppWrapper = styled.div`
   display: flex;
   align-items: flex-start;
@@ -106,7 +105,7 @@ export default function App() {
             <Web3ReactManager>
               <Switch>
                 <Route exact strict path="/swap" component={Swap} />
-                <Route exact strict path="/markeStrategy" component={MarketStrategy} />
+                <Route exact strict path="/market-strategy" component={MarketStrategy} />
                 <Route exact strict path="/generate" component={Generate} />
                 <Route exact strict path="/generate/:currencyIdA/:currencyIdB" component={Generate} />
                 <Route exact strict path="/redeem" component={Redeem} />
