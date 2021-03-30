@@ -197,7 +197,7 @@ export default function Generate() {
             )}
             pendingText="Generating"
           />
-          <AutoColumn gap="30px">
+          <AutoColumn gap="20px">
             <ButtonSelect
               label="Option Type"
               onSelection={setOptionType}
@@ -228,7 +228,7 @@ export default function Generate() {
                   showCommonBases
                   halfWidth={true}
                   defaultSymbol={'Put Token'}
-                  negativeMarginTop="-30px"
+                  negativeMarginTop="-20px"
                   isCall={false}
                 />
               </>

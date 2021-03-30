@@ -11,9 +11,8 @@ import { Base } from '../Button'
 
 const tabs = [
   { title: 'Option Trading', route: 'swap' },
-  { title: 'Market Strategy', route: 'market-strategy' },
+  { title: 'Market Exercise', route: 'market-strategy' },
   { title: 'Liquidity', route: 'pool' },
-  { title: 'Option Exercise', route: 'exercise' },
   { title: 'Matter Token', route: 'matter-token' },
   { title: 'Governance', route: 'governance' },
   { title: 'Info', route: 'info' }
