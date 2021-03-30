@@ -1,31 +1,27 @@
+import React, { useCallback, useContext, useState, useMemo } from 'react'
+import { Plus } from 'react-feather'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@uniswap/sdk'
-import React, { useCallback, useContext, useState } from 'react'
-import { Plus } from 'react-feather'
-import ReactGA from 'react-ga'
-import { RouteComponentProps } from 'react-router-dom'
+import { ETHER, TokenAmount, JSBI } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonPrimary } from '../../components/Button'
 import { LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
-import CurrencyInputPanel from '../../components/CurrencyInputPanel'
+import RedeemTokenPanel from '../../components/MarketStrategy/RedeemTokenPanel'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
-import { MinimalPositionCard } from '../../components/PositionCard'
 import Row, { RowBetween, RowFlat } from '../../components/Row'
 
 import { ROUTER_ADDRESS } from '../../constants'
 import { PairState } from '../../data/Reserves'
 import { useActiveWeb3React } from '../../hooks'
-import { useCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/mint/actions'
-import { useDerivedMintInfo, useMintActionHandlers, useMintState } from '../../state/mint/hooks'
+// import { useDerivedMintInfo, useMintActionHandlers, useMintState } from '../../state/mint/hooks'
 
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useIsExpertMode, useUserSlippageTolerance } from '../../state/user/hooks'
@@ -36,50 +32,35 @@ import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
 import { ConfirmAddModalBottom } from './ConfirmAddModalBottom'
-import { currencyId } from '../../utils/currencyId'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
-import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
+import { useMarketCurrency } from '../../hooks/Tokens'
+import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
+import ButtonSelect from '../../components/Button/ButtonSelect'
 
-export default function Redeem({
-  match: {
-    params: { currencyIdA, currencyIdB }
-  },
-  history
-}: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
+export default function Redeem() {
+  const [optionType, setOptionType] = useState('')
+  const [callTypedAmount, setCallTypedAmount] = useState<string>()
+  const [putTypedAmount, setPutTypedAmount] = useState<string>()
+
+  const optionTypes = useAllOptionTypes()
+  console.log(77777, optionTypes)
   const { account, chainId, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
-
-  const currencyA = useCurrency(currencyIdA)
-  const currencyB = useCurrency(currencyIdB)
-
-  const oneCurrencyIsWETH = Boolean(
-    chainId &&
-      ((currencyA && currencyEquals(currencyA, WETH[chainId])) ||
-        (currencyB && currencyEquals(currencyB, WETH[chainId])))
-  )
-
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
-
   const expertMode = useIsExpertMode()
+  const currencyA = useMarketCurrency(optionTypes[parseInt(optionType)]?.underlying)
+  const currencyB = useMarketCurrency(optionTypes[parseInt(optionType)]?.currency)
 
   // mint state
-  const { independentField, typedValue, otherTypedValue } = useMintState()
-  const {
-    dependentField,
-    currencies,
-    pair,
-    pairState,
-    currencyBalances,
-    parsedAmounts,
-    price,
-    noLiquidity,
-    liquidityMinted,
-    poolTokenPercentage,
-    error
-  } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
+  // const { independentField, typedValue, otherTypedValue } = useMintState()
+  const { delta, error } = useDerivedStrategyInfo(
+    selectedOptionType ?? undefined,
+    callTypedAmount ?? undefined,
+    putTypedAmount ?? undefined
+  )
 
-  const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
+  // const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
 
   const isValid = !error
 
@@ -109,15 +90,15 @@ export default function Redeem({
     {}
   )
 
-  const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
-      }
-    },
-    {}
-  )
+  // const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
+  //   (accumulator, field) => {
+  //     return {
+  //       ...accumulator,
+  //       [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
+  //     }
+  //   },
+  //   {}
+  // )
 
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_A], ROUTER_ADDRESS)
@@ -194,12 +175,6 @@ export default function Redeem({
           })
 
           setTxHash(response.hash)
-
-          ReactGA.event({
-            category: 'Liquidity',
-            action: 'Add',
-            label: [currencies[Field.CURRENCY_A]?.symbol, currencies[Field.CURRENCY_B]?.symbol].join('/')
-          })
         })
       )
       .catch(error => {
@@ -265,39 +240,6 @@ export default function Redeem({
     )
   }
 
-  const pendingText = `Supplying ${parsedAmounts[Field.CURRENCY_A]?.toSignificant(6)} ${
-    currencies[Field.CURRENCY_A]?.symbol
-  } and ${parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)} ${currencies[Field.CURRENCY_B]?.symbol}`
-
-  const handleCurrencyASelect = useCallback(
-    (currencyA: Currency) => {
-      const newCurrencyIdA = currencyId(currencyA)
-      console.log('newCurrency', newCurrencyIdA, currencyIdB)
-
-      if (newCurrencyIdA === currencyIdB) {
-        history.push(`/redeem/${currencyIdB}/${currencyIdA}`)
-      } else {
-        history.push(`/redeem/${newCurrencyIdA}/${currencyIdB}`)
-      }
-    },
-    [currencyIdB, history, currencyIdA]
-  )
-  const handleCurrencyBSelect = useCallback(
-    (currencyB: Currency) => {
-      const newCurrencyIdB = currencyId(currencyB)
-      if (currencyIdA === newCurrencyIdB) {
-        if (currencyIdB) {
-          history.push(`/redeem/${currencyIdB}/${newCurrencyIdB}`)
-        } else {
-          history.push(`/redeem/${newCurrencyIdB}`)
-        }
-      } else {
-        history.push(`/redeem/${currencyIdA ? currencyIdA : 'ETH'}/${newCurrencyIdB}`)
-      }
-    },
-    [currencyIdA, history, currencyIdB]
-  )
-
   const handleDismissConfirmation = useCallback(() => {
     setShowConfirm(false)
     // if there was a tx hash, we want to clear the input
@@ -308,6 +250,23 @@ export default function Redeem({
   }, [onFieldAInput, txHash])
 
   const addIsUnsupported = useIsTransactionUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
+
+  const selectOptions = useMemo(
+    () =>
+      optionTypes.map(item => {
+        return {
+          id: item.id,
+          option: `${item.underlyingSymbol}-${item.currencySymbol} ${JSBI.divide(
+            JSBI.BigInt(item.priceFloor),
+            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.underlyingDecimals ?? 18))
+          )}-${JSBI.divide(
+            JSBI.BigInt(item.priceCap),
+            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
+          )}`
+        }
+      }),
+    [optionTypes]
+  )
 
   return (
     <>
@@ -327,41 +286,40 @@ export default function Redeem({
                 bottomContent={modalBottom}
               />
             )}
-            pendingText={pendingText}
+            pendingText="Confirm"
             currencyToAdd={pair?.liquidityToken}
           />
 
-
           <AutoColumn gap="24px">
-            <CurrencyInputPanel
+            <ButtonSelect
+              label="Option Type"
+              onSelection={setOptionType}
+              options={selectOptions}
+              selectedId={optionType}
+            />
+            <RedeemTokenPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               onUserInput={onFieldAInput}
+              label="Call Token"
               onMax={() => {
                 onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
               }}
-              onCurrencySelect={handleCurrencyASelect}
-              showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
               currency={currencies[Field.CURRENCY_A]}
-              id="add-liquidity-input-tokena"
-              showCommonBases
-              halfWidth={true}
+              currencyBalance={''}
             />
             <ColumnCenter>
               <Plus size="28" color={theme.text2} />
             </ColumnCenter>
-            <CurrencyInputPanel
+            <RedeemTokenPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               onUserInput={onFieldBInput}
-              onCurrencySelect={handleCurrencyBSelect}
+              label="Put Token"
               onMax={() => {
                 onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
               }}
-              showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
               currency={currencies[Field.CURRENCY_B]}
-              id="add-liquidity-input-tokenb"
-              showCommonBases
-              halfWidth={true}
               negativeMarginTop="-30px"
+              currencyBalance={''}
             />
             {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && pairState !== PairState.INVALID && (
               <GenerateBar
@@ -431,10 +389,10 @@ export default function Redeem({
           </AutoColumn>
         </Wrapper>
       </AppBody>
-      {!addIsUnsupported ? (
+      {/* {!addIsUnsupported ? (
         pair && !noLiquidity && pairState !== PairState.INVALID ? (
           <AutoColumn style={{ minWidth: '20rem', width: '100%', maxWidth: '400px', marginTop: '1rem' }}>
-            <MinimalPositionCard showUnwrapped={oneCurrencyIsWETH} pair={pair} />
+            <MinimalPositionCard showUnwrapped={true} pair={pair} />
           </AutoColumn>
         ) : null
       ) : (
@@ -442,7 +400,7 @@ export default function Redeem({
           show={addIsUnsupported}
           currencies={[currencies.CURRENCY_A, currencies.CURRENCY_B]}
         />
-      )}
+      )} */}
     </>
   )
 }
