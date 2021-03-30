@@ -40,12 +40,8 @@ export function OptionCard({ optionType }: OptionCardProps) {
 
         <AutoColumn gap="8px">
           <RowBetween marginTop="10px">
-            <ButtonSecondary width="68%" as={Link} to={`/migrate/v1/`}>
-              Migrate
-            </ButtonSecondary>
-
             <ButtonSecondary style={{ backgroundColor: 'transparent' }} width="28%" as={Link} to={`/remove/v1/`}>
-              Remove
+              Trade
             </ButtonSecondary>
           </RowBetween>
         </AutoColumn>
