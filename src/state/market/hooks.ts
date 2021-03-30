@@ -121,7 +121,6 @@ export function useAllOptionTypes() {
         return item?.result?.[1]
       })
   }, [allCalls])
-  console.log('allCalls', allCalls)
   const underlyingSymbolRes = useMultipleContractSingleData(
     underlyingAddresses,
     ERC20_INTERFACE,
@@ -208,8 +207,7 @@ export function useDerivedStrategyInfo(
       tryParseAmount(putTyped, ETHER)?.raw.toString(),
       JSBI.multiply(JSBI.BigInt(allowedSlippage ?? 50), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16))).toString()
     ]
-  }, [optionType, callTyped, putTyped])
-  console.log('queryData--->', queryData)
+  }, [optionType, callTyped, putTyped, allowedSlippage])
   const delta = useSingleCallResult(antimatterContract, 'calcDeltaWithFeeAndSlippage', queryData ?? [undefined])
 
   const deltaResult = delta?.result?.dUnd
@@ -220,7 +218,6 @@ export function useDerivedStrategyInfo(
         totalCur: delta.result?.totalCur
       }
     : undefined
-  console.log('queryResult--->', deltaResult)
 
   let error: string | undefined
   if (!account) {

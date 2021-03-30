@@ -82,8 +82,6 @@ export default function Generate() {
     ANTIMATTER_ADDRESS
   )
 
-  console.log('approvalB--->', approvalA, approvalB)
-
   const addTransaction = useTransactionAdder()
 
   async function onGenerate() {

@@ -70,7 +70,6 @@ export function useSwapActionHandlers(): {
 
 // try to parse a user entered amount for a given token
 export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmount | undefined {
-  console.log('tryParseAmount', value, currency)
   if (!value || !currency) {
     return undefined
   }
