@@ -270,7 +270,7 @@ export function useDerivedStrategyInfo(
   if (!account) {
     error = 'Connect Wallet'
   } else if (!optionType) {
-    error = 'Select a Option Type'
+    error = 'Select a OptionCard Type'
   } else if (!callTyped && tokenType !== TOKEN_TYPES.put) {
     error = 'Enter call amount'
   } else if (!putTyped && tokenType !== TOKEN_TYPES.call) {

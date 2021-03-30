@@ -284,7 +284,7 @@ export default function WalletModal({
             color={option.color}
             link={option.href}
             header={option.name}
-            subheader={null} //use option.descriptio to bring back multi-line
+            subheader={null} //use OptionCard.descriptio to bring back multi-line
             icon={require('../../assets/images/' + option.iconName)}
             size={21}
           />

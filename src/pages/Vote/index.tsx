@@ -117,7 +117,7 @@ export default function Vote() {
   const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, chainId ? UNI[chainId] : undefined)
   const userDelegatee: string | undefined = useUserDelegatee()
 
-  // show delegation option if they have have a balance, but have not delegated
+  // show delegation OptionCard if they have have a balance, but have not delegated
   const showUnlockVoting = Boolean(
     uniBalance && JSBI.notEqual(uniBalance.raw, JSBI.BigInt(0)) && userDelegatee === ZERO_ADDRESS
   )

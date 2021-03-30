@@ -1,7 +1,7 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import React from 'react'
 import styled from 'styled-components'
-// import Option from './Option'
+// import OptionCard from './OptionCard'
 // import { SUPPORTED_WALLETS } from '../../constants'
 // import { injected } from '../../connectors'
 // import { darken } from 'polished'
@@ -95,25 +95,25 @@ export default function PendingView({
         )}
 
         {/* {Object.keys(SUPPORTED_WALLETS).map(key => {
-        const option = SUPPORTED_WALLETS[key]
-        if (option.connector === connector) {
-          if (option.connector === injected) {
-            if (isMetamask && option.name !== 'MetaMask') {
+        const OptionCard = SUPPORTED_WALLETS[key]
+        if (OptionCard.connector === connector) {
+          if (OptionCard.connector === injected) {
+            if (isMetamask && OptionCard.name !== 'MetaMask') {
               return null
             }
-            if (!isMetamask && option.name === 'MetaMask') {
+            if (!isMetamask && OptionCard.name === 'MetaMask') {
               return null
             }
           }
           return (
-            <Option
+            <OptionCard
               id={`connect-${key}`}
               key={key}
               clickable={false}
-              color={option.color}
-              header={option.name}
-              subheader={option.description}
-              icon={require('../../assets/images/' + option.iconName)}
+              color={OptionCard.color}
+              header={OptionCard.name}
+              subheader={OptionCard.description}
+              icon={require('../../assets/images/' + OptionCard.iconName)}
             />
           )
         }

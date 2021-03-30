@@ -10,7 +10,7 @@ import { AutoColumn } from 'components/Column'
 import { Base } from '../Button'
 
 const tabs = [
-  { title: 'Option Trading', route: 'swap' },
+  { title: 'OptionCard Trading', route: 'swap' },
   { title: 'Market Exercise', route: 'market-strategy' },
   { title: 'Liquidity', route: 'pool' },
   { title: 'Matter Token', route: 'matter-token' },

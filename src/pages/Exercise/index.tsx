@@ -10,9 +10,9 @@ import { Wrapper } from '../../components/swap/styleds'
 const optionTypes = [
   {
     id: 'callOption',
-    option: 'Call option'
+    option: 'Call OptionCard'
   },
-  { id: 'putOption', option: 'Put Option' }
+  { id: 'putOption', option: 'Put OptionCard' }
 ]
 
 export default function Exercise({ history }: RouteComponentProps) {
@@ -27,7 +27,7 @@ export default function Exercise({ history }: RouteComponentProps) {
 
   return (
     <AppBody>
-      <BodyHeader title={'Option Exercise'} />
+      <BodyHeader title={'OptionCard Exercise'} />
       <Wrapper id="swap-page" style={{ padding: '0 0', marginTop: '20px' }}>
         <AutoColumn gap="20px">
           <ButtonSelect
