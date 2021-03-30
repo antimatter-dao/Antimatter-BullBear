@@ -6,6 +6,8 @@ import CurrencyLogo from '../CurrencyLogo'
 import { AutoRow } from '../Row'
 import { TYPE } from '../../theme'
 import { Input as NumericalInput } from '../NumericalInput'
+import CallIcon from '../../assets/svg/call_icon.svg'
+import PutIcon from '../../assets/svg/put_icon.svg'
 
 import useTheme from '../../hooks/useTheme'
 
@@ -59,6 +61,12 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
   ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
 `
 
+const CallOrPutIcon = styled.img`
+  position: absolute;
+  margin-top: 16px;
+  margin-left: 16px;
+`
+
 interface CallOrPutInputPanelProps {
   value: string
   onUserInput: (value: string) => void
@@ -73,6 +81,7 @@ interface CallOrPutInputPanelProps {
   halfWidth?: boolean
   negativeMarginTop?: string
   defaultSymbol?: string
+  isCall?: boolean
 }
 
 export default function CallOrPutInputPanel({
@@ -84,7 +93,8 @@ export default function CallOrPutInputPanel({
   id,
   halfWidth,
   defaultSymbol,
-  negativeMarginTop
+  negativeMarginTop,
+  isCall
 }: CallOrPutInputPanelProps) {
   const theme = useTheme()
 
@@ -104,6 +114,7 @@ export default function CallOrPutInputPanel({
           <Aligner>
             <Aligner>
               <CurrencyLogo currency={currency} size={'24px'} />
+              <CallOrPutIcon src={isCall ? CallIcon : PutIcon} />
               <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
                 {(currency && currency.symbol && currency.symbol.length > 20
                   ? currency.symbol.slice(0, 4) +

@@ -109,6 +109,8 @@ export default function Generate() {
           method(...args, {
             gasLimit: calculateGasMargin(estimatedGasLimit)
           }).then(response => {
+            setPutTyped(undefined)
+            setCallTyped(undefined)
             setAttemptingTxn(false)
             addTransaction(response, {
               summary: 'generate '
@@ -211,6 +213,7 @@ export default function Generate() {
               showCommonBases
               defaultSymbol={'Call Token'}
               halfWidth={true}
+              isCall={true}
             />
             {tokenType === TOKEN_TYPES.callPut && (
               <>
@@ -226,6 +229,7 @@ export default function Generate() {
                   halfWidth={true}
                   defaultSymbol={'Put Token'}
                   negativeMarginTop="-30px"
+                  isCall={false}
                 />
               </>
             )}

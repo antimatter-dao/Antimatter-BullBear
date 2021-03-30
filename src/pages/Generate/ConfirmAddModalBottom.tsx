@@ -33,8 +33,8 @@ export function ConfirmGenerationModalBottom({
           new Token(1, ZERO_ADDRESS, currencyB?.decimals ?? 18),
           delta?.dCur.toString() ?? '0'
         )?.toSignificant(4)}
-        currency0={currencyA ?? undefined}
-        currency1={currencyB ?? undefined}
+        currency0={undefined}
+        currency1={undefined}
       />
       <GenerateBar
         cardTitle={`you will get`}

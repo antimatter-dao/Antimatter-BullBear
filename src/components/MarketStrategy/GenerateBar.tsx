@@ -51,13 +51,13 @@ export function GenerateBar({
               {subTitle ?? 'Input token'}
             </TYPE.subHeader>
             <TokenPanel>
-              <CurrencyLogo currency={currency0} size={'20px'} />
+              {currency0 && <CurrencyLogo currency={currency0} size={'20px'} />}{}
               <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'} flex={1}>
                 {(currency0 && currency0.symbol && currency0.symbol.length > 20
                   ? currency0.symbol.slice(0, 4) +
                     '...' +
                     currency0.symbol.slice(currency0.symbol.length - 5, currency0.symbol.length)
-                  : currency0?.symbol) || ''}
+                  : currency0?.symbol) || 'Call Token'}
               </TYPE.black>
               <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
                 {callVol}
@@ -72,13 +72,13 @@ export function GenerateBar({
               {subTitle ?? 'Input token'}
             </TYPE.subHeader>
             <TokenPanel>
-              <CurrencyLogo currency={currency1} size={'20px'} />
+              {currency1 && <CurrencyLogo currency={currency1} size={'20px'} />}
               <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text1} marginLeft={'8px'} flex={1}>
                 {(currency1 && currency1.symbol && currency1.symbol.length > 20
                   ? currency1.symbol.slice(0, 4) +
                     '...' +
                     currency1.symbol.slice(currency1.symbol.length - 5, currency1.symbol.length)
-                  : currency1?.symbol) || ''}
+                  : currency1?.symbol) || 'Put Token'}
               </TYPE.subHeader>
               <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
                 {putVol}
