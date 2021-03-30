@@ -3,7 +3,7 @@ import { Plus } from 'react-feather'
 import { Currency } from '@uniswap/sdk'
 import { OutlineCard } from '../Card'
 import { TYPE } from '../../theme'
-import { AutoRow, RowBetween } from '../Row'
+import { RowBetween } from '../Row'
 import useTheme from '../../hooks/useTheme'
 import { AutoColumn } from '../Column'
 import styled from 'styled-components'
@@ -25,13 +25,15 @@ export function GenerateBar({
   callVol,
   putVol,
   currency0,
-  currency1
+  currency1,
+  subTitle
 }: {
   cardTitle: string
   callVol?: string
   putVol?: string
   currency0?: Currency | undefined
   currency1?: Currency | undefined
+  subTitle?: string
 }) {
   const theme = useTheme()
 
@@ -43,10 +45,10 @@ export function GenerateBar({
         </TYPE.subHeader>
       </RowBetween>
       <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)', padding: '16px 20px' }}>
-        <AutoRow>
-          <AutoColumn style={{ flex: 1 }} gap={'8px'}>
+        <RowBetween>
+          <AutoColumn style={{ flex: 1, maxWidth: '45%' }} gap={'8px'}>
             <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
-              Input token
+              {subTitle ?? 'Input token'}
             </TYPE.subHeader>
             <TokenPanel>
               <CurrencyLogo currency={currency0} size={'20px'} />
@@ -65,9 +67,9 @@ export function GenerateBar({
 
           <Plus size="24" color={theme.text2} style={{ margin: '24px 10px 0' }} />
 
-          <AutoColumn style={{ flex: 1 }} gap={'8px'}>
+          <AutoColumn style={{ flex: 1, maxWidth: '45%' }} gap={'8px'}>
             <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
-              Input token
+              {subTitle ?? 'Input token'}
             </TYPE.subHeader>
             <TokenPanel>
               <CurrencyLogo currency={currency1} size={'20px'} />
@@ -83,7 +85,7 @@ export function GenerateBar({
               </TYPE.black>
             </TokenPanel>
           </AutoColumn>
-        </AutoRow>
+        </RowBetween>
       </OutlineCard>
     </AutoColumn>
   )

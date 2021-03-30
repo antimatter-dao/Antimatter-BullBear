@@ -35,6 +35,7 @@ export default function Generate() {
   const [optionType, setOptionType] = useState('')
   const [callTyped, setCallTyped] = useState<string>()
   const [putTyped, setPutTyped] = useState<string>()
+  const [tokenType, setTokenType] = useState(TOKEN_TYPES.callPut)
 
   const theme = useContext(ThemeContext)
 
@@ -68,9 +69,6 @@ export default function Generate() {
   // // txn values
   // const deadline = useTransactionDeadline() // custom from users settings
   const [txHash, setTxHash] = useState<string>('')
-
-  //Token Type
-  const [tokenType, setTokenType] = useState(TOKEN_TYPES.callPut)
 
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(

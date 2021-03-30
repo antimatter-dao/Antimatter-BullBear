@@ -178,7 +178,6 @@ export function useAllOptionTypes() {
         currencySymbol: currencySymbolRes[index].result?.[0],
         currencyDecimals: currencyDecimalsRes[index].result?.[0]
       }
-      console.log('optionTypeData', optionTypeData)
       return optionTypeData
     })
 }
@@ -224,7 +223,6 @@ export function useDerivedStrategyInfo(
     'balanceOf',
     [account ?? undefined]
   )
-  console.log(999, optionType, delta, balancesRes)
   const deltaResult = delta?.result?.dUnd
     ? {
         dUnd: delta.result?.dUnd,
@@ -251,7 +249,7 @@ export function useDerivedStrategyInfo(
     error = 'Select a Option Type'
   } else if (!callTyped) {
     error = 'Enter call amount'
-  } else if (!callTyped) {
+  } else if (!putTyped) {
     error = 'Enter put amount'
   }
 

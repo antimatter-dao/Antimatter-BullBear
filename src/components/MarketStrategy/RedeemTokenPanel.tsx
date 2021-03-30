@@ -1,22 +1,20 @@
-import { Currency } from '@uniswap/sdk'
+import React, { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import React from 'react'
+import { Currency } from '@uniswap/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import CurrencyLogo from '../CurrencyLogo'
 import { AutoRow } from '../Row'
 import { TYPE } from '../../theme'
 import { Input as NumericalInput } from '../NumericalInput'
-
 import { useActiveWeb3React } from '../../hooks'
-
 import useTheme from '../../hooks/useTheme'
 
-const InputRow = styled.div<{ selected: boolean }>`
+const InputRow = styled.div<{ inputOnly: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
-  padding: ${({ selected }) => (selected ? '0 0.5rem 0 1rem' : '0 0.65rem 0 0.75rem')};
-  width: 55%
+  padding: 0 0.5rem 0 1rem;
+  width: ${({ inputOnly }) => (inputOnly ? '100%' : '55%')}
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 14px;
   height: 3rem;
@@ -71,8 +69,6 @@ const InputPanel = styled.div<{ hideInput?: boolean; negativeMarginTop?: string 
   ${({ negativeMarginTop }) => `${negativeMarginTop ? 'margin-top: ' + negativeMarginTop : ''}`}
 `
 
-const Container = styled.div``
-
 const StyledTokenName = styled.span<{ active?: boolean }>`
   ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
   font-size:  16px;
@@ -104,38 +100,38 @@ const StyledBalanceMax = styled.button`
 interface CurrencyInputPanelProps {
   value: string
   onUserInput: (value: string) => void
-  onMax?: () => void
   label: string
   currency?: Currency | null
   negativeMarginTop?: string
-  currencyBalance: string
+  currencyBalance?: string
+  inputOnly?: boolean
 }
 
 export default function RedeemTokenPanel({
   value,
   onUserInput,
-  onMax,
   label,
   currency,
   negativeMarginTop,
-  currencyBalance
+  currencyBalance,
+  inputOnly
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation()
 
   const { account } = useActiveWeb3React()
   const theme = useTheme()
-
+  const handleOnMax = useCallback(() => onUserInput(currencyBalance ?? ''), [currencyBalance, onUserInput])
   return (
     <InputPanel negativeMarginTop={negativeMarginTop}>
-      <Container>
+      <div>
         <LabelRow>
           <AutoRow justify="space-between">
             <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
               {label}
             </TYPE.body>
-            {account && (
+            {account && !inputOnly && (
               <TYPE.body
-                onClick={onMax}
+                onClick={handleOnMax}
                 color={theme.text3}
                 fontWeight={500}
                 fontSize={14}
@@ -148,21 +144,19 @@ export default function RedeemTokenPanel({
         </LabelRow>
 
         <Aligner>
-          <CurrencySelect selected={!!currency} className="open-currency-select-button">
-            <Aligner>
+          {!inputOnly && (
+            <CurrencySelect selected={!!currency} className="open-currency-select-button">
               <Aligner>
-                {currency ? <CurrencyLogo currency={currency} size={'24px'} /> : null}
-                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
-                  {(currency && currency.symbol && currency.symbol.length > 20
-                    ? currency.symbol.slice(0, 4) +
-                      '...' +
-                      currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                    : currency?.symbol) || t('selectToken')}
-                </StyledTokenName>
+                <Aligner>
+                  {currency ? <CurrencyLogo currency={currency} size={'24px'} /> : null}
+                  <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
+                    {(currency && currency.symbol && label) || t('selectToken')}
+                  </StyledTokenName>
+                </Aligner>
               </Aligner>
-            </Aligner>
-          </CurrencySelect>
-          <InputRow selected={true}>
+            </CurrencySelect>
+          )}
+          <InputRow inputOnly={!!inputOnly}>
             <CustomNumericalInput
               className="token-amount-input"
               value={value}
@@ -170,10 +164,10 @@ export default function RedeemTokenPanel({
                 onUserInput(val)
               }}
             />
-            {account && currency && <StyledBalanceMax onClick={onMax}>Max</StyledBalanceMax>}
+            {account && currency && <StyledBalanceMax onClick={handleOnMax}>Max</StyledBalanceMax>}
           </InputRow>
         </Aligner>
-      </Container>
+      </div>
     </InputPanel>
   )
 }
