@@ -186,7 +186,8 @@ export function useAllOptionTypes() {
 export function useDerivedStrategyInfo(
   optionType: OptionTypeData | undefined,
   callTyped: string | undefined,
-  putTyped: string | undefined
+  putTyped: string | undefined,
+  tokenType: string
 ): {
   delta?: DeltaData
   error?: string
