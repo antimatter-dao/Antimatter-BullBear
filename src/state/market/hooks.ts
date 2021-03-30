@@ -13,6 +13,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useUserSlippageTolerance } from '../user/hooks'
 import { ETHER, JSBI } from '@uniswap/sdk'
 import { tryParseAmount } from '../swap/hooks'
+import { TOKEN_TYPES } from 'components/MarketStrategy/TokenTypeRadioButton'
 const CALL_OR_PUT_INTERFACE = new Interface(CALL_OR_PUT_ABI)
 
 export interface OptionTypeData {
@@ -247,9 +248,9 @@ export function useDerivedStrategyInfo(
     error = 'Connect Wallet'
   } else if (!optionType) {
     error = 'Select a Option Type'
-  } else if (!callTyped) {
+  } else if (!callTyped && tokenType !== TOKEN_TYPES.put) {
     error = 'Enter call amount'
-  } else if (!putTyped) {
+  } else if (!putTyped && tokenType !== TOKEN_TYPES.call) {
     error = 'Enter put amount'
   }
 

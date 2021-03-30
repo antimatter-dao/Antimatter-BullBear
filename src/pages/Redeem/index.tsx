@@ -30,7 +30,7 @@ import { useAntimatterContract } from '../../hooks/useContract'
 // import { calculateGasMargin } from '../../utils'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 
-const parstBalance = (val?: string, toSignificant?: number) => {
+const parseBalance = (val?: string, toSignificant?: number) => {
   return val ? CurrencyAmount.ether(val?.toString()).toSignificant(toSignificant ?? 6) : ''
 }
 const parsedGreaterThan = (userInput: string, balance: string) => {
@@ -69,7 +69,8 @@ export default function Redeem() {
   const { delta, error, balances } = useDerivedStrategyInfo(
     selectedOptionType ?? undefined,
     callTypedAmount ?? undefined,
-    putTypedAmount ?? undefined
+    putTypedAmount ?? undefined,
+    tokenType
   )
 
   const redeemError = useMemo(() => {
@@ -187,8 +188,8 @@ export default function Redeem() {
       <ConfirmRedeemModalBottom
         currencies={{ CURRENCY_A: currencyA ?? undefined, CURRENCY_B: currencyB ?? undefined }}
         onRedeem={onRedeem}
-        callVol={delta && parstBalance(delta.dUnd)}
-        putVol={delta && parstBalance(delta.dCur)}
+        callVol={delta && parseBalance(delta.dUnd)}
+        putVol={delta && parseBalance(delta.dCur)}
       />
     )
   }
@@ -266,7 +267,7 @@ export default function Redeem() {
                   onUserInput={setCallTypedAmount}
                   label="Call Token"
                   currency={currencyA}
-                  currencyBalance={parstBalance(balances?.callBalance)}
+                  currencyBalance={parseBalance(balances?.callBalance)}
                 />
                 <ColumnCenter>
                   <Plus size="28" color={theme.text2} />
@@ -277,7 +278,7 @@ export default function Redeem() {
                   label="Put Token"
                   currency={currencyB}
                   negativeMarginTop="-25px"
-                  currencyBalance={parstBalance(balances?.putBalance)}
+                  currencyBalance={parseBalance(balances?.putBalance)}
                 />
               </>
             ) : (
@@ -305,10 +306,10 @@ export default function Redeem() {
                 <RedeemTokenPanel
                   inputOnly={true}
                   value={isCallToken ? callTypedAmount : putTypedAmount}
-                  onUserInput={setPutTypedAmount}
+                  onUserInput={isCallToken ? setCallTypedAmount : setPutTypedAmount}
                   label={`${isCallToken ? 'CALL' : 'PUT'} Tokens Amount to Exercise`}
                   currency={isCallToken ? currencyA : currencyB}
-                  currencyBalance={parstBalance(isCallToken ? balances?.callBalance : balances?.putBalance)}
+                  currencyBalance={parseBalance(isCallToken ? balances?.callBalance : balances?.putBalance)}
                 />
               </>
             )}
@@ -318,8 +319,8 @@ export default function Redeem() {
                 currency0={currencyA}
                 currency1={currencyB}
                 subTitle="Output Token"
-                callVol={delta && parstBalance(delta.dUnd, 4)}
-                putVol={delta && parstBalance(delta.dCur, 4)}
+                callVol={delta && parseBalance(delta.dUnd, 4)}
+                putVol={delta && parseBalance(delta.dCur, 4)}
               />
             )}
 

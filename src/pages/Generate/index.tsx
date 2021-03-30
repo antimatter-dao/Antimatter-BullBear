@@ -55,7 +55,8 @@ export default function Generate() {
   const { delta, error } = useDerivedStrategyInfo(
     selectedOptionType ?? undefined,
     callTyped ?? undefined,
-    putTyped ?? undefined
+    putTyped ?? undefined,
+    tokenType
   )
 
   // const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
