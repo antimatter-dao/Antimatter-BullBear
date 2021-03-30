@@ -36,6 +36,10 @@ export interface DeltaData {
   dCur: string
   totalUnd: string
   totalCur: string
+  callBalance: string
+  putBalance: string
+  underlyingBalance: number | undefined
+  currencyBalance: number | undefined
 }
 
 export function useOptionTypeCount(): number | undefined {
@@ -209,13 +213,22 @@ export function useDerivedStrategyInfo(
     ]
   }, [optionType, callTyped, putTyped, allowedSlippage])
   const delta = useSingleCallResult(antimatterContract, 'calcDeltaWithFeeAndSlippage', queryData ?? [undefined])
-
+  const balancesRes = useMultipleContractSingleData(
+    [optionType?.callAddress, optionType?.putAddress, optionType?.underlying, optionType?.currency],
+    ERC20_INTERFACE,
+    'balanceOf',
+    [account ?? undefined]
+  )
   const deltaResult = delta?.result?.dUnd
     ? {
         dUnd: delta.result?.dUnd,
         dCur: delta.result?.dCur,
         totalUnd: delta.result?.totalUnd,
-        totalCur: delta.result?.totalCur
+        totalCur: delta.result?.totalCur,
+        callBalance: balancesRes?.[0].result?.[0],
+        putBalance: balancesRes?.[1].result?.[0],
+        underlyingBalance: balancesRes?.[2].result?.[0],
+        currencyBalance: balancesRes?.[3].result?.[0]
       }
     : undefined
 
