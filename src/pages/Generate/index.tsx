@@ -101,8 +101,7 @@ export default function Generate() {
       delta.dUnd.toString(),
       delta.dCur.toString()
     ]
-    console.log('method', method)
-    console.log('args--->', args)
+
     setAttemptingTxn(true)
     if (estimate) {
       await estimate(...args)

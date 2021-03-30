@@ -254,6 +254,22 @@ export function useDerivedStrategyInfo(
     error = 'Enter put amount'
   }
 
+  if (
+    deltaResult?.underlyingBalance &&
+    deltaResult?.dUnd &&
+    JSBI.greaterThan(JSBI.BigInt(deltaResult.dUnd), JSBI.BigInt(deltaResult.underlyingBalance))
+  ) {
+    error = `Insufficient ${optionType?.underlyingSymbol} Balance`
+  }
+
+  if (
+    deltaResult?.currencyBalance &&
+    deltaResult?.dCur &&
+    JSBI.greaterThan(JSBI.BigInt(deltaResult.dCur), JSBI.BigInt(deltaResult.currencyBalance))
+  ) {
+    error = `insufficient ${optionType?.currencySymbol} Balance`
+  }
+
   return {
     delta: deltaResult,
     balances,
