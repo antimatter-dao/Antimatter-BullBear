@@ -93,7 +93,7 @@ export default function Generate() {
       return
     }
 
-    const estimate = antimatterContract?.estimateGas.mint
+    const estimate = antimatterContract?.estimateGas.burn
     const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.mint
     const args = [
       optionTypes[parseInt(optionType)].callAddress,
@@ -102,10 +102,12 @@ export default function Generate() {
       delta.dUnd.toString(),
       delta.dCur.toString()
     ]
-    console.log('method', method)
-    console.log('args--->', args)
+
     setAttemptingTxn(true)
     if (estimate) {
+      estimate(...args, {}).then(estimatedGasLimit=>{
+        console.log('estimatedGasLimit', estimatedGasLimit)
+      })
       await estimate(...args)
         .then(estimatedGasLimit =>
           method(...args, {
