@@ -183,6 +183,13 @@ export function useAllOptionTypes() {
     })
 }
 
+export const absolute = (val: string) => {
+  if (val && val[0] === '-') {
+    return val.slice(1)
+  }
+  return val
+}
+
 export function useDerivedStrategyInfo(
   optionType: OptionTypeData | undefined,
   callTyped: string | undefined,
@@ -198,6 +205,7 @@ export function useDerivedStrategyInfo(
   const [allowedSlippage] = useUserSlippageTolerance() // custom from users
 
   const queryData = useMemo(() => {
+    console.log(callTyped, putTyped, tokenType)
     if (
       !optionType ||
       !optionType.priceFloor ||
@@ -208,16 +216,30 @@ export function useDerivedStrategyInfo(
       !putTyped
     )
       return undefined
+    console.log('yayyyyyy')
+    let callVal = tryParseAmount(absolute(callTyped), ETHER)?.raw.toString()
+    let putVal = tryParseAmount(absolute(putTyped), ETHER)?.raw.toString()
+
+    if (callVal && callTyped[0] === '-') {
+      const temp = callVal
+      callVal = '-' + temp
+    }
+    if (putVal && putTyped[0] === '-') {
+      const temp = putVal
+      putVal = '-' + temp
+    }
     return [
       optionType?.priceFloor.toString(),
       optionType?.priceCap.toString(),
       optionType?.callTotal.toString(),
       optionType?.putTotal.toString(),
-      tryParseAmount(callTyped, ETHER)?.raw.toString(),
-      tryParseAmount(putTyped, ETHER)?.raw.toString(),
+      callVal,
+      putVal,
       JSBI.multiply(JSBI.BigInt(allowedSlippage ?? 50), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16))).toString()
     ]
-  }, [optionType, callTyped, putTyped, allowedSlippage])
+  }, [optionType, callTyped, putTyped, allowedSlippage, tokenType])
+
+  console.log('query Data', queryData)
   const delta = useSingleCallResult(antimatterContract, 'calcDeltaWithFeeAndSlippage', queryData ?? [undefined])
   const balancesRes = useMultipleContractSingleData(
     [optionType?.callAddress, optionType?.putAddress, optionType?.underlying, optionType?.currency],
