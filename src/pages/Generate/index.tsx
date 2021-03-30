@@ -93,7 +93,7 @@ export default function Generate() {
       return
     }
 
-    const estimate = antimatterContract?.estimateGas.burn
+    const estimate = antimatterContract?.estimateGas.mint
     const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.mint
     const args = [
       optionTypes[parseInt(optionType)].callAddress,
@@ -105,9 +105,6 @@ export default function Generate() {
 
     setAttemptingTxn(true)
     if (estimate) {
-      estimate(...args, {}).then(estimatedGasLimit=>{
-        console.log('estimatedGasLimit', estimatedGasLimit)
-      })
       await estimate(...args)
         .then(estimatedGasLimit =>
           method(...args, {

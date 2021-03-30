@@ -256,24 +256,24 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volCall",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volPut",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undOutMin",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curOutMin",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "burn",
@@ -315,24 +315,24 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volCall",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volPut",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undOutMin",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curOutMin",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "burn4",
@@ -369,14 +369,19 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volCall",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undOutMin",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "burnCall",
@@ -418,14 +423,19 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volCall",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undOutMin",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "burnCall4",
@@ -462,14 +472,19 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volCall",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undOutMin",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "burnCall_",
@@ -496,14 +511,19 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volPut",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curOutMin",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "burnPut",
@@ -545,14 +565,19 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volPut",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curOutMin",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "burnPut4",
@@ -589,14 +614,19 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volPut",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curOutMin",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "burnPut_",
@@ -951,24 +981,24 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volCall",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volPut",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "mint",
@@ -1010,24 +1040,24 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volCall",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volPut",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "mint4",
@@ -1064,19 +1094,19 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volCall",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "mintCall",
@@ -1118,19 +1148,19 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volCall",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "mintCall4",
@@ -1167,19 +1197,19 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volCall",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "mintCall_",
@@ -1206,19 +1236,19 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volPut",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "mintPut",
@@ -1260,19 +1290,19 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volPut",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "mintPut4",
@@ -1309,19 +1339,19 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "volPut",
-        "type": "uint256"
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "undInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
       },
       {
-        "internalType": "uint256",
-        "name": "curInMax",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
       }
     ],
     "name": "mintPut_",
