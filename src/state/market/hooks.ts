@@ -41,6 +41,10 @@ export interface DeltaData {
   underlyingBalance: number | undefined
   currencyBalance: number | undefined
 }
+interface Balances {
+  callBalance: string
+  putBalance: string
+}
 
 export function useOptionTypeCount(): number | undefined {
   const antimatterContract = useAntimatterContract()
@@ -186,6 +190,7 @@ export function useDerivedStrategyInfo(
 ): {
   delta?: DeltaData
   error?: string
+  balances?: Balances
 } {
   const { account } = useActiveWeb3React()
   const antimatterContract = useAntimatterContract()
@@ -219,6 +224,7 @@ export function useDerivedStrategyInfo(
     'balanceOf',
     [account ?? undefined]
   )
+  console.log(999, optionType, delta, balancesRes)
   const deltaResult = delta?.result?.dUnd
     ? {
         dUnd: delta.result?.dUnd,
@@ -231,26 +237,27 @@ export function useDerivedStrategyInfo(
         currencyBalance: balancesRes?.[3].result?.[0]
       }
     : undefined
+  const balances = balancesRes
+    ? {
+        callBalance: balancesRes?.[0].result?.[0],
+        putBalance: balancesRes?.[1].result?.[0]
+      }
+    : undefined
 
   let error: string | undefined
   if (!account) {
     error = 'Connect Wallet'
-  }
-
-  if (!optionType) {
+  } else if (!optionType) {
     error = 'Select a Option Type'
-  }
-
-  if (!callTyped) {
+  } else if (!callTyped) {
     error = 'Enter call amount'
-  }
-
-  if (!callTyped) {
+  } else if (!callTyped) {
     error = 'Enter put amount'
   }
 
   return {
     delta: deltaResult,
+    balances,
     error
   }
 }

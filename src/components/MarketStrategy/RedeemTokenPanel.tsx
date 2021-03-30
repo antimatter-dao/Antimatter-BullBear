@@ -16,15 +16,15 @@ const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   padding: ${({ selected }) => (selected ? '0 0.5rem 0 1rem' : '0 0.65rem 0 0.75rem')};
-  width: 48%
+  width: 55%
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 14px;
   height: 3rem;
 `
 
-const CurrencySelect = styled.div<{ selected: boolean; halfWidth?: boolean }>`
+const CurrencySelect = styled.div<{ selected: boolean }>`
   align-items: center;
-  width: ${({ halfWidth }) => (halfWidth ? '48%' : '40%')}};
+  width: 40%;
   height: 3rem;
   line-height: 48px;
   font-weight: 500;
@@ -106,7 +106,7 @@ interface CurrencyInputPanelProps {
   onUserInput: (value: string) => void
   onMax?: () => void
   label: string
-  currency?: Currency
+  currency?: Currency | null
   negativeMarginTop?: string
   currencyBalance: string
 }
