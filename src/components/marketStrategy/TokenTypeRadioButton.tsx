@@ -48,7 +48,7 @@ export const TOKEN_TYPES = {
   callPut: 'CallAndPut'
 }
 
-export default function TokenTypeRadioButton({
+export function TokenTypeRadioButton({
   selected,
   onCheck
 }: {
