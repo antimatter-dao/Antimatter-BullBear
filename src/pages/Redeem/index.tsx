@@ -1,52 +1,63 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react'
 import { Plus } from 'react-feather'
 // import { TransactionResponse } from '@ethersproject/providers'
-import { /*ETHER , TokenAmount,*/ JSBI } from '@uniswap/sdk'
+import { CurrencyAmount, JSBI, ETHER } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
+import { TransactionResponse } from '@ethersproject/providers'
 import { ButtonError, ButtonPrimary } from '../../components/Button'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import RedeemTokenPanel from '../../components/MarketStrategy/RedeemTokenPanel'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
-import Row, { RowFlat } from '../../components/Row'
-
-// import { ROUTER_ADDRESS } from '../../constants'
+import { AutoRow } from '../../components/Row'
 import { useActiveWeb3React } from '../../hooks'
 // import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { useWalletModalToggle } from '../../state/application/hooks'
-// import { useDerivedMintInfo, useMintActionHandlers, useMintState } from '../../state/mint/hooks'
-
 // import { useTransactionAdder } from '../../state/transactions/hooks'
-import { useIsExpertMode, useUserSlippageTolerance } from '../../state/user/hooks'
+import { useIsExpertMode } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
-// import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '../../utils'
-import { maxAmountSpend } from '../../utils/maxAmountSpend'
-// import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
 import { Wrapper } from '../Pool/styleds'
-// import { ConfirmAddModalBottom } from './ConfirmAddModalBottom'
+import ConfirmRedeemModalBottom from './ConfirmRedeemModalBottom'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
-// import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { useMarketCurrency } from '../../hooks/Tokens'
 import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
 import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
+import TokenTypeRadioButton, { TOKEN_TYPES } from '../../components/MarketStrategy/TokenTypeRadioButton'
+import { useAntimatterContract } from '../../hooks/useContract'
+// import { calculateGasMargin } from '../../utils'
+import { useTransactionAdder } from '../../state/transactions/hooks'
 
-const parstBalance = (val?: string) => {
-  return val ? JSBI.divide(JSBI.BigInt(val), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))).toString() : ''
+const parstBalance = (val?: string, toSignificant?: number) => {
+  return val ? CurrencyAmount.ether(val?.toString()).toSignificant(toSignificant ?? 6) : ''
+}
+const parsedGreaterThan = (userInput: string, balance: string) => {
+  if (userInput && balance) {
+    const v1 = tryParseAmount(userInput, ETHER)?.raw
+    const v2 = JSBI.BigInt(balance.toString())
+    return v1 && v2 ? JSBI.greaterThan(v1, v2) : undefined
+  }
+  return
 }
 
 export default function Redeem() {
   const [optionTypeIndex, setOptionTypeIndex] = useState('')
-  const [callTypedAmount, setCallTypedAmount] = useState<string>()
-  const [putTypedAmount, setPutTypedAmount] = useState<string>()
+  const [callTypedAmount, setCallTypedAmount] = useState<string>('')
+  const [putTypedAmount, setPutTypedAmount] = useState<string>('')
+  const [tokenType, setTokenType] = useState(TOKEN_TYPES.callPut)
+  // modal and loading
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
 
+  const antimatterContract = useAntimatterContract()
   const optionTypes = useAllOptionTypes()
-  const { account /*, chainId, library */ } = useActiveWeb3React()
+  const { account, chainId, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
   const expertMode = useIsExpertMode()
+  const addTransaction = useTransactionAdder()
   const currencyA = useMarketCurrency(optionTypes[parseInt(optionTypeIndex)]?.underlying)
   const currencyB = useMarketCurrency(optionTypes[parseInt(optionTypeIndex)]?.currency)
 
@@ -54,26 +65,28 @@ export default function Redeem() {
     if (!optionTypes || !optionTypeIndex) return undefined
     return optionTypes?.[parseInt(optionTypeIndex)]
   }, [optionTypes, optionTypeIndex])
-  console.log(888, optionTypes, selectedOptionType)
-  // mint state
-  // const { independentField, typedValue, otherTypedValue } = useMintState()
+
   const { delta, error, balances } = useDerivedStrategyInfo(
     selectedOptionType ?? undefined,
     callTypedAmount ?? undefined,
     putTypedAmount ?? undefined
   )
-  console.log(77777, balances, delta)
-  console.log(90909090909, parstBalance(balances?.putBalance))
-  const isValid = !error
-  // const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
 
-  // modal and loading
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [attemptingTxn] = useState<boolean>(false) // clicked confirm
+  const redeemError = useMemo(() => {
+    if (
+      balances &&
+      (parsedGreaterThan(callTypedAmount, balances.callBalance) ||
+        parsedGreaterThan(putTypedAmount, balances.putBalance))
+    ) {
+      return 'Insufficient Balance'
+    }
+    return error
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [balances?.callBalance, balances?.callBalance, error, callTypedAmount, putTypedAmount])
 
   // txn values
   // const deadline = useTransactionDeadline() // custom from users settings
-  const [allowedSlippage] = useUserSlippageTolerance() // custom from users
+  // const [allowedSlippage] = useUserSlippageTolerance() // custom from users
   const [txHash, setTxHash] = useState<string>('')
 
   // get formatted amounts
@@ -105,97 +118,65 @@ export default function Redeem() {
 
   // const addTransaction = useTransactionAdder()
 
-  async function onAdd() {
-    // if (!chainId || !library || !account) return
-    // const router = getRouterContract(chainId, library, account)
-    // const { [Field.CURRENCY_A]: parsedAmountA, [Field.CURRENCY_B]: parsedAmountB } = parsedAmounts
-    // if (!parsedAmountA || !parsedAmountB || !currencyA || !currencyB || !deadline) {
-    //   return
-    // }
-    // const amountsMin = {
-    //   [Field.CURRENCY_A]: calculateSlippageAmount(parsedAmountA, noLiquidity ? 0 : allowedSlippage)[0],
-    //   [Field.CURRENCY_B]: calculateSlippageAmount(parsedAmountB, noLiquidity ? 0 : allowedSlippage)[0]
-    // }
-    // let estimate,
-    //   method: (...args: any) => Promise<TransactionResponse>,
-    //   args: Array<string | string[] | number>,
-    //   value: BigNumber | null
-    // if (currencyA === ETHER || currencyB === ETHER) {
-    //   const tokenBIsETH = currencyB === ETHER
-    //   estimate = router.estimateGas.addLiquidityETH
-    //   method = router.addLiquidityETH
-    //   args = [
-    //     wrappedCurrency(tokenBIsETH ? currencyA : currencyB, chainId)?.address ?? '', // token
-    //     (tokenBIsETH ? parsedAmountA : parsedAmountB).raw.toString(), // token desired
-    //     amountsMin[tokenBIsETH ? Field.CURRENCY_A : Field.CURRENCY_B].toString(), // token min
-    //     amountsMin[tokenBIsETH ? Field.CURRENCY_B : Field.CURRENCY_A].toString(), // eth min
-    //     account,
-    //     deadline.toHexString()
-    //   ]
-    //   value = BigNumber.from((tokenBIsETH ? parsedAmountB : parsedAmountA).raw.toString())
-    // } else {
-    //   estimate = router.estimateGas.addLiquidity
-    //   method = router.addLiquidity
-    //   args = [
-    //     wrappedCurrency(currencyA, chainId)?.address ?? '',
-    //     wrappedCurrency(currencyB, chainId)?.address ?? '',
-    //     parsedAmountA.raw.toString(),
-    //     parsedAmountB.raw.toString(),
-    //     amountsMin[Field.CURRENCY_A].toString(),
-    //     amountsMin[Field.CURRENCY_B].toString(),
-    //     account,
-    //     deadline.toHexString()
-    //   ]
-    //   value = null
-    // }
-    // setAttemptingTxn(true)
-    // await estimate(...args, value ? { value } : {})
-    //   .then(estimatedGasLimit =>
-    //     method(...args, {
-    //       ...(value ? { value } : {}),
-    //       gasLimit: calculateGasMargin(estimatedGasLimit)
-    //     }).then(response => {
-    //       setAttemptingTxn(false)
-    //       addTransaction(response, {
-    //         summary:
-    //           'Add ' +
-    //           parsedAmounts[Field.CURRENCY_A]?.toSignificant(3) +
-    //           ' ' +
-    //           currencyA?.symbol +
-    //           ' and ' +
-    //           parsedAmounts[Field.CURRENCY_B]?.toSignificant(3) +
-    //           ' ' +
-    //           currencyB?.symbol
-    //       })
-    //       setTxHash(response.hash)
-    //     })
-    //   )
-    //   .catch(error => {
-    //     setAttemptingTxn(false)
-    //     // we only care if the error is something _other_ than the user rejected the tx
-    //     if (error?.code !== 4001) {
-    //       console.error(error)
-    //     }
-    //   })
+  async function onRedeem() {
+    console.log('onRedeem')
+    if (!chainId || !library || !account) return
+
+    if (!delta) {
+      return
+    }
+    if (tokenType === TOKEN_TYPES.call && !callTypedAmount) return
+    if (tokenType === TOKEN_TYPES.put && !putTypedAmount) return
+
+    const estimate = antimatterContract?.estimateGas.burn
+
+    const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.burn
+
+    const args = [
+      optionTypes[parseInt(optionTypeIndex)].callAddress,
+      '-' + tryParseAmount(callTypedAmount ?? '0', ETHER)?.raw.toString(),
+      '-' + tryParseAmount(putTypedAmount ?? '0', ETHER)?.raw.toString(),
+      delta.dUnd.toString(),
+      delta.dCur.toString()
+    ]
+
+    setAttemptingTxn(true)
+
+    if (estimate) {
+      await estimate(...args)
+        // .then(estimatedGasLimit =>
+        .then(() =>
+          method(...args, {
+            // gasLimit: calculateGasMargin(estimatedGasLimit)
+            gasLimit: 379614
+          }).then(response => {
+            setAttemptingTxn(false)
+            addTransaction(response, {
+              summary: 'generate '
+            })
+
+            setTxHash(response.hash)
+          })
+        )
+        .catch(error => {
+          setAttemptingTxn(false)
+          // we only care if the error is something _other_ than the user rejected the tx
+          if (error?.code !== 4001) {
+            console.error('---->', error)
+          }
+        })
+    }
   }
 
   const modalHeader = () => {
     return (
       <>
         <AutoColumn gap="20px">
-          <RowFlat style={{ marginTop: '20px' }}>
-            <Text fontSize="48px" fontWeight={500} lineHeight="42px" marginRight={10}>
-              {/* {liquidityMinted?.toSignificant(6)} */}
+          <AutoRow justify="center" style={{ marginTop: '20px' }}>
+            <Text fontSize="14px" fontWeight={400}>
+              You will generate
             </Text>
-            {/* <DoubleCurrencyLogo currency0={currencyA} currency1={currencyB} size={30} /> */}
-          </RowFlat>
-          <Row>
-            <Text fontSize="24px">{currencyA?.symbol + '/' + currencyB?.symbol + ' Pool Tokens'}</Text>
-          </Row>
-          <TYPE.italic fontSize={12} textAlign="left" padding={'8px 0 0 0 '}>
-            {`Output is estimated. If the price changes by more than ${allowedSlippage /
-              100}% your transaction will revert.`}
-          </TYPE.italic>
+          </AutoRow>
         </AutoColumn>
       </>
     )
@@ -203,15 +184,12 @@ export default function Redeem() {
 
   const modalBottom = () => {
     return (
-      // <ConfirmAddModalBottom
-      //   price={price}
-      //   currencies={currencies}
-      //   parsedAmounts={parsedAmounts}
-      //   noLiquidity={noLiquidity}
-      //   onAdd={onAdd}
-      //   poolTokenPercentage={poolTokenPercentage}
-      // />
-      <></>
+      <ConfirmRedeemModalBottom
+        currencies={{ CURRENCY_A: currencyA ?? undefined, CURRENCY_B: currencyB ?? undefined }}
+        onRedeem={onRedeem}
+        callVol={delta && parstBalance(delta.dUnd)}
+        putVol={delta && parstBalance(delta.dCur)}
+      />
     )
   }
 
@@ -241,6 +219,16 @@ export default function Redeem() {
       }),
     [optionTypes]
   )
+  const handleCheck = useCallback((tokenType: string) => {
+    if (tokenType === TOKEN_TYPES.call) {
+      setPutTypedAmount('')
+    }
+    if (tokenType === TOKEN_TYPES.put) {
+      setCallTypedAmount('')
+    }
+    setTokenType(tokenType)
+  }, [])
+  const isCallToken = useMemo(() => tokenType === TOKEN_TYPES.call, [tokenType])
 
   return (
     <>
@@ -254,7 +242,7 @@ export default function Redeem() {
             hash={txHash}
             content={() => (
               <ConfirmationModalContent
-                title={'You will receive'}
+                title="Redemption confirmation"
                 onDismiss={handleDismissConfirmation}
                 topContent={modalHeader}
                 bottomContent={modalBottom}
@@ -270,34 +258,69 @@ export default function Redeem() {
               options={selectOptions}
               selectedId={optionTypeIndex}
             />
-            <RedeemTokenPanel
-              value={callTypedAmount ?? ''}
-              onUserInput={setCallTypedAmount}
-              label="Call Token"
-              onMax={() => {
-                console.log(maxAmountSpend(tryParseAmount(balances?.callBalance))?.toExact() ?? '')
-              }}
-              currency={currencyA}
-              // currencyBalance={JSBI.BigInt(balances?.putBalance)}
-              currencyBalance={parstBalance(balances?.callBalance)}
-            />
-            <ColumnCenter>
-              <Plus size="28" color={theme.text2} />
-            </ColumnCenter>
-            <RedeemTokenPanel
-              value={putTypedAmount ?? ''}
-              onUserInput={setPutTypedAmount}
-              label="Put Token"
-              onMax={() => {
-                console.log(maxAmountSpend(tryParseAmount(balances?.putBalance))?.toExact() ?? '')
-              }}
-              currency={currencyB}
-              negativeMarginTop="-25px"
-              // currencyBalance={JSBI.BigInt(balances?.putBalance)}
-              currencyBalance={parstBalance(balances?.putBalance)}
-            />
+            <TokenTypeRadioButton selected={tokenType} onCheck={handleCheck} />
+            {tokenType === TOKEN_TYPES.callPut ? (
+              <>
+                <RedeemTokenPanel
+                  value={callTypedAmount ?? ''}
+                  onUserInput={setCallTypedAmount}
+                  label="Call Token"
+                  currency={currencyA}
+                  currencyBalance={parstBalance(balances?.callBalance)}
+                />
+                <ColumnCenter>
+                  <Plus size="28" color={theme.text2} />
+                </ColumnCenter>
+                <RedeemTokenPanel
+                  value={putTypedAmount ?? ''}
+                  onUserInput={setPutTypedAmount}
+                  label="Put Token"
+                  currency={currencyB}
+                  negativeMarginTop="-25px"
+                  currencyBalance={parstBalance(balances?.putBalance)}
+                />
+              </>
+            ) : (
+              <>
+                <AutoColumn gap="4px">
+                  <AutoRow>
+                    <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
+                      Token Execrise
+                    </TYPE.body>
+                  </AutoRow>
+                  <div
+                    style={{
+                      width: '100%',
+                      border: `1px solid ${theme.bg3}`,
+                      padding: '0 20px',
+                      borderRadius: '14px',
+                      color: theme.text3,
+                      height: '3rem',
+                      lineHeight: '48px'
+                    }}
+                  >
+                    You have the rights to purchase ETH at 100 USDT
+                  </div>
+                </AutoColumn>
+                <RedeemTokenPanel
+                  inputOnly={true}
+                  value={isCallToken ? callTypedAmount : putTypedAmount}
+                  onUserInput={setPutTypedAmount}
+                  label={`${isCallToken ? 'CALL' : 'PUT'} Tokens Amount to Exercise`}
+                  currency={isCallToken ? currencyA : currencyB}
+                  currencyBalance={parstBalance(isCallToken ? balances?.callBalance : balances?.putBalance)}
+                />
+              </>
+            )}
             {currencyA && currencyB && (
-              <GenerateBar cardTitle={`You will receive`} currency0={currencyA} currency1={currencyB} />
+              <GenerateBar
+                cardTitle={`You will receive`}
+                currency0={currencyA}
+                currency1={currencyB}
+                subTitle="Output Token"
+                callVol={delta && parstBalance(delta.dUnd, 4)}
+                putVol={delta && parstBalance(delta.dCur, 4)}
+              />
             )}
 
             {!account ? (
@@ -306,12 +329,12 @@ export default function Redeem() {
               <AutoColumn gap={'md'}>
                 <ButtonError
                   onClick={() => {
-                    expertMode ? onAdd() : setShowConfirm(true)
+                    expertMode ? onRedeem() : setShowConfirm(true)
                   }}
-                  disabled={!isValid}
+                  disabled={!!redeemError}
                 >
                   <Text fontSize={16} fontWeight={500}>
-                    {error ?? 'Redeem'}
+                    {redeemError ?? 'Redeem'}
                   </Text>
                 </ButtonError>
               </AutoColumn>
