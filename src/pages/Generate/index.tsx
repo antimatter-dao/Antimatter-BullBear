@@ -221,7 +221,7 @@ export default function Generate({
             <CallOrPutInputPanel
               value={callTyped ?? ''}
               onUserInput={setCallTyped}
-              currency={currencyA ?? undefined}
+              currency={undefined}
               id="generate-output-token"
               showCommonBases
               defaultSymbol={'Call Token'}
@@ -235,7 +235,7 @@ export default function Generate({
                 <CallOrPutInputPanel
                   value={putTyped ?? ''}
                   onUserInput={setPutTyped}
-                  currency={currencyB ?? undefined}
+                  currency={undefined}
                   id="add-liquidity-input-tokenb"
                   showCommonBases
                   halfWidth={true}
