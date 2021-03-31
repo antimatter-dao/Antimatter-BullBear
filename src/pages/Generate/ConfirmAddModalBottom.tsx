@@ -32,16 +32,16 @@ export function ConfirmGenerationModalBottom({
         subTitle="Input Token"
         callTitle={'You will receive'}
         putTitle={'You will receive'}
-        callVol={parseBalance(delta?.dUnd)}
-        putVol={parseBalance(delta?.dCur)}
+        callVol={callTyped}
+        putVol={putTyped}
         currency0={undefined}
         currency1={undefined}
       />
       <GenerateBar
         cardTitle={``}
         subTitle="Output Token"
-        callVol={callTyped}
-        putVol={putTyped}
+        callVol={parseBalance(delta?.dUnd)}
+        putVol={parseBalance(delta?.dCur)}
         currency0={currencyA ?? undefined}
         currency1={currencyB ?? undefined}
       />
