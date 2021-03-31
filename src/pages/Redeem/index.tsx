@@ -120,7 +120,7 @@ export default function Redeem() {
           }).then(response => {
             setAttemptingTxn(false)
             addTransaction(response, {
-              summary: 'generate '
+              summary: 'redeem'
             })
 
             setTxHash(response.hash)

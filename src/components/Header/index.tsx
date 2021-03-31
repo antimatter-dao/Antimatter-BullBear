@@ -1,5 +1,6 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { X } from 'react-feather'
 // import { Text } from 'rebass'
 // import { NavLink } from 'react-router-dom'
 // import { darken } from 'polished'
@@ -13,11 +14,10 @@ import { /*useETHBalances,*/ useAggregateUniBalance } from '../../state/wallet/h
 // import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
 import { TYPE /*ExternalLink*/ } from '../../theme'
-
+import { Base } from 'components/Button'
 // import { YellowCard } from '../Card'
 // import { Moon, Sun } from 'react-feather'
 // import Menu from '../Menu'
-
 // import { /*Row,*/ RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -26,6 +26,7 @@ import { useUserHasAvailableClaim } from '../../state/claim/hooks'
 // import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
 // import { Dots } from '../swap/styleds'
 import usePrevious from '../../hooks/usePrevious'
+import Modal from 'components/Modal'
 
 export const headerHeight = '65px',
   headerHeightDisplacement = '32px'
@@ -287,6 +288,18 @@ export const StyledMenuButton = styled.button`
   }
 `
 
+const CloseButton = styled(Base)`
+  background: none;
+  width: auto;
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  :active,
+  :focus {
+    border: none;
+  }
+`
+
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
@@ -296,6 +309,16 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
+  const [warningModalOpen, setWarningModalOpen] = useState(false)
+
+  useEffect(() => {
+    console.log(chainId, ChainId.RINKEBY, ChainId.ROPSTEN)
+    if (chainId && chainId !== ChainId.RINKEBY && chainId !== ChainId.ROPSTEN) {
+      setWarningModalOpen(true)
+    } else {
+      setWarningModalOpen(false)
+    }
+  }, [chainId, setWarningModalOpen])
   // const { t } = useTranslation()
 
   // const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
@@ -319,6 +342,16 @@ export default function Header() {
   return (
     <HeaderFrame>
       <ClaimModal />
+      <Modal isOpen={warningModalOpen} onDismiss={() => setWarningModalOpen(false)} maxHeight={400}>
+        <div style={{ height: '400px', display: 'flex', alignItems: 'center', position: 'relative', padding: '48px' }}>
+          <CloseButton onClick={() => setWarningModalOpen(false)}>
+            <X />
+          </CloseButton>
+          <TYPE.body fontSize="24px">
+            The product is in public testing, please switch your wallet network to Ropston or rinkeby network
+          </TYPE.body>
+        </div>
+      </Modal>
       {/* <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
       </Modal> */}
