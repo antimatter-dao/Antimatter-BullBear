@@ -106,7 +106,7 @@ export default function App() {
             <Web3ReactManager>
               <Switch>
                 <Route exact strict path="/swap" component={Swap} />
-                <Route exact strict path="/marketStrategy" component={MarketStrategy} />
+                <Route exact strict path="/optionExercise" component={MarketStrategy} />
                 <Route exact strict path="/generate" component={Generate} />
                 <Route exact strict path="/generate/:currencyIdA/:currencyIdB" component={Generate} />
                 <Route exact strict path="/redeem" component={Redeem} />
