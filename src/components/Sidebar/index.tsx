@@ -11,7 +11,7 @@ import { Base } from '../Button'
 
 const tabs = [
   { title: 'Option Trading', route: 'swap' },
-  { title: 'Option Exercise', route: 'market-strategy' },
+  { title: 'Option Exercise', route: 'marketStrategy' },
   { title: 'Liquidity', route: 'pool' },
   { title: 'Matter Token', route: 'matterToken' },
   { title: 'Governance', route: 'governance' },
@@ -90,13 +90,14 @@ const StyledLogo = styled(Logo)`
 //   }
 //   `
 const MobileHeader = styled.header`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  height:${({ theme }) => theme.mobileHeaderHeight}
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items: center
   padding: 0 24px;
-  position: relative;
-  height: ${({ theme }) => theme.mobileHeaderHeight} ${({ theme }) => theme.mobile};
+  ${({ theme }) => theme.mobile}
+  position:relative;
 `
 const ToggleMenuButton = styled(Base)`
   background: none;
@@ -109,9 +110,9 @@ const ToggleMenuButton = styled(Base)`
 const TogggleMenuWrapper = styled.div`
   z-index:2;
   position: absolute;
-  left: 0;
-  width: 100vw;
   top: ${({ theme }) => theme.mobileHeaderHeight}
+  left: 0;
+  width: 100vw
   height:calc(100vh - ${({ theme }) => theme.mobileHeaderHeight});
   border-radius: 32px;
   background: ${({ theme }) => theme.gradient2}
