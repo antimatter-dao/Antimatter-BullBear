@@ -157,9 +157,6 @@ export default function Pool() {
               <TitleRow padding={'0'}>
                 <HideSmall>
                   <TYPE.mediumHeader style={{ justifySelf: 'flex-start' }}>Your liquidity</TYPE.mediumHeader>
-                  <TYPE.white fontSize={14} style={{ justifySelf: 'flex-start', color: theme.text2, marginTop: '4px' }}>
-                    Please chose option what you need
-                  </TYPE.white>
                 </HideSmall>
               </TitleRow>
               <ButtonRow>
