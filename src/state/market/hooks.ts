@@ -20,6 +20,8 @@ export interface OptionTypeData {
   id: string
   callAddress: string
   putAddress: string
+  callBalance: string
+  putBalance: string
   callTotal: string
   putTotal: string
   underlying: string
@@ -57,6 +59,7 @@ export function useOptionTypeCount(): number | undefined {
 }
 
 export function useAllOptionTypes() {
+  const { account } = useActiveWeb3React()
   const antimatterContract = useAntimatterContract()
   const optionTypeCount = useOptionTypeCount()
   const optionTypeIndexes = []
@@ -110,6 +113,14 @@ export function useAllOptionTypes() {
     undefined,
     NEVER_RELOAD
   )
+
+  const callBalancesRes = useMultipleContractSingleData(callAddresses, CALL_OR_PUT_INTERFACE, 'balanceOf', [
+    account ?? undefined
+  ])
+
+  const putBalancesRes = useMultipleContractSingleData(putAddresses, CALL_OR_PUT_INTERFACE, 'balanceOf', [
+    account ?? undefined
+  ])
 
   const underlyingAddresses = useMemo(() => {
     return allCalls
@@ -168,6 +179,8 @@ export function useAllOptionTypes() {
         id: index.toString(),
         callAddress: callAddresses[index],
         putAddress: putAddresses[index],
+        callBalance: callBalancesRes[index].result?.[0],
+        putBalance: putBalancesRes[index].result?.[0],
         callTotal: callTotalsRes[index].result?.[0],
         putTotal: putTotalsRes[index].result?.[0],
         underlying: item.result?.[0],

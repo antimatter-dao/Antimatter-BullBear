@@ -91,7 +91,7 @@ export default function MarketStrategy() {
                     Connect to a wallet to view your liquidity.
                   </TYPE.body>
                 </Card>
-              ) : !optionTypes ? (
+              ) : optionTypes.length === 0 ? (
                 <EmptyProposals>
                   <TYPE.body color={theme.text3} textAlign="center">
                     <Dots>Loading</Dots>
