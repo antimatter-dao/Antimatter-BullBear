@@ -225,24 +225,26 @@ export default function Generate() {
               />
             )}
 
-            {(tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.put) && (
-              <>
-                <ColumnCenter>
-                  <Plus size="28" color={theme.text2} />
-                </ColumnCenter>
-                <CallOrPutInputPanel
-                  value={putTyped ?? ''}
-                  onUserInput={setPutTyped}
-                  currency={undefined}
-                  id="add-liquidity-input-tokenb"
-                  showCommonBases
-                  halfWidth={true}
-                  defaultSymbol={'Put Token'}
-                  negativeMarginTop="-20px"
-                  isCall={false}
-                />
-              </>
+            {tokenType === TOKEN_TYPES.callPut && (
+              <ColumnCenter>
+                <Plus size="28" color={theme.text2} />
+              </ColumnCenter>
             )}
+
+            {(tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.put) && (
+              <CallOrPutInputPanel
+                value={putTyped ?? ''}
+                onUserInput={setPutTyped}
+                currency={undefined}
+                id="generate-output-token"
+                showCommonBases
+                halfWidth={true}
+                defaultSymbol={'Put Token'}
+                negativeMarginTop={tokenType === TOKEN_TYPES.callPut ? '-20px' : '0'}
+                isCall={false}
+              />
+            )}
+
             {currencyA && currencyB && delta?.dUnd && delta.dCur && (
               <GenerateBar
                 cardTitle={``}
