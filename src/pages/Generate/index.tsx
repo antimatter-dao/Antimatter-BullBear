@@ -89,7 +89,7 @@ export default function Generate() {
     // const maxUnd = tryParseAmount(delta?.totalUnd.toString(), currencyA ?? undefined)
     // const maxCur = tryParseAmount(delta?.totalCur.toString(), currencyB ?? undefined)
 
-    if (!delta || !callTyped || !putTyped) {
+    if (!delta) {
       return
     }
 
@@ -97,8 +97,12 @@ export default function Generate() {
     const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.mint
     const args = [
       optionTypes[parseInt(optionType)].callAddress,
-      tryParseAmount(TOKEN_TYPES.callPut || TOKEN_TYPES.call ? callTyped : '0', ETHER)?.raw.toString(),
-      tryParseAmount(TOKEN_TYPES.callPut || TOKEN_TYPES.put ? putTyped : '0', ETHER)?.raw.toString(),
+      tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.call
+        ? tryParseAmount(TOKEN_TYPES.callPut || TOKEN_TYPES.call ? callTyped : '0', ETHER)?.raw.toString()
+        : '0',
+      tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.put
+        ? tryParseAmount(TOKEN_TYPES.callPut || TOKEN_TYPES.put ? putTyped : '0', ETHER)?.raw.toString()
+        : '0',
       delta.dUnd.toString(),
       delta.dCur.toString()
     ]
@@ -249,7 +253,7 @@ export default function Generate() {
               />
             )}
 
-            {!optionType || !callTyped || !putTyped ? (
+            {!optionType || !delta ? (
               <ButtonPrimary disabled={true}>
                 <TYPE.main mb="4px">Enter Amount</TYPE.main>
               </ButtonPrimary>
