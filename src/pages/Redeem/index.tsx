@@ -61,6 +61,7 @@ export default function Redeem() {
   }, [optionTypes, optionTypeIndex])
 
   const { delta, error, balances } = useDerivedStrategyInfo(
+    false,
     selectedOptionType ?? undefined,
     callTypedAmount ? '-' + callTypedAmount : undefined,
     putTypedAmount ? '-' + putTypedAmount : undefined,

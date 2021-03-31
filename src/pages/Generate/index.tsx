@@ -54,6 +54,7 @@ export default function Generate() {
   }, [optionTypes, optionType])
 
   const { delta, error } = useDerivedStrategyInfo(
+    true,
     selectedOptionType ?? undefined,
     callTyped ?? undefined,
     putTyped ?? undefined,
