@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react'
 import { Plus } from 'react-feather'
-// import { TransactionResponse } from '@ethersproject/providers'
-import { JSBI, ETHER } from '@uniswap/sdk'
+import { ETHER } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
@@ -12,9 +11,7 @@ import RedeemTokenPanel from '../../components/MarketStrategy/RedeemTokenPanel'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
 import { AutoRow } from '../../components/Row'
 import { useActiveWeb3React } from '../../hooks'
-// import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { useWalletModalToggle } from '../../state/application/hooks'
-// import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useIsExpertMode } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import AppBody from '../AppBody'
@@ -180,13 +177,7 @@ export default function Redeem() {
       optionTypes.map(item => {
         return {
           id: item.id,
-          option: `${item.underlyingSymbol}-${item.currencySymbol} ${JSBI.divide(
-            JSBI.BigInt(item.priceFloor),
-            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.underlyingDecimals ?? 18))
-          )}-${JSBI.divide(
-            JSBI.BigInt(item.priceCap),
-            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
-          )}`
+          option: `${item.underlyingSymbol} ${parseBalance(item.priceFloor)}$${parseBalance(item.priceCap)}`
         }
       }),
     [optionTypes]

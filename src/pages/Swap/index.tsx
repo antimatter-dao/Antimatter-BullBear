@@ -307,7 +307,7 @@ export default function Swap({ history }: RouteComponentProps) {
         onConfirm={handleConfirmTokenWarning}
         onDismiss={handleDismissTokenWarning}
       />
-      <SwapPoolTabs active={'swap'} />
+      <SwapPoolTabs active={'option_trading'} />
       <AppBody>
         <SwapHeader />
         <Wrapper id="swap-page" style={{ padding: '1rem 0', marginTop: '20px' }}>

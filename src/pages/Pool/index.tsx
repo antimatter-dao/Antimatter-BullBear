@@ -125,7 +125,7 @@ export default function Pool() {
     <>
       <AppBody>
         <PageWrapper>
-          <SwapPoolTabs active={'pool'} />
+          <SwapPoolTabs active={'liquidity'} />
           {/* <VoteCard>
           <CardBGImage />
           <CardNoise />
