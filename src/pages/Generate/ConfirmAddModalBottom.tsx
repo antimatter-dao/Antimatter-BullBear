@@ -2,11 +2,13 @@ import React from 'react'
 import { Text } from 'rebass'
 import { ButtonPrimary } from '../../components/Button'
 import { DeltaData } from '../../state/market/hooks'
-import { Currency, Token, TokenAmount } from '@uniswap/sdk'
-import { ZERO_ADDRESS } from '../../constants'
+import { Currency } from '@uniswap/sdk'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
+import { parseBalance } from '../../utils/marketStrategyUtils'
+import { TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
 
 export function ConfirmGenerationModalBottom({
+  tokenType = TOKEN_TYPES.callPut,
   delta,
   callTyped,
   putTyped,
@@ -14,6 +16,7 @@ export function ConfirmGenerationModalBottom({
   currencyB,
   onGenerate
 }: {
+  tokenType?: string
   delta?: DeltaData | undefined
   callTyped?: string
   putTyped?: string
@@ -24,20 +27,19 @@ export function ConfirmGenerationModalBottom({
   return (
     <>
       <GenerateBar
-        cardTitle={`You will pay`}
-        callVol={new TokenAmount(
-          new Token(1, ZERO_ADDRESS, currencyA?.decimals ?? 18),
-          delta?.dUnd.toString() ?? '0'
-        )?.toSignificant(4)}
-        putVol={new TokenAmount(
-          new Token(1, ZERO_ADDRESS, currencyB?.decimals ?? 18),
-          delta?.dCur.toString() ?? '0'
-        )?.toSignificant(4)}
+        tokenType={tokenType}
+        cardTitle={``}
+        subTitle="Input Token"
+        callTitle={'You will receive'}
+        putTitle={'You will receive'}
+        callVol={parseBalance(delta?.dUnd)}
+        putVol={parseBalance(delta?.dCur)}
         currency0={undefined}
         currency1={undefined}
       />
       <GenerateBar
-        cardTitle={`you will get`}
+        cardTitle={``}
+        subTitle="Output Token"
         callVol={callTyped}
         putVol={putTyped}
         currency0={currencyA ?? undefined}

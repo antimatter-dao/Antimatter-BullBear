@@ -97,8 +97,8 @@ export default function Generate() {
     const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.mint
     const args = [
       optionTypes[parseInt(optionType)].callAddress,
-      tryParseAmount(callTyped ?? '0', ETHER)?.raw.toString(),
-      tryParseAmount(putTyped ?? '0', ETHER)?.raw.toString(),
+      tryParseAmount(TOKEN_TYPES.callPut || TOKEN_TYPES.call ? callTyped : '0', ETHER)?.raw.toString(),
+      tryParseAmount(TOKEN_TYPES.callPut || TOKEN_TYPES.put ? putTyped : '0', ETHER)?.raw.toString(),
       delta.dUnd.toString(),
       delta.dCur.toString()
     ]
@@ -159,6 +159,7 @@ export default function Generate() {
   const modalBottom = () => {
     return (
       <ConfirmGenerationModalBottom
+        tokenType={tokenType}
         delta={delta}
         callTyped={callTyped}
         putTyped={putTyped}
@@ -239,9 +240,10 @@ export default function Generate() {
             )}
             {currencyA && currencyB && delta?.dUnd && delta.dCur && (
               <GenerateBar
-                cardTitle={`You will pay`}
+                cardTitle={``}
                 callVol={delta && parseBalance(delta.dUnd, 4)}
                 putVol={delta && parseBalance(delta.dCur, 4)}
+                subTitle="Output Token"
                 currency0={currencyA}
                 currency1={currencyB}
               />
