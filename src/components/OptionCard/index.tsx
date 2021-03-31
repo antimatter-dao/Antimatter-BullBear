@@ -31,54 +31,52 @@ export function OptionCard({ optionType }: OptionCardProps) {
     <>
       <HoverCard>
         <RowBetween>
-          <FixedHeightRow>
-            <RowFixed>
-              {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
-              <Text fontWeight={500} fontSize={20} style={{ marginLeft: '' }}>
-                {`${optionType.underlyingSymbol ?? '-'} (Call Token)`}
-              </Text>
-            </RowFixed>
-          </FixedHeightRow>
-
-          <RowBetween>
+          <RowFixed>
+            {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
             <Text fontWeight={500} fontSize={20} style={{ marginLeft: '' }}>
+              {`${optionType.underlyingSymbol ?? '-'}(${parseBalance(optionType.priceFloor)}$${parseBalance(
+                optionType.priceCap
+              )})Call`}
+            </Text>
+          </RowFixed>
+
+          <RowFixed>
+            <Text fontWeight={500} fontSize={20} style={{ minWidth: 'unset', marginRight: 12 }}>
               {`${parseBalance(optionType.callBalance, 2)}`}
             </Text>
             <ButtonSecondary
               style={{ backgroundColor: 'transparent' }}
-              width="28%"
               as={Link}
               to={`/swap?inputCurrency=${optionType.callAddress}`}
             >
               Trade
             </ButtonSecondary>
-          </RowBetween>
+          </RowFixed>
         </RowBetween>
       </HoverCard>
       <HoverCard>
         <RowBetween>
-          <FixedHeightRow>
-            <RowFixed>
-              {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
-              <Text fontWeight={500} fontSize={20} style={{ marginLeft: '' }}>
-                {`${optionType.underlyingSymbol ?? '-'} (Put Token)`}
-              </Text>
-            </RowFixed>
-          </FixedHeightRow>
-
-          <RowBetween>
+          <RowFixed>
+            {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
             <Text fontWeight={500} fontSize={20} style={{ marginLeft: '' }}>
+              {`${optionType.underlyingSymbol ?? '-'}(${parseBalance(optionType.priceFloor)}$${parseBalance(
+                optionType.priceCap
+              )})Put`}
+            </Text>
+          </RowFixed>
+
+          <RowFixed>
+            <Text fontWeight={500} fontSize={20} style={{ minWidth: 'unset', marginRight: 12 }}>
               {`${parseBalance(optionType.putBalance, 2)}`}
             </Text>
             <ButtonSecondary
               style={{ backgroundColor: 'transparent' }}
-              width="28%"
               as={Link}
               to={`/swap?inputCurrency=${optionType.putAddress}`}
             >
               Trade
             </ButtonSecondary>
-          </RowBetween>
+          </RowFixed>
         </RowBetween>
       </HoverCard>
     </>
