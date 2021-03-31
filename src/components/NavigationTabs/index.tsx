@@ -6,7 +6,7 @@ import { NavLink, Link as HistoryLink } from 'react-router-dom'
 import { ArrowLeft } from 'react-feather'
 import { RowBetween } from '../Row'
 // import QuestionHelper from '../QuestionHelper'
-import Settings from '../Settings'
+import Settings, { SLIPPAGE_TYPE } from '../Settings'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { resetMintState } from 'state/mint/actions'
@@ -120,7 +120,7 @@ export function MarketStrategyTabs({ generation }: { generation: boolean }) {
           <StyledArrowLeft />
         </HistoryLink>
         <TYPE.mediumHeader>{generation ? 'Generation' : 'Redemption'}</TYPE.mediumHeader>
-        <Setting onlySlippage={true} />
+        <Setting onlySlippage={true} slippageType={generation ? SLIPPAGE_TYPE.generation : SLIPPAGE_TYPE.redeem} />
       </RowBetween>
     </Tabs>
   )
