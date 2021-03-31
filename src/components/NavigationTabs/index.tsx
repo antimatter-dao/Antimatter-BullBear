@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { resetMintState } from 'state/mint/actions'
 import { TYPE } from 'theme'
+import Setting from '../Settings'
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -119,7 +120,7 @@ export function MarketStrategyTabs({ generation }: { generation: boolean }) {
           <StyledArrowLeft />
         </HistoryLink>
         <TYPE.mediumHeader>{generation ? 'Generation' : 'Redemption'}</TYPE.mediumHeader>
-        <div />
+        <Setting onlySlippage={true} />
       </RowBetween>
     </Tabs>
   )

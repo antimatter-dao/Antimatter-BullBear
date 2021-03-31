@@ -141,7 +141,7 @@ const CustomizedAutoRow = styled(AutoRow)`
   }
 `
 
-export default function SettingsTab() {
+export default function SettingsTab({ onlySlippage }: { onlySlippage?: boolean }) {
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
@@ -227,48 +227,53 @@ export default function SettingsTab() {
                   setRawSlippage={setUserslippageTolerance}
                   deadline={ttl}
                   setDeadline={setTtl}
+                  onlySlippage={onlySlippage}
                 />
-                <Text fontWeight={400} fontSize={18} style={{ marginTop: '16px' }}>
-                  Interface Settings
-                </Text>
-                <CustomizedAutoRow>
-                  <Column>
-                    <RowFixed style={{ marginBottom: '11px' }}>
-                      <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                        Toggle Expert Mode
-                      </TYPE.black>
-                      <QuestionHelper text="Bypasses confirmation modals and allows high slippage trades. Use at your own risk." />
-                    </RowFixed>
-                    <Toggle
-                      id="toggle-expert-mode-button"
-                      isActive={expertMode}
-                      toggle={
-                        expertMode
-                          ? () => {
-                              toggleExpertMode()
-                              setShowConfirmation(false)
-                            }
-                          : () => {
-                              toggle()
-                              setShowConfirmation(true)
-                            }
-                      }
-                    />
-                  </Column>
-                  <Column>
-                    <RowFixed style={{ marginBottom: '11px' }}>
-                      <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                        Disable Multihops
-                      </TYPE.black>
-                      <QuestionHelper text="Restricts swaps to direct pairs only." />
-                    </RowFixed>
-                    <Toggle
-                      id="toggle-disable-multihop-button"
-                      isActive={singleHopOnly}
-                      toggle={() => (singleHopOnly ? setSingleHopOnly(false) : setSingleHopOnly(true))}
-                    />
-                  </Column>
-                </CustomizedAutoRow>
+                {!onlySlippage && (
+                  <>
+                    <Text fontWeight={400} fontSize={18} style={{ marginTop: '16px' }}>
+                      Interface Settings
+                    </Text>
+                    <CustomizedAutoRow>
+                      <Column>
+                        <RowFixed style={{ marginBottom: '11px' }}>
+                          <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                            Toggle Expert Mode
+                          </TYPE.black>
+                          <QuestionHelper text="Bypasses confirmation modals and allows high slippage trades. Use at your own risk." />
+                        </RowFixed>
+                        <Toggle
+                          id="toggle-expert-mode-button"
+                          isActive={expertMode}
+                          toggle={
+                            expertMode
+                              ? () => {
+                                  toggleExpertMode()
+                                  setShowConfirmation(false)
+                                }
+                              : () => {
+                                  toggle()
+                                  setShowConfirmation(true)
+                                }
+                          }
+                        />
+                      </Column>
+                      <Column>
+                        <RowFixed style={{ marginBottom: '11px' }}>
+                          <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                            Disable Multihops
+                          </TYPE.black>
+                          <QuestionHelper text="Restricts swaps to direct pairs only." />
+                        </RowFixed>
+                        <Toggle
+                          id="toggle-disable-multihop-button"
+                          isActive={singleHopOnly}
+                          toggle={() => (singleHopOnly ? setSingleHopOnly(false) : setSingleHopOnly(true))}
+                        />
+                      </Column>
+                    </CustomizedAutoRow>
+                  </>
+                )}
               </AutoColumn>
             </MenuFlyout>
             <Marginer />

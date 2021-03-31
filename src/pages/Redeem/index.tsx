@@ -108,7 +108,7 @@ export default function Redeem() {
       delta.dCur.toString()
     ]
 
-    console.log('args--->',args)
+    console.log('args--->', args)
 
     setAttemptingTxn(true)
 

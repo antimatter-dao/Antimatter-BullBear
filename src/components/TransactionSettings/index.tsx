@@ -89,9 +89,16 @@ export interface SlippageTabsProps {
   setRawSlippage: (rawSlippage: number) => void
   deadline: number
   setDeadline: (deadline: number) => void
+  onlySlippage?: boolean
 }
 
-export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, setDeadline }: SlippageTabsProps) {
+export default function SlippageTabs({
+  rawSlippage,
+  setRawSlippage,
+  deadline,
+  setDeadline,
+  onlySlippage
+}: SlippageTabsProps) {
   const theme = useContext(ThemeContext)
 
   const inputRef = useRef<HTMLInputElement>()
@@ -222,30 +229,32 @@ export default function SlippageTabs({ rawSlippage, setRawSlippage, deadline, se
         )}
       </AutoColumn>
 
-      <AutoColumn gap="sm">
-        <RowFixed>
-          <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-            Transaction deadline
-          </TYPE.black>
-          <QuestionHelper text="Your transaction will revert if it is pending for more than this long." />
-        </RowFixed>
-        <RowFixed>
-          <OptionCustom style={{ width: '10rem', marginRight: '12px' }} tabIndex={-1}>
-            <Input
-              color={!!deadlineError ? 'red' : undefined}
-              onBlur={() => {
-                parseCustomDeadline((deadline / 60).toString())
-              }}
-              placeholder={(deadline / 60).toString()}
-              value={deadlineInput}
-              onChange={e => parseCustomDeadline(e.target.value)}
-            />
-          </OptionCustom>
-          <TYPE.body style={{ paddingLeft: '8px' }} fontSize={14}>
-            minutes
-          </TYPE.body>
-        </RowFixed>
-      </AutoColumn>
+      {!onlySlippage && (
+        <AutoColumn gap="sm">
+          <RowFixed>
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              Transaction deadline
+            </TYPE.black>
+            <QuestionHelper text="Your transaction will revert if it is pending for more than this long." />
+          </RowFixed>
+          <RowFixed>
+            <OptionCustom style={{ width: '10rem', marginRight: '12px' }} tabIndex={-1}>
+              <Input
+                color={!!deadlineError ? 'red' : undefined}
+                onBlur={() => {
+                  parseCustomDeadline((deadline / 60).toString())
+                }}
+                placeholder={(deadline / 60).toString()}
+                value={deadlineInput}
+                onChange={e => parseCustomDeadline(e.target.value)}
+              />
+            </OptionCustom>
+            <TYPE.body style={{ paddingLeft: '8px' }} fontSize={14}>
+              minutes
+            </TYPE.body>
+          </RowFixed>
+        </AutoColumn>
+      )}
     </AutoColumn>
   )
 }
