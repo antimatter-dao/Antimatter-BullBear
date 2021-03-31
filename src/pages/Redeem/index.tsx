@@ -19,7 +19,7 @@ import { Wrapper } from '../Pool/styleds'
 import ConfirmRedeemModalBottom from './ConfirmRedeemModalBottom'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useMarketCurrency } from '../../hooks/Tokens'
-import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
+import { OptionTypeData, useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
 import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
 import { TypeRadioButton, TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
@@ -28,13 +28,11 @@ import { calculateGasMargin } from '../../utils'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { isNegative, parseBalance, parsedGreaterThan } from '../../utils/marketStrategyUtils'
 
-const findPrice = (isCall: boolean, selectOption?: string) => {
-  if (!selectOption) {
+const findPrice = (option?: OptionTypeData, isCall?: boolean) => {
+  if (!option) {
     return ''
   }
-  const regex = /^.+ ([0-9]+)$([0-9]+)/
-  const match = selectOption.match(regex)
-  return isCall ? match?.[1] || '' : match?.[2] || ''
+  return isCall ? parseBalance(option.priceFloor) : parseBalance(option.priceCap)
 }
 
 export default function Redeem() {
@@ -269,10 +267,7 @@ export default function Redeem() {
                       }}
                     >
                       {`You have the rights to ${isCallToken ? 'purchase' : 'sell'} ${currencyA?.symbol ??
-                        ''} at ${findPrice(
-                        isCallToken,
-                        selectOptions?.[parseInt(optionTypeIndex)]?.option
-                      )} ${currencyB?.symbol ?? ''}`}
+                        ''} at ${findPrice(selectedOptionType, isCallToken)} ${currencyB?.symbol ?? ''}`}
                     </div>
                   </AutoColumn>
                 )}
