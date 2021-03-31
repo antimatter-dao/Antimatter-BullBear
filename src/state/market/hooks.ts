@@ -246,7 +246,7 @@ export function useDerivedStrategyInfo(
       optionType?.putTotal.toString(),
       callVal,
       putVal,
-      JSBI.multiply(JSBI.BigInt(allowedSlippage ?? 50), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16))).toString()
+      JSBI.multiply(JSBI.BigInt(allowedSlippage ?? 50), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(15))).toString()
     ]
   }, [optionType, callTyped, putTyped, allowedSlippage, tokenType])
 
