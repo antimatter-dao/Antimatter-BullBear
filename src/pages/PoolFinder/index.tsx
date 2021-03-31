@@ -140,7 +140,7 @@ export default function PoolFinder() {
             <Text textAlign="center" fontWeight={500}>
               Pool Found!
             </Text>
-            <StyledInternalLink to={`/pool`}>
+            <StyledInternalLink to={`/liquidity`}>
               <Text textAlign="center">Manage this pool.</Text>
             </StyledInternalLink>
           </ColumnCenter>

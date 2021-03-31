@@ -10,9 +10,9 @@ import { AutoColumn } from 'components/Column'
 import { Base } from '../Button'
 
 const tabs = [
-  { title: 'Option Trading', route: 'swap' },
-  { title: 'Option Exercise', route: 'marketStrategy' },
-  { title: 'Liquidity', route: 'pool' },
+  { title: 'Option Trading', route: 'option_trading' },
+  { title: 'Option Exercise', route: 'option_exercise' },
+  { title: 'Liquidity', route: 'liquidity' },
   { title: 'Matter Token', route: 'matterToken' },
   { title: 'Governance', route: 'governance' },
   { title: 'Info', route: 'info' }
@@ -154,7 +154,7 @@ export default function Sidebar() {
       </Title> */}
         <StyledLogo />
         {tabs.map(({ title, route }) =>
-          route === 'pool' ? (
+          route === tabs[2].route ? (
             <Tab
               key={title}
               to={`/${route}`}
@@ -168,7 +168,7 @@ export default function Sidebar() {
             >
               {title}
             </Tab>
-          ) : route === 'marketStrategy' ? (
+          ) : route === tabs[1].route ? (
             <Tab
               key={title}
               to={`/${route}`}

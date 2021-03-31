@@ -105,20 +105,21 @@ export default function App() {
             <TopLevelModals />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/swap" component={Swap} />
-                <Route exact strict path="/marketStrategy" component={MarketStrategy} />
+                <Route exact strict path="/option_trading" component={Swap} />
+                <Route exact strict path="/option_exercise" component={MarketStrategy} />
                 <Route exact strict path="/generate" component={Generate} />
                 <Route exact strict path="/generate/:currencyIdA/:currencyIdB" component={Generate} />
                 <Route exact strict path="/redeem" component={Redeem} />
                 <Route exact strict path="/redeem/:currencyIdA/:currencyIdB" component={Redeem} />
                 <Route exact strict path="/matterToken" component={ComingSoon} />
                 <Route exact strict path="/governance" component={ComingSoon} />
+                <Route exact strict path="/info" component={ComingSoon} />
                 <Route exact strict path="/exercise" component={Exercise} />
                 <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                 <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                 <Route exact strict path="/find" component={PoolFinder} />
-                <Route exact strict path="/pool" component={Pool} />
+                <Route exact strict path="/liquidity" component={Pool} />
                 <Route exact strict path="/uni" component={Earn} />
                 <Route exact strict path="/vote" component={Vote} />
                 <Route exact strict path="/create" component={RedirectToAddLiquidity} />

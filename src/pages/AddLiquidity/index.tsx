@@ -215,14 +215,14 @@ export default function AddLiquidity({
     return noLiquidity ? (
       <AutoColumn gap="20px">
         <LightCard mt="20px" borderRadius="20px">
-          <RowFlat>
-            <Text fontSize="48px" fontWeight={500} lineHeight="42px" marginRight={10}>
+          <RowFlat style={{ background: theme.translucent }}>
+            <Text fontSize="14px" fontWeight={500} lineHeight="42px" marginRight={10}>
               {currencies[Field.CURRENCY_A]?.symbol + '/' + currencies[Field.CURRENCY_B]?.symbol}
             </Text>
             <DoubleCurrencyLogo
               currency0={currencies[Field.CURRENCY_A]}
               currency1={currencies[Field.CURRENCY_B]}
-              size={30}
+              size={14}
             />
           </RowFlat>
         </LightCard>

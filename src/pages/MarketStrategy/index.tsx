@@ -63,7 +63,7 @@ export default function MarketStrategy() {
     <>
       <AppBody>
         <PageWrapper>
-          <SwapPoolTabs active={'pool'} />
+          <SwapPoolTabs active={'liquidity'} />
           <AutoColumn gap="lg" justify="center">
             <AutoColumn gap="lg" style={{ width: '100%' }}>
               <TitleRow padding={'0'}>
