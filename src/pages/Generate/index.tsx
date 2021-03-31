@@ -146,13 +146,13 @@ export default function Generate() {
       optionTypes.map(item => {
         return {
           id: item.id,
-          option: `${item.underlyingSymbol}-${item.currencySymbol} ${JSBI.divide(
+          option: `${item.underlyingSymbol} (${JSBI.divide(
             JSBI.BigInt(item.priceFloor),
             JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.underlyingDecimals ?? 18))
-          )}-${JSBI.divide(
+          )}$${JSBI.divide(
             JSBI.BigInt(item.priceCap),
             JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
-          )}`
+          )})`
         }
       }),
     [optionTypes]

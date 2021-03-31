@@ -180,7 +180,7 @@ export default function Redeem() {
       optionTypes.map(item => {
         return {
           id: item.id,
-          option: `${item.underlyingSymbol} ${parseBalance(item.priceFloor)}$${parseBalance(item.priceCap)}`
+          option: `${item.underlyingSymbol} (${parseBalance(item.priceFloor)}$${parseBalance(item.priceCap)})`
         }
       }),
     [optionTypes]
