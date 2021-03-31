@@ -30,7 +30,7 @@ export default async function getTokenList(
     try {
       translatedUri = contenthashToUri(contentHashUri)
     } catch (error) {
-      console.debug('Failed to translate contenthash to URI', contentHashUri)
+      console.debug('Failed to  translate contenthash to URI', contentHashUri)
       throw new Error(`Failed to translate contenthash to URI: ${contentHashUri}`)
     }
     urls = uriToHttp(`${translatedUri}${parsedENS.ensPath ?? ''}`)
