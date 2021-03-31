@@ -72,12 +72,14 @@ export default function ButtonSelect({
   label,
   options,
   onSelection,
-  selectedId
+  selectedId,
+  onClick
 }: ButtonProps & {
   label?: string
   onSelection?: (id: string) => void
   options?: { id: string; option: string }[]
   selectedId?: string
+  onClick?: () => void
 }) {
   const node = useRef<HTMLDivElement>()
   const theme = useTheme()
@@ -107,6 +109,7 @@ export default function ButtonSelect({
       <ButtonSelectStyle
         onClick={() => {
           setIsOpen(!isOpen)
+          onClick && onClick()
         }}
         selected={!!selectedId}
       >
@@ -115,7 +118,7 @@ export default function ButtonSelect({
           <StyledDropDown />
         </RowBetween>
       </ButtonSelectStyle>
-      {isLoading && (
+      {isLoading && options && onSelection && (
         <OptionWrapper isOpen={isOpen} ref={node as any}>
           <SelectOption selected={false}>
             <Dots>Loading</Dots>
