@@ -16,7 +16,7 @@ import { useIsExpertMode } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import AppBody from '../AppBody'
 import { Wrapper } from '../Pool/styleds'
-import ConfirmRedeemModalBottom from './ConfirmRedeemModalBottom'
+import { ConfirmRedeemModalBottom } from './ConfirmRedeemModalBottom'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useMarketCurrency } from '../../hooks/Tokens'
 import { OptionTypeData, useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
@@ -144,8 +144,7 @@ export default function Redeem() {
         {isNegative(delta?.dCur) && isNegative(delta?.dUnd) && (
           <AutoColumn gap="20px">
             <AutoRow justify="center" style={{ marginTop: '20px' }}>
-              <Text fontSize="14px" fontWeight={400}>
-              </Text>
+              <Text fontSize="14px" fontWeight={400} />
             </AutoRow>
           </AutoColumn>
         )}
@@ -156,13 +155,13 @@ export default function Redeem() {
   const modalBottom = () => {
     return (
       <ConfirmRedeemModalBottom
+        tokenType={tokenType}
+        delta={delta}
+        callTyped={callTypedAmount}
+        putTyped={putTypedAmount}
         currencyA={currencyA}
         currencyB={currencyB}
         onRedeem={onRedeem}
-        dUnd={delta && parseBalance(delta.dUnd)}
-        dCur={delta && parseBalance(delta.dCur)}
-        tokenType={tokenType}
-        burnVol={isCallToken ? parseBalance(delta?.callBalance) : parseBalance(delta?.putBalance)}
       />
     )
   }
@@ -254,7 +253,7 @@ export default function Redeem() {
                   <AutoColumn gap="4px">
                     <AutoRow>
                       <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
-                        Token Execrise
+                        Token Exercise
                       </TYPE.body>
                     </AutoRow>
                     <div
