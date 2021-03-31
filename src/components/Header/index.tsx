@@ -312,7 +312,6 @@ export default function Header() {
   const [warningModalOpen, setWarningModalOpen] = useState(false)
 
   useEffect(() => {
-    console.log(chainId, ChainId.RINKEBY, ChainId.ROPSTEN)
     if (chainId && chainId !== ChainId.RINKEBY && chainId !== ChainId.ROPSTEN) {
       setWarningModalOpen(true)
     } else {

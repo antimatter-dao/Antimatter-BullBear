@@ -11,9 +11,9 @@ import { Base } from '../Button'
 
 const tabs = [
   { title: 'OptionCard Trading', route: 'swap' },
-  { title: 'Market Exercise', route: 'market-strategy' },
+  { title: 'Market Exercise', route: 'marketStrategy' },
   { title: 'Liquidity', route: 'pool' },
-  { title: 'Matter Token', route: 'matter-token' },
+  { title: 'Matter Token', route: 'matterToken' },
   { title: 'Governance', route: 'governance' },
   { title: 'Info', route: 'info' }
 ]
@@ -168,7 +168,7 @@ export default function Sidebar() {
             >
               {title}
             </Tab>
-          ) : route === 'market-strategy' ? (
+          ) : route === 'marketStrategy' ? (
             <Tab
               key={title}
               to={`/${route}`}
