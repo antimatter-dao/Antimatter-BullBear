@@ -33,7 +33,7 @@ export function OptionCard({ optionType }: OptionCardProps) {
         <RowBetween>
           <RowFixed>
             {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
-            <Text fontWeight={500} fontSize={20} style={{ marginLeft: '' }}>
+            <Text fontWeight={500} fontSize={16} style={{ marginLeft: '' }}>
               {`${optionType.underlyingSymbol ?? '-'}(${parseBalance(optionType.priceFloor)}$${parseBalance(
                 optionType.priceCap
               )})Call`}
@@ -41,7 +41,7 @@ export function OptionCard({ optionType }: OptionCardProps) {
           </RowFixed>
 
           <RowFixed>
-            <Text fontWeight={500} fontSize={20} style={{ minWidth: 'unset', marginRight: 12 }}>
+            <Text fontWeight={500} fontSize={16} style={{ minWidth: 'unset', marginRight: 12 }}>
               {`${parseBalance(optionType.callBalance, 2)}`}
             </Text>
             <ButtonSecondary
@@ -58,7 +58,7 @@ export function OptionCard({ optionType }: OptionCardProps) {
         <RowBetween>
           <RowFixed>
             {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
-            <Text fontWeight={500} fontSize={20} style={{ marginLeft: '' }}>
+            <Text fontWeight={500} fontSize={16} style={{ marginLeft: '' }}>
               {`${optionType.underlyingSymbol ?? '-'}(${parseBalance(optionType.priceFloor)}$${parseBalance(
                 optionType.priceCap
               )})Put`}
@@ -66,7 +66,7 @@ export function OptionCard({ optionType }: OptionCardProps) {
           </RowFixed>
 
           <RowFixed>
-            <Text fontWeight={500} fontSize={20} style={{ minWidth: 'unset', marginRight: 12 }}>
+            <Text fontWeight={500} fontSize={16} style={{ minWidth: 'unset', marginRight: 12 }}>
               {`${parseBalance(optionType.putBalance, 2)}`}
             </Text>
             <ButtonSecondary

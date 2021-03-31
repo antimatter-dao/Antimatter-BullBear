@@ -63,7 +63,24 @@ export default async function getTokenList(
         }, '') ?? 'unknown error'
       throw new Error(`Token list failed validation: ${validationErrors}`)
     }
-    return json
+    return {
+      name: '',
+      timestamp: '',
+      version: { major: 1, minor: 1, patch: 1 },
+      tokens: [
+        {
+          address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+          chainId: 3,
+          decimals: 18,
+          name: 'Wrapped Ether',
+          symbol: 'WETH',
+          tags: []
+        }
+      ],
+      keywords: [],
+      tags: undefined,
+      logoURI: undefined
+    }
   }
   throw new Error('Unrecognized list URL protocol.')
 }
