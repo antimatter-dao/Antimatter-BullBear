@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Text } from 'rebass'
-import { AutoColumn } from '../Column'
 import { ButtonSecondary } from '../Button'
 import { RowBetween, RowFixed } from '../Row'
 import styled from 'styled-components'
@@ -28,7 +27,7 @@ interface OptionCardProps {
 export function OptionCard({ optionType }: OptionCardProps) {
   return (
     <HoverCard>
-      <AutoColumn gap="12px">
+      <RowBetween>
         <FixedHeightRow>
           <RowFixed>
             {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
@@ -38,14 +37,15 @@ export function OptionCard({ optionType }: OptionCardProps) {
           </RowFixed>
         </FixedHeightRow>
 
-        <AutoColumn gap="8px">
-          <RowBetween marginTop="10px">
-            <ButtonSecondary style={{ backgroundColor: 'transparent' }} width="28%" as={Link} to={`/remove/v1/`}>
-              Trade
-            </ButtonSecondary>
-          </RowBetween>
-        </AutoColumn>
-      </AutoColumn>
+        <RowBetween marginTop="10px">
+          <Text fontWeight={500} fontSize={20} style={{ marginLeft: '' }}>
+            {`${optionType.underlyingSymbol}`}
+          </Text>
+          <ButtonSecondary style={{ backgroundColor: 'transparent' }} width="28%" as={Link} to={`/remove/v1/`}>
+            Trade
+          </ButtonSecondary>
+        </RowBetween>
+      </RowBetween>
     </HoverCard>
   )
 }
