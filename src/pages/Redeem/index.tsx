@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react'
 import { Plus } from 'react-feather'
 // import { TransactionResponse } from '@ethersproject/providers'
-import { CurrencyAmount, JSBI, ETHER } from '@uniswap/sdk'
+import { JSBI, ETHER } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
@@ -22,30 +22,14 @@ import { Wrapper } from '../Pool/styleds'
 import ConfirmRedeemModalBottom from './ConfirmRedeemModalBottom'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useMarketCurrency } from '../../hooks/Tokens'
-import { useAllOptionTypes, useDerivedStrategyInfo, absolute } from '../../state/market/hooks'
+import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
 import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
 import { TypeRadioButton, TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
 import { useAntimatterContract } from '../../hooks/useContract'
 import { calculateGasMargin } from '../../utils'
 import { useTransactionAdder } from '../../state/transactions/hooks'
-
-const parseBalance = (val?: string, toSignificant?: number) => {
-  const string = val?.toString()
-  if (string && string[0] === '-') {
-    return '-' + CurrencyAmount.ether(absolute(string)).toSignificant(toSignificant ?? 6)
-  }
-  return val ? CurrencyAmount.ether(val).toSignificant(toSignificant ?? 6) : ''
-}
-const parsedGreaterThan = (userInput: string, balance: string) => {
-  if (userInput && balance) {
-    const v1 = tryParseAmount(userInput, ETHER)?.raw
-    const v2 = JSBI.BigInt(balance.toString())
-    return v1 && v2 ? JSBI.greaterThan(v1, v2) : undefined
-  }
-  return
-}
-const isNegative = (val?: string): boolean => val?.toString()[0] === '-'
+import { isNegative, parseBalance, parsedGreaterThan } from '../../utils/marketStrategyUtils'
 
 const findPrice = (isCall: boolean, selectOption?: string) => {
   if (!selectOption) {
@@ -53,7 +37,6 @@ const findPrice = (isCall: boolean, selectOption?: string) => {
   }
   const regex = /^.+ ([0-9]+)\-([0-9]+)/
   const match = selectOption.match(regex)
-  console.log(match)
   return isCall ? match?.[1] || '' : match?.[2] || ''
 }
 
@@ -307,7 +290,7 @@ export default function Redeem() {
                 />
               </>
             )}
-            {currencyA && currencyB && delta?.dCur && delta?.dUnd && tokenType === TOKEN_TYPES.callPut && (
+            {currencyA && currencyB && delta?.dCur && delta?.dUnd && (
               <GenerateBar
                 cardTitle={`You will receive`}
                 currency0={currencyA}
@@ -329,7 +312,7 @@ export default function Redeem() {
                   disabled={!!redeemError}
                 >
                   <Text fontSize={16} fontWeight={500}>
-                    {redeemError ?? tokenType === TOKEN_TYPES.callPut ? 'Redeem' : 'Exercise'}
+                    {redeemError ?? (tokenType === TOKEN_TYPES.callPut ? 'Redeem' : 'Exercise')}
                   </Text>
                 </ButtonError>
               </AutoColumn>

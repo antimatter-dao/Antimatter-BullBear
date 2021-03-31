@@ -10,13 +10,7 @@ import { AutoColumn } from '../../components/Column'
 import useTheme from '../../hooks/useTheme'
 import { OutlineCard } from 'components/Card'
 import { TOKEN_TYPES } from 'components/MarketStrategy/TypeRadioButton'
-
-const currencyNameHelper = (currency?: Currency | null, defaultString?: string) =>
-  (currency && currency.symbol && currency.symbol.length > 20
-    ? currency.symbol.slice(0, 4) + '...' + currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-    : currency?.symbol) ||
-  defaultString ||
-  ''
+import { currencyNameHelper } from 'utils/marketStrategyUtils'
 
 export default function ConfirmAddModalBottom({
   currencyA,
