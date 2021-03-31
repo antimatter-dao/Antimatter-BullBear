@@ -100,8 +100,12 @@ export default function Redeem() {
 
     const args = [
       optionTypes[parseInt(optionTypeIndex)].callAddress,
-      '-' + tryParseAmount(callTypedAmount ?? '0', ETHER)?.raw.toString(),
-      '-' + tryParseAmount(putTypedAmount ?? '0', ETHER)?.raw.toString(),
+      tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.call
+        ? '-' + tryParseAmount(callTypedAmount ?? '0', ETHER)?.raw.toString()
+        : '0',
+      tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.call
+        ? '-' + tryParseAmount(putTypedAmount ?? '0', ETHER)?.raw.toString()
+        : '0',
       delta.dUnd.toString(),
       delta.dCur.toString()
     ]
