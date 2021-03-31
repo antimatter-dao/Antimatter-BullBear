@@ -113,6 +113,7 @@ export default function App() {
                 <Route exact strict path="/redeem/:currencyIdA/:currencyIdB" component={Redeem} />
                 <Route exact strict path="/matterToken" component={ComingSoon} />
                 <Route exact strict path="/governance" component={ComingSoon} />
+                <Route exact strict path="/info" component={ComingSoon} />
                 <Route exact strict path="/exercise" component={Exercise} />
                 <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
