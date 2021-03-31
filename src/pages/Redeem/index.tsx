@@ -32,7 +32,7 @@ const findPrice = (isCall: boolean, selectOption?: string) => {
   if (!selectOption) {
     return ''
   }
-  const regex = /^.+ ([0-9]+)\-([0-9]+)/
+  const regex = /^.+ ([0-9]+)-([0-9]+)/
   const match = selectOption.match(regex)
   return isCall ? match?.[1] || '' : match?.[2] || ''
 }

@@ -36,6 +36,7 @@ export default function ConfirmAddModalBottom({
       dUnd && dCur && currencyA && currencyB && dUnd?.[0] === '-'
         ? { payCurency: currencyB, payVol: dCur, gainCurrency: currencyA, gainVol: dUnd }
         : { payCurency: currencyA, payVol: dUnd, gainCurrency: currencyB, gainVol: dCur } || {},
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currencyA?.symbol, currencyB?.symbol, dCur, dUnd]
   )
 
