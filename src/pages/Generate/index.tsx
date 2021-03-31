@@ -119,14 +119,14 @@ export default function Generate() {
             setCallTyped(undefined)
             setAttemptingTxn(false)
             addTransaction(response, {
-              summary: 'generate '
+              summary: 'generated '
             })
 
             setTxHash(response.hash)
 
             ReactGA.event({
-              category: 'Liquidity',
-              action: 'Add',
+              category: 'Generate',
+              action: 'generate',
               label: ''
             })
           })

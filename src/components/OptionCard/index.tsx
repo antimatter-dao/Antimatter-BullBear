@@ -44,7 +44,12 @@ export function OptionCard({ optionType }: OptionCardProps) {
             <Text fontWeight={500} fontSize={20} style={{ marginLeft: '' }}>
               {`${parseBalance(optionType.callBalance, 2)}`}
             </Text>
-            <ButtonSecondary style={{ backgroundColor: 'transparent' }} width="28%" as={Link} to={`/remove/v1/`}>
+            <ButtonSecondary
+              style={{ backgroundColor: 'transparent' }}
+              width="28%"
+              as={Link}
+              to={`/swap?inputCurrency=${optionType.callAddress}`}
+            >
               Trade
             </ButtonSecondary>
           </RowBetween>
@@ -65,7 +70,12 @@ export function OptionCard({ optionType }: OptionCardProps) {
             <Text fontWeight={500} fontSize={20} style={{ marginLeft: '' }}>
               {`${parseBalance(optionType.putBalance, 2)}`}
             </Text>
-            <ButtonSecondary style={{ backgroundColor: 'transparent' }} width="28%" as={Link} to={`/remove/v1/`}>
+            <ButtonSecondary
+              style={{ backgroundColor: 'transparent' }}
+              width="28%"
+              as={Link}
+              to={`/swap?inputCurrency=${optionType.putAddress}`}
+            >
               Trade
             </ButtonSecondary>
           </RowBetween>
