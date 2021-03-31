@@ -189,6 +189,16 @@ export const absolute = (val: string) => {
   }
   return val
 }
+const parseAbsolute = (val: string) => {
+  if (val === '0') {
+    return '0'
+  }
+  const value = tryParseAmount(absolute(val), ETHER)?.raw.toString()
+  if (value && val[0] === '-') {
+    return '-' + value
+  }
+  return value
+}
 
 export function useDerivedStrategyInfo(
   optionType: OptionTypeData | undefined,
@@ -205,29 +215,31 @@ export function useDerivedStrategyInfo(
   const [allowedSlippage] = useUserSlippageTolerance() // custom from users
 
   const queryData = useMemo(() => {
-    console.log(callTyped, putTyped, tokenType)
+    let callAmount = callTyped
+    let putAmount = putTyped
+
+    if (tokenType === TOKEN_TYPES.call) {
+      console.log('isCall')
+      putAmount = '0'
+    }
+    if (tokenType === TOKEN_TYPES.put) {
+      callAmount = '0'
+    }
+
     if (
       !optionType ||
       !optionType.priceFloor ||
       !optionType.priceCap ||
       !optionType.callTotal ||
       !optionType.putTotal ||
-      !callTyped ||
-      !putTyped
+      !callAmount ||
+      !putAmount
     )
       return undefined
-    console.log('yayyyyyy')
-    let callVal = tryParseAmount(absolute(callTyped), ETHER)?.raw.toString()
-    let putVal = tryParseAmount(absolute(putTyped), ETHER)?.raw.toString()
 
-    if (callVal && callTyped[0] === '-') {
-      const temp = callVal
-      callVal = '-' + temp
-    }
-    if (putVal && putTyped[0] === '-') {
-      const temp = putVal
-      putVal = '-' + temp
-    }
+    const callVal = parseAbsolute(callAmount)
+    const putVal = parseAbsolute(putAmount)
+
     return [
       optionType?.priceFloor.toString(),
       optionType?.priceCap.toString(),
@@ -239,7 +251,6 @@ export function useDerivedStrategyInfo(
     ]
   }, [optionType, callTyped, putTyped, allowedSlippage, tokenType])
 
-  console.log('query Data', queryData)
   const delta = useSingleCallResult(antimatterContract, 'calcDeltaWithFeeAndSlippage', queryData ?? [undefined])
   const balancesRes = useMultipleContractSingleData(
     [optionType?.callAddress, optionType?.putAddress, optionType?.underlying, optionType?.currency],

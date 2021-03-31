@@ -17,7 +17,7 @@ const TokenPanel = styled.div`
   background: rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 0 16px;
-  ${({ theme }) => theme.flexRowNoWrap}
+  display: flex;
 `
 
 export function GenerateBar({
@@ -51,7 +51,8 @@ export function GenerateBar({
               {subTitle ?? 'Input token'}
             </TYPE.subHeader>
             <TokenPanel>
-              {currency0 && <CurrencyLogo currency={currency0} size={'20px'} />}{}
+              {currency0 && <CurrencyLogo currency={currency0} size={'20px'} />}
+              {}
               <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'} flex={1}>
                 {(currency0 && currency0.symbol && currency0.symbol.length > 20
                   ? currency0.symbol.slice(0, 4) +
@@ -60,7 +61,7 @@ export function GenerateBar({
                   : currency0?.symbol) || 'Call Token'}
               </TYPE.black>
               <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
-                {callVol}
+                {callVol?.[0] === '-' ? callVol.slice(1) : callVol}
               </TYPE.black>
             </TokenPanel>
           </AutoColumn>
@@ -81,7 +82,7 @@ export function GenerateBar({
                   : currency1?.symbol) || 'Put Token'}
               </TYPE.subHeader>
               <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
-                {putVol}
+                {putVol?.[0] === '-' ? putVol.slice(1) : putVol}
               </TYPE.black>
             </TokenPanel>
           </AutoColumn>

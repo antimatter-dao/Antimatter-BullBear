@@ -27,12 +27,12 @@ import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
 import { TypeRadioButton, TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
 import { useAntimatterContract } from '../../hooks/useContract'
-// import { calculateGasMargin } from '../../utils'
+import { calculateGasMargin } from '../../utils'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 
 const parseBalance = (val?: string, toSignificant?: number) => {
   const string = val?.toString()
-  if (string && string![0] === '-') {
+  if (string && string[0] === '-') {
     return '-' + CurrencyAmount.ether(absolute(string)).toSignificant(toSignificant ?? 6)
   }
   return val ? CurrencyAmount.ether(val).toSignificant(toSignificant ?? 6) : ''
@@ -45,6 +45,7 @@ const parsedGreaterThan = (userInput: string, balance: string) => {
   }
   return
 }
+const isNegative = (val?: string): boolean => val?.toString()[0] === '-'
 
 export default function Redeem() {
   const [optionTypeIndex, setOptionTypeIndex] = useState('')
@@ -65,6 +66,7 @@ export default function Redeem() {
   const currencyA = useMarketCurrency(optionTypes[parseInt(optionTypeIndex)]?.underlying)
   const currencyB = useMarketCurrency(optionTypes[parseInt(optionTypeIndex)]?.currency)
 
+  const isCallToken = useMemo(() => tokenType === TOKEN_TYPES.call, [tokenType])
   const selectedOptionType = useMemo(() => {
     if (!optionTypes || !optionTypeIndex) return undefined
     return optionTypes?.[parseInt(optionTypeIndex)]
@@ -93,35 +95,6 @@ export default function Redeem() {
   // const [allowedSlippage] = useUserSlippageTolerance() // custom from users
   const [txHash, setTxHash] = useState<string>('')
 
-  // get formatted amounts
-
-  // get the max amounts user can add
-  // const maxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-  //   (accumulator, field) => {
-  //     return {
-  //       ...accumulator,
-  //       [field]: maxAmountSpend(currencyBalances[field])
-  //     }
-  //   },
-  //   {}
-  // )
-
-  // const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-  //   (accumulator, field) => {
-  //     return {
-  //       ...accumulator,
-  //       [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
-  //     }
-  //   },
-  //   {}
-  // )
-
-  // check whether the user has approved the router on the tokens
-  // const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_A], ROUTER_ADDRESS)
-  // const [approvalB, approveBCallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_B], ROUTER_ADDRESS)
-
-  // const addTransaction = useTransactionAdder()
-
   async function onRedeem() {
     console.log('onRedeem')
     if (!chainId || !library || !account) return
@@ -148,11 +121,10 @@ export default function Redeem() {
 
     if (estimate) {
       await estimate(...args)
-        // .then(estimatedGasLimit =>
-        .then(() =>
+        .then(estimatedGasLimit =>
+          // .then(() =>
           method(...args, {
-            // gasLimit: calculateGasMargin(estimatedGasLimit)
-            gasLimit: 379614
+            gasLimit: calculateGasMargin(estimatedGasLimit)
           }).then(response => {
             setAttemptingTxn(false)
             addTransaction(response, {
@@ -178,7 +150,7 @@ export default function Redeem() {
         <AutoColumn gap="20px">
           <AutoRow justify="center" style={{ marginTop: '20px' }}>
             <Text fontSize="14px" fontWeight={400}>
-              You will generate
+              {isNegative(delta?.dCur) && isNegative(delta?.dUnd) ? 'You will generate' : ''}
             </Text>
           </AutoRow>
         </AutoColumn>
@@ -193,6 +165,8 @@ export default function Redeem() {
         onRedeem={onRedeem}
         callVol={delta && parseBalance(delta.dUnd)}
         putVol={delta && parseBalance(delta.dCur)}
+        tokenType={tokenType}
+        burnVol={isCallToken ? parseBalance(delta?.callBalance) : parseBalance(delta?.putBalance)}
       />
     )
   }
@@ -232,7 +206,6 @@ export default function Redeem() {
     }
     setTokenType(tokenType)
   }, [])
-  const isCallToken = useMemo(() => tokenType === TOKEN_TYPES.call, [tokenType])
 
   return (
     <>
@@ -271,6 +244,7 @@ export default function Redeem() {
                   label="Call Token"
                   currency={currencyA}
                   currencyBalance={parseBalance(balances?.callBalance)}
+                  isCall={true}
                 />
                 <ColumnCenter>
                   <Plus size="28" color={theme.text2} />
@@ -282,6 +256,7 @@ export default function Redeem() {
                   currency={currencyB}
                   negativeMarginTop="-25px"
                   currencyBalance={parseBalance(balances?.putBalance)}
+                  isCall={false}
                 />
               </>
             ) : (
@@ -313,10 +288,11 @@ export default function Redeem() {
                   label={`${isCallToken ? 'CALL' : 'PUT'} Tokens Amount to Exercise`}
                   currency={isCallToken ? currencyA : currencyB}
                   currencyBalance={parseBalance(isCallToken ? balances?.callBalance : balances?.putBalance)}
+                  isCall={isCallToken}
                 />
               </>
             )}
-            {currencyA && currencyB && (
+            {currencyA && currencyB && delta?.dCur && delta?.dUnd && tokenType === TOKEN_TYPES.callPut && (
               <GenerateBar
                 cardTitle={`You will receive`}
                 currency0={currencyA}

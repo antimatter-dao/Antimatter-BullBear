@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Currency } from '@uniswap/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
-import CurrencyLogo from '../CurrencyLogo'
+import CallPutToken from '../CurrencyLogo/CallPutToken'
 import { AutoRow } from '../Row'
 import { TYPE } from '../../theme'
 import { Input as NumericalInput } from '../NumericalInput'
@@ -105,6 +105,7 @@ interface CurrencyInputPanelProps {
   negativeMarginTop?: string
   currencyBalance?: string
   inputOnly?: boolean
+  isCall: boolean
 }
 
 export default function RedeemTokenPanel({
@@ -114,7 +115,8 @@ export default function RedeemTokenPanel({
   currency,
   negativeMarginTop,
   currencyBalance,
-  inputOnly
+  inputOnly,
+  isCall
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation()
 
@@ -148,7 +150,7 @@ export default function RedeemTokenPanel({
             <CurrencySelect selected={!!currency} className="open-currency-select-button">
               <Aligner>
                 <Aligner>
-                  {currency ? <CurrencyLogo currency={currency} size={'24px'} /> : null}
+                  {currency ? <CallPutToken currency={currency} isCall={isCall} /> : null}
                   <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
                     {(currency && currency.symbol && label) || t('selectToken')}
                   </StyledTokenName>
