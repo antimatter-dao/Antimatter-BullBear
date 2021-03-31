@@ -1,18 +1,17 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Plus } from 'react-feather'
 import { Currency } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { ButtonPrimary } from '../../components/Button'
 import { RowBetween, RowFixed } from '../../components/Row'
 import CurrencyLogo from '../../components/CurrencyLogo'
-import { Field } from '../../state/mint/actions'
 import { TYPE } from '../../theme'
 import { AutoColumn } from '../../components/Column'
 import useTheme from '../../hooks/useTheme'
 import { OutlineCard } from 'components/Card'
 import { TOKEN_TYPES } from 'components/MarketStrategy/TypeRadioButton'
 
-const currencyNameHelper = (currency?: Currency, defaultString?: string) =>
+const currencyNameHelper = (currency?: Currency | null, defaultString?: string) =>
   (currency && currency.symbol && currency.symbol.length > 20
     ? currency.symbol.slice(0, 4) + '...' + currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
     : currency?.symbol) ||
@@ -20,24 +19,31 @@ const currencyNameHelper = (currency?: Currency, defaultString?: string) =>
   ''
 
 export default function ConfirmAddModalBottom({
-  currencies,
+  currencyA,
+  currencyB,
   onRedeem,
-  callVol,
-  putVol,
+  dUnd,
+  dCur,
   burnVol,
   tokenType
 }: {
-  currencies: { [field in Field]?: Currency }
+  currencyA?: Currency | null
+  currencyB?: Currency | null
   onRedeem: () => void
-  callVol?: string
-  putVol?: string
+  dUnd?: string
+  dCur?: string
   burnVol?: string
   tokenType?: string
 }) {
   const theme = useTheme()
-  const currencyA = currencies[Field.CURRENCY_A],
-    currencyB = currencies[Field.CURRENCY_B]
-  const onlyGain = tokenType === TOKEN_TYPES.callPut
+  const onlyGain = dCur?.[0] === '-' && dUnd?.[0] === '-'
+  const currecies = useMemo(
+    () =>
+      dUnd && dCur && currencyA && currencyB && dUnd?.[0] === '-'
+        ? { payCurency: currencyB, payVol: dCur, gainCurrency: currencyA, gainVol: dUnd }
+        : { payCurency: currencyA, payVol: dUnd, gainCurrency: currencyB, gainVol: dCur } || {},
+    [currencyA?.symbol, currencyB?.symbol, dCur, dUnd]
+  )
 
   return (
     <>
@@ -62,7 +68,7 @@ export default function ConfirmAddModalBottom({
                   {currencyA && <CurrencyLogo currency={currencyA!} style={{ marginRight: '8px' }} />}
                   <TYPE.body>{currencyNameHelper(currencyA)}</TYPE.body>
                 </RowFixed>
-                <TYPE.body>{callVol}</TYPE.body>
+                <TYPE.body>{dUnd}</TYPE.body>
               </RowBetween>
             </AutoColumn>
 
@@ -86,7 +92,7 @@ export default function ConfirmAddModalBottom({
                   {currencyB && <CurrencyLogo currency={currencyB!} style={{ marginRight: '8px' }} />}
                   <TYPE.body>{currencyNameHelper(currencyB)}</TYPE.body>
                 </RowFixed>
-                <TYPE.body>{putVol}</TYPE.body>
+                <TYPE.body>{dCur}</TYPE.body>
               </RowBetween>
             </AutoColumn>
           </RowBetween>
@@ -124,24 +130,48 @@ export default function ConfirmAddModalBottom({
                 <TYPE.body color={theme.text3} fontWeight={500} fontSize={14} mb="4px">
                   You will pay
                 </TYPE.body>
-                <RowBetween
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    borderRadius: ' 14px',
-                    padding: '14px',
-                    flexWrap: 'wrap'
-                  }}
-                >
-                  <RowFixed>
-                    {currencyB && <CurrencyLogo currency={currencyB!} style={{ marginRight: '8px' }} />}
-                    <TYPE.body>{currencyNameHelper(currencyB)}</TYPE.body>
-                  </RowFixed>
-                  <TYPE.body>{}</TYPE.body>
-                </RowBetween>
               </RowFixed>
+              <RowBetween
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  borderRadius: ' 14px',
+                  padding: '14px',
+                  flexWrap: 'wrap'
+                }}
+              >
+                <RowFixed>
+                  {currecies.payCurency && (
+                    <CurrencyLogo currency={currecies.payCurency!} style={{ marginRight: '8px' }} />
+                  )}
+                  <TYPE.body>{currencyNameHelper(currecies.payCurency)}</TYPE.body>
+                </RowFixed>
+                <TYPE.body>{currecies.payVol}</TYPE.body>
+              </RowBetween>
             </AutoColumn>
           </RowBetween>
-          <AutoColumn></AutoColumn>
+          <AutoColumn>
+            <RowFixed>
+              <TYPE.body color={theme.text3} fontWeight={500} fontSize={14} mb="4px">
+                You will get
+              </TYPE.body>
+            </RowFixed>
+            <RowBetween
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                borderRadius: ' 14px',
+                padding: '14px',
+                flexWrap: 'wrap'
+              }}
+            >
+              <RowFixed>
+                {currecies.gainCurrency && (
+                  <CurrencyLogo currency={currecies.gainCurrency!} style={{ marginRight: '8px' }} />
+                )}
+                <TYPE.body>{currencyNameHelper(currecies.gainCurrency)}</TYPE.body>
+              </RowFixed>
+              <TYPE.body>{currecies.gainVol?.slice(1)}</TYPE.body>
+            </RowBetween>
+          </AutoColumn>
         </AutoColumn>
       )}
       <ButtonPrimary style={{ margin: '20px 0 0 0' }} onClick={onRedeem}>

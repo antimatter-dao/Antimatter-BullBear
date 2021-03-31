@@ -47,6 +47,16 @@ const parsedGreaterThan = (userInput: string, balance: string) => {
 }
 const isNegative = (val?: string): boolean => val?.toString()[0] === '-'
 
+const findPrice = (isCall: boolean, selectOption?: string) => {
+  if (!selectOption) {
+    return ''
+  }
+  const regex = /^.+ ([0-9]+)\-([0-9]+)/
+  const match = selectOption.match(regex)
+  console.log(match)
+  return isCall ? match?.[1] || '' : match?.[2] || ''
+}
+
 export default function Redeem() {
   const [optionTypeIndex, setOptionTypeIndex] = useState('')
   const [callTypedAmount, setCallTypedAmount] = useState<string>('')
@@ -96,7 +106,6 @@ export default function Redeem() {
   const [txHash, setTxHash] = useState<string>('')
 
   async function onRedeem() {
-    console.log('onRedeem')
     if (!chainId || !library || !account) return
 
     if (!delta) {
@@ -161,10 +170,11 @@ export default function Redeem() {
   const modalBottom = () => {
     return (
       <ConfirmRedeemModalBottom
-        currencies={{ CURRENCY_A: currencyA ?? undefined, CURRENCY_B: currencyB ?? undefined }}
+        currencyA={currencyA}
+        currencyB={currencyB}
         onRedeem={onRedeem}
-        callVol={delta && parseBalance(delta.dUnd)}
-        putVol={delta && parseBalance(delta.dCur)}
+        dUnd={delta && parseBalance(delta.dUnd)}
+        dCur={delta && parseBalance(delta.dCur)}
         tokenType={tokenType}
         burnVol={isCallToken ? parseBalance(delta?.callBalance) : parseBalance(delta?.putBalance)}
       />
@@ -180,7 +190,6 @@ export default function Redeem() {
     setTxHash('')
   }, [txHash])
 
-  // const addIsUnsupported = useIsTransactionUnsupported(currencyA, currencyB)
   const selectOptions = useMemo(
     () =>
       optionTypes.map(item => {
@@ -261,26 +270,32 @@ export default function Redeem() {
               </>
             ) : (
               <>
-                <AutoColumn gap="4px">
-                  <AutoRow>
-                    <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
-                      Token Execrise
-                    </TYPE.body>
-                  </AutoRow>
-                  <div
-                    style={{
-                      width: '100%',
-                      border: `1px solid ${theme.bg3}`,
-                      padding: '0 20px',
-                      borderRadius: '14px',
-                      color: theme.text3,
-                      height: '3rem',
-                      lineHeight: '48px'
-                    }}
-                  >
-                    You have the rights to purchase ETH at 100 USDT
-                  </div>
-                </AutoColumn>
+                {currencyA && currencyB && (
+                  <AutoColumn gap="4px">
+                    <AutoRow>
+                      <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
+                        Token Execrise
+                      </TYPE.body>
+                    </AutoRow>
+                    <div
+                      style={{
+                        width: '100%',
+                        border: `1px solid ${theme.bg3}`,
+                        padding: '0 20px',
+                        borderRadius: '14px',
+                        color: theme.text3,
+                        height: '3rem',
+                        lineHeight: '48px'
+                      }}
+                    >
+                      {`You have the rights to ${isCallToken ? 'purchase' : 'sell'} ${currencyA?.symbol ??
+                        ''} at ${findPrice(
+                        isCallToken,
+                        selectOptions?.[parseInt(optionTypeIndex)]?.option
+                      )} ${currencyB?.symbol ?? ''}`}
+                    </div>
+                  </AutoColumn>
+                )}
                 <RedeemTokenPanel
                   inputOnly={true}
                   value={isCallToken ? callTypedAmount : putTypedAmount}
@@ -314,7 +329,7 @@ export default function Redeem() {
                   disabled={!!redeemError}
                 >
                   <Text fontSize={16} fontWeight={500}>
-                    {redeemError ?? 'Redeem'}
+                    {redeemError ?? tokenType === TOKEN_TYPES.callPut ? 'Redeem' : 'Exercise'}
                   </Text>
                 </ButtonError>
               </AutoColumn>

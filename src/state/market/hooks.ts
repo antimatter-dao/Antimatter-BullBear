@@ -219,7 +219,6 @@ export function useDerivedStrategyInfo(
     let putAmount = putTyped
 
     if (tokenType === TOKEN_TYPES.call) {
-      console.log('isCall')
       putAmount = '0'
     }
     if (tokenType === TOKEN_TYPES.put) {
