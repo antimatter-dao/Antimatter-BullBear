@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { darken, lighten } from 'polished'
+import { darken } from 'polished'
 
 import { RowBetween } from '../Row'
 import { ChevronDown } from 'react-feather'
@@ -272,9 +272,9 @@ export const ButtonWhite = styled(Base)`
 `
 
 const ButtonConfirmedStyle = styled(Base)`
-  background-color: ${({ theme }) => lighten(0.5, theme.green1)};
-  color: ${({ theme }) => theme.green1};
-  border: 1px solid ${({ theme }) => theme.green1};
+  background-color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.bg1};
+  border: 1px solid transparent;
 
   &:disabled {
     opacity: 50%;

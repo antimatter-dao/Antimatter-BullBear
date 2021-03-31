@@ -35,6 +35,7 @@ import MarketStrategy from './MarketStrategy'
 import Generate from './Generate'
 import Redeem from './Redeem'
 import Exercise from './Exercise'
+import ComingSoon from './ComingSoon'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -105,11 +106,13 @@ export default function App() {
             <Web3ReactManager>
               <Switch>
                 <Route exact strict path="/swap" component={Swap} />
-                <Route exact strict path="/market-strategy" component={MarketStrategy} />
+                <Route exact strict path="/marketStrategy" component={MarketStrategy} />
                 <Route exact strict path="/generate" component={Generate} />
                 <Route exact strict path="/generate/:currencyIdA/:currencyIdB" component={Generate} />
                 <Route exact strict path="/redeem" component={Redeem} />
                 <Route exact strict path="/redeem/:currencyIdA/:currencyIdB" component={Redeem} />
+                <Route exact strict path="/matterToken" component={ComingSoon} />
+                <Route exact strict path="/governance" component={ComingSoon} />
                 <Route exact strict path="/exercise" component={Exercise} />
                 <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />

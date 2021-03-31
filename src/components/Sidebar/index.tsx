@@ -13,7 +13,7 @@ const tabs = [
   { title: 'Option Trading', route: 'swap' },
   { title: 'Option Exercise', route: 'market-strategy' },
   { title: 'Liquidity', route: 'pool' },
-  { title: 'Matter Token', route: 'matter-token' },
+  { title: 'Matter Token', route: 'matterToken' },
   { title: 'Governance', route: 'governance' },
   { title: 'Info', route: 'info' }
 ]
@@ -90,14 +90,13 @@ const StyledLogo = styled(Logo)`
 //   }
 //   `
 const MobileHeader = styled.header`
-  height:${({ theme }) => theme.mobileHeaderHeight}
-  width:100%;
-  display:flex;
-  justify-content:space-between;
-  align-items: center
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 0 24px;
-  ${({ theme }) => theme.mobile}
-  position:relative;
+  position: relative;
+  height: ${({ theme }) => theme.mobileHeaderHeight} ${({ theme }) => theme.mobile};
 `
 const ToggleMenuButton = styled(Base)`
   background: none;
@@ -110,9 +109,9 @@ const ToggleMenuButton = styled(Base)`
 const TogggleMenuWrapper = styled.div`
   z-index:2;
   position: absolute;
-  top: ${({ theme }) => theme.mobileHeaderHeight}
   left: 0;
-  width: 100vw
+  width: 100vw;
+  top: ${({ theme }) => theme.mobileHeaderHeight}
   height:calc(100vh - ${({ theme }) => theme.mobileHeaderHeight});
   border-radius: 32px;
   background: ${({ theme }) => theme.gradient2}
@@ -168,7 +167,7 @@ export default function Sidebar() {
             >
               {title}
             </Tab>
-          ) : route === 'market-strategy' ? (
+          ) : route === 'marketStrategy' ? (
             <Tab
               key={title}
               to={`/${route}`}

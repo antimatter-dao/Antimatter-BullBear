@@ -5,7 +5,7 @@ import { TYPE } from 'theme'
 import { OutlineCard } from '.'
 import useTheme from 'hooks/useTheme'
 
-interface DataType {
+export interface DataType {
   title: JSX.Element | string
   content: JSX.Element | string | undefined
 }
