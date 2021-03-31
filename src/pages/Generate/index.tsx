@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react'
-import { ETHER, JSBI, Token, TokenAmount } from '@uniswap/sdk'
+import { ETHER, JSBI } from '@uniswap/sdk'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
@@ -11,7 +11,7 @@ import CallOrPutInputPanel from '../../components/CallOrPutInputPanel'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
 import { RowBetween } from '../../components/Row'
 import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
-import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
+import { ANTIMATTER_ADDRESS } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
 import { useMarketCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
@@ -30,6 +30,7 @@ import { tryParseAmount } from '../../state/swap/hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useAntimatterContract } from '../../hooks/useContract'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
+import { parseBalance } from '../../utils/marketStrategyUtils'
 
 export default function Generate() {
   const [optionType, setOptionType] = useState('')
@@ -205,17 +206,20 @@ export default function Generate() {
               selectedId={optionType}
             />
             <TypeRadioButton selected={tokenType} onCheck={(tokenType: string) => setTokenType(tokenType)} />
-            <CallOrPutInputPanel
-              value={callTyped ?? ''}
-              onUserInput={setCallTyped}
-              currency={undefined}
-              id="generate-output-token"
-              showCommonBases
-              defaultSymbol={'Call Token'}
-              halfWidth={true}
-              isCall={true}
-            />
-            {tokenType === TOKEN_TYPES.callPut && (
+            {(tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.call) && (
+              <CallOrPutInputPanel
+                value={callTyped ?? ''}
+                onUserInput={setCallTyped}
+                currency={undefined}
+                id="generate-output-token"
+                showCommonBases
+                defaultSymbol={'Call Token'}
+                halfWidth={true}
+                isCall={true}
+              />
+            )}
+
+            {(tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.put) && (
               <>
                 <ColumnCenter>
                   <Plus size="28" color={theme.text2} />
@@ -236,14 +240,8 @@ export default function Generate() {
             {currencyA && currencyB && delta?.dUnd && delta.dCur && (
               <GenerateBar
                 cardTitle={`You will pay`}
-                callVol={new TokenAmount(
-                  new Token(1, ZERO_ADDRESS, currencyA.decimals),
-                  delta.dUnd.toString()
-                )?.toSignificant(4)}
-                putVol={new TokenAmount(
-                  new Token(1, ZERO_ADDRESS, currencyA.decimals),
-                  delta.dCur.toString()
-                )?.toSignificant(4)}
+                callVol={delta && parseBalance(delta.dUnd, 4)}
+                putVol={delta && parseBalance(delta.dCur, 4)}
                 currency0={currencyA}
                 currency1={currencyB}
               />
