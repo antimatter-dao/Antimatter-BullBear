@@ -12,6 +12,8 @@ import {
   updateUserDarkMode,
   updateUserExpertMode,
   updateUserSlippageTolerance,
+  updateUserRedeemSlippageTolerance,
+  updateUserGenerationSlippageTolerance,
   updateUserDeadline,
   toggleURLWarning,
   updateUserSingleHopOnly
@@ -32,6 +34,8 @@ export interface UserState {
 
   // user defined slippage tolerance in bips, used in all txns
   userSlippageTolerance: number
+  userRedeemSlippageTolerance: number
+  userGenerationSlippageTolerance: number
 
   // deadline set by user in minutes, used in all txns
   userDeadline: number
@@ -63,6 +67,8 @@ export const initialState: UserState = {
   userExpertMode: false,
   userSingleHopOnly: false,
   userSlippageTolerance: INITIAL_ALLOWED_SLIPPAGE,
+  userRedeemSlippageTolerance: INITIAL_ALLOWED_SLIPPAGE,
+  userGenerationSlippageTolerance: INITIAL_ALLOWED_SLIPPAGE,
   userDeadline: DEFAULT_DEADLINE_FROM_NOW,
   tokens: {},
   pairs: {},
@@ -101,6 +107,14 @@ export default createReducer(initialState, builder =>
     })
     .addCase(updateUserSlippageTolerance, (state, action) => {
       state.userSlippageTolerance = action.payload.userSlippageTolerance
+      state.timestamp = currentTimestamp()
+    })
+    .addCase(updateUserRedeemSlippageTolerance, (state, action) => {
+      state.userRedeemSlippageTolerance = action.payload.userRedeemSlippageTolerance
+      state.timestamp = currentTimestamp()
+    })
+    .addCase(updateUserGenerationSlippageTolerance, (state, action) => {
+      state.userGenerationSlippageTolerance = action.payload.userGenerationSlippageTolerance
       state.timestamp = currentTimestamp()
     })
     .addCase(updateUserDeadline, (state, action) => {

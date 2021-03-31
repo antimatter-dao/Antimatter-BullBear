@@ -9,6 +9,8 @@ import {
   useExpertModeManager,
   useUserTransactionTTL,
   useUserSlippageTolerance,
+  useUserRedeemSlippageTolerance,
+  useUserGenerationSlippageTolerance,
   useUserSingleHopOnly
 } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
@@ -140,14 +142,28 @@ const CustomizedAutoRow = styled(AutoRow)`
     width: 50%;
   }
 `
+export const SLIPPAGE_TYPE = { generation: 'generation', redeem: 'redeem' }
 
-export default function SettingsTab({ onlySlippage }: { onlySlippage?: boolean }) {
+export default function SettingsTab({
+  onlySlippage,
+  slippageType
+}: {
+  onlySlippage?: boolean
+  slippageType?: typeof SLIPPAGE_TYPE[keyof typeof SLIPPAGE_TYPE]
+}) {
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
 
   const theme = useContext(ThemeContext)
-  const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()
+  const userSlippage = useUserSlippageTolerance()
+  const generationSlippage = useUserGenerationSlippageTolerance()
+  const redeemSlippage = useUserRedeemSlippageTolerance()
+  const [currentSlippage, currentSlippageSetting] = slippageType
+    ? slippageType === SLIPPAGE_TYPE.generation
+      ? generationSlippage
+      : redeemSlippage
+    : userSlippage
 
   const [ttl, setTtl] = useUserTransactionTTL()
 
@@ -223,8 +239,8 @@ export default function SettingsTab({ onlySlippage }: { onlySlippage?: boolean }
                   Transaction Settings
                 </Text>
                 <TransactionSettings
-                  rawSlippage={userSlippageTolerance}
-                  setRawSlippage={setUserslippageTolerance}
+                  rawSlippage={currentSlippage}
+                  setRawSlippage={currentSlippageSetting}
                   deadline={ttl}
                   setDeadline={setTtl}
                   onlySlippage={onlySlippage}
