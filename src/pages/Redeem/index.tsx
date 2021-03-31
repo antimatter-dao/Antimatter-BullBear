@@ -139,13 +139,15 @@ export default function Redeem() {
   const modalHeader = () => {
     return (
       <>
-        <AutoColumn gap="20px">
-          <AutoRow justify="center" style={{ marginTop: '20px' }}>
-            <Text fontSize="14px" fontWeight={400}>
-              {isNegative(delta?.dCur) && isNegative(delta?.dUnd) ? 'You will generate' : ''}
-            </Text>
-          </AutoRow>
-        </AutoColumn>
+        {isNegative(delta?.dCur) && isNegative(delta?.dUnd) && (
+          <AutoColumn gap="20px">
+            <AutoRow justify="center" style={{ marginTop: '20px' }}>
+              <Text fontSize="14px" fontWeight={400}>
+                {'You will generate'}
+              </Text>
+            </AutoRow>
+          </AutoColumn>
+        )}
       </>
     )
   }

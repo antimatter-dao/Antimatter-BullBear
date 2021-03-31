@@ -131,15 +131,21 @@ export default function RedeemTokenPanel({
             <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
               {label}
             </TYPE.body>
-            {account && !inputOnly && (
+            {account && (
               <TYPE.body
                 onClick={handleOnMax}
                 color={theme.text3}
                 fontWeight={500}
-                fontSize={14}
+                fontSize={12}
                 style={{ display: 'inline', cursor: 'pointer' }}
               >
-                {!!currency && currencyBalance ? 'Your balance: ' + currencyBalance : ' -'}
+                {!currencyBalance && ' -'}
+                {!inputOnly && !!currency && currencyBalance && 'Your balance: ' + currencyBalance}
+                {inputOnly &&
+                  currencyBalance &&
+                  (isCall
+                    ? `Call Token Balance: ${currencyBalance} CALL`
+                    : `Put Token Balance: ${currencyBalance} PUT`)}
               </TYPE.body>
             )}
           </AutoRow>
