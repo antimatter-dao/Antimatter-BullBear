@@ -1,0 +1,48 @@
+{
+  "name": "AntiMatter",
+  "logoURI": "",
+  "keywords": [
+    "antimatter",
+    "defi"
+  ],
+  "timestamp": "2020-09-03T12:37:57.000+00:00",
+  "tokens": [
+    {
+      "name": "Wrapped Ether",
+      "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+      "symbol": "WETH",
+      "decimals": 18,
+      "chainId": 3,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xaD6D458402F60fD3Bd25163575031ACDce07538D/logo.png"
+    },
+    {
+      "name": "Dai Stablecoin",
+      "address": "0xaD6D458402F60fD3Bd25163575031ACDce07538D",
+      "symbol": "DAI",
+      "decimals": 18,
+      "chainId": 3,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"
+    },
+    {
+      "name": "AntiMatter.Finance ETH perpetual put contract floor $200 cap $300",
+      "address": "0x747434F3334Ec885De96e2A8e053DcAeE0E7F492",
+      "symbol": "-ETH(200$300)",
+      "decimals": 18,
+      "chainId": 3,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x747434f3334ec885de96e2a8e053dcaee0e7f492.png"
+    },
+    {
+      "name": "AntiMatter.Finance ETH perpetual call contract floor $200 cap $300",
+      "address": "0x1dA4A25AE837259cB2f14E362BA94aF015F77d7d",
+      "symbol": "+ETH(200$300)",
+      "decimals": 18,
+      "chainId": 3,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x1dA4A25AE837259cB2f14E362BA94aF015F77d7d.png"
+    }
+  ],
+  "version": {
+    "major": 0,
+    "minor": 18,
+    "patch": 0
+  }
+}

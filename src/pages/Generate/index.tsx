@@ -54,6 +54,7 @@ export default function Generate() {
   }, [optionTypes, optionType])
 
   const { delta, error } = useDerivedStrategyInfo(
+    true,
     selectedOptionType ?? undefined,
     callTyped ?? undefined,
     putTyped ?? undefined,
@@ -118,14 +119,14 @@ export default function Generate() {
             setCallTyped(undefined)
             setAttemptingTxn(false)
             addTransaction(response, {
-              summary: 'generate '
+              summary: 'generated '
             })
 
             setTxHash(response.hash)
 
             ReactGA.event({
-              category: 'Liquidity',
-              action: 'Add',
+              category: 'Generate',
+              action: 'generate',
               label: ''
             })
           })
@@ -145,13 +146,13 @@ export default function Generate() {
       optionTypes.map(item => {
         return {
           id: item.id,
-          option: `${item.underlyingSymbol}-${item.currencySymbol} ${JSBI.divide(
+          option: `${item.underlyingSymbol} (${JSBI.divide(
             JSBI.BigInt(item.priceFloor),
             JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.underlyingDecimals ?? 18))
-          )}-${JSBI.divide(
+          )}$${JSBI.divide(
             JSBI.BigInt(item.priceCap),
             JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
-          )}`
+          )})`
         }
       }),
     [optionTypes]
@@ -224,24 +225,26 @@ export default function Generate() {
               />
             )}
 
-            {(tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.put) && (
-              <>
-                <ColumnCenter>
-                  <Plus size="28" color={theme.text2} />
-                </ColumnCenter>
-                <CallOrPutInputPanel
-                  value={putTyped ?? ''}
-                  onUserInput={setPutTyped}
-                  currency={undefined}
-                  id="add-liquidity-input-tokenb"
-                  showCommonBases
-                  halfWidth={true}
-                  defaultSymbol={'Put Token'}
-                  negativeMarginTop="-20px"
-                  isCall={false}
-                />
-              </>
+            {tokenType === TOKEN_TYPES.callPut && (
+              <ColumnCenter>
+                <Plus size="28" color={theme.text2} />
+              </ColumnCenter>
             )}
+
+            {(tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.put) && (
+              <CallOrPutInputPanel
+                value={putTyped ?? ''}
+                onUserInput={setPutTyped}
+                currency={undefined}
+                id="generate-output-token"
+                showCommonBases
+                halfWidth={true}
+                defaultSymbol={'Put Token'}
+                negativeMarginTop={tokenType === TOKEN_TYPES.callPut ? '-20px' : '0'}
+                isCall={false}
+              />
+            )}
+
             {currencyA && currencyB && delta?.dUnd && delta.dCur && (
               <GenerateBar
                 cardTitle={``}

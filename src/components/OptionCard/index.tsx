@@ -1,13 +1,13 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Text } from 'rebass'
-import { AutoColumn } from '../Column'
 import { ButtonSecondary } from '../Button'
 import { RowBetween, RowFixed } from '../Row'
 import styled from 'styled-components'
 import Card from '../Card'
 import { darken } from 'polished'
 import { OptionTypeData } from '../../state/market/hooks'
+import { parseBalance } from '../../utils/marketStrategyUtils'
 
 export const FixedHeightRow = styled(RowBetween)`
   height: 24px;
@@ -15,6 +15,7 @@ export const FixedHeightRow = styled(RowBetween)`
 
 export const HoverCard = styled(Card)`
   border: 1px solid transparent;
+  padding: 0.25rem 1.25rem;
   background-color: rgba(255, 255, 255, 0.08);
   :hover {
     border: 1px solid ${({ theme }) => darken(0.06, theme.bg2)};
@@ -27,25 +28,57 @@ interface OptionCardProps {
 
 export function OptionCard({ optionType }: OptionCardProps) {
   return (
-    <HoverCard>
-      <AutoColumn gap="12px">
-        <FixedHeightRow>
+    <>
+      <HoverCard>
+        <RowBetween>
           <RowFixed>
             {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
-            <Text fontWeight={500} fontSize={20} style={{ marginLeft: '' }}>
-              {`${optionType.underlyingSymbol}/${optionType.currencySymbol}`}
+            <Text fontWeight={500} fontSize={16} style={{ marginLeft: '' }}>
+              {`${optionType.underlyingSymbol ?? '-'}(${parseBalance(optionType.priceFloor)}$${parseBalance(
+                optionType.priceCap
+              )})Call`}
             </Text>
           </RowFixed>
-        </FixedHeightRow>
 
-        <AutoColumn gap="8px">
-          <RowBetween marginTop="10px">
-            <ButtonSecondary style={{ backgroundColor: 'transparent' }} width="28%" as={Link} to={`/remove/v1/`}>
+          <RowFixed>
+            <Text fontWeight={500} fontSize={16} style={{ minWidth: 'unset', marginRight: 12 }}>
+              {`${parseBalance(optionType.callBalance, 2)}`}
+            </Text>
+            <ButtonSecondary
+              style={{ backgroundColor: 'transparent' }}
+              as={Link}
+              to={`/swap?inputCurrency=${optionType.callAddress}`}
+            >
               Trade
             </ButtonSecondary>
-          </RowBetween>
-        </AutoColumn>
-      </AutoColumn>
-    </HoverCard>
+          </RowFixed>
+        </RowBetween>
+      </HoverCard>
+      <HoverCard>
+        <RowBetween>
+          <RowFixed>
+            {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
+            <Text fontWeight={500} fontSize={16} style={{ marginLeft: '' }}>
+              {`${optionType.underlyingSymbol ?? '-'}(${parseBalance(optionType.priceFloor)}$${parseBalance(
+                optionType.priceCap
+              )})Put`}
+            </Text>
+          </RowFixed>
+
+          <RowFixed>
+            <Text fontWeight={500} fontSize={16} style={{ minWidth: 'unset', marginRight: 12 }}>
+              {`${parseBalance(optionType.putBalance, 2)}`}
+            </Text>
+            <ButtonSecondary
+              style={{ backgroundColor: 'transparent' }}
+              as={Link}
+              to={`/swap?inputCurrency=${optionType.putAddress}`}
+            >
+              Trade
+            </ButtonSecondary>
+          </RowFixed>
+        </RowBetween>
+      </HoverCard>
+    </>
   )
 }

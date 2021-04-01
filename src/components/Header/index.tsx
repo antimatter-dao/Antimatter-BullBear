@@ -342,12 +342,23 @@ export default function Header() {
     <HeaderFrame>
       <ClaimModal />
       <Modal isOpen={warningModalOpen} onDismiss={() => setWarningModalOpen(false)} maxHeight={400}>
-        <div style={{ height: '400px', display: 'flex', alignItems: 'center', position: 'relative', padding: '48px' }}>
+        <div
+          style={{
+            height: '400px',
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            alignItems: 'center',
+            position: 'relative',
+            padding: '48px'
+          }}
+        >
           <CloseButton onClick={() => setWarningModalOpen(false)}>
             <X />
           </CloseButton>
-          <TYPE.body fontSize="24px">
-            The product is in public testing, please switch your wallet network to Ropston or rinkeby network
+          <TYPE.largeHeader fontSize="24px">Product Launch Phase I</TYPE.largeHeader>
+          <TYPE.body fontSize="16px" marginTop={'20px'} color={'rgba(255, 255, 255, 0.6)'}>
+            The product is in public testing, please switch your wallet network to Ropston or rinkeby network.
           </TYPE.body>
         </div>
       </Modal>

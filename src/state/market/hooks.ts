@@ -10,7 +10,7 @@ import CALL_OR_PUT_ABI from '../../constants/abis/callOrPut.json'
 import { useMemo } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useActiveWeb3React } from '../../hooks'
-import { useUserSlippageTolerance } from '../user/hooks'
+import { useUserGenerationSlippageTolerance, useUserRedeemSlippageTolerance } from '../user/hooks'
 import { ETHER, JSBI } from '@uniswap/sdk'
 import { tryParseAmount } from '../swap/hooks'
 import { TOKEN_TYPES } from 'components/MarketStrategy/TypeRadioButton'
@@ -20,6 +20,8 @@ export interface OptionTypeData {
   id: string
   callAddress: string
   putAddress: string
+  callBalance: string
+  putBalance: string
   callTotal: string
   putTotal: string
   underlying: string
@@ -57,6 +59,7 @@ export function useOptionTypeCount(): number | undefined {
 }
 
 export function useAllOptionTypes() {
+  const { account } = useActiveWeb3React()
   const antimatterContract = useAntimatterContract()
   const optionTypeCount = useOptionTypeCount()
   const optionTypeIndexes = []
@@ -110,6 +113,14 @@ export function useAllOptionTypes() {
     undefined,
     NEVER_RELOAD
   )
+
+  const callBalancesRes = useMultipleContractSingleData(callAddresses, CALL_OR_PUT_INTERFACE, 'balanceOf', [
+    account ?? undefined
+  ])
+
+  const putBalancesRes = useMultipleContractSingleData(putAddresses, CALL_OR_PUT_INTERFACE, 'balanceOf', [
+    account ?? undefined
+  ])
 
   const underlyingAddresses = useMemo(() => {
     return allCalls
@@ -168,6 +179,8 @@ export function useAllOptionTypes() {
         id: index.toString(),
         callAddress: callAddresses[index],
         putAddress: putAddresses[index],
+        callBalance: callBalancesRes[index].result?.[0],
+        putBalance: putBalancesRes[index].result?.[0],
         callTotal: callTotalsRes[index].result?.[0],
         putTotal: putTotalsRes[index].result?.[0],
         underlying: item.result?.[0],
@@ -201,6 +214,7 @@ const parseAbsolute = (val: string) => {
 }
 
 export function useDerivedStrategyInfo(
+  isGeneration: boolean,
   optionType: OptionTypeData | undefined,
   callTyped: string | undefined,
   putTyped: string | undefined,
@@ -212,7 +226,8 @@ export function useDerivedStrategyInfo(
 } {
   const { account } = useActiveWeb3React()
   const antimatterContract = useAntimatterContract()
-  const [allowedSlippage] = useUserSlippageTolerance() // custom from users
+  const [userGenerationSlippageTolerance] = useUserGenerationSlippageTolerance() // custom from users
+  const [userRedeemSlippageTolerance] = useUserRedeemSlippageTolerance() // custom from users
 
   const queryData = useMemo(() => {
     let callAmount = callTyped
@@ -246,9 +261,20 @@ export function useDerivedStrategyInfo(
       optionType?.putTotal.toString(),
       callVal,
       putVal,
-      JSBI.multiply(JSBI.BigInt(allowedSlippage ?? 50), JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16))).toString()
+      JSBI.multiply(
+        JSBI.BigInt(isGeneration ? userGenerationSlippageTolerance : userRedeemSlippageTolerance ?? 50),
+        JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(15))
+      ).toString()
     ]
-  }, [optionType, callTyped, putTyped, allowedSlippage, tokenType])
+  }, [
+    optionType,
+    callTyped,
+    putTyped,
+    isGeneration,
+    tokenType,
+    userGenerationSlippageTolerance,
+    userRedeemSlippageTolerance
+  ])
 
   const delta = useSingleCallResult(antimatterContract, 'calcDeltaWithFeeAndSlippage', queryData ?? [undefined])
   const balancesRes = useMultipleContractSingleData(
