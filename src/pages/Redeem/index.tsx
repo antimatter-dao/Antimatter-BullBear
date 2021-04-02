@@ -109,14 +109,11 @@ export default function Redeem() {
       delta.dCur.toString()
     ]
 
-    console.log('args--->', args)
-
     setAttemptingTxn(true)
 
     if (estimate) {
       await estimate(...args)
         .then(estimatedGasLimit =>
-          // .then(() =>
           method(...args, {
             gasLimit: calculateGasMargin(estimatedGasLimit)
           }).then(response => {
@@ -126,6 +123,8 @@ export default function Redeem() {
             })
 
             setTxHash(response.hash)
+            setCallTypedAmount('')
+            setPutTypedAmount('')
           })
         )
         .catch(error => {
@@ -186,12 +185,6 @@ export default function Redeem() {
     [optionTypes]
   )
   const handleCheck = useCallback((tokenType: string) => {
-    if (tokenType === TOKEN_TYPES.call) {
-      setPutTypedAmount('')
-    }
-    if (tokenType === TOKEN_TYPES.put) {
-      setCallTypedAmount('')
-    }
     setTokenType(tokenType)
   }, [])
 

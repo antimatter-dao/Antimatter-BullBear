@@ -297,8 +297,8 @@ export function useDerivedStrategyInfo(
     : undefined
   const balances = balancesRes
     ? {
-        callBalance: balancesRes?.[0].result?.[0],
-        putBalance: balancesRes?.[1].result?.[0]
+        callBalance: balancesRes?.[0]?.result?.[0],
+        putBalance: balancesRes?.[1]?.result?.[0]
       }
     : undefined
 

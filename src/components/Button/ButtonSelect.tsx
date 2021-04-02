@@ -91,9 +91,9 @@ export default function ButtonSelect({
       if (options.length > 0) {
         setIsLoading(false)
         const selected = options.find(({ id }) => id === selectedId)
-        return selected ? selected.option : 'Select OptionCard Type'
+        return selected ? selected.option : 'Select Option Type'
       }
-      return 'Select OptionCard Type'
+      return 'Select Option Type'
     }
     return children
   }, [options, children, setIsLoading, selectedId])
