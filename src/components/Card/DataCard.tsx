@@ -48,7 +48,7 @@ export default function DataCard({
       </AutoColumn>
       {cardBottom && (
         <RowBetween style={{ padding: '12px 24px', borderTop: `1px solid ${theme.text5}` }}>
-          <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text1}>
+          <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text1} width="100%">
             {cardBottom}
           </TYPE.subHeader>
         </RowBetween>

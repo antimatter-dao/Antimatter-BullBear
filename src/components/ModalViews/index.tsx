@@ -6,10 +6,11 @@ import styled from 'styled-components'
 import { RowBetween } from '../Row'
 import { TYPE, CloseIcon, CustomLightSpinner } from '../../theme'
 import { ReactComponent as CheckCircle } from '../../assets/svg/transaction_submitted.svg'
-
 import Circle from '../../assets/svg/gray_loader.svg'
 import { getEtherscanLink } from '../../utils'
 import { ExternalLink } from '../../theme/components'
+import useTheme from 'hooks/useTheme'
+import { ButtonPrimary } from 'components/Button'
 
 const ConfirmOrLoadingWrapper = styled.div`
   width: 100%;
@@ -48,6 +49,7 @@ export function SubmittedView({
   hash: string | undefined
 }) {
   const { chainId } = useActiveWeb3React()
+  const theme = useTheme()
 
   return (
     <ConfirmOrLoadingWrapper>
@@ -61,10 +63,17 @@ export function SubmittedView({
       <AutoColumn gap="32px" justify={'center'}>
         {children}
         {chainId && hash && (
-          <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')} style={{ marginLeft: '4px' }}>
-            <TYPE.subHeader>View transaction on Etherscan</TYPE.subHeader>
+          <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')} style={{ color: theme.primary1 }}>
+            <TYPE.main fontWeight={400} fontSize={14} color={theme.primary1}>
+              View on Etherscan
+            </TYPE.main>
           </ExternalLink>
         )}
+        <ButtonPrimary onClick={onDismiss} style={{ marginTop: '-10px' }}>
+          <TYPE.main fontWeight={500} fontSize={16} color={theme.bg1}>
+            Close
+          </TYPE.main>
+        </ButtonPrimary>
       </AutoColumn>
     </ConfirmOrLoadingWrapper>
   )

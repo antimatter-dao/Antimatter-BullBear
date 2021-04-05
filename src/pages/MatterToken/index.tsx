@@ -23,7 +23,6 @@ import { LPT_TYPE, LPT_PAIRS, currencies } from 'constants/matterToken/matterTok
 import ButtonSelect from 'components/Button/ButtonSelect'
 
 const sectionPadding = '30px'
-const gapSize = '15px'
 const GridWrapper = styled.div`
   background: ${({ theme }) => theme.gradient2};
   max-width: 1010px;
@@ -39,6 +38,9 @@ const ClaimRewardWrapper = styled.div`
   width: 33.3%;
   border-right: 1px solid ${({ theme }) => theme.bg3};
   padding: ${sectionPadding};
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `
 
 const LPTWrapper = styled.div`
@@ -49,8 +51,10 @@ const LPTWrapper = styled.div`
   & > div {
     width: 100%;
     display: flex;
+    flex-grow: 1;
     :first-child {
-      height:40%
+      height: 40%;
+      flex-grow: 0;
       border-bottom: 1px solid ${({ theme }) => theme.bg3};
     }
     & > section {
@@ -60,6 +64,9 @@ const LPTWrapper = styled.div`
       :first-child {
         border-right: 1px solid ${({ theme }) => theme.bg3};
       }
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
   }
 `
@@ -204,87 +211,76 @@ export default function MatterToken() {
             </AutoColumn>
             <GridWrapper>
               <ClaimRewardWrapper>
-                <AutoColumn gap="38px">
-                  <TYPE.darkGray fontSize={20} fontWeight={400}>
-                    Your Staking Rewards Estimation
-                  </TYPE.darkGray>
-                  <TYPE.largeHeader fontSize={58} fontWeight={400} style={{ marginTop: '-19px' }}>
-                    <CountUp
-                      key={countUpAmount}
-                      isCounting
-                      decimalPlaces={2}
-                      start={parseFloat(countUpAmountPrevious)}
-                      end={parseFloat(countUpAmount)}
-                      thousandsSeparator={','}
-                      duration={1}
-                    />
-                    <TYPE.body fontSize={14} fontWeight={400} fontFamily="Roboto">
-                      Matter Option Token
-                    </TYPE.body>
-                  </TYPE.largeHeader>
-
-                  <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}>
-                    Claim Rewards
-                  </ButtonPrimary>
-                </AutoColumn>
+                <TYPE.darkGray fontSize={20} fontWeight={400}>
+                  Your Staking Rewards Estimation
+                </TYPE.darkGray>
+                <TYPE.largeHeader fontSize={58} fontWeight={400} style={{ marginTop: '-19px' }}>
+                  <CountUp
+                    key={countUpAmount}
+                    isCounting
+                    decimalPlaces={2}
+                    start={parseFloat(countUpAmountPrevious)}
+                    end={parseFloat(countUpAmount)}
+                    thousandsSeparator={','}
+                    duration={1}
+                  />
+                  <TYPE.body fontSize={14} fontWeight={400} fontFamily="Roboto">
+                    Matter Option Token
+                  </TYPE.body>
+                </TYPE.largeHeader>
+                <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}>
+                  Claim Rewards
+                </ButtonPrimary>
               </ClaimRewardWrapper>
               <LPTWrapper>
                 <div>
                   <section>
-                    <AutoColumn gap={gapSize}>
-                      <TYPE.darkGray fontSize={14} fontWeight={400}>
-                        Token LPT Staked
-                      </TYPE.darkGray>
-                      <NumberUnitText
-                        number={
-                          valueOfTotalStakedAmountInUSDC
-                            ? `$${valueOfTotalStakedAmountInUSDC.toFixed(0, { groupSeparator: ',' })}`
-                            : `${valueOfTotalStakedAmountInWETH?.toSignificant(4, { groupSeparator: ',' }) ?? '-'}`
-                        }
-                        unit="LPT"
-                      />
-                    </AutoColumn>
+                    <TYPE.darkGray fontSize={14} fontWeight={400}>
+                      Token LPT Staked
+                    </TYPE.darkGray>
+                    <NumberUnitText
+                      number={
+                        valueOfTotalStakedAmountInUSDC
+                          ? `$${valueOfTotalStakedAmountInUSDC.toFixed(0, { groupSeparator: ',' })}`
+                          : `${valueOfTotalStakedAmountInWETH?.toSignificant(4, { groupSeparator: ',' }) ?? '-'}`
+                      }
+                      unit="LPT"
+                    />
                   </section>
                   <section>
-                    <AutoColumn gap={gapSize}>
-                      <TYPE.darkGray fontSize={14} fontWeight={400}>
-                        Total Network Rewards Per Cycle
-                      </TYPE.darkGray>
-                      <NumberUnitText
-                        number={
-                          stakingInfo?.active
-                            ? stakingInfo?.totalRewardRate
-                                ?.multiply(BIG_INT_SECONDS_IN_WEEK)
-                                ?.toFixed(0, { groupSeparator: ',' }) ?? '-'
-                            : '0'
-                        }
-                        unit="Matter Option Token"
-                      />
-                    </AutoColumn>
+                    <TYPE.darkGray fontSize={14} fontWeight={400}>
+                      Total Network Rewards Per Cycle
+                    </TYPE.darkGray>
+                    <NumberUnitText
+                      number={
+                        stakingInfo?.active
+                          ? stakingInfo?.totalRewardRate
+                              ?.multiply(BIG_INT_SECONDS_IN_WEEK)
+                              ?.toFixed(0, { groupSeparator: ',' }) ?? '-'
+                          : '0'
+                      }
+                      unit="Matter Option Token"
+                    />
                   </section>
                 </div>
                 <div>
                   <section>
-                    <AutoColumn gap={gapSize}>
-                      <TYPE.darkGray fontSize={14} fontWeight={400}>
-                        Your Balance
-                      </TYPE.darkGray>
-                      <NumberUnitText number={userLiquidityUnstaked?.toSignificant(6) ?? '-'} unit="LPT" />
-                      <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.STAKE)}>
-                        Stack LPT
-                      </ButtonPrimary>
-                    </AutoColumn>
+                    <TYPE.darkGray fontSize={14} fontWeight={400}>
+                      Your Balance
+                    </TYPE.darkGray>
+                    <NumberUnitText number={userLiquidityUnstaked?.toSignificant(6) ?? '-'} unit="LPT" />
+                    <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.STAKE)}>
+                      Stack LPT
+                    </ButtonPrimary>
                   </section>
                   <section>
-                    <AutoColumn gap={gapSize}>
-                      <TYPE.darkGray fontSize={14} fontWeight={400}>
-                        Your Stake
-                      </TYPE.darkGray>
-                      <NumberUnitText number={stakingInfo?.stakedAmount?.toSignificant(6) ?? '-'} unit="LPT" />
-                      <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.UNSTAKE)}>
-                        Unstack LPT
-                      </ButtonPrimary>
-                    </AutoColumn>
+                    <TYPE.darkGray fontSize={14} fontWeight={400}>
+                      Your Stake
+                    </TYPE.darkGray>
+                    <NumberUnitText number={stakingInfo?.stakedAmount?.toSignificant(6) ?? '-'} unit="LPT" />
+                    <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.UNSTAKE)}>
+                      Unstack LPT
+                    </ButtonPrimary>
                   </section>
                 </div>
               </LPTWrapper>

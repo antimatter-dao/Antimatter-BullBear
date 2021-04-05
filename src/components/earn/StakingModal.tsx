@@ -225,11 +225,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
                     content: stakingInfo.stakedAmount.toSignificant(4) + ' MATTER'
                   },
                   {
-                    title: `Rewards From Last Cycle`,
-                    content: stakingInfo.earnedAmount.toSignificant(4) + ' MATTER'
-                  },
-                  {
-                    title: `Total Rewards from Last 7days`,
+                    title: `Weekly Rewards`,
                     content:
                       hypotheticalRewardRate
                         .multiply((60 * 60 * 24 * 7).toString())
