@@ -102,15 +102,6 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
                     )
                   },
                   {
-                    title: 'Rewards From Last Cycle',
-                    content: (
-                      <>
-                        <FormattedCurrencyAmount currencyAmount={stakingInfo.earnedAmount} />
-                        MATTER
-                      </>
-                    )
-                  },
-                  {
                     title: 'Total Rewards from Last 7days',
                     content:
                       hypotheticalRewardRate
