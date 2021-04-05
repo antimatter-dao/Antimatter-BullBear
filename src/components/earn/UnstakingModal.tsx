@@ -1,23 +1,25 @@
 import React, { useState } from 'react'
+import { TransactionResponse } from '@ethersproject/providers'
+import { TokenAmount } from '@uniswap/sdk'
 import Modal from '../Modal'
 import { AutoColumn } from '../Column'
 import styled from 'styled-components'
 import { RowBetween } from '../Row'
-import { TYPE, CloseIcon } from '../../theme'
-import { ButtonError } from '../Button'
+import { TYPE } from '../../theme'
+import { ButtonError, ArrowLeftButton } from '../Button'
 import { StakingInfo } from '../../state/stake/hooks'
 import { useStakingContract } from '../../hooks/useContract'
 import { SubmittedView, LoadingView } from '../ModalViews'
-import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import FormattedCurrencyAmount from '../FormattedCurrencyAmount'
 import { useActiveWeb3React } from '../../hooks'
+import AppBody from 'pages/AppBody'
+import DataCard from 'components/Card/DataCard'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
   padding: 1rem;
 `
-
 interface StakingModalProps {
   isOpen: boolean
   onDismiss: () => void
@@ -47,7 +49,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
         .exit({ gasLimit: 300000 })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Withdraw deposited liquidity`
+            summary: `Unstake deposited liquidity`
           })
           setHash(response.hash)
         })
@@ -66,55 +68,82 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
     error = error ?? 'Enter an amount'
   }
 
+  const hypotheticalRewardRate: TokenAmount = new TokenAmount(stakingInfo.rewardRate.token, '0')
+
   return (
-    <Modal isOpen={isOpen} onDismiss={wrappedOndismiss} maxHeight={90}>
-      {!attempting && !hash && (
-        <ContentWrapper gap="lg">
-          <RowBetween>
-            <TYPE.mediumHeader>Withdraw</TYPE.mediumHeader>
-            <CloseIcon onClick={wrappedOndismiss} />
-          </RowBetween>
-          {stakingInfo?.stakedAmount && (
-            <AutoColumn justify="center" gap="md">
-              <TYPE.body fontWeight={600} fontSize={36}>
-                {<FormattedCurrencyAmount currencyAmount={stakingInfo.stakedAmount} />}
-              </TYPE.body>
-              <TYPE.body>Deposited liquidity:</TYPE.body>
-            </AutoColumn>
+    <>
+      {isOpen && (
+        <AppBody>
+          {!attempting && !hash && (
+            <ContentWrapper gap="lg">
+              <RowBetween style={{ margin: '0 -1rem' }}>
+                <ArrowLeftButton onClick={onDismiss} />
+                <TYPE.mediumHeader>Unstake LPT</TYPE.mediumHeader>
+                <div />
+              </RowBetween>
+              <DataCard
+                data={[
+                  {
+                    title: 'Unclaimed MATTER',
+                    content: (
+                      <>
+                        <FormattedCurrencyAmount currencyAmount={stakingInfo?.earnedAmount} />
+                        MATTER
+                      </>
+                    )
+                  },
+                  {
+                    title: 'MATTER Staked',
+                    content: (
+                      <>
+                        <FormattedCurrencyAmount currencyAmount={stakingInfo.stakedAmount} />
+                        MATTER
+                      </>
+                    )
+                  },
+                  {
+                    title: 'Rewards From Last Cycle',
+                    content: (
+                      <>
+                        <FormattedCurrencyAmount currencyAmount={stakingInfo.earnedAmount} />
+                        MATTER
+                      </>
+                    )
+                  },
+                  {
+                    title: 'Total Rewards from Last 7days',
+                    content:
+                      hypotheticalRewardRate
+                        .multiply((60 * 60 * 24 * 7).toString())
+                        .toSignificant(4, { groupSeparator: ',' }) + ' MATTER'
+                  }
+                ]}
+              />
+              <ButtonError disabled={!!error} error={!!error && !!stakingInfo?.stakedAmount} onClick={onWithdraw}>
+                {error ?? 'Unstake MATTER'}
+              </ButtonError>
+            </ContentWrapper>
           )}
-          {stakingInfo?.earnedAmount && (
-            <AutoColumn justify="center" gap="md">
-              <TYPE.body fontWeight={600} fontSize={36}>
-                {<FormattedCurrencyAmount currencyAmount={stakingInfo?.earnedAmount} />}
-              </TYPE.body>
-              <TYPE.body>Unclaimed UNI</TYPE.body>
-            </AutoColumn>
-          )}
-          <TYPE.subHeader style={{ textAlign: 'center' }}>
-            When you withdraw, your UNI is claimed and your liquidity is removed from the mining pool.
-          </TYPE.subHeader>
-          <ButtonError disabled={!!error} error={!!error && !!stakingInfo?.stakedAmount} onClick={onWithdraw}>
-            {error ?? 'Withdraw & Claim'}
-          </ButtonError>
-        </ContentWrapper>
+
+          <Modal isOpen={attempting && !hash} onDismiss={wrappedOndismiss}>
+            <LoadingView onDismiss={wrappedOndismiss}>
+              <AutoColumn gap="12px" justify={'center'}>
+                <TYPE.body fontSize={18}>Unstaking {stakingInfo?.stakedAmount?.toSignificant(4)} MATTER</TYPE.body>
+                <TYPE.body fontSize={14}>Claiming {stakingInfo?.earnedAmount?.toSignificant(4)} MATTER</TYPE.body>
+              </AutoColumn>
+            </LoadingView>
+          </Modal>
+
+          <Modal isOpen={attempting && !!hash} onDismiss={wrappedOndismiss}>
+            <SubmittedView onDismiss={wrappedOndismiss} hash={hash}>
+              <AutoColumn gap="12px" justify={'center'}>
+                <TYPE.body fontSize={18}>Your BOT was Unstaked</TYPE.body>
+                <TYPE.body fontSize={14}>Claimed MATTER</TYPE.body>
+              </AutoColumn>
+            </SubmittedView>
+          </Modal>
+        </AppBody>
       )}
-      {attempting && !hash && (
-        <LoadingView onDismiss={wrappedOndismiss}>
-          <AutoColumn gap="12px" justify={'center'}>
-            <TYPE.body fontSize={20}>Withdrawing {stakingInfo?.stakedAmount?.toSignificant(4)} UNI-V2</TYPE.body>
-            <TYPE.body fontSize={20}>Claiming {stakingInfo?.earnedAmount?.toSignificant(4)} UNI</TYPE.body>
-          </AutoColumn>
-        </LoadingView>
-      )}
-      {hash && (
-        <SubmittedView onDismiss={wrappedOndismiss} hash={hash}>
-          <AutoColumn gap="12px" justify={'center'}>
-            <TYPE.largeHeader>Transaction Submitted</TYPE.largeHeader>
-            <TYPE.body fontSize={20}>Withdrew UNI-V2!</TYPE.body>
-            <TYPE.body fontSize={20}>Claimed UNI!</TYPE.body>
-          </AutoColumn>
-        </SubmittedView>
-      )}
-    </Modal>
+    </>
   )
 }

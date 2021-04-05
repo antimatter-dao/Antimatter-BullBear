@@ -73,13 +73,15 @@ export default function ButtonSelect({
   options,
   onSelection,
   selectedId,
-  onClick
+  onClick,
+  placeholder = 'Select Option Type'
 }: ButtonProps & {
   label?: string
   onSelection?: (id: string) => void
   options?: { id: string; option: string }[]
   selectedId?: string
   onClick?: () => void
+  placeholder?: string
 }) {
   const node = useRef<HTMLDivElement>()
   const theme = useTheme()
@@ -91,12 +93,12 @@ export default function ButtonSelect({
       if (options.length > 0) {
         setIsLoading(false)
         const selected = options.find(({ id }) => id === selectedId)
-        return selected ? selected.option : 'Select Option Type'
+        return selected ? selected.option : placeholder
       }
-      return 'Select Option Type'
+      return placeholder
     }
     return children
-  }, [options, children, setIsLoading, selectedId])
+  }, [options, children, setIsLoading, selectedId, placeholder])
   return (
     <div style={{ position: 'relative' }}>
       {label && (

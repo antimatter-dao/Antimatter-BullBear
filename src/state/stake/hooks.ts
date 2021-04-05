@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ChainId, CurrencyAmount, JSBI, Token, TokenAmount, WETH, Pair } from '@uniswap/sdk'
 import { useMemo } from 'react'
 import { DAI, UNI, USDC, USDT, WBTC } from '../../constants'
@@ -6,6 +7,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { NEVER_RELOAD, useMultipleContractSingleData } from '../multicall/hooks'
 import { tryParseAmount } from '../swap/hooks'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
+import { currencies } from 'constants/matterToken/matterTokenTokens'
 
 export const STAKING_GENESIS = 1600387200
 
@@ -34,6 +36,20 @@ export const STAKING_REWARDS_INFO: {
     {
       tokens: [WETH[ChainId.MAINNET], WBTC],
       stakingRewardAddress: '0xCA35e32e7926b96A9988f61d510E038108d8068e'
+    }
+  ],
+  [ChainId.ROPSTEN]: [
+    {
+      tokens: [currencies[ChainId.ROPSTEN]!.ETH_CALL, currencies[ChainId.ROPSTEN]!.DAI],
+      stakingRewardAddress: '0xEB97da2E0719ed5a0353f61d3E9B342c4862e15c'
+    },
+    {
+      tokens: [currencies[ChainId.ROPSTEN]!.ETH_PUT, currencies[ChainId.ROPSTEN]!.DAI],
+      stakingRewardAddress: '0x41e267AC728213a1F6263cc41f48173450C144D7'
+    },
+    {
+      tokens: [currencies[ChainId.ROPSTEN]!.MATTER, currencies[ChainId.ROPSTEN]!.ETHER],
+      stakingRewardAddress: '0xB9f0a49f4E6ac50e49081AbA5a91768E335Dd47B'
     }
   ]
 }
@@ -156,7 +172,6 @@ export function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
         const dummyPair = new Pair(new TokenAmount(tokens[0], '0'), new TokenAmount(tokens[1], '0'))
 
         // check for account, if no account set to 0
-
         const stakedAmount = new TokenAmount(dummyPair.liquidityToken, JSBI.BigInt(balanceState?.result?.[0] ?? 0))
         const totalStakedAmount = new TokenAmount(dummyPair.liquidityToken, JSBI.BigInt(totalSupplyState.result?.[0]))
         const totalRewardRate = new TokenAmount(uni, JSBI.BigInt(rewardRateState.result?.[0]))

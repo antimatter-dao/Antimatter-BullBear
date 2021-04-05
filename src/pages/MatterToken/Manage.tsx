@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
 import { JSBI, TokenAmount, ETHER } from '@uniswap/sdk'
-import { RouteComponentProps } from 'react-router-dom'
+// import { RouteComponentProps } from 'react-router-dom'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 import { useCurrency } from '../../hooks/Tokens'
 import { useWalletModalToggle } from '../../state/application/hooks'
@@ -87,15 +87,17 @@ const DataRow = styled(RowBetween)`
   `};
 `
 
-export default function Manage({
-  match: {
-    params: { currencyIdA, currencyIdB }
-  }
-}: RouteComponentProps<{ currencyIdA: string; currencyIdB: string }>) {
+export default function Manage() {
+  //   {
+  //   match: {
+  //     params: { currencyIdA, currencyIdB }
+  //   }
+  // }: RouteComponentProps<{ currencyIdA: string; currencyIdB: string }>
   const { account, chainId } = useActiveWeb3React()
 
   // get currencies and pair
-  const [currencyA, currencyB] = [useCurrency(currencyIdA), useCurrency(currencyIdB)]
+  // const [currencyA, currencyB] = [useCurrency(currencyIdA), useCurrency(currencyIdB)]
+  const [currencyA, currencyB] = [useCurrency('ETH'), useCurrency('DAI')]
   const tokenA = wrappedCurrency(currencyA ?? undefined, chainId)
   const tokenB = wrappedCurrency(currencyB ?? undefined, chainId)
 

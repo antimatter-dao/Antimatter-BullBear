@@ -1,13 +1,13 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useActiveWeb3React } from '../../hooks'
 
 import { AutoColumn, ColumnCenter } from '../Column'
-import styled, { ThemeContext } from 'styled-components'
+import styled from 'styled-components'
 import { RowBetween } from '../Row'
 import { TYPE, CloseIcon, CustomLightSpinner } from '../../theme'
-import { ArrowUpCircle } from 'react-feather'
+import { ReactComponent as CheckCircle } from '../../assets/svg/transaction_submitted.svg'
 
-import Circle from '../../assets/images/blue-loader.svg'
+import Circle from '../../assets/svg/gray_loader.svg'
 import { getEtherscanLink } from '../../utils'
 import { ExternalLink } from '../../theme/components'
 
@@ -17,7 +17,7 @@ const ConfirmOrLoadingWrapper = styled.div`
 `
 
 const ConfirmedIcon = styled(ColumnCenter)`
-  padding: 60px 0;
+  padding: 0 0 28px;
 `
 
 export function LoadingView({ children, onDismiss }: { children: any; onDismiss: () => void }) {
@@ -28,11 +28,11 @@ export function LoadingView({ children, onDismiss }: { children: any; onDismiss:
         <CloseIcon onClick={onDismiss} />
       </RowBetween>
       <ConfirmedIcon>
-        <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
+        <CustomLightSpinner src={Circle} alt="loader" size={'45px'} />
       </ConfirmedIcon>
-      <AutoColumn gap="100px" justify={'center'}>
+      <AutoColumn gap="28px" justify={'center'}>
         {children}
-        <TYPE.subHeader>Confirm this transaction in your wallet</TYPE.subHeader>
+        <TYPE.smallGray>Confirm this transaction in your wallet</TYPE.smallGray>
       </AutoColumn>
     </ConfirmOrLoadingWrapper>
   )
@@ -47,7 +47,6 @@ export function SubmittedView({
   onDismiss: () => void
   hash: string | undefined
 }) {
-  const theme = useContext(ThemeContext)
   const { chainId } = useActiveWeb3React()
 
   return (
@@ -57,9 +56,9 @@ export function SubmittedView({
         <CloseIcon onClick={onDismiss} />
       </RowBetween>
       <ConfirmedIcon>
-        <ArrowUpCircle strokeWidth={0.5} size={90} color={theme.primary1} />
+        <CheckCircle style={{ width: '32px', height: '32px' }} />
       </ConfirmedIcon>
-      <AutoColumn gap="100px" justify={'center'}>
+      <AutoColumn gap="32px" justify={'center'}>
         {children}
         {chainId && hash && (
           <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')} style={{ marginLeft: '4px' }}>
