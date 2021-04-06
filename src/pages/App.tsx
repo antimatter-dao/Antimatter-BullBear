@@ -35,6 +35,7 @@ import Generate from './Generate'
 import Redeem from './Redeem'
 import Exercise from './Exercise'
 import ComingSoon from './ComingSoon'
+import MatterRedemption from './MatterToken/MatterRedemption'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -119,7 +120,7 @@ export default function App() {
                 <Route exact strict path="/find" component={PoolFinder} />
                 <Route exact strict path="/liquidity" component={Pool} />
                 <Route exact strict path="/matter_token" component={MatterToken} />
-                <Route exact strict path="/matter_redemption" component={MatterToken} />
+                <Route exact strict path="/matter_redemption" component={MatterRedemption} />
                 <Route exact strict path="/vote" component={Vote} />
                 <Route exact strict path="/create" component={RedirectToAddLiquidity} />
                 <Route exact path="/add" component={AddLiquidity} />

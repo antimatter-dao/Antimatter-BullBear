@@ -2,6 +2,7 @@ import { ChainId, JSBI, Percent, Token, WETH } from '@uniswap/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
+import { OptionTypeData } from '../state/market/hooks'
 
 export const ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 
@@ -11,6 +12,30 @@ export const ANTIMATTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.RINKEBY]: '0xe774A104715ba1B99dEAB30ab33e1C99B0695270',
   [ChainId.KOVAN]: '',
   [ChainId.GÖRLI]: ''
+}
+
+export const MATTER_OPTION: { [chainId in ChainId]: OptionTypeData | null } = {
+  [ChainId.MAINNET]: null,
+  [ChainId.ROPSTEN]: {
+    id: '0',
+    callAddress: '0xF87aC9826e7CBceAE26E5Febaedc1e70e864F9A6',
+    putAddress: '0xD8760634Ee64139637010Ca9efb9810BF3Fc90AD',
+    callBalance: '',
+    putBalance: '',
+    callTotal: '',
+    putTotal: '',
+    underlying: '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F',
+    currency: '0xaD6D458402F60fD3Bd25163575031ACDce07538D',
+    priceFloor: '1000000000000000000',
+    priceCap: '100000000000000000000',
+    underlyingSymbol: 'MATTER',
+    underlyingDecimals: '18',
+    currencySymbol: 'DAI',
+    currencyDecimals: '18'
+  },
+  [ChainId.RINKEBY]: null,
+  [ChainId.KOVAN]: null,
+  [ChainId.GÖRLI]: null
 }
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'

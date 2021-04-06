@@ -15,6 +15,7 @@ import { ETHER, JSBI } from '@uniswap/sdk'
 import { tryParseAmount } from '../swap/hooks'
 import { TOKEN_TYPES } from 'components/MarketStrategy/TypeRadioButton'
 import { useETHBalances } from '../wallet/hooks'
+import { MATTER_OPTION } from '../../constants'
 const CALL_OR_PUT_INTERFACE = new Interface(CALL_OR_PUT_ABI)
 
 export interface OptionTypeData {
@@ -197,6 +198,46 @@ export function useAllOptionTypes() {
       }
       return optionTypeData
     })
+}
+
+export function useMatterOption() {
+  const { chainId, account } = useActiveWeb3React()
+  const matterOption = chainId ? MATTER_OPTION[chainId] : undefined
+
+  const balanceRes = useMultipleContractSingleData(
+    [matterOption?.callAddress, matterOption?.putAddress],
+    CALL_OR_PUT_INTERFACE,
+    'balanceOf',
+    [account ?? undefined]
+  )
+
+  const totalsRes = useMultipleContractSingleData(
+    [matterOption?.callAddress, matterOption?.putAddress],
+    CALL_OR_PUT_INTERFACE,
+    'totalSupply',
+    undefined,
+    NEVER_RELOAD
+  )
+
+  const optionTypeData: OptionTypeData = {
+    id: '',
+    callAddress: matterOption?.callAddress ?? '',
+    putAddress: matterOption?.putAddress ?? '',
+    callBalance: balanceRes[0].result?.[0],
+    putBalance: balanceRes[1].result?.[0],
+    callTotal: totalsRes[0].result?.[0],
+    putTotal: totalsRes[1].result?.[0],
+    underlying: matterOption?.underlying ?? '',
+    currency: matterOption?.currency ?? '',
+    priceFloor: matterOption?.priceFloor ?? '',
+    priceCap: matterOption?.priceCap ?? '',
+    underlyingSymbol: matterOption?.underlyingSymbol,
+    underlyingDecimals: matterOption?.underlyingDecimals ?? '',
+    currencySymbol: matterOption?.currencySymbol,
+    currencyDecimals: matterOption?.currencyDecimals ?? ''
+  }
+
+  return optionTypeData
 }
 
 export const absolute = (val: string) => {

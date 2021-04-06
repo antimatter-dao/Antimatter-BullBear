@@ -20,7 +20,7 @@ const StyledDropDown = styled(DropDown)`
   }
 `
 
-const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; width?: string }>`
+export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; width?: string }>`
   width: ${({ width }) => (width ? width : '100%')};
   height: 3rem;
   background-color: ${({ theme }) => theme.bg2};
