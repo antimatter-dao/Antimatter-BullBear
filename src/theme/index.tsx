@@ -144,7 +144,7 @@ const TextWrapper = styled(Text)<{ color: keyof Colors }>`
 
 export const TYPE = {
   main(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'text2'} {...props} />
+    return <TextWrapper fontWeight={500} color={'text1'} {...props} />
   },
   link(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'primary1'} {...props} />
