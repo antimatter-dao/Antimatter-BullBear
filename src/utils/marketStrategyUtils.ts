@@ -22,6 +22,8 @@ export const parsedGreaterThan = (userInput: string, balance: string) => {
 export const currencyNameHelper = (currency?: Currency | null, defaultString?: string) =>
   (currency && currency.symbol && currency.symbol.length > 20
     ? currency.symbol.slice(0, 4) + '...' + currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+    : currency?.symbol === 'WETH'
+    ? 'ETH'
     : currency?.symbol) ||
   defaultString ||
   ''

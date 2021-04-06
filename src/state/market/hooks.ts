@@ -14,6 +14,7 @@ import { useUserGenerationSlippageTolerance, useUserRedeemSlippageTolerance } fr
 import { ETHER, JSBI } from '@uniswap/sdk'
 import { tryParseAmount } from '../swap/hooks'
 import { TOKEN_TYPES } from 'components/MarketStrategy/TypeRadioButton'
+import { useETHBalances } from '../wallet/hooks'
 const CALL_OR_PUT_INTERFACE = new Interface(CALL_OR_PUT_ABI)
 
 export interface OptionTypeData {
@@ -187,8 +188,10 @@ export function useAllOptionTypes() {
         currency: item.result?.[1],
         priceFloor: item.result?.[2],
         priceCap: item.result?.[3],
-        underlyingSymbol: underlyingSymbolRes[index].result?.[0],
-        underlyingDecimals: underlyingDecimalsRes[index].result?.[0],
+        underlyingSymbol:
+          underlyingSymbolRes[index].result?.[0] === 'WETH' ? 'ETH' : underlyingSymbolRes[index].result?.[0],
+        underlyingDecimals:
+          underlyingDecimalsRes[index].result?.[0] === 'WETH' ? 'ETH' : underlyingDecimalsRes[index].result?.[0],
         currencySymbol: currencySymbolRes[index].result?.[0],
         currencyDecimals: currencyDecimalsRes[index].result?.[0]
       }
@@ -275,7 +278,7 @@ export function useDerivedStrategyInfo(
     userGenerationSlippageTolerance,
     userRedeemSlippageTolerance
   ])
-
+  const ETHBalance = useETHBalances(account ? [account] : [])
   const delta = useSingleCallResult(antimatterContract, 'calcDeltaWithFeeAndSlippage', queryData ?? [undefined])
   const balancesRes = useMultipleContractSingleData(
     [optionType?.callAddress, optionType?.putAddress, optionType?.underlying, optionType?.currency],
@@ -283,10 +286,11 @@ export function useDerivedStrategyInfo(
     'balanceOf',
     [account ?? undefined]
   )
-  const deltaResult = delta?.result?.dUnd
+
+  const deltaResult = delta?.result?.undMax
     ? {
-        dUnd: delta.result?.dUnd,
-        dCur: delta.result?.dCur,
+        dUnd: delta.result?.undMax,
+        dCur: delta.result?.curMax,
         totalUnd: delta.result?.totalUnd,
         totalCur: delta.result?.totalCur,
         callBalance: balancesRes?.[0].result?.[0],
@@ -313,10 +317,18 @@ export function useDerivedStrategyInfo(
     error = 'Enter put amount'
   }
 
+  const underlyingBalance =
+    optionType?.underlyingSymbol === 'ETH' && account
+      ? ETHBalance?.[account]?.raw.toString()
+      : deltaResult?.underlyingBalance
+  const currencyBalance =
+    optionType?.currencySymbol === 'ETH' && account
+      ? ETHBalance?.[account]?.raw.toString()
+      : deltaResult?.currencyBalance
   if (
     deltaResult?.underlyingBalance &&
     deltaResult?.dUnd &&
-    JSBI.greaterThan(JSBI.BigInt(deltaResult.dUnd), JSBI.BigInt(deltaResult.underlyingBalance))
+    JSBI.greaterThan(JSBI.BigInt(deltaResult.dUnd), JSBI.BigInt(underlyingBalance))
   ) {
     error = `Insufficient ${optionType?.underlyingSymbol} Balance`
   }
@@ -324,9 +336,9 @@ export function useDerivedStrategyInfo(
   if (
     deltaResult?.currencyBalance &&
     deltaResult?.dCur &&
-    JSBI.greaterThan(JSBI.BigInt(deltaResult.dCur), JSBI.BigInt(deltaResult.currencyBalance))
+    JSBI.greaterThan(JSBI.BigInt(deltaResult.dCur), JSBI.BigInt(currencyBalance))
   ) {
-    error = `insufficient ${optionType?.currencySymbol} Balance`
+    error = `Insufficient ${optionType?.currencySymbol} Balance`
   }
 
   return {
