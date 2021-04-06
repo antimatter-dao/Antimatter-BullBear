@@ -110,11 +110,11 @@ export default function Generate() {
     ]
 
     if (optionTypes[parseInt(optionType)].underlyingSymbol === 'ETH') {
-      value = tryParseAmount(TOKEN_TYPES.callPut || TOKEN_TYPES.call ? callTyped : '0', ETHER)?.raw.toString()
+      value = delta.dUnd.toString()
     }
 
     if (optionTypes[parseInt(optionType)].currencySymbol === 'ETH') {
-      value = tryParseAmount(TOKEN_TYPES.callPut || TOKEN_TYPES.put ? callTyped : '0', ETHER)?.raw.toString()
+      value = delta.dCur.toString()
     }
 
     setAttemptingTxn(true)

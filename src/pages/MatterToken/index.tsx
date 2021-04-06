@@ -143,7 +143,7 @@ export default function MatterToken() {
   }
 
   const countUpAmount = stakingInfo?.active
-    ? stakingInfo?.rewardRate?.multiply(BIG_INT_SECONDS_IN_WEEK)?.toSignificant(2, { groupSeparator: ',' }) ?? '-'
+    ? stakingInfo?.earnedAmount?.toSignificant(2, { groupSeparator: ',' }) ?? '-'
     : '0'
   const countUpAmountPrevious = usePrevious(countUpAmount) ?? '0'
 
@@ -198,7 +198,7 @@ export default function MatterToken() {
             justifyContent: 'center'
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
             <AutoColumn style={{ width: '280px', marginBottom: '20px' }}>
               <ButtonSelect
                 options={SelectButtonOptions}
