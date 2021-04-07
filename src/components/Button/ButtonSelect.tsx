@@ -27,7 +27,6 @@ export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; wi
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   border-radius: 14px;
   border: unset;
-  padding: 0 0.3rem;
   margin-right: 20px;
   padding: 0 10px;
   border: 1px solid transparent;
