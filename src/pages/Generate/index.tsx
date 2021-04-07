@@ -30,7 +30,7 @@ import { tryParseAmount } from '../../state/swap/hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useAntimatterContract } from '../../hooks/useContract'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
-import { parseBalance } from '../../utils/marketStrategyUtils'
+import { isNegative, parseBalance } from '../../utils/marketStrategyUtils'
 
 export default function Generate() {
   const [optionType, setOptionType] = useState('')
@@ -110,11 +110,11 @@ export default function Generate() {
     ]
 
     if (optionTypes[parseInt(optionType)].underlyingSymbol === 'ETH') {
-      value = delta.dUnd.toString()
+      value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
     }
 
     if (optionTypes[parseInt(optionType)].currencySymbol === 'ETH') {
-      value = delta.dCur.toString()
+      value = isNegative(delta.dCur) ? '0' : delta.dCur.toString()
     }
 
     setAttemptingTxn(true)
