@@ -69,3 +69,6 @@ export const GradientCard = styled(Card)`
   color: ${({ theme }) => theme.text1};
   font-weight: 500;
 `
+export const TranslucentCard = styled(Card)`
+  background-color: ${({ theme }) => theme.translucent};
+`

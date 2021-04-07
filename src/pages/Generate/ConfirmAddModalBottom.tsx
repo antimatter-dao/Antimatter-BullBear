@@ -46,7 +46,7 @@ export function ConfirmGenerationModalBottom({
         currency1={currencyB ?? undefined}
       />
       <ButtonPrimary style={{ margin: '20px 0 0 0' }} onClick={onGenerate}>
-        <Text fontWeight={400} fontSize={16}>
+        <Text fontWeight={500} fontSize={16}>
           Confirm Generation
         </Text>
       </ButtonPrimary>

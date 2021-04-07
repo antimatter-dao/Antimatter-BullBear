@@ -18,8 +18,8 @@ export const BodyWrapper = styled.div`
 /**
  * The styled container element that wraps the content of most pages and the tabs.
  */
-export default function AppBody({ children }: { children: React.ReactNode }) {
-  return <BodyWrapper>{children}</BodyWrapper>
+export default function AppBody({ children, style }: { children: React.ReactNode; style?: any }) {
+  return <BodyWrapper style={style}>{children}</BodyWrapper>
 }
 
 const StyledSwapHeader = styled.div`

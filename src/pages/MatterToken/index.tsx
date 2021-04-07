@@ -19,7 +19,7 @@ import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
 import { LPT_TYPE, LPT_PAIRS } from 'constants/matterToken/matterTokenTokens'
 import ButtonSelect from 'components/Button/ButtonSelect'
 
-const sectionPadding = '34px 32px 40px 32px'
+const sectionPadding = '32px'
 const GridWrapper = styled.div`
   background: ${({ theme }) => theme.gradient2};
   height: 360px;
