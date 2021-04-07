@@ -96,7 +96,7 @@ const ToggleTabStyle = styled(Tab)<{ isopen: 'true' | 'false' }>`
       position: absolute;
       right: 20px;
       top: 50%;
-      transform: translateY(-50%) ${({ isopen }) => (isopen ? '' : 'rotate(180deg)')};
+      transform: translateY(-50%) ${({ isopen }) => (isopen === 'true' ? '' : 'rotate(180deg)')};
     }
   }
 `
