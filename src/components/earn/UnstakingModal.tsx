@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { TransactionResponse } from '@ethersproject/providers'
-import { TokenAmount } from '@uniswap/sdk'
 import Modal from '../Modal'
 import { AutoColumn } from '../Column'
 import styled from 'styled-components'
@@ -68,8 +67,6 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
     error = error ?? 'Enter an amount'
   }
 
-  const hypotheticalRewardRate: TokenAmount = new TokenAmount(stakingInfo.rewardRate.token, '0')
-
   return (
     <>
       {isOpen && (
@@ -84,7 +81,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
               <DataCard
                 data={[
                   {
-                    title: 'Unclaimed MATTER',
+                    title: 'Unclaimed  +MATTER($1)',
                     content: (
                       <>
                         <FormattedCurrencyAmount currencyAmount={stakingInfo?.earnedAmount} />
@@ -93,25 +90,18 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
                     )
                   },
                   {
-                    title: 'MATTER Staked',
+                    title: 'LPT Staked',
                     content: (
                       <>
                         <FormattedCurrencyAmount currencyAmount={stakingInfo.stakedAmount} />
-                        MATTER
+                        LPT
                       </>
                     )
-                  },
-                  {
-                    title: 'Total Rewards from Last 7days',
-                    content:
-                      hypotheticalRewardRate
-                        .multiply((60 * 60 * 24 * 7).toString())
-                        .toSignificant(4, { groupSeparator: ',' }) + ' MATTER'
                   }
                 ]}
               />
               <ButtonError disabled={!!error} error={!!error && !!stakingInfo?.stakedAmount} onClick={onWithdraw}>
-                {error ?? 'Unstake MATTER'}
+                {error ?? 'Unstake LPT'}
               </ButtonError>
             </ContentWrapper>
           )}
@@ -119,8 +109,8 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
           <Modal isOpen={attempting && !hash} onDismiss={wrappedOndismiss}>
             <LoadingView onDismiss={wrappedOndismiss}>
               <AutoColumn gap="12px" justify={'center'}>
-                <TYPE.body fontSize={18}>Unstaking {stakingInfo?.stakedAmount?.toSignificant(4)} MATTER</TYPE.body>
-                <TYPE.body fontSize={14}>Claiming {stakingInfo?.earnedAmount?.toSignificant(4)} MATTER</TYPE.body>
+                <TYPE.body fontSize={18}>Unstaking {stakingInfo?.stakedAmount?.toSignificant(4)} LPT</TYPE.body>
+                <TYPE.body fontSize={14}>Claiming {stakingInfo?.earnedAmount?.toSignificant(4)} +MATTER($1)</TYPE.body>
               </AutoColumn>
             </LoadingView>
           </Modal>
@@ -128,8 +118,8 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
           <Modal isOpen={attempting && !!hash} onDismiss={wrappedOndismiss}>
             <SubmittedView onDismiss={wrappedOndismiss} hash={hash}>
               <AutoColumn gap="12px" justify={'center'}>
-                <TYPE.body fontSize={18}>Your BOT was Unstaked</TYPE.body>
-                <TYPE.body fontSize={14}>Claimed MATTER</TYPE.body>
+                <TYPE.body fontSize={18}>{`Your LPT was Unstaked`}</TYPE.body>
+                <TYPE.body fontSize={14}>Claimed {stakingInfo?.earnedAmount?.toSignificant(4)} +MATTER($1)</TYPE.body>
               </AutoColumn>
             </SubmittedView>
           </Modal>

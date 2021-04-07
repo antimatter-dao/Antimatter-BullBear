@@ -2,7 +2,6 @@
 import React, { useCallback, useState } from 'react'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
-import { JSBI, TokenAmount, ChainId } from '@uniswap/sdk'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { TYPE } from '../../theme'
 import { ButtonPrimary } from '../../components/Button'
@@ -13,20 +12,16 @@ import ClaimRewardModal from '../../components/earn/ClaimRewardModal'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { CountUp } from 'use-count-up'
-import { useTotalSupply } from '../../data/TotalSupply'
 import { usePair } from '../../data/Reserves'
 
 import usePrevious from '../../hooks/usePrevious'
-import useUSDCPrice from '../../utils/useUSDCPrice'
 import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
-import { LPT_TYPE, LPT_PAIRS, currencies } from 'constants/matterToken/matterTokenTokens'
+import { LPT_TYPE, LPT_PAIRS } from 'constants/matterToken/matterTokenTokens'
 import ButtonSelect from 'components/Button/ButtonSelect'
 
-const sectionPadding = '30px'
+const sectionPadding = '34px 32px 40px 32px'
 const GridWrapper = styled.div`
   background: ${({ theme }) => theme.gradient2};
-  max-width: 1010px;
-  width: 80%;
   height: 360px;
   border-radius: 36px;
   border: 1px solid ${({ theme }) => theme.bg3};
@@ -35,7 +30,7 @@ const GridWrapper = styled.div`
 
 const ClaimRewardWrapper = styled.div`
   height: 100%;
-  width: 33.3%;
+  width: fit-content;
   border-right: 1px solid ${({ theme }) => theme.bg3};
   padding: ${sectionPadding};
   display: flex;
@@ -53,12 +48,12 @@ const LPTWrapper = styled.div`
     display: flex;
     flex-grow: 1;
     :first-child {
-      height: 40%;
+      height: 37%;
       flex-grow: 0;
       border-bottom: 1px solid ${({ theme }) => theme.bg3};
     }
     & > section {
-      width: 50%;
+      width: 309px;
       height: 100%;
       padding: ${sectionPadding};
       :first-child {
@@ -121,36 +116,10 @@ export default function MatterToken() {
   const userLiquidityUnstaked = useTokenBalance(account ?? undefined, stakingInfo?.stakedAmount?.token)
   // const showAddLiquidityButton = Boolean(stakingInfo?.stakedAmount?.equalTo('0') && userLiquidityUnstaked?.equalTo('0'))
 
-  const WETH = tokenA === currencies[chainId ?? (3 as ChainId)]?.ETHER ? tokenA : tokenB
-
-  // get WETH value of staked LP tokens
-  const totalSupplyOfStakingToken = useTotalSupply(stakingInfo?.stakedAmount?.token)
-  let valueOfTotalStakedAmountInWETH: TokenAmount | undefined
-  if (totalSupplyOfStakingToken && stakingTokenPair && stakingInfo && WETH) {
-    if (totalSupplyOfStakingToken && lptType && stakingInfo && WETH) {
-      // take the total amount of LP tokens staked, multiply by ETH value of all LP tokens, divide by all LP tokens
-      valueOfTotalStakedAmountInWETH = new TokenAmount(
-        WETH,
-        JSBI.divide(
-          JSBI.multiply(
-            JSBI.multiply(stakingInfo.totalStakedAmount.raw, stakingTokenPair.reserveOf(WETH).raw),
-            JSBI.BigInt(2) // this is b/c the value of LP shares are ~double the value of the WETH they entitle owner to
-          ),
-          totalSupplyOfStakingToken.raw
-        )
-      )
-    }
-  }
-
   const countUpAmount = stakingInfo?.active
     ? stakingInfo?.earnedAmount?.toSignificant(2, { groupSeparator: ',' }) ?? '-'
     : '0'
   const countUpAmountPrevious = usePrevious(countUpAmount) ?? '0'
-
-  // get the USD value of staked WETH
-  const USDPrice = useUSDCPrice(WETH)
-  const valueOfTotalStakedAmountInUSDC =
-    valueOfTotalStakedAmountInWETH && USDPrice?.quote(valueOfTotalStakedAmountInWETH)
 
   const toggleWalletModal = useWalletModalToggle()
 
@@ -211,10 +180,15 @@ export default function MatterToken() {
             </AutoColumn>
             <GridWrapper>
               <ClaimRewardWrapper>
-                <TYPE.darkGray fontSize={20} fontWeight={400}>
+                <TYPE.darkGray fontSize={20} fontWeight={400} width={260}>
                   Your Staking Rewards Estimation
                 </TYPE.darkGray>
-                <TYPE.largeHeader fontSize={58} fontWeight={400} style={{ marginTop: '-19px' }}>
+                <TYPE.largeHeader
+                  display="flex"
+                  fontSize={58}
+                  fontWeight={400}
+                  style={{ marginTop: 'auto', marginBottom: 48, alignItems: 'flex-end' }}
+                >
                   <CountUp
                     key={countUpAmount}
                     isCounting
@@ -224,31 +198,32 @@ export default function MatterToken() {
                     thousandsSeparator={','}
                     duration={1}
                   />
-                  <TYPE.body fontSize={14} fontWeight={400} fontFamily="Roboto">
+                  <TYPE.body
+                    style={{ whiteSpace: 'nowrap', marginBottom: 12, marginLeft: 8 }}
+                    fontSize={14}
+                    fontWeight={400}
+                    fontFamily="Roboto"
+                  >
                     Matter Option Token
                   </TYPE.body>
                 </TYPE.largeHeader>
-                <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}>
+                <ButtonPrimary height="48px" width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}>
                   Claim Rewards
                 </ButtonPrimary>
               </ClaimRewardWrapper>
               <LPTWrapper>
                 <div>
-                  <section>
+                  <section style={{ paddingBottom: 20 }}>
                     <TYPE.darkGray fontSize={14} fontWeight={400}>
                       Token LPT Staked
                     </TYPE.darkGray>
                     <NumberUnitText
-                      number={
-                        valueOfTotalStakedAmountInUSDC
-                          ? `$${valueOfTotalStakedAmountInUSDC.toFixed(0, { groupSeparator: ',' })}`
-                          : `${valueOfTotalStakedAmountInWETH?.toSignificant(4, { groupSeparator: ',' }) ?? '-'}`
-                      }
+                      number={stakingInfo?.stakedAmount.toSignificant(4, { groupSeparator: ',' })}
                       unit="LPT"
                     />
                   </section>
-                  <section>
-                    <TYPE.darkGray fontSize={14} fontWeight={400}>
+                  <section style={{ paddingBottom: 20 }}>
+                    <TYPE.darkGray style={{ whiteSpace: 'nowrap' }} fontSize={14} fontWeight={400}>
                       Total Network Rewards Per Cycle
                     </TYPE.darkGray>
                     <NumberUnitText
@@ -270,7 +245,7 @@ export default function MatterToken() {
                     </TYPE.darkGray>
                     <NumberUnitText number={userLiquidityUnstaked?.toSignificant(6) ?? '-'} unit="LPT" />
                     <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.STAKE)}>
-                      Stack LPT
+                      Stake LPT
                     </ButtonPrimary>
                   </section>
                   <section>
@@ -279,7 +254,7 @@ export default function MatterToken() {
                     </TYPE.darkGray>
                     <NumberUnitText number={stakingInfo?.stakedAmount?.toSignificant(6) ?? '-'} unit="LPT" />
                     <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.UNSTAKE)}>
-                      Unstack LPT
+                      Unstake LPT
                     </ButtonPrimary>
                   </section>
                 </div>

@@ -148,7 +148,6 @@ const TogggleMenuWrapper = styled.div`
   background: ${({ theme }) => theme.gradient2}
   top: ${({ theme }) => theme.mobileHeaderHeight}
   height:calc(100vh - ${({ theme }) => theme.mobileHeaderHeight});
-
 `
 
 function ToggleMenu() {

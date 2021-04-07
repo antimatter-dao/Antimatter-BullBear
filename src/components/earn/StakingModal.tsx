@@ -6,7 +6,7 @@ import { AutoColumn } from '../Column'
 import styled from 'styled-components'
 import { RowBetween } from '../Row'
 import { TYPE } from '../../theme'
-import { ArrowLeftButton, ButtonConfirmed, ButtonError, ButtonPrimary } from '../Button'
+import { ArrowLeftButton, ButtonConfirmed, ButtonError } from '../Button'
 // import ProgressCircles from '../ProgressSteps'
 import CurrencyInputPanel from '../CurrencyInputPanel'
 import { TokenAmount, Pair } from '@uniswap/sdk'
@@ -221,15 +221,15 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
               <DataCard
                 data={[
                   {
-                    title: `MATTER Staked`,
-                    content: stakingInfo.stakedAmount.toSignificant(4) + ' MATTER'
+                    title: `LPT Staked`,
+                    content: stakingInfo.stakedAmount.toSignificant(4) + ' LPT'
                   },
                   {
                     title: `Weekly Rewards`,
                     content:
                       hypotheticalRewardRate
                         .multiply((60 * 60 * 24 * 7).toString())
-                        .toSignificant(4, { groupSeparator: ',' }) + ' MATTER'
+                        .toSignificant(4, { groupSeparator: ',' }) + ' +MATTER($1)'
                   }
                 ]}
               />
@@ -260,7 +260,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
                   error={!!error && !!parsedAmount}
                   onClick={onStake}
                 >
-                  {error ?? 'Stack Matter'}
+                  {error ?? 'Stake LPT'}
                 </ButtonError>
               </RowBetween>
               {/* <ProgressCircles
@@ -274,7 +274,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
             <LoadingView onDismiss={wrappedOnDismiss}>
               <AutoColumn gap="12px" justify={'center'}>
                 <TYPE.body fontSize={18}>Waiting For Confirmation...</TYPE.body>
-                <TYPE.body fontSize={14}>Stake {parsedAmount?.toSignificant(4)} MATTER</TYPE.body>
+                <TYPE.body fontSize={14}>Stake {parsedAmount?.toSignificant(4)} LPT</TYPE.body>
               </AutoColumn>
             </LoadingView>
           </Modal>
@@ -282,9 +282,8 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
           <Modal isOpen={attempting && !!hash} onDismiss={wrappedOnDismiss}>
             <SubmittedView onDismiss={wrappedOnDismiss} hash={hash}>
               <AutoColumn gap="24px" justify={'center'}>
-                <TYPE.body fontSize={18}>Your BOT was Staked</TYPE.body>
+                <TYPE.body fontSize={18}>Your LPT was Staked</TYPE.body>
               </AutoColumn>
-              <ButtonPrimary onClick={wrappedOnDismiss}>Close</ButtonPrimary>
             </SubmittedView>
           </Modal>
         </AppBody>
