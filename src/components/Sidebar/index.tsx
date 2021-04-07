@@ -13,7 +13,17 @@ const tabs = [
   { title: 'Option Trading', route: 'option_trading' },
   { title: 'Option Exercise', route: 'option_exercise' },
   { title: 'Liquidity', route: 'liquidity' },
-  { title: 'Matter Token', route: 'matter_token' },
+  {
+    title: 'Matter Token',
+    route: 'matter_token',
+    children: [
+      {
+        title: 'Liquidity Mining',
+        route: 'matter_token'
+      },
+      { title: 'Matter Option Redemption ', route: 'matter_redemption' }
+    ]
+  },
   { title: 'Governance', route: 'governance' },
   { title: 'Info', route: 'info' }
 ]
@@ -66,6 +76,28 @@ const Tab = styled(TabBasic)`
     opacity: 1;
   }
 `
+
+const SubTab = styled(NavLink)`
+  width: 100%;
+  font-size: 12px;
+  padding: 16px 36px;
+  opacity: 0.4;
+  cursor: pointer;
+  text-decoration: none;
+  color: ${({ theme }) => theme.text1};
+  &.${activeClassName}, :focus,
+  :active,
+  :hover {
+    opacity: 1;
+  }
+`
+
+const TabDivider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+`
+
 const StyledLogo = styled(Logo)`
   width: 150px;
   margin: 38px auto 120px auto;
@@ -90,14 +122,14 @@ const StyledLogo = styled(Logo)`
 //   }
 //   `
 const MobileHeader = styled.header`
-  height:${({ theme }) => theme.mobileHeaderHeight}
   width:100%;
   display:flex;
   justify-content:space-between;
-  align-items: center
+  align-items: center;
   padding: 0 24px;
-  ${({ theme }) => theme.mobile}
   position:relative;
+  ${({ theme }) => theme.mobile}
+  height:${({ theme }) => theme.mobileHeaderHeight}
 `
 const ToggleMenuButton = styled(Base)`
   background: none;
@@ -110,12 +142,12 @@ const ToggleMenuButton = styled(Base)`
 const TogggleMenuWrapper = styled.div`
   z-index:2;
   position: absolute;
-  top: ${({ theme }) => theme.mobileHeaderHeight}
   left: 0;
-  width: 100vw
-  height:calc(100vh - ${({ theme }) => theme.mobileHeaderHeight});
+  width: 100vw;
   border-radius: 32px;
   background: ${({ theme }) => theme.gradient2}
+  top: ${({ theme }) => theme.mobileHeaderHeight}
+  height:calc(100vh - ${({ theme }) => theme.mobileHeaderHeight});
 `
 
 function ToggleMenu() {
@@ -153,7 +185,7 @@ export default function Sidebar() {
         </UniIcon>
       </Title> */}
         <StyledLogo />
-        {tabs.map(({ title, route }) =>
+        {tabs.map(({ title, route, children }) =>
           route === tabs[2].route ? (
             <Tab
               key={title}
@@ -178,10 +210,37 @@ export default function Sidebar() {
             >
               {title}
             </Tab>
+          ) : route === tabs[3].route ? (
+            <>
+              <Tab
+                key={title}
+                to={`/${route}`}
+                isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/matter')}
+              >
+                {title}
+              </Tab>
+              {children &&
+                children.map(({ title, route }) => {
+                  return (
+                    <SubTab
+                      key={title}
+                      isActive={(match, { pathname }) =>
+                        Boolean(match) || pathname.startsWith('/generate') || pathname.startsWith('/redeem')
+                      }
+                      to={`/${route}`}
+                    >
+                      {title}
+                    </SubTab>
+                  )
+                })}
+              {children && <TabDivider />}
+            </>
           ) : (
-            <Tab key={title} to={`/${route}`}>
-              {title}
-            </Tab>
+            <>
+              <Tab key={title} to={`/${route}`}>
+                {title}
+              </Tab>
+            </>
           )
         )}
       </StyledSidebar>

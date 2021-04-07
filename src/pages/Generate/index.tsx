@@ -75,12 +75,12 @@ export default function Generate() {
 
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(
-    tryParseAmount(delta?.totalUnd.toString(), currencyA ?? undefined),
-    ANTIMATTER_ADDRESS
+    tryParseAmount(delta?.totalUnd.toString(), currencyA?.symbol === 'WETH' ? ETHER : currencyA ?? undefined),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
   )
   const [approvalB, approveBCallback] = useApproveCallback(
-    tryParseAmount(delta?.totalCur.toString(), currencyB ?? undefined),
-    ANTIMATTER_ADDRESS
+    tryParseAmount(delta?.totalCur.toString(), currencyB?.symbol === 'WETH' ? ETHER : currencyB ?? undefined),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
   )
 
   const addTransaction = useTransactionAdder()
@@ -96,6 +96,7 @@ export default function Generate() {
 
     const estimate = antimatterContract?.estimateGas.mint
     const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.mint
+    let value: string | undefined | null = null
     const args = [
       optionTypes[parseInt(optionType)].callAddress,
       tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.call
@@ -108,11 +109,20 @@ export default function Generate() {
       delta.dCur.toString()
     ]
 
+    if (optionTypes[parseInt(optionType)].underlyingSymbol === 'ETH') {
+      value = delta.dUnd.toString()
+    }
+
+    if (optionTypes[parseInt(optionType)].currencySymbol === 'ETH') {
+      value = delta.dCur.toString()
+    }
+
     setAttemptingTxn(true)
     if (estimate) {
-      await estimate(...args)
+      await estimate(...args, value ? { value } : {})
         .then(estimatedGasLimit =>
           method(...args, {
+            ...(value ? { value } : {}),
             gasLimit: calculateGasMargin(estimatedGasLimit)
           }).then(response => {
             setPutTyped(undefined)
@@ -146,7 +156,7 @@ export default function Generate() {
       optionTypes.map(item => {
         return {
           id: item.id,
-          option: `${item.underlyingSymbol} (${JSBI.divide(
+          option: `${item.underlyingSymbol ?? '-'} (${JSBI.divide(
             JSBI.BigInt(item.priceFloor),
             JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.underlyingDecimals ?? 18))
           )}$${JSBI.divide(
@@ -216,7 +226,7 @@ export default function Generate() {
               <CallOrPutInputPanel
                 value={callTyped ?? ''}
                 onUserInput={setCallTyped}
-                currency={undefined}
+                currency={currencyA || undefined}
                 id="generate-output-token"
                 showCommonBases
                 defaultSymbol={'Call Token'}
@@ -235,7 +245,7 @@ export default function Generate() {
               <CallOrPutInputPanel
                 value={putTyped ?? ''}
                 onUserInput={setPutTyped}
-                currency={undefined}
+                currency={currencyB || undefined}
                 id="generate-output-token"
                 showCommonBases
                 halfWidth={true}

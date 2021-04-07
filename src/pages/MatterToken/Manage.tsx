@@ -268,7 +268,7 @@ export default function Manage() {
             <AutoColumn gap="sm">
               <RowBetween>
                 <div>
-                  <TYPE.black>Your unclaimed UNI</TYPE.black>
+                  <TYPE.black>Your unclaimed +MATTER($1)</TYPE.black>
                 </div>
                 {stakingInfo?.earnedAmount && JSBI.notEqual(BIG_INT_ZERO, stakingInfo?.earnedAmount?.raw) && (
                   <ButtonEmpty
@@ -302,7 +302,7 @@ export default function Manage() {
                         ?.multiply(BIG_INT_SECONDS_IN_WEEK)
                         ?.toSignificant(4, { groupSeparator: ',' }) ?? '-'
                     : '0'}
-                  {' UNI / week'}
+                  {' +MATTER($1) / week'}
                 </TYPE.black>
               </RowBetween>
             </AutoColumn>

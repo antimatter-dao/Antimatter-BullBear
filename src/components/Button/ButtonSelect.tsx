@@ -20,14 +20,13 @@ const StyledDropDown = styled(DropDown)`
   }
 `
 
-const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; width?: string }>`
+export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; width?: string }>`
   width: ${({ width }) => (width ? width : '100%')};
   height: 3rem;
   background-color: ${({ theme }) => theme.bg2};
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   border-radius: 14px;
   border: unset;
-  padding: 0 0.3rem;
   margin-right: 20px;
   padding: 0 10px;
   border: 1px solid transparent;

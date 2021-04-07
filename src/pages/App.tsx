@@ -36,6 +36,7 @@ import Redeem from './Redeem'
 import Exercise from './Exercise'
 import ComingSoon from './ComingSoon'
 import Info from './Info'
+import MatterRedemption from './MatterToken/MatterRedemption'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -51,10 +52,10 @@ const ContentWrapper = styled.div`
 `
 
 const HeaderWrapper = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
   width: 100%;
   justify-content: space-between;
   flex-direction: column;
+  ${({ theme }) => theme.flexRowNoWrap}
 `
 
 const BodyWrapper = styled.div`
@@ -120,6 +121,7 @@ export default function App() {
                 <Route exact strict path="/find" component={PoolFinder} />
                 <Route exact strict path="/liquidity" component={Pool} />
                 <Route exact strict path="/matter_token" component={MatterToken} />
+                <Route exact strict path="/matter_redemption" component={MatterRedemption} />
                 {/* <Route exact strict path="/vote" component={Vote} /> */}
                 <Route exact strict path="/create" component={RedirectToAddLiquidity} />
                 <Route exact path="/add" component={AddLiquidity} />
