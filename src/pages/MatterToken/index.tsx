@@ -117,7 +117,7 @@ export default function MatterToken() {
   // const showAddLiquidityButton = Boolean(stakingInfo?.stakedAmount?.equalTo('0') && userLiquidityUnstaked?.equalTo('0'))
 
   const countUpAmount = stakingInfo?.active
-    ? stakingInfo?.earnedAmount?.toSignificant(2, { groupSeparator: ',' }) ?? '-'
+    ? stakingInfo?.earnedAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '-'
     : '0'
   const countUpAmountPrevious = usePrevious(countUpAmount) ?? '0'
 

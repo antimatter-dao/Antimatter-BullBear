@@ -342,7 +342,9 @@ export default function Redeem() {
                   onClick={() => {
                     expertMode ? onRedeem() : setShowConfirm(true)
                   }}
-                  disabled={!!redeemError}
+                  disabled={
+                    !!redeemError || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED
+                  }
                 >
                   <Text fontSize={16} fontWeight={500}>
                     {redeemError ?? (tokenType === TOKEN_TYPES.callPut ? 'Redeem' : 'Exercise')}
