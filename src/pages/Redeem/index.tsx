@@ -9,7 +9,7 @@ import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import RedeemTokenPanel from '../../components/MarketStrategy/RedeemTokenPanel'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
-import { AutoRow } from '../../components/Row'
+import { AutoRow, RowBetween } from '../../components/Row'
 import { useActiveWeb3React } from '../../hooks'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useIsExpertMode } from '../../state/user/hooks'
@@ -27,6 +27,9 @@ import { useAntimatterContract } from '../../hooks/useContract'
 import { calculateGasMargin } from '../../utils'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { isNegative, parseBalance, parsedGreaterThan } from '../../utils/marketStrategyUtils'
+import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback'
+import { Dots } from 'components/swap/styleds'
+import { ANTIMATTER_ADDRESS } from '../../constants'
 
 const findPrice = (option?: OptionTypeData, isCall?: boolean) => {
   if (!option) {
@@ -43,6 +46,7 @@ export default function Redeem() {
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [txHash, setTxHash] = useState<string>('')
 
   const antimatterContract = useAntimatterContract()
   const optionTypes = useAllOptionTypes()
@@ -67,6 +71,7 @@ export default function Redeem() {
     putTypedAmount ? '-' + putTypedAmount : undefined,
     tokenType
   )
+  const isValid = !error
   const redeemError = useMemo(() => {
     if (
       balances &&
@@ -82,7 +87,15 @@ export default function Redeem() {
   // txn values
   // const deadline = useTransactionDeadline() // custom from users settings
   // const [allowedSlippage] = useUserSlippageTolerance() // custom from users
-  const [txHash, setTxHash] = useState<string>('')
+  // check whether the user has approved the router on the tokens
+  const [approvalA, approveACallback] = useApproveCallback(
+    tryParseAmount(delta?.totalUnd.toString(), currencyA?.symbol === 'WETH' ? ETHER : currencyA ?? undefined),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
+  )
+  const [approvalB, approveBCallback] = useApproveCallback(
+    tryParseAmount(delta?.totalCur.toString(), currencyB?.symbol === 'WETH' ? ETHER : currencyB ?? undefined),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
+  )
 
   async function onRedeem() {
     if (!chainId || !library || !account) return
@@ -291,6 +304,40 @@ export default function Redeem() {
               <ButtonPrimary onClick={toggleWalletModal}>Connect Wallet</ButtonPrimary>
             ) : (
               <AutoColumn gap={'md'}>
+                {(approvalA === ApprovalState.NOT_APPROVED ||
+                  approvalA === ApprovalState.PENDING ||
+                  approvalB === ApprovalState.NOT_APPROVED ||
+                  approvalB === ApprovalState.PENDING) &&
+                  isValid && (
+                    <RowBetween>
+                      {approvalA !== ApprovalState.APPROVED && (
+                        <ButtonPrimary
+                          onClick={approveACallback}
+                          disabled={approvalA === ApprovalState.PENDING}
+                          width={approvalB !== ApprovalState.APPROVED ? '48%' : '100%'}
+                        >
+                          {approvalA === ApprovalState.PENDING ? (
+                            <Dots>Approving {optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}</Dots>
+                          ) : (
+                            'Approve ' + optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
+                          )}
+                        </ButtonPrimary>
+                      )}
+                      {approvalB !== ApprovalState.APPROVED && (
+                        <ButtonPrimary
+                          onClick={approveBCallback}
+                          disabled={approvalB === ApprovalState.PENDING}
+                          width={approvalA !== ApprovalState.APPROVED ? '48%' : '100%'}
+                        >
+                          {approvalB === ApprovalState.PENDING ? (
+                            <Dots>Approving {optionTypes[parseInt(optionTypeIndex)]?.currencySymbol}</Dots>
+                          ) : (
+                            'Approve ' + optionTypes[parseInt(optionTypeIndex)]?.currencySymbol
+                          )}
+                        </ButtonPrimary>
+                      )}
+                    </RowBetween>
+                  )}
                 <ButtonError
                   onClick={() => {
                     expertMode ? onRedeem() : setShowConfirm(true)
