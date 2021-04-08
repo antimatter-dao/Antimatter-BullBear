@@ -158,7 +158,7 @@ export default function Generate() {
           id: item.id,
           option: `${item.underlyingSymbol ?? '-'} (${JSBI.divide(
             JSBI.BigInt(item.priceFloor),
-            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.underlyingDecimals ?? 18))
+            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
           )}$${JSBI.divide(
             JSBI.BigInt(item.priceCap),
             JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
@@ -232,7 +232,9 @@ export default function Generate() {
                 defaultSymbol={
                   optionTypes[parseInt(optionType)]?.underlyingSymbol
                     ? `+${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance(
-                        optionTypes[parseInt(optionType)]?.priceFloor
+                        optionTypes[parseInt(optionType)]?.priceFloor,
+                        2,
+                        optionTypes[parseInt(optionType)]?.currencyDecimals.toString()
                       )})`
                     : 'Call Token'
                 }
@@ -251,14 +253,16 @@ export default function Generate() {
               <CallOrPutInputPanel
                 value={putTyped ?? ''}
                 onUserInput={setPutTyped}
-                currency={currencyB || undefined}
+                currency={currencyA || undefined}
                 id="generate-output-token"
                 showCommonBases
                 halfWidth={true}
                 defaultSymbol={
                   optionTypes[parseInt(optionType)]?.underlyingSymbol
                     ? `-${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance(
-                        optionTypes[parseInt(optionType)]?.priceCap
+                        optionTypes[parseInt(optionType)]?.priceCap,
+                        2,
+                        optionTypes[parseInt(optionType)]?.currencyDecimals.toString()
                       )})`
                     : 'Put Token'
                 }
@@ -270,8 +274,12 @@ export default function Generate() {
             {currencyA && currencyB && delta?.dUnd && delta.dCur && (
               <GenerateBar
                 cardTitle={``}
-                callVol={delta && parseBalance(delta.dUnd, 4)}
-                putVol={delta && parseBalance(delta.dCur, 4)}
+                callVol={
+                  delta && parseBalance(delta.dUnd, 6, optionTypes[parseInt(optionType)]?.underlyingDecimals.toString())
+                }
+                putVol={
+                  delta && parseBalance(delta.dCur, 6, optionTypes[parseInt(optionType)]?.currencyDecimals.toString())
+                }
                 subTitle="Output Token"
                 currency0={currencyA}
                 currency1={currencyB}

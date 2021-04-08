@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ChainId, CurrencyAmount, JSBI, Token, TokenAmount, WETH, Pair } from '@uniswap/sdk'
 import { useMemo } from 'react'
-import { ETH_DOWN, ETH_UP, MATTER_UP, UNI, USDT, WBTC } from '../../constants'
+import { ETH_CALL, ETH_PUT, MATTER_CALL, UNI, USDT } from '../../constants'
 import { STAKING_REWARDS_INTERFACE } from '../../constants/abis/staking-rewards'
 import { useActiveWeb3React } from '../../hooks'
 import { NEVER_RELOAD, useMultipleContractSingleData } from '../multicall/hooks'
@@ -21,11 +21,11 @@ export const STAKING_REWARDS_INFO: {
 } = {
   [ChainId.MAINNET]: [
     {
-      tokens: [ETH_UP, USDT],
+      tokens: [ETH_CALL, USDT],
       stakingRewardAddress: '0x67f6740f722Afb340c7463654ad7B13bfbBe17D2'
     },
     {
-      tokens: [ETH_DOWN, USDT],
+      tokens: [ETH_PUT, USDT],
       stakingRewardAddress: '0x7Ce706ffbe8a6639276a9d09B082624148c4162d'
     },
     {
@@ -33,7 +33,7 @@ export const STAKING_REWARDS_INFO: {
       stakingRewardAddress: '0x933Bcc3b0D1EEA2a485424Ec6573b29742cdDF72'
     },
     {
-      tokens: [MATTER_UP, WBTC],
+      tokens: [MATTER_CALL, UNI[ChainId.MAINNET]],
       stakingRewardAddress: '0xee91a4C96004114b335435BCAdA1E2a9B74178B2'
     }
   ]

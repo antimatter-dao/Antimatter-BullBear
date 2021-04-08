@@ -4,12 +4,24 @@ import { absolute } from 'state/market/hooks'
 
 export const isNegative = (val?: string): boolean => val?.toString()[0] === '-'
 
-export const parseBalance = (val?: string, toSignificant?: number) => {
+const precisionUtil = (string: string, precision: number) => {
+  return (parseInt(string) * Math.pow(10, 18 - precision)).toString()
+}
+
+export const parseBalance = (val?: string, toSignificant = 6, precisionString = '18') => {
+  console.log(val?.toString(), precisionString)
+  const precision = parseInt(precisionString)
   const string = val?.toString()
+  if (!string) return ''
+  const digit = toSignificant + (18 - precision)
+  const beforePrecision = CurrencyAmount.ether(absolute(string)).toSignificant(digit)
+
+  const withPrecision = precision === 18 ? beforePrecision : precisionUtil(beforePrecision, precision)
   if (string && string[0] === '-') {
-    return '-' + CurrencyAmount.ether(absolute(string)).toSignificant(toSignificant ?? 6)
+    return '-' + withPrecision
+  } else {
+    return withPrecision
   }
-  return val ? CurrencyAmount.ether(val).toSignificant(toSignificant ?? 6) : ''
 }
 export const parsedGreaterThan = (userInput: string, balance: string) => {
   if (userInput && balance) {

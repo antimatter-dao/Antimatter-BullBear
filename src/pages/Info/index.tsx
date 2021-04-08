@@ -32,7 +32,7 @@ export default function Info() {
   const theme = useTheme()
   const values = useValues()
   const optionTypes = useAllOptionTypes()
-  console.log('values', values)
+  console.log('optionTypes', optionTypes)
   const allValue = useMemo(() => {
     if (!values || values.length === 0) return undefined
     return values?.reduce((pre, cur) => {

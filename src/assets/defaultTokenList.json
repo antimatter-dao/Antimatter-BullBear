@@ -37,7 +37,71 @@
       "symbol": "+ETH($200)",
       "decimals": 18,
       "chainId": 3,
-      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x1dA4A25AE837259cB2f14E362BA94aF015F77d7d.png"
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x1da4a25ae837259cb2f14e362ba94af015f77d7d.png"
+    },
+    {
+      "name": "AntiMatter.Finance ETH Perpetual Call Option Floor $1000 Cap $3000",
+      "address": "0x3843a61f2960108287A51806c683fc854dC00354",
+      "symbol": "+ETH($1000)",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x3843a61f2960108287a51806c683fc854dc00354.png"
+    },
+    {
+      "name": "AntiMatter.Finance ETH Perpetual Put Option Floor $1000 Cap $3000",
+      "address": "0xfE41168Fe09359c4b010E414c724c643dF4159A3",
+      "symbol": "-ETH($3000)",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0xfe41168fe09359c4b010e414c724c643df4159a3.png"
+    },
+    {
+      "name": "AntiMatter.Finance MATTER Perpetual Call Option Floor $1 Cap $100",
+      "address": "0xD5eE7F431fFB7F03a19CFAE69A1E75a450Ec2021",
+      "symbol": "+MATTER($1)",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0xd5ee7f431ffb7f03a19cfae69a1e75a450ec2021.png"
+    },
+    {
+      "name": "AntiMatter.Finance MATTER Perpetual Put Option Floor $1 Cap $100",
+      "address": "0xc72813b0BC5125A419C6CC1b4e4Cf3030E60657e",
+      "symbol": "-MATTER($100)",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0xc72813b0bc5125a419c6cc1b4e4cf3030e60657e.png"
+    },
+    {
+      "name": "Uniswap MATTER/ETH LP",
+      "address": "0x6c8a55f67a7a6274d11e20bde30ee45049bdb570",
+      "symbol": "UNI-V2",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x6c8a55f67a7a6274d11e20bde30ee45049bdb570.png"
+    },
+    {
+      "name": "Uniswap V2",
+      "address": "0x67258f507Ee5CE6bFf8d589749f4380CfA9b0131",
+      "symbol": "UNI-V2",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x67258f507ee5ce6bff8d589749f4380cfa9b0131.png"
+    },
+    {
+      "name": "Uniswap V2",
+      "address": "0x14094f829a710075aE6A43F5c62F139049DD486F",
+      "symbol": "UNI-V2",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x14094f829a710075ae6a43f5c62f139049dd486f.png"
+    },
+    {
+      "name": "Uniswap V2",
+      "address": "0xaAC10F733AD4956Ea06DE98945BE2E7272E06228",
+      "symbol": "UNI-V2",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0xaac10f733ad4956ea06de98945be2e7272e06228.png"
     }
   ],
   "version": {
