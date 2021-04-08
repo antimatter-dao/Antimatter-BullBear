@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { GradientCard } from 'components/Card'
 import { StyledDialogOverlay, StyledDialogContent } from 'components/Modal'
@@ -7,7 +7,8 @@ import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import { ButtonWhite } from 'components/Button'
 import { AutoColumn } from 'components/Column'
 import useTheme from 'hooks/useTheme'
-import { useActiveWeb3React } from 'hooks'
+// import { useOnClickOutside } from 'hooks/useOnClickOutside'
+// import { useActiveWeb3React } from 'hooks'
 
 const WelcomeCard = styled(GradientCard)``
 
@@ -77,62 +78,63 @@ const pageContent = [
 ]
 
 export default function WelcomeSlider() {
-  const { account } = useActiveWeb3React()
-  const [isOpen, setIsOpen] = useState(false)
+  // const { account } = useActiveWeb3React()
+  const [isOpen, setIsOpen] = useState(true)
   const [page, setPage] = useState(0)
   const isEndPage = page === pageContent.length - 1
+  // const node = useRef<HTMLDivElement>()
   const theme = useTheme()
+  // useOnClickOutside(node, () => setIsOpen(false))
   const handleNextClick = () => {
     return page < pageContent.length - 1 ? setPage(page + 1) : setIsOpen(false)
   }
   const handleClose = useCallback(() => setIsOpen(false), [setIsOpen])
-  useEffect(() => {
-    console.log(account)
-    if (account) {
-      setIsOpen(false)
-    } else {
-      setIsOpen(true)
-    }
-  }, [account])
+  // useEffect(() => {
+  //   console.log(account)
+  //   if (account) {
+  //     setIsOpen(false)
+  //   } else {
+  //     setIsOpen(true)
+  //   }
+  // }, [account])
 
   return (
-    <>
-      {isOpen && (
-        <StyledDialogOverlay style={{ alignItems: 'flex-end', justifyContent: 'flex-start', padding: '30px' }}>
-          <StyledDialogContent
-            minHeight={20}
-            minWidth={580}
-            border={'1px solid ' + theme.bg4}
-            style={{ alignSelf: 'unset' }}
-          >
-            <WelcomeCard>
-              <AutoColumn gap="20px" style={{ padding: '12px 24px' }}>
-                <RowBetween>
-                  <TYPE.body fontSize={22}>{pageContent[page].title}</TYPE.body>
-                  <CloseIcon onClick={handleClose} />
-                </RowBetween>
-                <TYPE.body style={{ whiteSpace: 'pre-wrap' }}>{pageContent[page].content}</TYPE.body>
-                <RowFixed style={{ marginTop: '20px' }}>
-                  {!isEndPage && (
-                    <ButtonWhite style={{ padding: '9px', marginRight: '20px', width: '160px' }} onClick={handleClose}>
-                      <TYPE.main fontSize={14}>Skip </TYPE.main>
-                    </ButtonWhite>
-                  )}
-                  <ButtonWhite
-                    style={{ padding: '9px', backgroundColor: '#FFFFFF', width: '160px' }}
-                    onClick={handleNextClick}
-                  >
-                    <TYPE.main fontSize={14} color="#000000">
-                      {!isEndPage && (page === 0 ? 'Show Tutorial' : 'Next')}
-                      {isEndPage && 'Begin to trade'}
-                    </TYPE.main>
-                  </ButtonWhite>
-                </RowFixed>
-              </AutoColumn>
-            </WelcomeCard>
-          </StyledDialogContent>
-        </StyledDialogOverlay>
-      )}
-    </>
+    <StyledDialogOverlay
+      isOpen={isOpen}
+      style={{ alignItems: 'flex-end', justifyContent: 'flex-start', padding: '30px' }}
+    >
+      <StyledDialogContent
+        minHeight={20}
+        minWidth={580}
+        border={'1px solid ' + theme.bg4}
+        style={{ alignSelf: 'unset' }}
+      >
+        <WelcomeCard>
+          <AutoColumn gap="20px" style={{ padding: '12px 24px' }}>
+            <RowBetween>
+              <TYPE.body fontSize={22}>{pageContent[page].title}</TYPE.body>
+              <CloseIcon onClick={handleClose} />
+            </RowBetween>
+            <TYPE.body style={{ whiteSpace: 'pre-wrap' }}>{pageContent[page].content}</TYPE.body>
+            <RowFixed style={{ marginTop: '20px' }}>
+              {!isEndPage && (
+                <ButtonWhite style={{ padding: '9px', marginRight: '20px', width: '160px' }} onClick={handleClose}>
+                  <TYPE.main fontSize={14}>Skip </TYPE.main>
+                </ButtonWhite>
+              )}
+              <ButtonWhite
+                style={{ padding: '9px', backgroundColor: '#FFFFFF', width: '160px' }}
+                onClick={handleNextClick}
+              >
+                <TYPE.main fontSize={14} color="#000000">
+                  {!isEndPage && (page === 0 ? 'Show Tutorial' : 'Next')}
+                  {isEndPage && 'Begin to trade'}
+                </TYPE.main>
+              </ButtonWhite>
+            </RowFixed>
+          </AutoColumn>
+        </WelcomeCard>
+      </StyledDialogContent>
+    </StyledDialogOverlay>
   )
 }
