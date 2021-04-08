@@ -40,6 +40,22 @@
       "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x1da4a25ae837259cb2f14e362ba94af015f77d7d.png"
     },
     {
+      "name": "Antimatter.Finance Governance Token",
+      "address": "0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F",
+      "symbol": "MATTER",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x1c9491865a1de77c5b6e19d2e6a5f1d7a6f2b25f.png"
+    },
+    {
+      "name": "Tether USD",
+      "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+      "symbol": "USDT",
+      "decimals": 6,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
+    },
+    {
       "name": "AntiMatter.Finance ETH Perpetual Call Option Floor $1000 Cap $3000",
       "address": "0x3843a61f2960108287A51806c683fc854dC00354",
       "symbol": "+ETH($1000)",
