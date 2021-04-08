@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ChainId, CurrencyAmount, JSBI, Token, TokenAmount, WETH, Pair } from '@uniswap/sdk'
 import { useMemo } from 'react'
-import { DAI, UNI, USDC, USDT, WBTC } from '../../constants'
+import { ETH_DOWN, ETH_UP, MATTER_UP, UNI, USDT, WBTC } from '../../constants'
 import { STAKING_REWARDS_INTERFACE } from '../../constants/abis/staking-rewards'
 import { useActiveWeb3React } from '../../hooks'
 import { NEVER_RELOAD, useMultipleContractSingleData } from '../multicall/hooks'
 import { tryParseAmount } from '../swap/hooks'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
-import { currencies } from 'constants/matterToken/matterTokenTokens'
 
 export const STAKING_GENESIS = 1600387200
 
@@ -22,34 +21,20 @@ export const STAKING_REWARDS_INFO: {
 } = {
   [ChainId.MAINNET]: [
     {
-      tokens: [WETH[ChainId.MAINNET], DAI],
-      stakingRewardAddress: '0xa1484C3aa22a66C62b77E0AE78E15258bd0cB711'
+      tokens: [ETH_UP, USDT],
+      stakingRewardAddress: '0x67f6740f722Afb340c7463654ad7B13bfbBe17D2'
     },
     {
-      tokens: [WETH[ChainId.MAINNET], USDC],
-      stakingRewardAddress: '0x7FBa4B8Dc5E7616e59622806932DBea72537A56b'
+      tokens: [ETH_DOWN, USDT],
+      stakingRewardAddress: '0x7Ce706ffbe8a6639276a9d09B082624148c4162d'
     },
     {
-      tokens: [WETH[ChainId.MAINNET], USDT],
-      stakingRewardAddress: '0x6C3e4cb2E96B01F4b866965A91ed4437839A121a'
+      tokens: [UNI[ChainId.MAINNET], WETH[ChainId.MAINNET]],
+      stakingRewardAddress: '0x933Bcc3b0D1EEA2a485424Ec6573b29742cdDF72'
     },
     {
-      tokens: [WETH[ChainId.MAINNET], WBTC],
-      stakingRewardAddress: '0xCA35e32e7926b96A9988f61d510E038108d8068e'
-    }
-  ],
-  [ChainId.ROPSTEN]: [
-    {
-      tokens: [currencies[ChainId.ROPSTEN]!.ETH_CALL, currencies[ChainId.ROPSTEN]!.DAI],
-      stakingRewardAddress: '0xEB97da2E0719ed5a0353f61d3E9B342c4862e15c'
-    },
-    {
-      tokens: [currencies[ChainId.ROPSTEN]!.ETH_PUT, currencies[ChainId.ROPSTEN]!.DAI],
-      stakingRewardAddress: '0x41e267AC728213a1F6263cc41f48173450C144D7'
-    },
-    {
-      tokens: [currencies[ChainId.ROPSTEN]!.MATTER, currencies[ChainId.ROPSTEN]!.ETHER],
-      stakingRewardAddress: '0xB9f0a49f4E6ac50e49081AbA5a91768E335Dd47B'
+      tokens: [MATTER_UP, WBTC],
+      stakingRewardAddress: '0xee91a4C96004114b335435BCAdA1E2a9B74178B2'
     }
   ]
 }

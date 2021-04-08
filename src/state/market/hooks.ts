@@ -346,7 +346,7 @@ export function useDerivedStrategyInfo(
       callVal,
       putVal,
       JSBI.multiply(
-        JSBI.BigInt(isGeneration ? userGenerationSlippageTolerance : userRedeemSlippageTolerance ?? 50),
+        JSBI.BigInt(isGeneration ? userGenerationSlippageTolerance ?? 50 : userRedeemSlippageTolerance ?? 50),
         JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(15))
       ).toString()
     ]

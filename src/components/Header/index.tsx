@@ -1,19 +1,14 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
 import React, { useEffect, useState } from 'react'
 import { X } from 'react-feather'
-// import { Text } from 'rebass'
-// import { NavLink } from 'react-router-dom'
-// import { darken } from 'polished'
-// import { useTranslation } from 'react-i18next'
-
 import styled from 'styled-components'
 
 import { useActiveWeb3React } from '../../hooks'
 // import { useDarkModeManager } from '../../state/user/hooks'
-import { /*useETHBalances,*/ useAggregateUniBalance } from '../../state/wallet/hooks'
+import { useAggregateUniBalance } from '../../state/wallet/hooks'
 // import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
-import { TYPE /*ExternalLink*/ } from '../../theme'
+import { TYPE } from '../../theme'
 import { Base } from 'components/Button'
 // import { YellowCard } from '../Card'
 // import { Moon, Sun } from 'react-feather'
@@ -27,6 +22,10 @@ import { useUserHasAvailableClaim } from '../../state/claim/hooks'
 // import { Dots } from '../swap/styleds'
 import usePrevious from '../../hooks/usePrevious'
 import Modal from 'components/Modal'
+// import { Text } from 'rebass'
+// import { NavLink } from 'react-router-dom'
+// import { darken } from 'polished'
+// import { useTranslation } from 'react-i18next'
 
 export const headerHeight = '65px',
   headerHeightDisplacement = '32px'
@@ -312,7 +311,7 @@ export default function Header() {
   const [warningModalOpen, setWarningModalOpen] = useState(false)
 
   useEffect(() => {
-    if (chainId && chainId !== ChainId.RINKEBY && chainId !== ChainId.ROPSTEN) {
+    if (chainId && chainId !== ChainId.MAINNET && chainId !== ChainId.RINKEBY && chainId !== ChainId.ROPSTEN) {
       setWarningModalOpen(true)
     } else {
       setWarningModalOpen(false)
