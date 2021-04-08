@@ -9,7 +9,9 @@ import arrowUpUrl from 'assets/svg/arrow_up.svg'
 import { headerHeight } from '../Header'
 import { AutoColumn } from 'components/Column'
 import { Base } from '../Button'
-
+import { TYPE } from 'theme'
+import useTheme from 'hooks/useTheme'
+import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 interface TabContent {
   title: string
   route: string
@@ -44,6 +46,7 @@ const StyledSidebar = styled.div`
   width: 212px;
   height: 100vh;
   border-radius: 0 42px 42px 0;
+  padding: 36px 0;
   background: linear-gradient(
       283.31deg,
       rgba(255, 255, 255, 0.09) -2.53%,
@@ -124,7 +127,7 @@ const TabDivider = styled.div`
 
 const StyledLogo = styled(Logo)`
   width: 150px;
-  margin: 38px auto 120px auto;
+  margin: 0 auto 120px auto;
 `
 // const UniIcon = styled.div`
 //   transition: transform 0.3s ease;
@@ -231,13 +234,36 @@ function ToggleTab({
     </>
   )
 }
-
+function FAQButton() {
+  const theme = useTheme()
+  return (
+    <TabBasic to="/faq" style={{ marginTop: 'auto' }}>
+      <RowFixed>
+        <AutoRow
+          justify="center"
+          style={{
+            borderRadius: '50%',
+            border: `1px solid ${theme.primary1}`,
+            width: '20px',
+            height: '20px',
+            marginRight: '12px'
+          }}
+        >
+          <TYPE.body color={theme.primary1}>?</TYPE.body>
+        </AutoRow>
+        <TYPE.body>FAQ</TYPE.body>
+      </RowFixed>
+    </TabBasic>
+  )
+}
 export default function Sidebar() {
   return (
     <>
       <MobileHeader>
-        <Logo />
-        <ToggleMenu />
+        <RowBetween>
+          <Logo />
+          <ToggleMenu />
+        </RowBetween>
       </MobileHeader>
       <StyledSidebar>
         {/* <Title href=".">
@@ -298,6 +324,7 @@ export default function Sidebar() {
             </>
           )
         )}
+        <FAQButton />
       </StyledSidebar>
     </>
   )
