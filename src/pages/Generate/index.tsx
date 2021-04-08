@@ -30,7 +30,7 @@ import { tryParseAmount } from '../../state/swap/hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useAntimatterContract } from '../../hooks/useContract'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
-import { parseBalance } from '../../utils/marketStrategyUtils'
+import { isNegative, parseBalance } from '../../utils/marketStrategyUtils'
 
 export default function Generate() {
   const [optionType, setOptionType] = useState('')
@@ -110,11 +110,11 @@ export default function Generate() {
     ]
 
     if (optionTypes[parseInt(optionType)].underlyingSymbol === 'ETH') {
-      value = delta.dUnd.toString()
+      value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
     }
 
     if (optionTypes[parseInt(optionType)].currencySymbol === 'ETH') {
-      value = delta.dCur.toString()
+      value = isNegative(delta.dCur) ? '0' : delta.dCur.toString()
     }
 
     setAttemptingTxn(true)
@@ -229,7 +229,13 @@ export default function Generate() {
                 currency={currencyA || undefined}
                 id="generate-output-token"
                 showCommonBases
-                defaultSymbol={'Call Token'}
+                defaultSymbol={
+                  optionTypes[parseInt(optionType)]?.underlyingSymbol
+                    ? `+${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance(
+                        optionTypes[parseInt(optionType)]?.priceFloor
+                      )})`
+                    : 'Call Token'
+                }
                 halfWidth={true}
                 isCall={true}
               />
@@ -249,7 +255,13 @@ export default function Generate() {
                 id="generate-output-token"
                 showCommonBases
                 halfWidth={true}
-                defaultSymbol={'Put Token'}
+                defaultSymbol={
+                  optionTypes[parseInt(optionType)]?.underlyingSymbol
+                    ? `-${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance(
+                        optionTypes[parseInt(optionType)]?.priceCap
+                      )})`
+                    : 'Put Token'
+                }
                 negativeMarginTop={tokenType === TOKEN_TYPES.callPut ? '-20px' : '0'}
                 isCall={false}
               />

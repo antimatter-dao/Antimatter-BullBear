@@ -26,7 +26,7 @@
     {
       "name": "AntiMatter.Finance ETH perpetual put contract floor $200 cap $300",
       "address": "0x747434F3334Ec885De96e2A8e053DcAeE0E7F492",
-      "symbol": "-ETH(200$300)",
+      "symbol": "-ETH($300)",
       "decimals": 18,
       "chainId": 3,
       "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x747434f3334ec885de96e2a8e053dcaee0e7f492.png"
@@ -34,7 +34,7 @@
     {
       "name": "AntiMatter.Finance ETH perpetual call contract floor $200 cap $300",
       "address": "0x1dA4A25AE837259cB2f14E362BA94aF015F77d7d",
-      "symbol": "+ETH(200$300)",
+      "symbol": "+ETH($200)",
       "decimals": 18,
       "chainId": 3,
       "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x1dA4A25AE837259cB2f14E362BA94aF015F77d7d.png"

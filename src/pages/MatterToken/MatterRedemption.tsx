@@ -177,14 +177,14 @@ export default function Redeem() {
           <AutoColumn gap="24px">
             <ButtonSelectStyle>
               <RowBetween>
-                <div style={{ display: 'flex', alignItems: 'center' }}>{optionType?.underlyingSymbol}</div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>Matter Option Token</div>
               </RowBetween>
             </ButtonSelectStyle>
             <>
               <RedeemTokenPanel
                 value={callTypedAmount ?? ''}
                 onUserInput={setCallTypedAmount}
-                label="Call Token"
+                label="+Matter($1)"
                 currency={currencyA}
                 currencyBalance={parseBalance(balances?.callBalance)}
                 isCall={true}

@@ -11,7 +11,6 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import AppBody from 'pages/AppBody'
-import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -78,11 +77,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo }: Sta
               {stakingInfo?.earnedAmount && (
                 <AutoColumn justify="center" gap="md">
                   <TYPE.body fontWeight={600} fontSize={36}>
-                    {stakingInfo?.active
-                      ? stakingInfo?.rewardRate
-                          ?.multiply(BIG_INT_SECONDS_IN_WEEK)
-                          ?.toSignificant(2, { groupSeparator: ',' }) ?? '-'
-                      : '0'}
+                    {stakingInfo?.active ? stakingInfo?.earnedAmount?.toSignificant(6) ?? '-' : '0'}
                   </TYPE.body>
                   <TYPE.body> +MATTER($1)</TYPE.body>
                 </AutoColumn>

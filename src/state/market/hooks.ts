@@ -51,6 +51,11 @@ interface Balances {
   putBalance: string
 }
 
+interface Value {
+  priceUnderlying: string
+  valueReserve: string
+}
+
 export function useOptionTypeCount(): number | undefined {
   const antimatterContract = useAntimatterContract()
   const res = useSingleCallResult(antimatterContract, 'length')
@@ -58,6 +63,41 @@ export function useOptionTypeCount(): number | undefined {
     return parseInt(res.result[0])
   }
   return undefined
+}
+
+export function useValues(): Value[] | undefined {
+  const antimatterContract = useAntimatterContract()
+  const optionTypeCount = useOptionTypeCount()
+  const optionTypeIndexes = []
+  for (let i = 0; i < (optionTypeCount ?? 0); i++) {
+    optionTypeIndexes.push([i])
+  }
+  const callAddressesRes = useSingleContractMultipleData(antimatterContract, 'allCalls', optionTypeIndexes)
+  //const putAddressesRes = useSingleContractMultipleData(antimatterContract, 'allPuts', optionTypeIndexes)
+  const callAddresses = useMemo(() => {
+    return callAddressesRes
+      .filter(item => {
+        return item.result
+      })
+      .map(item => {
+        return [item?.result?.[0]]
+      })
+  }, [callAddressesRes])
+
+  const valuesRes = useSingleContractMultipleData(antimatterContract, 'priceValue1', callAddresses)
+
+  console.log('valuesRes', valuesRes)
+
+  return valuesRes
+    .filter(item => {
+      return item.result
+    })
+    .map(item => {
+      return {
+        priceUnderlying: item?.result?.priceUnderlying,
+        valueReserve: item?.result?.valueReserve
+      }
+    })
 }
 
 export function useAllOptionTypes() {

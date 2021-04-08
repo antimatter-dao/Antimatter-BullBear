@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import AppBody from 'pages/AppBody'
 import { AutoRow, RowBetween } from 'components/Row'
@@ -7,17 +7,21 @@ import { AutoColumn } from 'components/Column'
 import { TranslucentCard } from 'components/Card'
 import useTheme from 'hooks/useTheme'
 import antimatterLogo from 'assets/svg/antimatter_background_logo.svg'
-import { ReactComponent as CallToken } from 'assets/svg/call_token.svg'
-import { ReactComponent as PutToken } from 'assets/svg/put_token.svg'
+import { useAllOptionTypes, useValues } from '../../state/market/hooks'
+import { JSBI } from '@uniswap/sdk'
+import { parseBalance } from '../../utils/marketStrategyUtils'
+import { CountUp } from 'use-count-up/lib'
+import PriceItem from './PriceItem'
+import AssetItem from './AssetItem'
 
-function NumberWithUnit({ unit, number }: { unit: string; number: string }) {
+export function NumberWithUnit({ unit, number }: { unit: string; number: string }) {
   return (
     <TYPE.main fontWeight={500} fontSize={24}>
       {number} <span style={{ fontSize: '16px' }}>&nbsp;{unit}</span>
     </TYPE.main>
   )
 }
-const Divider = styled.div`
+export const Divider = styled.div`
   width: 100%;
   height: 0;
   margin: 12px 0 14px 0;
@@ -26,6 +30,21 @@ const Divider = styled.div`
 
 export default function Info() {
   const theme = useTheme()
+  const values = useValues()
+  const optionTypes = useAllOptionTypes()
+  console.log('values', values)
+  const allValue = useMemo(() => {
+    if (!values || values.length === 0) return undefined
+    return values?.reduce((pre, cur) => {
+      return {
+        priceUnderlying: JSBI.add(JSBI.BigInt(pre.priceUnderlying), JSBI.BigInt(cur.priceUnderlying)).toString(),
+        valueReserve: JSBI.add(JSBI.BigInt(pre.valueReserve), JSBI.BigInt(cur.valueReserve)).toString()
+      }
+    })
+  }, [values])
+
+  const countUpAmountPrevious = '0'
+  console.log('allValue', parseBalance(allValue?.valueReserve))
   return (
     <AppBody style={{ maxWidth: '640px' }}>
       <AutoRow justify="center">
@@ -37,69 +56,37 @@ export default function Info() {
             src={antimatterLogo}
             style={{ position: 'absolute', right: '40px', top: '24px', height: '75px' }}
             alt=""
-          ></img>
+          />
           <AutoColumn gap="16px">
             <TYPE.smallGray>TOTAL VALUE LOCKED</TYPE.smallGray>
             <TYPE.main fontWeight={500} fontSize={40} color={theme.primary1}>
-              $ 1 000 000
+              $
+              <CountUp
+                key={parseBalance(allValue?.valueReserve)}
+                isCounting
+                decimalPlaces={2}
+                start={parseFloat(countUpAmountPrevious)}
+                end={parseFloat(parseBalance(allValue?.valueReserve ?? '0'))}
+                thousandsSeparator={','}
+                duration={1}
+              />
             </TYPE.main>
           </AutoColumn>
         </TranslucentCard>
-        <TranslucentCard>
-          <AutoColumn gap="16px">
-            <TYPE.smallGray>UNDERLYING ASSET</TYPE.smallGray>
-            <AutoRow>
-              <NumberWithUnit number="10 000" unit="ETH" />
-              <TYPE.main fontWeight={500} fontSize={24} style={{ display: 'flex' }}>
-                &nbsp;:&nbsp;
-              </TYPE.main>
-              <NumberWithUnit number="10 000" unit="USDT" />
-            </AutoRow>
-          </AutoColumn>
-        </TranslucentCard>
 
-        <RowBetween>
-          <TranslucentCard style={{ marginRight: '16px' }}>
-            <AutoColumn>
-              <div>
-                <AutoColumn gap="9px">
-                  <TYPE.smallGray>TOTAL NUMBER OF CALL TOKENS ($1000)</TYPE.smallGray>
-                  <TYPE.main fontWeight={500} fontSize={24}>
-                    <CallToken style={{ marginRight: '12px' }} />
-                    200
-                  </TYPE.main>
-                </AutoColumn>
-              </div>
-              <Divider />
-              <div>
-                <AutoColumn gap="9px">
-                  <TYPE.smallGray>PRICE OF CALL TOKENS ($1000)</TYPE.smallGray>
-                  <NumberWithUnit number="2000" unit="USDT" />
-                </AutoColumn>
-              </div>
-            </AutoColumn>
-          </TranslucentCard>
+        {optionTypes.map(item => {
+          return (
+            <>
+              <AssetItem optionType={item} />
 
-          <TranslucentCard>
-            <AutoColumn>
-              <div>
-                <AutoColumn gap="9px">
-                  <TYPE.smallGray>TOTAL NUMBER OF PUT TOKENS ($3000)</TYPE.smallGray>
-                  <TYPE.main fontWeight={500} fontSize={24}>
-                    <PutToken style={{ marginRight: '12px' }} /> 200
-                  </TYPE.main>
-                </AutoColumn>
-              </div>
-              <Divider />
-              <div>
-                <AutoColumn gap="9px">
-                  <TYPE.smallGray>PRICE OF PUT TOKENS ($3000)</TYPE.smallGray>
-                  <NumberWithUnit number="2000" unit="USDT" />
-                </AutoColumn>
-              </div>
-            </AutoColumn>
-          </TranslucentCard>
-        </RowBetween>
+              <RowBetween>
+                <PriceItem address={item.callAddress ?? ''} total={parseBalance(item.callTotal)} />
+                <div style={{ width: 16, height: '100%' }} />
+                <PriceItem address={item.putAddress ?? ''} total={parseBalance(item.callTotal)} />
+              </RowBetween>
+            </>
+          )
+        })}
       </AutoColumn>
     </AppBody>
   )
