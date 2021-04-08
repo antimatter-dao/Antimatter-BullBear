@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { GradientCard } from 'components/Card'
 import { StyledDialogOverlay, StyledDialogContent } from 'components/Modal'
@@ -7,6 +7,7 @@ import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import { ButtonWhite } from 'components/Button'
 import { AutoColumn } from 'components/Column'
 import useTheme from 'hooks/useTheme'
+import { useActiveWeb3React } from 'hooks'
 
 const WelcomeCard = styled(GradientCard)``
 
@@ -76,13 +77,24 @@ const pageContent = [
 ]
 
 export default function WelcomeSlider() {
-  const [isOpen, setIsOpen] = useState(!(window && window.localStorage.key(0)))
+  const { account } = useActiveWeb3React()
+  const [isOpen, setIsOpen] = useState(false)
   const [page, setPage] = useState(0)
   const isEndPage = page === pageContent.length - 1
   const theme = useTheme()
-  const handleNextClick = useCallback(() => {
+  const handleNextClick = () => {
     return page < pageContent.length - 1 ? setPage(page + 1) : setIsOpen(false)
-  }, [page, setPage, setIsOpen])
+  }
+  const handleClose = useCallback(() => setIsOpen(false), [setIsOpen])
+  useEffect(() => {
+    console.log(account)
+    if (account) {
+      setIsOpen(false)
+    } else {
+      setIsOpen(true)
+    }
+  }, [account])
+
   return (
     <>
       {isOpen && (
@@ -97,16 +109,12 @@ export default function WelcomeSlider() {
               <AutoColumn gap="20px" style={{ padding: '12px 24px' }}>
                 <RowBetween>
                   <TYPE.body fontSize={22}>{pageContent[page].title}</TYPE.body>
-                  <CloseIcon
-                    onClick={() => {
-                      setIsOpen(false)
-                    }}
-                  />
+                  <CloseIcon onClick={handleClose} />
                 </RowBetween>
                 <TYPE.body style={{ whiteSpace: 'pre-wrap' }}>{pageContent[page].content}</TYPE.body>
                 <RowFixed style={{ marginTop: '20px' }}>
                   {!isEndPage && (
-                    <ButtonWhite style={{ padding: '9px', marginRight: '20px', width: '160px' }}>
+                    <ButtonWhite style={{ padding: '9px', marginRight: '20px', width: '160px' }} onClick={handleClose}>
                       <TYPE.main fontSize={14}>Skip </TYPE.main>
                     </ButtonWhite>
                   )}
