@@ -7,9 +7,6 @@ import useHttpLocations from '../../hooks/useHttpLocations'
 import { WrappedTokenInfo } from '../../state/lists/hooks'
 import Logo from '../Logo'
 
-export const getTokenLogoURL = (address: string) =>
-  `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
-
 export const getAntimatterTokenLogoURL = (address: string) =>
   `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
 
@@ -28,7 +25,7 @@ const StyledLogo = styled(Logo)<{ size: string }>`
   background-color: ${({ theme }) => theme.white};
 `
 
-export default function CurrencyLogo({
+export default function AntimatterCurrencyLogo({
   currency,
   size = '24px',
   style
@@ -44,9 +41,9 @@ export default function CurrencyLogo({
 
     if (currency instanceof Token) {
       if (currency instanceof WrappedTokenInfo) {
-        return [...uriLocations, getTokenLogoURL(currency.address)]
+        return [...uriLocations, getAntimatterTokenLogoURL(currency.address)]
       }
-      return [getTokenLogoURL(currency.address)]
+      return [getAntimatterTokenLogoURL(currency.address)]
     }
     return []
   }, [currency, uriLocations])

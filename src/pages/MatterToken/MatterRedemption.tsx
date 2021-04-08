@@ -24,6 +24,9 @@ import { useAntimatterContract } from '../../hooks/useContract'
 import { calculateGasMargin } from '../../utils'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { isNegative, parseBalance, parsedGreaterThan } from '../../utils/marketStrategyUtils'
+import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
+import { ANTIMATTER_ADDRESS } from '../../constants'
+import { Dots } from '../../components/swap/styleds'
 
 export default function Redeem() {
   const { account, chainId, library } = useActiveWeb3React()
@@ -52,6 +55,8 @@ export default function Redeem() {
     TOKEN_TYPES.call
   )
 
+  const isValid = !error
+
   const redeemError = useMemo(() => {
     if (
       balances &&
@@ -63,6 +68,15 @@ export default function Redeem() {
     return error
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [balances?.callBalance, balances?.callBalance, error, callTypedAmount, putTypedAmount])
+
+  const [approvalA, approveACallback] = useApproveCallback(
+    tryParseAmount(delta?.totalUnd.toString(), currencyA?.symbol === 'WETH' ? ETHER : currencyA ?? undefined),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
+  )
+  const [approvalB, approveBCallback] = useApproveCallback(
+    tryParseAmount(delta?.totalCur.toString(), currencyB?.symbol === 'WETH' ? ETHER : currencyB ?? undefined),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
+  )
 
   // txn values
   // const deadline = useTransactionDeadline() // custom from users settings
@@ -205,11 +219,47 @@ export default function Redeem() {
               <ButtonPrimary onClick={toggleWalletModal}>Connect Wallet</ButtonPrimary>
             ) : (
               <AutoColumn gap={'md'}>
+                {(approvalA === ApprovalState.NOT_APPROVED ||
+                  approvalA === ApprovalState.PENDING ||
+                  approvalB === ApprovalState.NOT_APPROVED ||
+                  approvalB === ApprovalState.PENDING) &&
+                  isValid && (
+                    <RowBetween>
+                      {approvalA !== ApprovalState.APPROVED && (
+                        <ButtonPrimary
+                          onClick={approveACallback}
+                          disabled={approvalA === ApprovalState.PENDING}
+                          width={approvalB !== ApprovalState.APPROVED ? '48%' : '100%'}
+                        >
+                          {approvalA === ApprovalState.PENDING ? (
+                            <Dots>Approving {optionType.underlyingSymbol}</Dots>
+                          ) : (
+                            'Approve ' + optionType.underlyingSymbol
+                          )}
+                        </ButtonPrimary>
+                      )}
+                      {approvalB !== ApprovalState.APPROVED && (
+                        <ButtonPrimary
+                          onClick={approveBCallback}
+                          disabled={approvalB === ApprovalState.PENDING}
+                          width={approvalA !== ApprovalState.APPROVED ? '48%' : '100%'}
+                        >
+                          {approvalB === ApprovalState.PENDING ? (
+                            <Dots>Approving {optionType.currencySymbol}</Dots>
+                          ) : (
+                            'Approve ' + optionType?.currencySymbol
+                          )}
+                        </ButtonPrimary>
+                      )}
+                    </RowBetween>
+                  )}
                 <ButtonError
                   onClick={() => {
                     expertMode ? onRedeem() : setShowConfirm(true)
                   }}
-                  disabled={!!redeemError}
+                  disabled={
+                    !!redeemError || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED
+                  }
                 >
                   <Text fontSize={16} fontWeight={500}>
                     {redeemError ?? (tokenType === TOKEN_TYPES.callPut ? 'Redeem' : 'Exercise')}
