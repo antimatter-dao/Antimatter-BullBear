@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react'
-import { ETHER, JSBI } from '@uniswap/sdk'
+import { ETHER, Token } from '@uniswap/sdk'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
@@ -11,7 +11,7 @@ import CallOrPutInputPanel from '../../components/CallOrPutInputPanel'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
 import { RowBetween } from '../../components/Row'
 import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
-import { ANTIMATTER_ADDRESS } from '../../constants'
+import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
 import { useMarketCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
@@ -52,6 +52,22 @@ export default function Generate() {
     if (!optionTypes || !optionType) return undefined
     return optionTypes?.[parseInt(optionType)]
   }, [optionTypes, optionType])
+
+  const underlyingToken: Token = new Token(
+    chainId ?? 1,
+    selectedOptionType?.underlying ?? ZERO_ADDRESS,
+    Number(selectedOptionType?.underlyingDecimals.toString() ?? '18')
+  )
+
+  const currencyToken: Token = new Token(
+    chainId ?? 1,
+    selectedOptionType?.currency ?? ZERO_ADDRESS,
+    Number(selectedOptionType?.currencyDecimals.toString() ?? '18')
+  )
+
+  // const callToken: Token = new Token(chainId ?? 1, selectedOptionType?.callAddress ?? ZERO_ADDRESS, 18)
+  //
+  // const putToken: Token = new Token(chainId ?? 1, selectedOptionType?.putAddress ?? ZERO_ADDRESS, 18)
 
   const { delta, error } = useDerivedStrategyInfo(
     true,
@@ -156,13 +172,13 @@ export default function Generate() {
       optionTypes.map(item => {
         return {
           id: item.id,
-          option: `${item.underlyingSymbol ?? '-'} (${JSBI.divide(
-            JSBI.BigInt(item.priceFloor),
-            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
-          )}$${JSBI.divide(
-            JSBI.BigInt(item.priceCap),
-            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
-          )})`
+          option: `${item.underlyingSymbol ?? '-'} (${parseBalance({
+            val: item.priceFloor,
+            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals))
+          })}$${parseBalance({
+            val: item.priceCap,
+            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals))
+          })})`
         }
       }),
     [optionTypes]
@@ -181,6 +197,8 @@ export default function Generate() {
         currencyA={currencyA}
         currencyB={currencyB}
         onGenerate={onGenerate}
+        underlyingToken={underlyingToken}
+        currencyToken={currencyToken}
       />
     )
   }
@@ -231,11 +249,10 @@ export default function Generate() {
                 showCommonBases
                 defaultSymbol={
                   optionTypes[parseInt(optionType)]?.underlyingSymbol
-                    ? `+${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance(
-                        optionTypes[parseInt(optionType)]?.priceFloor,
-                        2,
-                        optionTypes[parseInt(optionType)]?.currencyDecimals.toString()
-                      )})`
+                    ? `+${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance({
+                        val: selectedOptionType?.priceFloor,
+                        token: currencyToken
+                      })})`
                     : 'Call Token'
                 }
                 halfWidth={true}
@@ -259,11 +276,10 @@ export default function Generate() {
                 halfWidth={true}
                 defaultSymbol={
                   optionTypes[parseInt(optionType)]?.underlyingSymbol
-                    ? `-${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance(
-                        optionTypes[parseInt(optionType)]?.priceCap,
-                        2,
-                        optionTypes[parseInt(optionType)]?.currencyDecimals.toString()
-                      )})`
+                    ? `-${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance({
+                        val: selectedOptionType?.priceCap,
+                        token: currencyToken
+                      })})`
                     : 'Put Token'
                 }
                 negativeMarginTop={tokenType === TOKEN_TYPES.callPut ? '-20px' : '0'}
@@ -275,10 +291,18 @@ export default function Generate() {
               <GenerateBar
                 cardTitle={``}
                 callVol={
-                  delta && parseBalance(delta.dUnd, 6, optionTypes[parseInt(optionType)]?.underlyingDecimals.toString())
+                  delta &&
+                  parseBalance({
+                    val: delta.dUnd,
+                    token: underlyingToken
+                  })
                 }
                 putVol={
-                  delta && parseBalance(delta.dCur, 6, optionTypes[parseInt(optionType)]?.currencyDecimals.toString())
+                  delta &&
+                  parseBalance({
+                    val: delta.dCur,
+                    token: currencyToken
+                  })
                 }
                 subTitle="Output Token"
                 currency0={currencyA}

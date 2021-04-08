@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react'
 import { Plus } from 'react-feather'
-import { ETHER } from '@uniswap/sdk'
+import { ChainId, ETHER, Token, WETH } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
@@ -29,13 +29,15 @@ import { useTransactionAdder } from '../../state/transactions/hooks'
 import { isNegative, parseBalance, parsedGreaterThan } from '../../utils/marketStrategyUtils'
 import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback'
 import { Dots } from 'components/swap/styleds'
-import { ANTIMATTER_ADDRESS } from '../../constants'
+import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
 
-const findPrice = (option?: OptionTypeData, isCall?: boolean) => {
+const findPrice = ({ option, isCall, token }: { option?: OptionTypeData; isCall?: boolean; token: Token }) => {
   if (!option) {
     return ''
   }
-  return isCall ? parseBalance(option.priceFloor) : parseBalance(option.priceCap)
+  return isCall
+    ? parseBalance({ val: option.priceFloor, token: token })
+    : parseBalance({ val: option.priceCap, token: token })
 }
 
 export default function Redeem() {
@@ -63,6 +65,18 @@ export default function Redeem() {
     if (!optionTypes || !optionTypeIndex) return undefined
     return optionTypes?.[parseInt(optionTypeIndex)]
   }, [optionTypes, optionTypeIndex])
+
+  const underlyingToken: Token = new Token(
+    chainId ?? 1,
+    selectedOptionType?.underlying ?? ZERO_ADDRESS,
+    Number(selectedOptionType?.underlyingDecimals.toString() ?? '18')
+  )
+
+  const currencyToken: Token = new Token(
+    chainId ?? 1,
+    selectedOptionType?.currency ?? ZERO_ADDRESS,
+    Number(selectedOptionType?.currencyDecimals.toString() ?? '18')
+  )
 
   const { delta, error, balances } = useDerivedStrategyInfo(
     false,
@@ -194,7 +208,13 @@ export default function Redeem() {
       optionTypes.map(item => {
         return {
           id: item.id,
-          option: `${item.underlyingSymbol} (${parseBalance(item.priceFloor)}$${parseBalance(item.priceCap)})`
+          option: `${item.underlyingSymbol} (${parseBalance({
+            val: item.priceFloor,
+            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
+          })}$${parseBalance({
+            val: item.priceCap,
+            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
+          })})`
         }
       }),
     [optionTypes]
@@ -239,13 +259,14 @@ export default function Redeem() {
                   onUserInput={setCallTypedAmount}
                   label={
                     optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
-                      ? `+${optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}($${parseBalance(
-                          optionTypes[parseInt(optionTypeIndex)]?.priceFloor
-                        )})`
+                      ? `+${optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}($${parseBalance({
+                          val: selectedOptionType?.priceFloor,
+                          token: currencyToken
+                        })})`
                       : 'Call Token'
                   }
                   currency={currencyA}
-                  currencyBalance={parseBalance(balances?.callBalance)}
+                  currencyBalance={parseBalance({ val: balances?.callBalance, token: WETH[ChainId.MAINNET] })}
                   isCall={true}
                 />
                 <ColumnCenter>
@@ -256,14 +277,15 @@ export default function Redeem() {
                   onUserInput={setPutTypedAmount}
                   label={
                     optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
-                      ? `+${optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}($${parseBalance(
-                          optionTypes[parseInt(optionTypeIndex)]?.priceCap
-                        )})`
+                      ? `+${optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}($${parseBalance({
+                          val: optionTypes[parseInt(optionTypeIndex)]?.priceCap,
+                          token: currencyToken
+                        })})`
                       : 'Call Token'
                   }
                   currency={currencyB}
                   negativeMarginTop="-25px"
-                  currencyBalance={parseBalance(balances?.putBalance)}
+                  currencyBalance={parseBalance({ val: balances?.putBalance, token: WETH[ChainId.MAINNET] })}
                   isCall={false}
                 />
               </>
@@ -288,7 +310,11 @@ export default function Redeem() {
                       }}
                     >
                       {`You have the rights to ${isCallToken ? 'purchase' : 'sell'} ${currencyA?.symbol ??
-                        ''} at ${findPrice(selectedOptionType, isCallToken)} ${currencyB?.symbol ?? ''}`}
+                        ''} at ${findPrice({
+                        option: selectedOptionType,
+                        isCall: isCallToken,
+                        token: currencyToken
+                      })} ${currencyB?.symbol ?? ''}`}
                     </div>
                   </AutoColumn>
                 )}
@@ -298,7 +324,10 @@ export default function Redeem() {
                   onUserInput={isCallToken ? setCallTypedAmount : setPutTypedAmount}
                   label={`${isCallToken ? 'CALL' : 'PUT'} Tokens Amount to Exercise`}
                   currency={isCallToken ? currencyA : currencyB}
-                  currencyBalance={parseBalance(isCallToken ? balances?.callBalance : balances?.putBalance)}
+                  currencyBalance={parseBalance({
+                    val: isCallToken ? balances?.callBalance : balances?.putBalance,
+                    token: WETH[ChainId.MAINNET]
+                  })}
                   isCall={isCallToken}
                 />
               </>
@@ -309,8 +338,8 @@ export default function Redeem() {
                 currency0={currencyA}
                 currency1={currencyB}
                 subTitle="Output Token"
-                callVol={delta && parseBalance(delta.dUnd, 4)}
-                putVol={delta && parseBalance(delta.dCur, 4)}
+                callVol={delta && parseBalance({ val: delta.dUnd, token: underlyingToken })}
+                putVol={delta && parseBalance({ val: delta.dCur, token: currencyToken })}
               />
             )}
 
