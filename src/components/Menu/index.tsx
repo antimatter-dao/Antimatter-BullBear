@@ -85,7 +85,7 @@ const MenuItem = styled(ExternalLink)`
   }
 `
 
-const CODE_LINK = 'https://github.com/Uniswap/uniswap-interface'
+const CODE_LINK = 'https://app.antimatter.finance'
 
 export default function Menu() {
   const { account } = useActiveWeb3React()
