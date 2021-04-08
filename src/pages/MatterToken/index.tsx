@@ -13,12 +13,16 @@ import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { CountUp } from 'use-count-up'
 import { usePair } from '../../data/Reserves'
-
 import usePrevious from '../../hooks/usePrevious'
 // import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
 import { LPT_TYPE, LPT_PAIRS, LPT_rewardPerDay } from 'constants/matterToken/matterTokenTokens'
 import ButtonSelect from 'components/Button/ButtonSelect'
 import QuestionHelper from '../../components/QuestionHelper'
+import { ReactComponent as Logo1 } from 'assets/svg/cross_circle.svg'
+import { ReactComponent as Logo2 } from 'assets/svg/cross_circle.svg'
+import { ReactComponent as Logo3 } from 'assets/svg/cross_circle.svg'
+import { ReactComponent as Logo4 } from 'assets/svg/cross_circle.svg'
+import { RowBetween } from 'components/Row'
 
 const sectionPadding = '32px'
 const GridWrapper = styled.div`
@@ -66,6 +70,14 @@ const LPTWrapper = styled.div`
     }
   }
 `
+const OptionWrapper = styled(RowBetween)`
+  svg {
+    height: 24px;
+    width: 24px;
+    margin-right: 10px;
+  }
+`
+
 enum STAKING_MODAL_TYPE {
   STAKE = 'stake',
   UNSTAKE = 'unstake',
@@ -99,10 +111,25 @@ function NumberUnitText({ number, unit }: { number: string; unit: string }) {
   )
 }
 
-const SelectButtonOptions = Object.keys(LPT_TYPE).map(key => ({
-  id: LPT_TYPE[key as keyof typeof LPT_TYPE],
-  option: LPT_TYPE[key as keyof typeof LPT_TYPE]
-}))
+const Logos = {
+  [LPT_TYPE.ETH_CALL_DAI]: <Logo1 />,
+  [LPT_TYPE.ETH_PUT_DAI]: <Logo2 />,
+  [LPT_TYPE.MATTER_ETH]: <Logo3 />,
+  [LPT_TYPE.MATTER_CALL_MATTER]: <Logo4 />
+}
+
+const SelectButtonOptions = Object.keys(LPT_TYPE).map(key => {
+  console.log(88888, Logos[key as keyof typeof Logos])
+  return {
+    id: LPT_TYPE[key as keyof typeof LPT_TYPE],
+    option: (
+      <OptionWrapper>
+        {Logos[LPT_TYPE[key as keyof typeof LPT_TYPE]]}
+        {LPT_TYPE[key as keyof typeof LPT_TYPE]}
+      </OptionWrapper>
+    )
+  }
+})
 
 export default function MatterToken() {
   const [lptType, setLptType] = useState<LPT_TYPE>(LPT_TYPE.ETH_CALL_DAI)
@@ -177,6 +204,7 @@ export default function MatterToken() {
                   setLptType(id as LPT_TYPE)
                 }}
                 selectedId={lptType}
+                width="330px"
               />
             </AutoColumn>
             <GridWrapper>
