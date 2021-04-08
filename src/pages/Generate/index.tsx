@@ -174,10 +174,10 @@ export default function Generate() {
           id: item.id,
           option: `${item.underlyingSymbol ?? '-'} (${parseBalance({
             val: item.priceFloor,
-            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals))
+            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
           })}$${parseBalance({
             val: item.priceCap,
-            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals))
+            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
           })})`
         }
       }),
