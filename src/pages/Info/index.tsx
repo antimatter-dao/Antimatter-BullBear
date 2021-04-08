@@ -13,6 +13,7 @@ import { parseBalance } from '../../utils/marketStrategyUtils'
 import { CountUp } from 'use-count-up/lib'
 import PriceItem from './PriceItem'
 import AssetItem from './AssetItem'
+import { USDT } from '../../constants'
 
 export function NumberWithUnit({ unit, number }: { unit: string; number: string }) {
   return (
@@ -41,7 +42,6 @@ export default function Info() {
       }
     })
   }, [values])
-  console.log('allValue', allValue)
 
   const countUpAmountPrevious = '0'
   return (
@@ -65,7 +65,7 @@ export default function Info() {
                 isCounting
                 decimalPlaces={2}
                 start={parseFloat(countUpAmountPrevious)}
-                end={parseFloat(parseBalance({ val: allValue?.valueReserve ?? '0', token: WETH[ChainId.MAINNET] }))}
+                end={parseFloat(parseBalance({ val: allValue?.valueReserve ?? '0', token: USDT }))}
                 thousandsSeparator={','}
                 duration={1}
               />
@@ -79,9 +79,15 @@ export default function Info() {
               <AssetItem optionType={item} />
 
               <RowBetween>
-                <PriceItem address={item.callAddress ?? ''} total={parseBalance({ val: item.callTotal, token: WETH[ChainId.MAINNET] })} />
+                <PriceItem
+                  address={item.callAddress ?? ''}
+                  total={parseBalance({ val: item.callTotal, token: WETH[ChainId.MAINNET] })}
+                />
                 <div style={{ width: 16, height: '100%' }} />
-                <PriceItem address={item.putAddress ?? ''} total={parseBalance({ val: item.callTotal, token: WETH[ChainId.MAINNET] })} />
+                <PriceItem
+                  address={item.putAddress ?? ''}
+                  total={parseBalance({ val: item.callTotal, token: WETH[ChainId.MAINNET] })}
+                />
               </RowBetween>
             </>
           )

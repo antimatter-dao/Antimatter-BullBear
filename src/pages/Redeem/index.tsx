@@ -273,7 +273,7 @@ export default function Redeem() {
                         })})`
                       : 'Call Token'
                   }
-                  currency={currencyB}
+                  currency={currencyA}
                   negativeMarginTop="-25px"
                   currencyBalance={parseBalance({ val: balances?.putBalance, token: WETH[ChainId.MAINNET] })}
                   isCall={false}

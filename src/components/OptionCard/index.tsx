@@ -75,7 +75,7 @@ export function OptionCard({ optionType }: OptionCardProps) {
             <Text fontWeight={500} fontSize={16} style={{ minWidth: 'unset', marginRight: 12 }}>
               {`${parseBalance({
                 val: optionType.putBalance,
-                token: currencyToken
+                token: WETH[ChainId.MAINNET]
               })}`}
             </Text>
             <ButtonSecondary
