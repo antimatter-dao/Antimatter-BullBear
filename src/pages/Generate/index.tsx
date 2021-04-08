@@ -158,7 +158,7 @@ export default function Generate() {
           id: item.id,
           option: `${item.underlyingSymbol ?? '-'} (${JSBI.divide(
             JSBI.BigInt(item.priceFloor),
-            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.underlyingDecimals ?? 18))
+            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
           )}$${JSBI.divide(
             JSBI.BigInt(item.priceCap),
             JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
@@ -251,7 +251,7 @@ export default function Generate() {
               <CallOrPutInputPanel
                 value={putTyped ?? ''}
                 onUserInput={setPutTyped}
-                currency={currencyB || undefined}
+                currency={currencyA || undefined}
                 id="generate-output-token"
                 showCommonBases
                 halfWidth={true}

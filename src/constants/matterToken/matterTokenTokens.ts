@@ -1,6 +1,6 @@
 import { ChainId, Token, ETHER } from '@uniswap/sdk'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
-import { UNI } from '../index'
+import { ETH_CALL, ETH_PUT, MATTER_CALL, UNI, USDT } from '../index'
 
 interface Currencies {
   ETH_CALL?: Token
@@ -14,8 +14,7 @@ export const currencies: {
   [chainId in ChainId]?: Currencies
 } = {
   [ChainId.MAINNET]: {
-    ETH_CALL: new Token(ChainId.ROPSTEN, '0x1dA4A25AE837259cB2f14E362BA94aF015F77d7d', 18, 'ETH+', 'ETH+'),
-    ETH_PUT: new Token(ChainId.ROPSTEN, '0x747434F3334Ec885De96e2A8e053DcAeE0E7F492', 18, 'ETH-', 'ETH-')
+    ETHER: wrappedCurrency(ETHER, ChainId.MAINNET)
   },
   [ChainId.ROPSTEN]: {
     ETH_CALL: new Token(ChainId.ROPSTEN, '0x1dA4A25AE837259cB2f14E362BA94aF015F77d7d', 18, 'ETH+', 'ETH+'),
@@ -47,23 +46,23 @@ export const LPT_PAIRS: {
   [ChainId.MAINNET]: {
     [LPT_TYPE.ETH_CALL_DAI]: {
       title: '+ETH($1000)/USDT LP Pool',
-      currencyA: currencies[ChainId.ROPSTEN]?.ETH_CALL,
-      currencyB: currencies[ChainId.ROPSTEN]?.DAI
+      currencyA: ETH_CALL,
+      currencyB: USDT
     },
     [LPT_TYPE.ETH_PUT_DAI]: {
       title: '-ETH($3000)/USDT LP Pool',
-      currencyA: currencies[ChainId.ROPSTEN]?.ETH_PUT,
-      currencyB: currencies[ChainId.ROPSTEN]?.DAI
+      currencyA: ETH_PUT,
+      currencyB: USDT
     },
     [LPT_TYPE.MATTER_ETH]: {
       title: 'MATTER/ETH LP Pool',
-      currencyA: currencies[ChainId.ROPSTEN]?.MATTER,
-      currencyB: currencies[ChainId.ROPSTEN]?.ETHER
+      currencyA: UNI[ChainId.MAINNET],
+      currencyB: currencies[ChainId.MAINNET]?.ETHER
     },
     [LPT_TYPE.MATTER_CALL_MATTER]: {
       title: '+MATTER($1)/MATTER LP Pool',
-      currencyA: currencies[ChainId.ROPSTEN]?.MATTER,
-      currencyB: currencies[ChainId.ROPSTEN]?.ETHER
+      currencyA: MATTER_CALL,
+      currencyB: UNI[ChainId.MAINNET]
     }
   },
   [ChainId.ROPSTEN]: {
