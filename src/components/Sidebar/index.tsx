@@ -191,6 +191,7 @@ function ToggleMenu() {
                 {title}
               </TabBasic>
             ))}
+            <FAQButton onClick={() => setIsOpen(!isOpen)} />
           </AutoColumn>
         </TogggleMenuWrapper>
       )}
@@ -234,10 +235,10 @@ function ToggleTab({
     </>
   )
 }
-function FAQButton() {
+function FAQButton({ onClick }: { onClick?: () => void }) {
   const theme = useTheme()
   return (
-    <TabBasic to="/faq" style={{ marginTop: 'auto' }}>
+    <TabBasic to="/faq" style={{ marginTop: 'auto' }} onClick={onClick}>
       <RowFixed>
         <AutoRow
           justify="center"
