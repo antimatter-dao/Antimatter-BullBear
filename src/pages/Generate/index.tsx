@@ -229,7 +229,13 @@ export default function Generate() {
                 currency={currencyA || undefined}
                 id="generate-output-token"
                 showCommonBases
-                defaultSymbol={'Call Token'}
+                defaultSymbol={
+                  optionTypes[parseInt(optionType)]?.underlyingSymbol
+                    ? `+${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance(
+                        optionTypes[parseInt(optionType)]?.priceFloor
+                      )})`
+                    : 'Call Token'
+                }
                 halfWidth={true}
                 isCall={true}
               />
@@ -249,7 +255,13 @@ export default function Generate() {
                 id="generate-output-token"
                 showCommonBases
                 halfWidth={true}
-                defaultSymbol={'Put Token'}
+                defaultSymbol={
+                  optionTypes[parseInt(optionType)]?.underlyingSymbol
+                    ? `-${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance(
+                        optionTypes[parseInt(optionType)]?.priceCap
+                      )})`
+                    : 'Put Token'
+                }
                 negativeMarginTop={tokenType === TOKEN_TYPES.callPut ? '-20px' : '0'}
                 isCall={false}
               />

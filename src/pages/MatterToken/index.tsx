@@ -18,6 +18,7 @@ import usePrevious from '../../hooks/usePrevious'
 import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
 import { LPT_TYPE, LPT_PAIRS } from 'constants/matterToken/matterTokenTokens'
 import ButtonSelect from 'components/Button/ButtonSelect'
+import QuestionHelper from '../../components/QuestionHelper'
 
 const sectionPadding = '32px'
 const GridWrapper = styled.div`
@@ -224,7 +225,11 @@ export default function MatterToken() {
                   </section>
                   <section style={{ paddingBottom: 20 }}>
                     <TYPE.darkGray style={{ whiteSpace: 'nowrap' }} fontSize={14} fontWeight={400}>
-                      Total Network Rewards Per Cycle
+                      Total Network Rewards Per Day
+                      <QuestionHelper
+                        text={`+MATTER($1) 
+                       Matter Option Token`}
+                      />
                     </TYPE.darkGray>
                     <NumberUnitText
                       number={

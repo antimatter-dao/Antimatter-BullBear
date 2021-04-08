@@ -57,7 +57,7 @@ export default function QuestionHelper({ text }: { text: string }) {
     <span style={{ marginLeft: 4 }}>
       <Tooltip text={text} show={show}>
         <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
-          <Question size={12} />
+          <Question size={18} />
         </QuestionWrapper>
       </Tooltip>
     </span>

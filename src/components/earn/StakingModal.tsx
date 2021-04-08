@@ -16,7 +16,6 @@ import { usePairContract, useStakingContract } from '../../hooks/useContract'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { splitSignature } from 'ethers/lib/utils'
 import { StakingInfo, useDerivedStakeInfo } from '../../state/stake/hooks'
-import { wrappedCurrencyAmount } from '../../utils/wrappedCurrency'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { LoadingView, SubmittedView } from '../ModalViews'
@@ -50,16 +49,6 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   // track and parse user input
   const [typedValue, setTypedValue] = useState('')
   const { parsedAmount, error } = useDerivedStakeInfo(typedValue, stakingInfo.stakedAmount.token, userLiquidityUnstaked)
-  const parsedAmountWrapped = wrappedCurrencyAmount(parsedAmount, chainId)
-
-  let hypotheticalRewardRate: TokenAmount = new TokenAmount(stakingInfo.rewardRate.token, '0')
-  if (parsedAmountWrapped?.greaterThan('0')) {
-    hypotheticalRewardRate = stakingInfo.getHypotheticalRewardRate(
-      stakingInfo.stakedAmount.add(parsedAmountWrapped),
-      stakingInfo.totalStakedAmount.add(parsedAmountWrapped),
-      stakingInfo.totalRewardRate
-    )
-  }
 
   // state for pending and submitted txn views
   const addTransaction = useTransactionAdder()
@@ -223,13 +212,6 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
                   {
                     title: `LPT Staked`,
                     content: stakingInfo.stakedAmount.toSignificant(4) + ' LPT'
-                  },
-                  {
-                    title: `Weekly Rewards`,
-                    content:
-                      hypotheticalRewardRate
-                        .multiply((60 * 60 * 24 * 7).toString())
-                        .toSignificant(4, { groupSeparator: ',' }) + ' +MATTER($1)'
                   }
                 ]}
               />

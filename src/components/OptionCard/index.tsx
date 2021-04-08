@@ -8,6 +8,8 @@ import Card from '../Card'
 import { darken } from 'polished'
 import { OptionTypeData } from '../../state/market/hooks'
 import { parseBalance } from '../../utils/marketStrategyUtils'
+import CurrencyLogo from '../CurrencyLogo'
+import { useMarketCurrency } from '../../hooks/Tokens'
 
 export const FixedHeightRow = styled(RowBetween)`
   height: 24px;
@@ -27,16 +29,17 @@ interface OptionCardProps {
 }
 
 export function OptionCard({ optionType }: OptionCardProps) {
+  const currencyUnderlying = useMarketCurrency(optionType?.callAddress)
+  const currencyCurrency = useMarketCurrency(optionType?.putAddress)
   return (
     <>
       <HoverCard>
         <RowBetween>
           <RowFixed>
             {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
-            <Text fontWeight={500} fontSize={16} style={{ marginLeft: '' }}>
-              {`${optionType.underlyingSymbol ?? '-'}(${parseBalance(optionType.priceFloor)}$${parseBalance(
-                optionType.priceCap
-              )})Call`}
+            <CurrencyLogo currency={currencyUnderlying ?? undefined} />
+            <Text fontWeight={500} fontSize={16} style={{ marginLeft: '12px' }}>
+              {`+${optionType.underlyingSymbol ?? '-'}($${parseBalance(optionType.priceFloor)})`}
             </Text>
           </RowFixed>
 
@@ -58,10 +61,9 @@ export function OptionCard({ optionType }: OptionCardProps) {
         <RowBetween>
           <RowFixed>
             {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
-            <Text fontWeight={500} fontSize={16} style={{ marginLeft: '' }}>
-              {`${optionType.underlyingSymbol ?? '-'}(${parseBalance(optionType.priceFloor)}$${parseBalance(
-                optionType.priceCap
-              )})Put`}
+            <CurrencyLogo currency={currencyCurrency ?? undefined} />
+            <Text fontWeight={500} fontSize={16} style={{ marginLeft: '12px' }}>
+              {`-${optionType.underlyingSymbol ?? '-'}($${parseBalance(optionType.priceCap)})`}
             </Text>
           </RowFixed>
 

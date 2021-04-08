@@ -165,6 +165,11 @@
       },
       {
         "internalType": "address",
+        "name": "WETH",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
         "name": "feeTo",
         "type": "address"
       }
@@ -184,6 +189,11 @@
       {
         "internalType": "address",
         "name": "implPut",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "WETH",
         "type": "address"
       },
       {
@@ -881,6 +891,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "feeRate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -1509,7 +1532,7 @@
         "type": "uint256"
       }
     ],
-    "name": "prices",
+    "name": "priceValue",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1518,12 +1541,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "priceCall",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "pricePut",
+        "name": "valueReserve",
         "type": "uint256"
       }
     ],
@@ -1538,7 +1556,7 @@
         "type": "address"
       }
     ],
-    "name": "prices1",
+    "name": "priceValue1",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1547,12 +1565,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "priceCall",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "pricePut",
+        "name": "valueReserve",
         "type": "uint256"
       }
     ],
@@ -1582,7 +1595,7 @@
         "type": "uint256"
       }
     ],
-    "name": "prices4",
+    "name": "priceValue4",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1591,12 +1604,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "priceCall",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "pricePut",
+        "name": "valueReserve",
         "type": "uint256"
       }
     ],
@@ -1723,6 +1731,24 @@
       }
     ],
     "name": "setConfigI",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "feeRate_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "feeTo",
+        "type": "address"
+      }
+    ],
+    "name": "setFee",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

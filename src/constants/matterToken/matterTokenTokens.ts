@@ -28,6 +28,12 @@ export enum LPT_TYPE {
   MATTER_ETH = 'MATTER/ETH>+MATTER($1)'
 }
 
+export enum LPT_CYCLE_REWARDS {
+  ETH_CALL_DAI = 1000,
+  ETH_PUT_DAI = 1000,
+  MATTER_ETH = 1000
+}
+
 export const LPT_PAIRS: {
   [chainId in ChainId]?: {
     [lptType in LPT_TYPE]: { title: string; currencyA: Token | undefined; currencyB: Token | undefined }

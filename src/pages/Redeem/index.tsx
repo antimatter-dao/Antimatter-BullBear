@@ -235,7 +235,13 @@ export default function Redeem() {
                 <RedeemTokenPanel
                   value={callTypedAmount ?? ''}
                   onUserInput={setCallTypedAmount}
-                  label="Call Token"
+                  label={
+                    optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
+                      ? `+${optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}($${parseBalance(
+                          optionTypes[parseInt(optionTypeIndex)]?.priceFloor
+                        )})`
+                      : 'Call Token'
+                  }
                   currency={currencyA}
                   currencyBalance={parseBalance(balances?.callBalance)}
                   isCall={true}
@@ -246,7 +252,13 @@ export default function Redeem() {
                 <RedeemTokenPanel
                   value={putTypedAmount ?? ''}
                   onUserInput={setPutTypedAmount}
-                  label="Put Token"
+                  label={
+                    optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
+                      ? `+${optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}($${parseBalance(
+                          optionTypes[parseInt(optionTypeIndex)]?.priceCap
+                        )})`
+                      : 'Call Token'
+                  }
                   currency={currencyB}
                   negativeMarginTop="-25px"
                   currencyBalance={parseBalance(balances?.putBalance)}
