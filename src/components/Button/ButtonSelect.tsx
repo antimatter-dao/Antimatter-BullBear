@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
-import { ButtonProps, Text } from 'rebass/styled-components'
+import { ButtonProps } from 'rebass/styled-components'
 import { ButtonOutlined, Base } from '.'
 import { RowBetween, AutoRow } from '../Row'
 import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
@@ -74,14 +74,16 @@ export default function ButtonSelect({
   onSelection,
   selectedId,
   onClick,
+  width,
   placeholder = 'Select Option Type'
 }: ButtonProps & {
   label?: string
   onSelection?: (id: string) => void
-  options?: { id: string; option: string }[]
+  options?: { id: string; option: string | JSX.Element }[]
   selectedId?: string
   onClick?: () => void
   placeholder?: string
+  width?: string
 }) {
   const node = useRef<HTMLDivElement>()
   const theme = useTheme()
@@ -99,6 +101,7 @@ export default function ButtonSelect({
     }
     return children
   }, [options, children, setIsLoading, selectedId, placeholder])
+  console.log(options)
   return (
     <div style={{ position: 'relative' }}>
       {label && (
@@ -114,6 +117,7 @@ export default function ButtonSelect({
           onClick && onClick()
         }}
         selected={!!selectedId}
+        width={width}
       >
         <RowBetween>
           <div style={{ display: 'flex', alignItems: 'center' }}>{buttonContent}</div>
@@ -129,20 +133,21 @@ export default function ButtonSelect({
       )}
       {!isLoading && options && onSelection && (
         <OptionWrapper isOpen={isOpen} ref={node as any}>
-          {options.map(({ id, option }) => (
-            <SelectOption
-              key={id}
-              selected={selectedId === id}
-              onClick={() => {
-                onSelection(id)
-                setIsOpen(false)
-              }}
-            >
-              <Text fontSize={16} fontWeight={500}>
-                {option}
-              </Text>
-            </SelectOption>
-          ))}
+          {options.map(({ id, option }) => {
+            console.log(option)
+            return (
+              <SelectOption
+                key={id}
+                selected={selectedId === id}
+                onClick={() => {
+                  onSelection(id)
+                  setIsOpen(false)
+                }}
+              >
+                <div style={{ fontSize: 16, fontWeight: 500 }}>{option}</div>
+              </SelectOption>
+            )
+          })}
         </OptionWrapper>
       )}
     </div>

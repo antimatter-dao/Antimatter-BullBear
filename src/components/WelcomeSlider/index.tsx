@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { GradientCard } from 'components/Card'
 import { StyledDialogOverlay, StyledDialogContent } from 'components/Modal'
@@ -79,12 +79,15 @@ const pageContent = [
 
 export default function WelcomeSlider() {
   // const { account } = useActiveWeb3React()
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState<boolean>(!(window && window.localStorage.getItem('visited')))
   const [page, setPage] = useState(0)
   const isEndPage = page === pageContent.length - 1
   // const node = useRef<HTMLDivElement>()
   const theme = useTheme()
   // useOnClickOutside(node, () => setIsOpen(false))
+  useEffect(() => {
+    window && window.localStorage.setItem('visited', 'true')
+  }, [])
   const handleNextClick = () => {
     return page < pageContent.length - 1 ? setPage(page + 1) : setIsOpen(false)
   }
