@@ -57,3 +57,9 @@ export const LPT_PAIRS: {
     }
   }
 }
+
+export const LPT_rewardPerDay = {
+  [LPT_TYPE.ETH_CALL_DAI]: '100',
+  [LPT_TYPE.ETH_PUT_DAI]: '200',
+  [LPT_TYPE.MATTER_ETH]: '300'
+}

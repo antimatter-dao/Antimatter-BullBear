@@ -15,8 +15,8 @@ import { CountUp } from 'use-count-up'
 import { usePair } from '../../data/Reserves'
 
 import usePrevious from '../../hooks/usePrevious'
-import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
-import { LPT_TYPE, LPT_PAIRS } from 'constants/matterToken/matterTokenTokens'
+// import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
+import { LPT_TYPE, LPT_PAIRS, LPT_rewardPerDay } from 'constants/matterToken/matterTokenTokens'
 import ButtonSelect from 'components/Button/ButtonSelect'
 import QuestionHelper from '../../components/QuestionHelper'
 
@@ -231,7 +231,7 @@ export default function MatterToken() {
                        Matter Option Token`}
                       />
                     </TYPE.darkGray>
-                    <NumberUnitText
+                    {/* <NumberUnitText
                       number={
                         stakingInfo?.active
                           ? stakingInfo?.totalRewardRate
@@ -240,7 +240,8 @@ export default function MatterToken() {
                           : '0'
                       }
                       unit="Matter Option Token"
-                    />
+                    /> */}{' '}
+                    <NumberUnitText number={LPT_rewardPerDay[lptType]} unit="Matter Option Token" />
                   </section>
                 </div>
                 <div>

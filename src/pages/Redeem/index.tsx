@@ -4,7 +4,7 @@ import { ETHER } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
-import { ButtonError, ButtonPrimary } from '../../components/Button'
+import { ButtonError, ButtonOutlined, ButtonPrimary } from '../../components/Button'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import RedeemTokenPanel from '../../components/MarketStrategy/RedeemTokenPanel'
@@ -96,6 +96,8 @@ export default function Redeem() {
     tryParseAmount(delta?.totalCur.toString(), currencyB?.symbol === 'WETH' ? ETHER : currencyB ?? undefined),
     chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
   )
+  const approval1 = isNegative(delta?.totalUnd.toString()) ? ApprovalState.APPROVED : approvalA
+  const approval2 = isNegative(delta?.totalCur.toString()) ? ApprovalState.APPROVED : approvalB
 
   async function onRedeem() {
     if (!chainId || !library || !account) return
@@ -316,32 +318,32 @@ export default function Redeem() {
               <ButtonPrimary onClick={toggleWalletModal}>Connect Wallet</ButtonPrimary>
             ) : (
               <AutoColumn gap={'md'}>
-                {(approvalA === ApprovalState.NOT_APPROVED ||
-                  approvalA === ApprovalState.PENDING ||
-                  approvalB === ApprovalState.NOT_APPROVED ||
-                  approvalB === ApprovalState.PENDING) &&
+                {(approval1 === ApprovalState.NOT_APPROVED ||
+                  approval1 === ApprovalState.PENDING ||
+                  approval2 === ApprovalState.NOT_APPROVED ||
+                  approval2 === ApprovalState.PENDING) &&
                   isValid && (
                     <RowBetween>
-                      {approvalA !== ApprovalState.APPROVED && (
+                      {approval1 !== ApprovalState.APPROVED && (
                         <ButtonPrimary
                           onClick={approveACallback}
-                          disabled={approvalA === ApprovalState.PENDING}
-                          width={approvalB !== ApprovalState.APPROVED ? '48%' : '100%'}
+                          disabled={approval1 === ApprovalState.PENDING}
+                          width={approval2 !== ApprovalState.APPROVED ? '48%' : '100%'}
                         >
-                          {approvalA === ApprovalState.PENDING ? (
+                          {approval1 === ApprovalState.PENDING ? (
                             <Dots>Approving {optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}</Dots>
                           ) : (
                             'Approve ' + optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
                           )}
                         </ButtonPrimary>
                       )}
-                      {approvalB !== ApprovalState.APPROVED && (
+                      {approval2 !== ApprovalState.APPROVED && (
                         <ButtonPrimary
                           onClick={approveBCallback}
-                          disabled={approvalB === ApprovalState.PENDING}
-                          width={approvalA !== ApprovalState.APPROVED ? '48%' : '100%'}
+                          disabled={approval2 === ApprovalState.PENDING}
+                          width={approval1 !== ApprovalState.APPROVED ? '48%' : '100%'}
                         >
-                          {approvalB === ApprovalState.PENDING ? (
+                          {approval2 === ApprovalState.PENDING ? (
                             <Dots>Approving {optionTypes[parseInt(optionTypeIndex)]?.currencySymbol}</Dots>
                           ) : (
                             'Approve ' + optionTypes[parseInt(optionTypeIndex)]?.currencySymbol
@@ -350,18 +352,21 @@ export default function Redeem() {
                       )}
                     </RowBetween>
                   )}
-                <ButtonError
-                  onClick={() => {
-                    expertMode ? onRedeem() : setShowConfirm(true)
-                  }}
-                  disabled={
-                    !!redeemError || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED
-                  }
-                >
-                  <Text fontSize={16} fontWeight={500}>
-                    {redeemError ?? (tokenType === TOKEN_TYPES.callPut ? 'Redeem' : 'Exercise')}
-                  </Text>
-                </ButtonError>
+                {redeemError && <ButtonOutlined style={{ opacity: '0.5' }}>{redeemError}</ButtonOutlined>}
+                {!redeemError && (
+                  <ButtonError
+                    onClick={() => {
+                      expertMode ? onRedeem() : setShowConfirm(true)
+                    }}
+                    disabled={
+                      !!redeemError || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED
+                    }
+                  >
+                    <Text fontSize={16} fontWeight={500}>
+                      {redeemError ?? (tokenType === TOKEN_TYPES.callPut ? 'Redeem' : 'Exercise')}
+                    </Text>
+                  </ButtonError>
+                )}
               </AutoColumn>
             )}
           </AutoColumn>

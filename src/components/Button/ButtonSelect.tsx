@@ -64,6 +64,7 @@ const SelectOption = styled(Base)<{ selected: boolean }>`
   :active {
     background-color: ${({ theme }) => theme.bg3};
   }
+  justify-content: flex-start;
 `
 
 export default function ButtonSelect({

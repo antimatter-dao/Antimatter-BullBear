@@ -37,6 +37,8 @@ import Exercise from './Exercise'
 import ComingSoon from './ComingSoon'
 import Info from './Info'
 import MatterRedemption from './MatterToken/MatterRedemption'
+import WelcomeSlider from 'components/WelcomeSlider'
+import FAQ from './FAQ'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -103,6 +105,7 @@ export default function App() {
           <BodyWrapper>
             <Popups />
             <Polling />
+            <WelcomeSlider />
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>
@@ -133,6 +136,7 @@ export default function App() {
                 <Route exact strict path="/remove/v1/:address" component={RemoveV1Exchange} />
                 <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
                 <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                <Route exact strict path="/faq" component={FAQ} />
                 {/* <Route exact strict path="/migrate/v1" component={MigrateV1} />
                 <Route exact strict path="/migrate/v1/:address" component={MigrateV1Exchange} /> */}
                 {/* <Route exact strict path="/vote/:id" component={VotePage} /> */}

@@ -4,7 +4,7 @@ import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
-import { ButtonError, ButtonPrimary } from '../../components/Button'
+import { ButtonError, ButtonPrimary, ButtonOutlined } from '../../components/Button'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CallOrPutInputPanel from '../../components/CallOrPutInputPanel'
@@ -279,9 +279,9 @@ export default function Generate() {
             )}
 
             {!optionType || !delta ? (
-              <ButtonPrimary disabled={true}>
-                <TYPE.main mb="4px">Enter Amount</TYPE.main>
-              </ButtonPrimary>
+              <ButtonOutlined style={{ opacity: '0.5' }} disabled={true}>
+                <TYPE.main>Enter Amount</TYPE.main>
+              </ButtonOutlined>
             ) : !account ? (
               <ButtonPrimary onClick={toggleWalletModal} borderRadius="49px">
                 Connect Wallet
@@ -322,17 +322,20 @@ export default function Generate() {
                       )}
                     </RowBetween>
                   )}
-                <ButtonError
-                  onClick={() => {
-                    expertMode ? onGenerate() : setShowConfirm(true)
-                  }}
-                  disabled={!isValid || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED}
-                  error={!isValid && !callTyped && !putTyped}
-                >
-                  <Text fontSize={16} fontWeight={500}>
-                    {error ?? 'Generate'}
-                  </Text>
-                </ButtonError>
+                {error && <ButtonOutlined style={{ opacity: '0.5' }}>{error}</ButtonOutlined>}
+                {!error && (
+                  <ButtonError
+                    onClick={() => {
+                      expertMode ? onGenerate() : setShowConfirm(true)
+                    }}
+                    disabled={!isValid || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED}
+                    error={!isValid && !callTyped && !putTyped}
+                  >
+                    <Text fontSize={16} fontWeight={500}>
+                      {error ?? 'Generate'}
+                    </Text>
+                  </ButtonError>
+                )}
               </AutoColumn>
             )}
           </AutoColumn>
