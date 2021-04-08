@@ -37,6 +37,7 @@ import Exercise from './Exercise'
 import ComingSoon from './ComingSoon'
 import Info from './Info'
 import MatterRedemption from './MatterToken/MatterRedemption'
+import WelcomeSlider from 'components/WelcomeSlider'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -103,6 +104,7 @@ export default function App() {
           <BodyWrapper>
             <Popups />
             <Polling />
+            <WelcomeSlider />
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>
