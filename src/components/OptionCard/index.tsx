@@ -28,7 +28,7 @@ interface OptionCardProps {
 export function OptionCard({ optionType }: OptionCardProps) {
   const currencyUnderlying = useCurrency(optionType?.callAddress)
   const currencyCurrency = useCurrency(optionType?.putAddress)
-  const currencyToken = new Token(1, optionType.currency, Number(optionType.currencyDecimals))
+  const currencyToken = new Token(1, optionType.currency, Number(optionType.currencyDecimals ?? '0'))
   return (
     <>
       <HoverCard>
