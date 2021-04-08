@@ -32,7 +32,6 @@ export default function Info() {
   const theme = useTheme()
   const values = useValues()
   const optionTypes = useAllOptionTypes()
-  console.log('optionTypes', optionTypes)
   const allValue = useMemo(() => {
     if (!values || values.length === 0) return undefined
     return values?.reduce((pre, cur) => {
@@ -42,6 +41,7 @@ export default function Info() {
       }
     })
   }, [values])
+  console.log('allValue', allValue)
 
   const countUpAmountPrevious = '0'
   return (

@@ -247,7 +247,7 @@ export default function MatterToken() {
                       Token LPT Staked
                     </TYPE.darkGray>
                     <NumberUnitText
-                      number={stakingInfo?.stakedAmount.toSignificant(4, { groupSeparator: ',' })}
+                      number={stakingInfo?.totalStakedAmount.toSignificant(4, { groupSeparator: ',' })}
                       unit="LPT"
                     />
                   </section>

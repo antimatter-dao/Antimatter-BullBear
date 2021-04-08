@@ -13,13 +13,12 @@ import { AutoRow, RowBetween } from '../../components/Row'
 import { useActiveWeb3React } from '../../hooks'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useIsExpertMode } from '../../state/user/hooks'
-import { TYPE } from '../../theme'
 import AppBody from '../AppBody'
 import { Wrapper } from '../Pool/styleds'
 import { ConfirmRedeemModalBottom } from './ConfirmRedeemModalBottom'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useMarketCurrency } from '../../hooks/Tokens'
-import { OptionTypeData, useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
+import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
 import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
 import { TypeRadioButton, TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
@@ -30,15 +29,6 @@ import { isNegative, parseBalance, parsedGreaterThan } from '../../utils/marketS
 import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback'
 import { Dots } from 'components/swap/styleds'
 import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
-
-const findPrice = ({ option, isCall, token }: { option?: OptionTypeData; isCall?: boolean; token: Token }) => {
-  if (!option) {
-    return ''
-  }
-  return isCall
-    ? parseBalance({ val: option.priceFloor, token: token })
-    : parseBalance({ val: option.priceCap, token: token })
-}
 
 export default function Redeem() {
   const [optionTypeIndex, setOptionTypeIndex] = useState('')
@@ -291,33 +281,6 @@ export default function Redeem() {
               </>
             ) : (
               <>
-                {currencyA && currencyB && (
-                  <AutoColumn gap="4px">
-                    <AutoRow>
-                      <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
-                        Token Exercise
-                      </TYPE.body>
-                    </AutoRow>
-                    <div
-                      style={{
-                        width: '100%',
-                        border: `1px solid ${theme.bg3}`,
-                        padding: '0 20px',
-                        borderRadius: '14px',
-                        color: theme.text3,
-                        height: '3rem',
-                        lineHeight: '48px'
-                      }}
-                    >
-                      {`You have the rights to ${isCallToken ? 'purchase' : 'sell'} ${currencyA?.symbol ??
-                        ''} at ${findPrice({
-                        option: selectedOptionType,
-                        isCall: isCallToken,
-                        token: currencyToken
-                      })} ${currencyB?.symbol ?? ''}`}
-                    </div>
-                  </AutoColumn>
-                )}
                 <RedeemTokenPanel
                   inputOnly={true}
                   value={isCallToken ? callTypedAmount : putTypedAmount}

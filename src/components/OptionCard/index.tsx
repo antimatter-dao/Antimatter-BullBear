@@ -10,7 +10,7 @@ import { OptionTypeData } from '../../state/market/hooks'
 import { parseBalance } from '../../utils/marketStrategyUtils'
 import { useCurrency } from '../../hooks/Tokens'
 import AntimatterCurrencyLogo from '../CurrencyLogo/AntimatterCurrencyLogo'
-import { Token } from '@uniswap/sdk'
+import { ChainId, Token, WETH } from '@uniswap/sdk'
 
 export const HoverCard = styled(Card)`
   border: 1px solid transparent;
@@ -46,7 +46,7 @@ export function OptionCard({ optionType }: OptionCardProps) {
 
           <RowFixed>
             <Text fontWeight={500} fontSize={16} style={{ minWidth: 'unset', marginRight: 12 }}>
-              {`${parseBalance({ val: optionType.callBalance, token: currencyToken })}`}
+              {`${parseBalance({ val: optionType.callBalance, token: WETH[ChainId.MAINNET] })}`}
             </Text>
             <ButtonSecondary
               style={{ backgroundColor: 'transparent' }}
