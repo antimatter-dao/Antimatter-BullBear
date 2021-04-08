@@ -69,7 +69,7 @@ export function useValues(): Value[] | undefined {
   const antimatterContract = useAntimatterContract()
   const optionTypeCount = useOptionTypeCount()
   const optionTypeIndexes = []
-  for (let i = 0; i < (optionTypeCount ?? 0); i++) {
+  for (let i = 1; i < (optionTypeCount ?? 0); i++) {
     optionTypeIndexes.push([i])
   }
   const callAddressesRes = useSingleContractMultipleData(antimatterContract, 'allCalls', optionTypeIndexes)
@@ -105,7 +105,7 @@ export function useAllOptionTypes() {
   const antimatterContract = useAntimatterContract()
   const optionTypeCount = useOptionTypeCount()
   const optionTypeIndexes = []
-  for (let i = 0; i < (optionTypeCount ?? 0); i++) {
+  for (let i = 1; i < (optionTypeCount ?? 0); i++) {
     optionTypeIndexes.push([i])
   }
 
@@ -205,7 +205,7 @@ export function useAllOptionTypes() {
     NEVER_RELOAD
   )
   const currencyDecimalsRes = useMultipleContractSingleData(
-    underlyingAddresses,
+    currencyAddresses,
     ERC20_INTERFACE,
     'decimals',
     undefined,

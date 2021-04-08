@@ -8,12 +8,8 @@ import Card from '../Card'
 import { darken } from 'polished'
 import { OptionTypeData } from '../../state/market/hooks'
 import { parseBalance } from '../../utils/marketStrategyUtils'
-import CurrencyLogo from '../CurrencyLogo'
-import { useMarketCurrency } from '../../hooks/Tokens'
-
-export const FixedHeightRow = styled(RowBetween)`
-  height: 24px;
-`
+import { useCurrency } from '../../hooks/Tokens'
+import AntimatterCurrencyLogo from '../CurrencyLogo/AntimatterCurrencyLogo'
 
 export const HoverCard = styled(Card)`
   border: 1px solid transparent;
@@ -29,17 +25,21 @@ interface OptionCardProps {
 }
 
 export function OptionCard({ optionType }: OptionCardProps) {
-  const currencyUnderlying = useMarketCurrency(optionType?.callAddress)
-  const currencyCurrency = useMarketCurrency(optionType?.putAddress)
+  const currencyUnderlying = useCurrency(optionType?.callAddress)
+  const currencyCurrency = useCurrency(optionType?.putAddress)
   return (
     <>
       <HoverCard>
         <RowBetween>
           <RowFixed>
             {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
-            <CurrencyLogo currency={currencyUnderlying ?? undefined} />
+            <AntimatterCurrencyLogo currency={currencyUnderlying ?? undefined} />
             <Text fontWeight={500} fontSize={16} style={{ marginLeft: '12px' }}>
-              {`+${optionType.underlyingSymbol ?? '-'}($${parseBalance(optionType.priceFloor)})`}
+              {`+${optionType.underlyingSymbol ?? '-'}($${parseBalance(
+                optionType.priceFloor,
+                2,
+                optionType.currencyDecimals?.toString()
+              )})`}
             </Text>
           </RowFixed>
 
@@ -61,15 +61,19 @@ export function OptionCard({ optionType }: OptionCardProps) {
         <RowBetween>
           <RowFixed>
             {/*<DoubleCurrencyLogo currency0={currencyCall} currency1={currencyPut} margin={true} size={20} />*/}
-            <CurrencyLogo currency={currencyCurrency ?? undefined} />
+            <AntimatterCurrencyLogo currency={currencyCurrency ?? undefined} />
             <Text fontWeight={500} fontSize={16} style={{ marginLeft: '12px' }}>
-              {`-${optionType.underlyingSymbol ?? '-'}($${parseBalance(optionType.priceCap)})`}
+              {`-${optionType.underlyingSymbol ?? '-'}($${parseBalance(
+                optionType.priceCap,
+                2,
+                optionType.currencyDecimals?.toString()
+              )})`}
             </Text>
           </RowFixed>
 
           <RowFixed>
             <Text fontWeight={500} fontSize={16} style={{ minWidth: 'unset', marginRight: 12 }}>
-              {`${parseBalance(optionType.putBalance, 2)}`}
+              {`${parseBalance(optionType.putBalance, 2, optionType.currencyDecimals ?? '18')}`}
             </Text>
             <ButtonSecondary
               style={{ backgroundColor: 'transparent' }}
