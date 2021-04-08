@@ -2,14 +2,14 @@ import React from 'react'
 import { AutoColumn } from '../../components/Column'
 import { TYPE } from '../../theme'
 import { Divider, NumberWithUnit } from './index'
-import useUSDCPrice from '../../utils/useUSDCPrice'
 import { useCurrency } from '../../hooks/Tokens'
 import { TranslucentCard } from '../../components/Card'
 import { ReactComponent as PutToken } from '../../assets/svg/put_token.svg'
+import { useUSDTPrice } from '../../utils/useUSDCPrice'
 
 export default function PriceItem({ address, total }: { address: string; total: string }) {
   const currency = useCurrency(address)
-  const price = useUSDCPrice(currency ?? undefined)
+  const price = useUSDTPrice(currency ?? undefined)
   return (
     <TranslucentCard>
       <AutoColumn>

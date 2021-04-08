@@ -86,8 +86,6 @@ export function useValues(): Value[] | undefined {
 
   const valuesRes = useSingleContractMultipleData(antimatterContract, 'priceValue1', callAddresses)
 
-  console.log('valuesRes', valuesRes)
-
   return valuesRes
     .filter(item => {
       return item.result
