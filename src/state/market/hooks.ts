@@ -69,7 +69,7 @@ export function useValues(): Value[] | undefined {
   const antimatterContract = useAntimatterContract()
   //const optionTypeCount = useOptionTypeCount()
   const optionTypeIndexes = []
-  for (let i = 1; i < 2; i++) {
+  for (let i = 0; i < 2; i++) {
     optionTypeIndexes.push([i])
   }
   const callAddressesRes = useSingleContractMultipleData(antimatterContract, 'allCalls', optionTypeIndexes)
@@ -103,7 +103,7 @@ export function useAllOptionTypes() {
   const antimatterContract = useAntimatterContract()
   //const optionTypeCount = useOptionTypeCount()
   const optionTypeIndexes = []
-  for (let i = 1; i < 2; i++) {
+  for (let i = 0; i < 2; i++) {
     optionTypeIndexes.push([i])
   }
 
