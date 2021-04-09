@@ -82,6 +82,7 @@ export default function Info() {
                 <PriceItem
                   address={item.callAddress ?? ''}
                   total={parseBalance({ val: item.callTotal, token: WETH[ChainId.MAINNET] })}
+                  isCall
                 />
                 <div style={{ width: 16, height: '100%' }} />
                 <PriceItem
