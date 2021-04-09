@@ -125,6 +125,7 @@ export default function Generate() {
       delta.dCur.toString()
     ]
 
+
     if (optionTypes[parseInt(optionType)].underlyingSymbol === 'ETH') {
       value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
     }
