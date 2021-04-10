@@ -7,7 +7,7 @@ export default function MatterToken() {
   return (
     <AutoColumn gap="4rem">
       {Object.keys(LPT_TYPE).map(lpt => (
-        <MatterTokenManageModal lptType={LPT_TYPE[lpt as keyof typeof LPT_TYPE]} />
+        <MatterTokenManageModal key={lpt} lptType={LPT_TYPE[lpt as keyof typeof LPT_TYPE]} />
       ))}
     </AutoColumn>
   )
