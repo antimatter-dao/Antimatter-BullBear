@@ -18,10 +18,14 @@ export default function AssetItem({ optionType }: { optionType: OptionTypeData }
   return (
     <TranslucentCard>
       <AutoColumn gap="16px">
-        <TYPE.smallGray>
-          {optionType.underlyingSymbol ?? '-'}({parseBalance(optionType.priceFloor) ?? '-'}$
-          {parseBalance(optionType.priceCap) ?? '-'}) underlying asset
-        </TYPE.smallGray>
+        {currencyToken && (
+          <TYPE.smallGray>
+            {optionType.underlyingSymbol ?? '-'}(
+            {parseBalance({ val: optionType.priceFloor, token: currencyToken }) ?? '-'}$
+            {parseBalance({ val: optionType.priceCap, token: currencyToken }) ?? '-'}) underlying asset
+          </TYPE.smallGray>
+        )}
+
         <AutoRow>
           <NumberWithUnit
             number={underlyingBalance?.toFixed(2, { groupSeparator: ',' }) ?? '-'}

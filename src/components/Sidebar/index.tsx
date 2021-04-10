@@ -29,7 +29,7 @@ const tabs: Tab[] = [
     route: 'matter_token',
     children: [
       {
-        title: 'Liquidity Mining',
+        title: 'Farming',
         route: 'matter_token'
       },
       { title: 'Matter Option Redemption ', route: 'matter_redemption' }

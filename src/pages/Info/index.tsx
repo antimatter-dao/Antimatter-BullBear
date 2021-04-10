@@ -8,11 +8,12 @@ import { TranslucentCard } from 'components/Card'
 import useTheme from 'hooks/useTheme'
 import antimatterLogo from 'assets/svg/antimatter_background_logo.svg'
 import { useAllOptionTypes, useValues } from '../../state/market/hooks'
-import { JSBI } from '@uniswap/sdk'
+import { ChainId, JSBI, WETH } from '@uniswap/sdk'
 import { parseBalance } from '../../utils/marketStrategyUtils'
 import { CountUp } from 'use-count-up/lib'
 import PriceItem from './PriceItem'
 import AssetItem from './AssetItem'
+import { USDT } from '../../constants'
 
 export function NumberWithUnit({ unit, number }: { unit: string; number: string }) {
   return (
@@ -32,7 +33,6 @@ export default function Info() {
   const theme = useTheme()
   const values = useValues()
   const optionTypes = useAllOptionTypes()
-  console.log('optionTypes', optionTypes)
   const allValue = useMemo(() => {
     if (!values || values.length === 0) return undefined
     return values?.reduce((pre, cur) => {
@@ -44,7 +44,6 @@ export default function Info() {
   }, [values])
 
   const countUpAmountPrevious = '0'
-  console.log('allValue', parseBalance(allValue?.valueReserve))
   return (
     <AppBody style={{ maxWidth: '640px' }}>
       <AutoRow justify="center">
@@ -62,11 +61,11 @@ export default function Info() {
             <TYPE.main fontWeight={500} fontSize={40} color={theme.primary1}>
               $
               <CountUp
-                key={parseBalance(allValue?.valueReserve)}
+                key={parseBalance({ val: allValue?.valueReserve, token: WETH[ChainId.MAINNET] })}
                 isCounting
                 decimalPlaces={2}
                 start={parseFloat(countUpAmountPrevious)}
-                end={parseFloat(parseBalance(allValue?.valueReserve ?? '0'))}
+                end={parseFloat(parseBalance({ val: allValue?.valueReserve ?? '0', token: USDT }))}
                 thousandsSeparator={','}
                 duration={1}
               />
@@ -80,9 +79,16 @@ export default function Info() {
               <AssetItem optionType={item} />
 
               <RowBetween>
-                <PriceItem address={item.callAddress ?? ''} total={parseBalance(item.callTotal)} />
+                <PriceItem
+                  address={item.callAddress ?? ''}
+                  total={parseBalance({ val: item.callTotal, token: WETH[ChainId.MAINNET] })}
+                  isCall
+                />
                 <div style={{ width: 16, height: '100%' }} />
-                <PriceItem address={item.putAddress ?? ''} total={parseBalance(item.callTotal)} />
+                <PriceItem
+                  address={item.putAddress ?? ''}
+                  total={parseBalance({ val: item.callTotal, token: WETH[ChainId.MAINNET] })}
+                />
               </RowBetween>
             </>
           )

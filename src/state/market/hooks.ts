@@ -67,9 +67,9 @@ export function useOptionTypeCount(): number | undefined {
 
 export function useValues(): Value[] | undefined {
   const antimatterContract = useAntimatterContract()
-  const optionTypeCount = useOptionTypeCount()
+  //const optionTypeCount = useOptionTypeCount()
   const optionTypeIndexes = []
-  for (let i = 1; i < (optionTypeCount ?? 0); i++) {
+  for (let i = 0; i < 2; i++) {
     optionTypeIndexes.push([i])
   }
   const callAddressesRes = useSingleContractMultipleData(antimatterContract, 'allCalls', optionTypeIndexes)
@@ -86,8 +86,6 @@ export function useValues(): Value[] | undefined {
 
   const valuesRes = useSingleContractMultipleData(antimatterContract, 'priceValue1', callAddresses)
 
-  console.log('valuesRes', valuesRes)
-
   return valuesRes
     .filter(item => {
       return item.result
@@ -103,9 +101,9 @@ export function useValues(): Value[] | undefined {
 export function useAllOptionTypes() {
   const { account } = useActiveWeb3React()
   const antimatterContract = useAntimatterContract()
-  const optionTypeCount = useOptionTypeCount()
+  //const optionTypeCount = useOptionTypeCount()
   const optionTypeIndexes = []
-  for (let i = 1; i < (optionTypeCount ?? 0); i++) {
+  for (let i = 0; i < 2; i++) {
     optionTypeIndexes.push([i])
   }
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react'
-import { ETHER } from '@uniswap/sdk'
+import { ChainId, ETHER, Token, WETH } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { TransactionResponse } from '@ethersproject/providers'
 import { ButtonError, ButtonPrimary } from '../../components/Button'
@@ -25,7 +25,7 @@ import { calculateGasMargin } from '../../utils'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { isNegative, parseBalance, parsedGreaterThan } from '../../utils/marketStrategyUtils'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
-import { ANTIMATTER_ADDRESS } from '../../constants'
+import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
 import { Dots } from '../../components/swap/styleds'
 
 export default function Redeem() {
@@ -200,7 +200,7 @@ export default function Redeem() {
                 onUserInput={setCallTypedAmount}
                 label="+Matter($1)"
                 currency={currencyA}
-                currencyBalance={parseBalance(balances?.callBalance)}
+                currencyBalance={parseBalance({ val: balances?.callBalance, token: WETH[ChainId.MAINNET] })}
                 isCall={true}
               />
             </>
@@ -210,8 +210,14 @@ export default function Redeem() {
                 currency0={currencyA}
                 currency1={currencyB}
                 subTitle="Output Token"
-                callVol={delta && parseBalance(delta.dUnd, 4)}
-                putVol={delta && parseBalance(delta.dCur, 4)}
+                callVol={
+                  delta &&
+                  parseBalance({ val: delta.dUnd, token: new Token(1, ZERO_ADDRESS, currencyA.decimals ?? 18) })
+                }
+                putVol={
+                  delta &&
+                  parseBalance({ val: delta.dCur, token: new Token(1, ZERO_ADDRESS, currencyB.decimals ?? 18) })
+                }
               />
             )}
 
