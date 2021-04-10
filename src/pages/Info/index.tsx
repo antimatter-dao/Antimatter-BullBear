@@ -87,7 +87,7 @@ export default function Info() {
                 <div style={{ width: 16, height: '100%' }} />
                 <PriceItem
                   address={item.putAddress ?? ''}
-                  total={parseBalance({ val: item.callTotal, token: WETH[ChainId.MAINNET] })}
+                  total={parseBalance({ val: item.putTotal, token: WETH[ChainId.MAINNET] })}
                 />
               </RowBetween>
             </>
