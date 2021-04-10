@@ -21,7 +21,7 @@ import { ReactComponent as Logo2 } from 'assets/svg/ETH-_USDT.svg'
 import { ReactComponent as Logo3 } from 'assets/svg/ETH_Matter.svg'
 import { ReactComponent as Logo4 } from 'assets/svg/Matter+_matter.svg'
 import { AutoRow, RowBetween } from 'components/Row'
-import Card from 'components/Card'
+import Card, { OutlineCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
 
 const sectionPadding = '25px'
@@ -66,6 +66,12 @@ const LPTWrapper = styled.div`
     }
   }
 `
+const APYCard = styled(OutlineCard)`
+  border-radius: 10px;
+  padding: 9px;
+  min-width: 122px;
+  width: fit-content;
+`
 
 enum STAKING_MODAL_TYPE {
   STAKE = 'stake',
@@ -108,7 +114,6 @@ const Logos = {
 }
 
 export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE }) {
-  // const [lptType, setLptType] = useState<LPT_TYPE>(LPT_TYPE.ETH_CALL_DAI)
   const [modalType, setModalType] = useState<STAKING_MODAL_TYPE | undefined>(undefined)
   const { account, chainId } = useActiveWeb3React()
   // get currencies and pair
@@ -174,6 +179,12 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                     {lptType}
                   </AutoRow>
                 </OptionCard>
+                <APYCard>
+                  <RowBetween>
+                    <TYPE.smallGray fontSize={14}>APY</TYPE.smallGray>
+                    <TYPE.body fontSize={20}>1000%</TYPE.body>
+                  </RowBetween>
+                </APYCard>
               </RowBetween>
               <TYPE.darkGray fontSize={20} fontWeight={400}>
                 Your Staking Rewards Estimation
