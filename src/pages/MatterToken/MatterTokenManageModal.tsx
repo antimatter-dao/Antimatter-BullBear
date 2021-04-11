@@ -117,17 +117,16 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
   const [modalType, setModalType] = useState<STAKING_MODAL_TYPE | undefined>(undefined)
   const { account, chainId } = useActiveWeb3React()
   // get currencies and pair
-  const [tokenA, tokenB] = [LPT_PAIRS[chainId ?? 3]?.[lptType].currencyA, LPT_PAIRS[chainId ?? 3]?.[lptType].currencyB]
-
+  const [tokenA, tokenB] = [LPT_PAIRS[chainId ?? 1]?.[lptType].currencyA, LPT_PAIRS[chainId ?? 1]?.[lptType].currencyB]
   const [, stakingTokenPair] = usePair(tokenA, tokenB)
   const stakingInfo = useStakingInfo(stakingTokenPair)?.[0]
   // detect existing unstaked LP position to show add button if none found
   const userLiquidityUnstaked = useTokenBalance(account ?? undefined, stakingInfo?.stakedAmount?.token)
   // const showAddLiquidityButton = Boolean(stakingInfo?.stakedAmount?.equalTo('0') && userLiquidityUnstaked?.equalTo('0'))
 
-  const countUpAmount = stakingInfo?.active
-    ? stakingInfo?.earnedAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '-'
-    : '0'
+  const countUpAmount = stakingInfo?.active ? stakingInfo?.earnedAmount?.toSignificant(6) ?? '-' : '0'
+  console.log('tag--->', countUpAmount)
+
   const countUpAmountPrevious = usePrevious(countUpAmount) ?? '0'
 
   const toggleWalletModal = useWalletModalToggle()
