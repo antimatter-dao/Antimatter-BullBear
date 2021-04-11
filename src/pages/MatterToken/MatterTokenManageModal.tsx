@@ -14,7 +14,7 @@ import { CountUp } from 'use-count-up'
 import { usePair } from '../../data/Reserves'
 import usePrevious from '../../hooks/usePrevious'
 // import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
-import { LPT_TYPE, LPT_PAIRS, LPT_RewardPerDay } from 'constants/matterToken/matterTokenTokens'
+import { LPT_PAIRS, LPT_RewardPerDay, LPT_TYPE } from 'constants/matterToken/matterTokenTokens'
 import QuestionHelper from '../../components/QuestionHelper'
 import { ReactComponent as Logo1 } from 'assets/svg/ETH+_USDT.svg'
 import { ReactComponent as Logo2 } from 'assets/svg/ETH-_USDT.svg'
@@ -179,10 +179,15 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                     {lptType}
                   </AutoRow>
                 </OptionCard>
+
                 <APYCard>
                   <RowBetween>
                     <TYPE.smallGray fontSize={14}>APY</TYPE.smallGray>
-                    <TYPE.body fontSize={20}>1000%</TYPE.body>
+                    {stakingInfo && lptType !== LPT_TYPE.MATTER_CALL_MATTER && (
+                      <TYPE.body fontSize={20}>
+                        {`${stakingInfo?.apy.divide('10000000000000000').quotient} %`}
+                      </TYPE.body>
+                    )}
                   </RowBetween>
                 </APYCard>
               </RowBetween>
@@ -213,7 +218,12 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   Matter Option Token
                 </TYPE.body>
               </TYPE.largeHeader>
-              <ButtonPrimary height="48px" width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}>
+              <ButtonPrimary
+                disabled={lptType === LPT_TYPE.MATTER_CALL_MATTER}
+                height="48px"
+                width="100%"
+                onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}
+              >
                 Claim Rewards
               </ButtonPrimary>
               <RowBetween>
@@ -233,7 +243,11 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                        Matter Option Token`}
                   />
                 </TYPE.darkGray>
-                <NumberUnitText number={LPT_RewardPerDay[lptType]} unit="Matter Option Token" />
+                {lptType === LPT_TYPE.MATTER_CALL_MATTER ? (
+                  <NumberUnitText number={'pending'} unit="" />
+                ) : (
+                  <NumberUnitText number={LPT_RewardPerDay[lptType]} unit="Matter Option Token" />
+                )}
               </RowBetween>
             </AutoColumn>
           </ClaimRewardWrapper>
@@ -244,7 +258,11 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   Your Stake
                 </TYPE.darkGray>
                 <NumberUnitText number={stakingInfo?.stakedAmount?.toSignificant(6) ?? '-'} unit="LPT" />
-                <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.UNSTAKE)}>
+                <ButtonPrimary
+                  disabled={lptType === LPT_TYPE.MATTER_CALL_MATTER}
+                  width="100%"
+                  onClick={handleModalClick(STAKING_MODAL_TYPE.UNSTAKE)}
+                >
                   Unstake LPT
                 </ButtonPrimary>
               </AutoColumn>
@@ -255,7 +273,11 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   Your Balance
                 </TYPE.darkGray>
                 <NumberUnitText number={userLiquidityUnstaked?.toSignificant(6) ?? '-'} unit="LPT" />
-                <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.STAKE)}>
+                <ButtonPrimary
+                  disabled={lptType === LPT_TYPE.MATTER_CALL_MATTER}
+                  width="100%"
+                  onClick={handleModalClick(STAKING_MODAL_TYPE.STAKE)}
+                >
                   Stake LPT
                 </ButtonPrimary>
               </AutoColumn>

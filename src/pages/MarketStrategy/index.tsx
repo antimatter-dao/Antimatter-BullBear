@@ -88,7 +88,7 @@ export default function MarketStrategy() {
               {!account ? (
                 <Card padding="12px" border={`1px solid ${theme.text3}`} borderRadius="14px">
                   <TYPE.body color={theme.text3} textAlign="center">
-                    Connect to a wallet to view your liquidity.
+                    Connect to a wallet to view your options.
                   </TYPE.body>
                 </Card>
               ) : optionTypes.length === 0 ? (
