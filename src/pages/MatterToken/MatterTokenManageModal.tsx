@@ -218,12 +218,7 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   Matter Option Token
                 </TYPE.body>
               </TYPE.largeHeader>
-              <ButtonPrimary
-                disabled={lptType === LPT_TYPE.MATTER_CALL_MATTER}
-                height="48px"
-                width="100%"
-                onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}
-              >
+              <ButtonPrimary height="48px" width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}>
                 Claim Rewards
               </ButtonPrimary>
               <RowBetween>
@@ -258,11 +253,7 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   Your Stake
                 </TYPE.darkGray>
                 <NumberUnitText number={stakingInfo?.stakedAmount?.toSignificant(6) ?? '-'} unit="LPT" />
-                <ButtonPrimary
-                  disabled={lptType === LPT_TYPE.MATTER_CALL_MATTER}
-                  width="100%"
-                  onClick={handleModalClick(STAKING_MODAL_TYPE.UNSTAKE)}
-                >
+                <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.UNSTAKE)}>
                   Unstake LPT
                 </ButtonPrimary>
               </AutoColumn>
@@ -273,11 +264,7 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   Your Balance
                 </TYPE.darkGray>
                 <NumberUnitText number={userLiquidityUnstaked?.toSignificant(6) ?? '-'} unit="LPT" />
-                <ButtonPrimary
-                  disabled={lptType === LPT_TYPE.MATTER_CALL_MATTER}
-                  width="100%"
-                  onClick={handleModalClick(STAKING_MODAL_TYPE.STAKE)}
-                >
+                <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.STAKE)}>
                   Stake LPT
                 </ButtonPrimary>
               </AutoColumn>
