@@ -51,6 +51,8 @@ const AppWrapper = styled.div`
 `
 const ContentWrapper = styled.div`
   width: 100%;
+  max-height: 100vh;
+  overflow: auto;
 `
 
 const HeaderWrapper = styled.div`
