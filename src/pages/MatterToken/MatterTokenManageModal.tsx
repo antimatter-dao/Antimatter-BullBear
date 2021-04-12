@@ -125,7 +125,6 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
   // const showAddLiquidityButton = Boolean(stakingInfo?.stakedAmount?.equalTo('0') && userLiquidityUnstaked?.equalTo('0'))
 
   const countUpAmount = stakingInfo?.active ? stakingInfo?.earnedAmount?.toSignificant(6) ?? '-' : '0'
-  console.log('tag--->', countUpAmount)
 
   const countUpAmountPrevious = usePrevious(countUpAmount) ?? '0'
 
