@@ -23,6 +23,9 @@ const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean; hideSelect
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 14px;
   height: 3rem;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  width: 100%;
+`};
 `
 
 const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>`
@@ -47,6 +50,17 @@ const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>
   :hover {
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.bg5))};
   }
+  ${({ theme, selected }) => theme.mediaWidth.upToSmall`
+  position: absolute;
+  right: 0;
+  width: 50%;
+  z-index: 2;
+  color:${selected ? theme.text1 : theme.primary1}
+  border: 1px solid ${selected ? theme.text4 : theme.primary1}
+  :hover,:focus,:active {
+    border: 1px solid ${selected ? theme.text4 : theme.primary1}
+  }
+  `}
 `
 
 const CustomNumericalInput = styled(NumericalInput)`
@@ -79,6 +93,12 @@ const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
     stroke: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
     stroke-width: 1.5px;
   }
+  ${({ theme, selected }) =>
+    selected
+      ? ''
+      : theme.mediaWidth.upToExtraSmall`
+  display: none
+`};
 `
 
 const InputPanel = styled.div<{ hideInput?: boolean; negativeMarginTop?: string }>`

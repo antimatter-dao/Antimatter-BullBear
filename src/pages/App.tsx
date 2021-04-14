@@ -46,11 +46,16 @@ const AppWrapper = styled.div`
   overflow-x: hidden;
   background-color: ${({ theme }) => theme.bg1};
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  flex-direction: column
+  flex-direction: column;
+  height: 100vh;
   `}
 `
 const ContentWrapper = styled.div`
   width: 100%;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  height:calc(100% - ${({ theme }) => theme.mobileHeaderHeight} - ${({ theme }) => theme.headerHeight});
+  overflow-y: auto
+  `}
 `
 
 const HeaderWrapper = styled.div`
@@ -58,6 +63,10 @@ const HeaderWrapper = styled.div`
   justify-content: space-between;
   flex-direction: column;
   ${({ theme }) => theme.flexRowNoWrap}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  height:0;
+  overflow: hidden
+  `}
 `
 
 const BodyWrapper = styled.div`
@@ -70,18 +79,14 @@ const BodyWrapper = styled.div`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  z-index: 10;
-
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 16px;
-    padding-top: 2rem;
-  `};
-
-  z-index: 1;
+  min-height: 100%;
+  `}
 `
 
 export const Marginer = styled.div`
   margin-top: 5rem;
+  ${({ theme }) => theme.desktop}
 `
 
 // function TopLevelModals() {
@@ -95,14 +100,14 @@ export default function App() {
     <Suspense fallback={null}>
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
-      <AppWrapper>
+      <AppWrapper id="app">
         {/* <URLWarning /> */}
         <Sidebar />
         <ContentWrapper>
-          <HeaderWrapper>
+          <HeaderWrapper id="header">
             <Header />
           </HeaderWrapper>
-          <BodyWrapper>
+          <BodyWrapper id="body">
             <Popups />
             <Polling />
             <WelcomeSlider />

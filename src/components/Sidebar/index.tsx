@@ -88,6 +88,37 @@ const Tab = styled(TabBasic)`
     opacity: 1;
   }
 `
+const TabMobile = styled(TabBasic)`
+  font-size: 24px;
+  color: ${({ theme }) => theme.text1};
+  opacity: 1;
+`
+const SubTabMobile = styled(TabMobile)`
+  font-size: 16px;
+  line-height: 24px;
+  padding: 8px 32px;
+  color: ${({ theme }) => theme.text3};
+  &.${activeClassName}, :focus,
+  :active,
+  :hover {
+    color: ${({ theme }) => theme.text1};
+  }
+`
+
+const ToggleTabMobile = styled(TabMobile)<{ isopen: 'true' | 'false' }>`
+  position: relative;
+  :after {
+    content: '';
+    width: 14px;
+    height: 8px;
+    background: url(${arrowUpUrl});
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%) ${({ isopen }) => (isopen === 'true' ? '' : 'rotate(180deg)')};
+  }
+`
+
 const ToggleTabStyle = styled(Tab)<{ isopen: 'true' | 'false' }>`
   position: relative;
   &.${activeClassName}, :hover {
@@ -157,7 +188,15 @@ const MobileHeader = styled.header`
   position:relative;
   ${({ theme }) => theme.mobile}
   height:${({ theme }) => theme.mobileHeaderHeight}
+  position:fixed;
+  top: 0;
+  left: 0;
+  z-index: 100
 `
+const MobileHeaderFiller = styled.div`
+  height: ${({ theme }) => theme.mobileHeaderHeight};
+`
+
 const ToggleMenuButton = styled(Base)`
   background: none;
   width: auto;
@@ -186,11 +225,38 @@ function ToggleMenu() {
       {isOpen && (
         <TogggleMenuWrapper>
           <AutoColumn>
-            {tabs.map(({ title, route }) => (
-              <TabBasic key={title} to={`/${route}`} onClick={() => setIsOpen(!isOpen)}>
-                {title}
-              </TabBasic>
-            ))}
+            {tabs.map(({ title, route, children }) =>
+              children ? (
+                <ToggleTab
+                  key={title}
+                  route={`/${route}`}
+                  title={title}
+                  matchString="/matter"
+                  isMobile={true}
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  <>
+                    {children &&
+                      children.map(({ title, route }) => {
+                        return (
+                          <SubTabMobile
+                            key={title}
+                            to={`/${route}`}
+                            onClick={() => setIsOpen(!isOpen)}
+                            isActive={match => Boolean(match)}
+                          >
+                            {title}
+                          </SubTabMobile>
+                        )
+                      })}
+                  </>
+                </ToggleTab>
+              ) : (
+                <TabMobile key={title} to={`/${route}`} onClick={() => setIsOpen(!isOpen)}>
+                  {title}
+                </TabMobile>
+              )
+            )}
             <FAQButton onClick={() => setIsOpen(!isOpen)} />
           </AutoColumn>
         </TogggleMenuWrapper>
@@ -203,33 +269,57 @@ function ToggleTab({
   route,
   matchString,
   children,
-  title
+  title,
+  isMobile,
+  onClick
 }: {
   route: string
   matchString: string
   children: JSX.Element | string
   title: string
+  isMobile?: boolean
+  onClick?: () => void
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const { pathname } = useLocation()
   const isActive = pathname.includes(matchString)
   useEffect(() => setIsOpen(isActive), [isActive])
-  const handleClick = useCallback(() => setIsOpen(!isOpen), [setIsOpen, isOpen])
+  const handleClick = useCallback(() => {
+    setIsOpen(!isOpen)
+    onClick && onClick()
+  }, [setIsOpen, isOpen, onClick])
   return (
     <>
-      <ToggleTabStyle
-        title={title}
-        to={route}
-        isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith(matchString)}
-        onClick={handleClick}
-        isopen={isOpen ? 'true' : 'false'}
-      >
-        {title}
-      </ToggleTabStyle>
-      {isOpen && (
+      {isMobile ? (
         <>
-          {isActive && children}
-          {isActive && <TabDivider />}
+          <ToggleTabMobile
+            title={title}
+            to={route}
+            isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith(matchString)}
+            onClick={handleClick}
+            isopen={isOpen ? 'true' : 'false'}
+          >
+            {title}
+          </ToggleTabMobile>
+          {isOpen && <>{isActive && children}</>}
+        </>
+      ) : (
+        <>
+          <ToggleTabStyle
+            title={title}
+            to={route}
+            isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith(matchString)}
+            onClick={handleClick}
+            isopen={isOpen ? 'true' : 'false'}
+          >
+            {title}
+          </ToggleTabStyle>
+          {isOpen && (
+            <>
+              {isActive && children}
+              {isActive && <TabDivider />}
+            </>
+          )}
         </>
       )}
     </>
@@ -260,6 +350,7 @@ function FAQButton({ onClick }: { onClick?: () => void }) {
 export default function Sidebar() {
   return (
     <>
+      <MobileHeaderFiller />
       <MobileHeader>
         <RowBetween>
           <Logo />
@@ -304,13 +395,7 @@ export default function Sidebar() {
                 {children &&
                   children.map(({ title, route }) => {
                     return (
-                      <SubTab
-                        key={title}
-                        isActive={(match, { pathname }) =>
-                          Boolean(match) || pathname.startsWith('/generate') || pathname.startsWith('/redeem')
-                        }
-                        to={`/${route}`}
-                      >
+                      <SubTab key={title} isActive={match => Boolean(match)} to={`/${route}`}>
                         {title}
                       </SubTab>
                     )

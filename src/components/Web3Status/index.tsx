@@ -133,6 +133,12 @@ const Dot = styled.span`
   border-radius: 50%;
 `
 
+const HideSmall = styled.span`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
   return b.addedTime - a.addedTime
@@ -211,7 +217,7 @@ function Web3StatusInner() {
             </>
           )}
         </Web3StatusConnected>
-        {account && <Copy toCopy={account}></Copy>}
+        <HideSmall> {account && <Copy toCopy={account}></Copy>}</HideSmall>
       </>
     )
   } else if (error) {

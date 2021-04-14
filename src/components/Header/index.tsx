@@ -76,6 +76,11 @@ const HeaderControls = styled.div`
     border-radius: 12px 12px 0 0;
     background-color: ${({ theme }) => theme.bg1};
   `};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid ${({ theme }) => theme.bg3};
+  `}
 `
 
 const HeaderElement = styled.div<{
@@ -90,7 +95,6 @@ const HeaderElement = styled.div<{
   }
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-   flex-direction: row-reverse;
     align-items: center;
   `};
   & > div {
@@ -155,11 +159,11 @@ const UNIWrapper = styled.span`
   position: relative;
 `
 
-const HideSmall = styled.span`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
-`
+// const HideSmall = styled.span`
+//   ${({ theme }) => theme.mediaWidth.upToSmall`
+//     display: none;
+//   `};
+// `
 
 // const NetworkCard = styled(YellowCard)`
 //   border-radius: 12px;
@@ -184,6 +188,9 @@ const NetworkCard = styled.div`
   background-color: rgba(255, 255, 255, 0.12);
   font-size: 13px;
   font-weight: 500;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 0
+`};
 `
 
 // const BalanceText = styled(Text)`
@@ -395,11 +402,11 @@ export default function Header() {
       {/* </HeaderRow> */}
       <HeaderControls>
         <HeaderElement show={!!account}>
-          <HideSmall>
-            {chainId && NETWORK_LABELS[chainId] && (
-              <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
-            )}
-          </HideSmall>
+          {/* <HideSmall> */}
+          {chainId && NETWORK_LABELS[chainId] && (
+            <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
+          )}
+          {/* </HideSmall> */}
           <div>
             {/* {availableClaim && !showClaimPopup && (
               <UNIWrapper onClick={toggleClaimModal}>
@@ -416,22 +423,22 @@ export default function Header() {
               <UNIWrapper>
                 <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'none' }}>
                   {account && (
-                    <HideSmall>
-                      <TYPE.white
-                        style={{
-                          paddingRight: '.4rem'
-                        }}
-                      >
-                        <CountUp
-                          key={countUpValue}
-                          isCounting
-                          start={parseFloat(countUpValuePrevious)}
-                          end={parseFloat(countUpValue)}
-                          thousandsSeparator={','}
-                          duration={1}
-                        />
-                      </TYPE.white>
-                    </HideSmall>
+                    // <HideSmall>
+                    <TYPE.white
+                      style={{
+                        paddingRight: '.4rem'
+                      }}
+                    >
+                      <CountUp
+                        key={countUpValue}
+                        isCounting
+                        start={parseFloat(countUpValuePrevious)}
+                        end={parseFloat(countUpValue)}
+                        thousandsSeparator={','}
+                        duration={1}
+                      />
+                    </TYPE.white>
+                    // </HideSmall>
                   )}
                   MATTER
                 </UNIAmount>

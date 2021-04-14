@@ -22,6 +22,10 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     justify-content: center;
 
     background-color: ${({ theme }) => theme.modalBG};
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+    height: calc(100% - ${theme.headerHeight});
+    justify-content: flex-end;
+    `}
   }
 `
 export const Wrapper = styled.div`
@@ -30,6 +34,11 @@ export const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  ${({ theme }) => theme.mediaWidth.upToSmall`          
+    margin-top: auto;
+    max-height: calc(100% - ${theme.mobileHeaderHeight});
+    overflow-y: auto;
+  `}
 `
 
 export const Filler = styled.div`
@@ -86,14 +95,13 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
       margin: 0;
     `}
     ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
-      width:  85vw;
-      ${mobile &&
-        css`
-          width: 100vw;
-          border-radius: 20px;
-          border-bottom-left-radius: 0;
-          border-bottom-right-radius: 0;
-        `}
+      width: 100vw;
+      border-radius: 20px;
+      border-bottom-left-radius: unset;
+      border-bottom-right-radius: unset;
+      max-height: calc(100% - ${theme.mobileHeaderHeight});
+      overflow-y: auto;
+      
     `}
   }
 `

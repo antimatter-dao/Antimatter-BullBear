@@ -37,7 +37,19 @@ const LoadingMessage = styled.div`
     padding: 1rem;
   }
 `
-
+const ButtonGroup = styled(RowBetween)`
+  button:first-child {
+    margin-left: 16px;
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column
+  button:first-child{
+    margin-left: unset
+    margin-bottom: 12px;
+  };
+  padding-bottom: 20px
+`}
+`
 // const ErrorButton = styled.div`
 //   border-radius: 8px;
 //   font-size: 12px;
@@ -121,7 +133,7 @@ export default function PendingView({
       })} */}
       </PendingSection>
       {error && (
-        <RowBetween>
+        <ButtonGroup>
           {children}
           {error && (
             <ButtonPrimary
@@ -129,12 +141,11 @@ export default function PendingView({
                 setPendingError(false)
                 connector && tryActivation(connector)
               }}
-              style={{ marginLeft: '16px' }}
             >
               Try Again
             </ButtonPrimary>
           )}
-        </RowBetween>
+        </ButtonGroup>
       )}
     </AutoColumn>
   )

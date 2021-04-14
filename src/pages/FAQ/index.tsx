@@ -119,7 +119,7 @@ function Accordion({
 
 export default function FAQ() {
   return (
-    <AppBody style={{ maxWidth: 540, marginBottom: 'auto', marginTop: 160, padding: '23px 32px 22px 32px' }}>
+    <AppBody style={{ maxWidth: 540, padding: '23px 32px 22px 32px' }}>
       <TYPE.mediumHeader marginBottom={24}>FAQ</TYPE.mediumHeader>
       <AutoColumn>
         {faqList.map((faq, idx) => (
