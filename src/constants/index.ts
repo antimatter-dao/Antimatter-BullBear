@@ -14,46 +14,6 @@ export const ANTIMATTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.GÖRLI]: ''
 }
 
-export const MATTER_OPTION: { [chainId in ChainId]: OptionTypeData | null } = {
-  [ChainId.MAINNET]: {
-    id: '0',
-    callAddress: '0xD5eE7F431fFB7F03a19CFAE69A1E75a450Ec2021',
-    putAddress: '0xc72813b0BC5125A419C6CC1b4e4Cf3030E60657e',
-    callBalance: '',
-    putBalance: '',
-    callTotal: '',
-    putTotal: '',
-    underlying: '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F',
-    currency: '0xaD6D458402F60fD3Bd25163575031ACDce07538D',
-    priceFloor: '1000000000000000000',
-    priceCap: '100000000000000000000',
-    underlyingSymbol: 'MATTER',
-    underlyingDecimals: '18',
-    currencySymbol: 'USDT',
-    currencyDecimals: '6'
-  },
-  [ChainId.ROPSTEN]: {
-    id: '0',
-    callAddress: '0xF87aC9826e7CBceAE26E5Febaedc1e70e864F9A6',
-    putAddress: '0xD8760634Ee64139637010Ca9efb9810BF3Fc90AD',
-    callBalance: '',
-    putBalance: '',
-    callTotal: '',
-    putTotal: '',
-    underlying: '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F',
-    currency: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    priceFloor: '1000000',
-    priceCap: '100000000',
-    underlyingSymbol: 'MATTER',
-    underlyingDecimals: '18',
-    currencySymbol: 'DAI',
-    currencyDecimals: '18'
-  },
-  [ChainId.RINKEBY]: null,
-  [ChainId.KOVAN]: null,
-  [ChainId.GÖRLI]: null
-}
-
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 export { PRELOADED_PROPOSALS } from './proposals'
@@ -95,6 +55,46 @@ export const MATTER_CALL = new Token(
   '+MATTER($1)',
   'AntiMatter.Finance MATTER Perpetual Call Option Floor $1 Cap $100'
 )
+
+export const MATTER_OPTION: { [chainId in ChainId]: OptionTypeData | null } = {
+  [ChainId.MAINNET]: {
+    id: '0',
+    callAddress: '0xD5eE7F431fFB7F03a19CFAE69A1E75a450Ec2021',
+    putAddress: '0xc72813b0BC5125A419C6CC1b4e4Cf3030E60657e',
+    callBalance: '',
+    putBalance: '',
+    callTotal: '',
+    putTotal: '',
+    underlying: '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F',
+    currency: USDT.address,
+    priceFloor: '1000000',
+    priceCap: '100000000',
+    underlyingSymbol: 'MATTER',
+    underlyingDecimals: '18',
+    currencySymbol: 'USDT',
+    currencyDecimals: '6'
+  },
+  [ChainId.ROPSTEN]: {
+    id: '0',
+    callAddress: '0xF87aC9826e7CBceAE26E5Febaedc1e70e864F9A6',
+    putAddress: '0xD8760634Ee64139637010Ca9efb9810BF3Fc90AD',
+    callBalance: '',
+    putBalance: '',
+    callTotal: '',
+    putTotal: '',
+    underlying: '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F',
+    currency: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    priceFloor: '1000000',
+    priceCap: '100000000',
+    underlyingSymbol: 'MATTER',
+    underlyingDecimals: '18',
+    currencySymbol: 'DAI',
+    currencyDecimals: '18'
+  },
+  [ChainId.RINKEBY]: null,
+  [ChainId.KOVAN]: null,
+  [ChainId.GÖRLI]: null
+}
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 13

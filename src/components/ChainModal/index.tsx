@@ -60,13 +60,13 @@ export default function ChainModal({ isOpen, onDismiss }: { isOpen: boolean; onD
               Select Antimatter on available chains:
             </TYPE.mediumHeader>
             <Button onClick={onDismiss}>
-              <ExternalLink href="">
+              <ExternalLink href="https://app.antimatter.finance">
                 <ETH />
                 Antimatter Ethereum Mainnet
               </ExternalLink>
             </Button>
             <Button onClick={onDismiss}>
-              <ExternalLink href="">
+              <ExternalLink href="https://heco.antimatter.finance">
                 <Heco />
                 Antimatter HECO Chain
               </ExternalLink>

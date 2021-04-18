@@ -179,7 +179,6 @@ const UNIWrapper = styled.span`
 //   ``};
 const NetworkCard = styled.div`
   display: flex;
-  width: 66px;
   height: 32px;
   margin-right: 12px;
   margin-left: 19px;
@@ -315,7 +314,7 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan',
-  [ChainId.MAINNET]: 'ETH'
+  [ChainId.MAINNET]: 'Ethereum Mainnet'
 }
 
 export default function Header() {

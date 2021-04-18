@@ -417,7 +417,6 @@ export function useDerivedStrategyInfo(
     deltaResult?.dCur &&
     JSBI.greaterThan(JSBI.BigInt(deltaResult.dCur), JSBI.BigInt(currencyBalance))
   ) {
-    console.log('tag---->', deltaResult?.dCur.toString(), currencyBalance.toString())
     error = `Insufficient ${optionType?.currencySymbol} Balance`
   }
 
