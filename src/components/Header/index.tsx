@@ -321,7 +321,7 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   const [warningModalOpen, setWarningModalOpen] = useState(false)
-  const [chainModalOpen, setChainModalOpen] = useState(true)
+  const [chainModalOpen, setChainModalOpen] = useState(false)
   useEffect(() => {
     if (chainId && chainId !== ChainId.MAINNET && chainId !== ChainId.RINKEBY && chainId !== ChainId.ROPSTEN) {
       setWarningModalOpen(true)
@@ -410,7 +410,7 @@ export default function Header() {
         <HeaderElement show={!!account}>
           {/* <HideSmall> */}
           {chainId && NETWORK_LABELS[chainId] && (
-            <NetworkCard title={NETWORK_LABELS[chainId]} onClick={() => setChainModalOpen(!chainModalOpen)}>
+            <NetworkCard title={NETWORK_LABELS[chainId]} onClick={() => setChainModalOpen(true)}>
               {NETWORK_LABELS[chainId]}
             </NetworkCard>
           )}
