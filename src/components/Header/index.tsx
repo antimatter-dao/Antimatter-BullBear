@@ -22,6 +22,7 @@ import { useUserHasAvailableClaim } from '../../state/claim/hooks'
 // import { Dots } from '../swap/styleds'
 import usePrevious from '../../hooks/usePrevious'
 import Modal from 'components/Modal'
+import ChainModal from 'components/ChainModal'
 // import { Text } from 'rebass'
 // import { NavLink } from 'react-router-dom'
 // import { darken } from 'polished'
@@ -188,6 +189,9 @@ const NetworkCard = styled.div`
   background-color: rgba(255, 255, 255, 0.12);
   font-size: 13px;
   font-weight: 500;
+  :hover {
+    cursor: pointer;
+  }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0
 `};
@@ -310,13 +314,14 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan'
+  [ChainId.KOVAN]: 'Kovan',
+  [ChainId.MAINNET]: 'ETH'
 }
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   const [warningModalOpen, setWarningModalOpen] = useState(false)
-
+  const [chainModalOpen, setChainModalOpen] = useState(true)
   useEffect(() => {
     if (chainId && chainId !== ChainId.MAINNET && chainId !== ChainId.RINKEBY && chainId !== ChainId.ROPSTEN) {
       setWarningModalOpen(true)
@@ -346,6 +351,7 @@ export default function Header() {
 
   return (
     <HeaderFrame>
+      <ChainModal isOpen={chainModalOpen} onDismiss={() => setChainModalOpen(false)} />
       <ClaimModal />
       <Modal isOpen={warningModalOpen} onDismiss={() => setWarningModalOpen(false)} maxHeight={400}>
         <div
@@ -404,7 +410,9 @@ export default function Header() {
         <HeaderElement show={!!account}>
           {/* <HideSmall> */}
           {chainId && NETWORK_LABELS[chainId] && (
-            <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
+            <NetworkCard title={NETWORK_LABELS[chainId]} onClick={() => setChainModalOpen(!chainModalOpen)}>
+              {NETWORK_LABELS[chainId]}
+            </NetworkCard>
           )}
           {/* </HideSmall> */}
           <div>

@@ -39,7 +39,6 @@ import Info from './Info'
 import MatterRedemption from './MatterToken/MatterRedemption'
 import WelcomeSlider from 'components/WelcomeSlider'
 import FAQ from './FAQ'
-import ChainModal from 'components/ChainModal'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -112,7 +111,6 @@ export default function App() {
             <Popups />
             <Polling />
             <WelcomeSlider />
-            <ChainModal />
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>

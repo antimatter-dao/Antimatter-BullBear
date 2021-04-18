@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React from 'react'
 import Modal from 'components/Modal'
 import { ButtonOutlinedPrimary } from 'components/Button'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
@@ -50,30 +50,28 @@ color: ${({ theme }) => theme.text1};
   }
 `
 
-export default function ChainModal() {
-  const [isOpen, setIsOpen] = useState(true)
-  const handleClose = useCallback(() => setIsOpen(false), [])
+export default function ChainModal({ isOpen, onDismiss }: { isOpen: boolean; onDismiss: () => void }) {
   return (
     <>
       {isOpen && (
-        <Modal isOpen={isOpen} onDismiss={handleClose}>
+        <Modal isOpen={isOpen} onDismiss={onDismiss}>
           <AutoColumn justify="center" gap="24px" style={{ width: '100%', padding: '60px' }}>
             <TYPE.mediumHeader style={{ paddingBottom: '10px' }}>
               Select Antimatter on available chains:
             </TYPE.mediumHeader>
-            <Button onClick={handleClose}>
+            <Button onClick={onDismiss}>
               <ExternalLink href="">
                 <ETH />
                 Antimatter Ethereum Mainnet
               </ExternalLink>
             </Button>
-            <Button onClick={handleClose}>
+            <Button onClick={onDismiss}>
               <ExternalLink href="">
                 <Heco />
                 Antimatter HECO Chain
               </ExternalLink>
             </Button>
-            <Button onClick={handleClose} disabled>
+            <Button onClick={onDismiss} disabled>
               <p>
                 <BSC />
                 <AutoColumn>
