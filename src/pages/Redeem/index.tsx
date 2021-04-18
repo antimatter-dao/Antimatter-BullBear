@@ -128,12 +128,23 @@ export default function Redeem() {
       delta.dCur.toString()
     ]
 
+    let value: string | undefined | null = null
+
+    if (optionTypes[parseInt(optionTypeIndex)].underlyingSymbol === 'ETH') {
+      value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
+    }
+
+    if (optionTypes[parseInt(optionTypeIndex)].currencySymbol === 'ETH') {
+      value = isNegative(delta.dCur) ? '0' : delta.dCur.toString()
+    }
+
     setAttemptingTxn(true)
 
     if (estimate) {
-      await estimate(...args)
+      await estimate(...args, value ? { value } : {})
         .then(estimatedGasLimit =>
           method(...args, {
+            ...(value ? { value } : {}),
             gasLimit: calculateGasMargin(estimatedGasLimit)
           }).then(response => {
             setAttemptingTxn(false)
