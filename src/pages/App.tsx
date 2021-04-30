@@ -39,7 +39,7 @@ import Info from './Info'
 import MatterRedemption from './MatterToken/MatterRedemption'
 import WelcomeSlider from 'components/WelcomeSlider'
 import FAQ from './FAQ'
-import WarningModal from 'components/Modal/WarningModal'
+// import WarningModal from 'components/Modal/WarningModal'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -112,7 +112,7 @@ export default function App() {
             <Popups />
             <Polling />
             <WelcomeSlider />
-            <WarningModal />
+            {/* <WarningModal /> */}
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>
