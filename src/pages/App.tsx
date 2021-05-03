@@ -26,7 +26,7 @@ import Pool from './Pool'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
-import Swap from './Swap'
+// import Swap from './Swap'
 import { /*OpenClaimAddressModalAndRedirectToSwap,*/ RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 // import Vote from './Vote'
 // import VotePage from './Vote/VotePage'
@@ -39,6 +39,7 @@ import Info from './Info'
 import MatterRedemption from './MatterToken/MatterRedemption'
 import WelcomeSlider from 'components/WelcomeSlider'
 import FAQ from './FAQ'
+import OptionTrade from './OptionTrade'
 // import WarningModal from 'components/Modal/WarningModal'
 
 const AppWrapper = styled.div`
@@ -114,7 +115,8 @@ export default function App() {
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/option_trading" component={Swap} />
+                {/* <Route exact strict path="/option_trading" component={Swap} /> */}
+                <Route exact strict path="/option_trading" component={OptionTrade} />
                 <Route exact strict path="/option_exercise" component={MarketStrategy} />
                 <Route exact strict path="/generate" component={Generate} />
                 <Route exact strict path="/generate/:currencyIdA/:currencyIdB" component={Generate} />

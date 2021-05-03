@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { TYPE } from '../theme'
 import { ColumnCenter } from '../components/Column'
 
-export const BodyWrapper = styled.div`
-  max-width: 480px;
+export const BodyWrapper = styled.div<{ maxWidth?: string }>`
+  max-width: ${({ maxWidth }) => maxWidth ?? '480px'};
   width: 100%;
   background: ${({ theme }) => theme.bg1}
     linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%) ;
@@ -25,8 +25,20 @@ export const BodyWrapper = styled.div`
 /**
  * The styled container element that wraps the content of most pages and the tabs.
  */
-export default function AppBody({ children, style }: { children: React.ReactNode; style?: any }) {
-  return <BodyWrapper style={style}>{children}</BodyWrapper>
+export default function AppBody({
+  children,
+  style,
+  maxWidth
+}: {
+  children: React.ReactNode
+  style?: any
+  maxWidth?: string
+}) {
+  return (
+    <BodyWrapper style={style} maxWidth={maxWidth}>
+      {children}
+    </BodyWrapper>
+  )
 }
 
 const StyledSwapHeader = styled.div`

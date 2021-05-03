@@ -3,8 +3,8 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@uniswap/sdk'
 import React, { useCallback, useContext, useState } from 'react'
 import { Plus } from 'react-feather'
-import ReactGA from 'react-ga'
-import { RouteComponentProps } from 'react-router-dom'
+// import ReactGA from 'react-ga'
+import { useHistory, useLocation } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonPrimary } from '../../components/Button'
@@ -41,14 +41,20 @@ import { PoolPriceBar } from './PoolPriceBar'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 
-export default function AddLiquidity({
-  match: {
-    params: { currencyIdA, currencyIdB }
-  },
-  history
-}: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
+export default function AddLiquidity() {
+  // {
+  //   match: {
+  //     params: { currencyIdA, currencyIdB }
+  //   },
+  //   history
+  // }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>
   const { account, chainId, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
+  const history = useHistory()
+  const { search } = useLocation()
+  const query = new URLSearchParams(search)
+  const currencyIdA = query.get('currencyIdA') ?? undefined
+  const currencyIdB = query.get('currencyIdB') ?? undefined
 
   const currencyA = useCurrency(currencyIdA)
   const currencyB = useCurrency(currencyIdB)
@@ -195,11 +201,11 @@ export default function AddLiquidity({
 
           setTxHash(response.hash)
 
-          ReactGA.event({
-            category: 'Liquidity',
-            action: 'Add',
-            label: [currencies[Field.CURRENCY_A]?.symbol, currencies[Field.CURRENCY_B]?.symbol].join('/')
-          })
+          // ReactGA.event({
+          //   category: 'Liquidity',
+          //   action: 'Add',
+          //   label: [currencies[Field.CURRENCY_A]?.symbol, currencies[Field.CURRENCY_B]?.symbol].join('/')
+          // })
         })
       )
       .catch(error => {
@@ -313,7 +319,7 @@ export default function AddLiquidity({
 
   return (
     <>
-      <AppBody>
+      <AppBody style={{ margin: '-1px' }}>
         <AddRemoveTabs creating={isCreate} adding={true} />
         <Wrapper>
           <TransactionConfirmationModal

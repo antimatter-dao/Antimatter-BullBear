@@ -48,11 +48,11 @@ import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
-import { RouteComponentProps } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
-export default function Swap({ history }: RouteComponentProps) {
+export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
-
+  const history = useHistory()
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
@@ -308,7 +308,7 @@ export default function Swap({ history }: RouteComponentProps) {
         onDismiss={handleDismissTokenWarning}
       />
       <SwapPoolTabs active={'option_trading'} />
-      <AppBody>
+      <AppBody style={{ margin: '-1px' }}>
         <SwapHeader />
         <Wrapper id="swap-page" style={{ padding: '1rem 0', marginTop: '20px' }}>
           <ConfirmSwapModal
