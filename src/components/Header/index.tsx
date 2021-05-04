@@ -1,48 +1,78 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
 import React, { useEffect, useState } from 'react'
 import { X } from 'react-feather'
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
-
+// import { useTranslation } from 'react-i18next'
+import { darken } from 'polished'
+import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 // import { useDarkModeManager } from '../../state/user/hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
 // import { CardNoise } from '../earn/styled'
-import { CountUp } from 'use-count-up'
-import { TYPE } from '../../theme'
+import { /*ExternalLink, */ TYPE } from '../../theme'
 import { Base } from 'components/Button'
 // import { YellowCard } from '../Card'
 // import { Moon, Sun } from 'react-feather'
 // import Menu from '../Menu'
-// import { /*Row,*/ RowFixed } from '../Row'
+import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
 // import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
-import { useUserHasAvailableClaim } from '../../state/claim/hooks'
+// import { useUserHasAvailableClaim } from '../../state/claim/hooks'
 // import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
 // import { Dots } from '../swap/styleds'
 import usePrevious from '../../hooks/usePrevious'
 import Modal from 'components/Modal'
 import ChainModal from 'components/ChainModal'
 // import { Text } from 'rebass'
-// import { NavLink } from 'react-router-dom'
-// import { darken } from 'polished'
-// import { useTranslation } from 'react-i18next'
+import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
+import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
+import { ReactComponent as HECO } from '../../assets/svg/huobi_inverted.svg'
+import { ReactComponent as BSC } from '../../assets/svg/binance.svg'
+interface TabContent {
+  title: string
+  route: string
+}
+interface Tab extends TabContent {
+  children?: TabContent[]
+}
+
+const tabs: Tab[] = [
+  { title: 'Option Trading', route: 'option_trading' },
+  { title: 'Option Exercise', route: 'option_exercise' },
+  { title: 'Farm', route: 'farm' },
+  { title: 'Governance', route: 'governance' }
+  // { title: 'About', route: 'info' }
+]
+
+const NetworkInfo: { [key: number]: { color: string; icon: JSX.Element } } = {
+  1: {
+    color: '#FFFFFF',
+    icon: <ETH />
+  },
+  128: {
+    color: '#059BDC',
+    icon: <HECO />
+  },
+  56: {
+    color: '#F0B90B',
+    icon: <BSC />
+  }
+}
 
 export const headerHeight = '65px',
   headerHeightDisplacement = '32px'
 
 const HeaderFrame = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 120px;
-  align-items: center;
+  display: flex;
   justify-content: space-between;
-  align-items: center;
   flex-direction: row;
   width: 100%;
   top: 0;
   position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 1rem;
+  border-bottom: 1px solid ${({ theme }) => theme.text5};
+  padding: 27px 61px 0;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
@@ -59,12 +89,12 @@ const HeaderFrame = styled.div`
 const HeaderControls = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
   justify-self: flex-end;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     height: ${headerHeight};
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     justify-self: center;
     width: 100%;
     max-width: 960px;
@@ -88,7 +118,6 @@ const HeaderElement = styled.div<{
   show?: boolean
 }>`
   display: flex;
-  align-items: center;
 
   /* addresses safari's lack of support for "gap" */
   & > *:not(:first-child) {
@@ -114,19 +143,21 @@ const HeaderElement = styled.div<{
 //   align-items: center;
 // `
 
-// const HeaderRow = styled(RowFixed)`
-//   ${({ theme }) => theme.mediaWidth.upToMedium`
-//    width: 100%;
-//   `};
-// `
+const HeaderRow = styled(RowFixed)`
+  align-items: flex-start
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+   width: 100%;
+   align-items: center
+  `};
+`
 
-// const HeaderLinks = styled(Row)`
-//   justify-content: center;
-//   ${({ theme }) => theme.mediaWidth.upToMedium`
-//     padding: 1rem 0 1rem 1rem;
-//     justify-content: flex-end;
-// `};
-// `
+const HeaderLinks = styled(Row)`
+  justify-content: center;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    padding: 1rem 0 1rem 1rem;
+    justify-content: flex-end;
+`};
+`
 
 const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
@@ -166,18 +197,8 @@ const UNIWrapper = styled.span`
 //   `};
 // `
 
-// const NetworkCard = styled(YellowCard)`
-//   border-radius: 12px;
-//   padding: 8px 12px;
-//   ${({ theme }) => theme.mediaWidth.upToSmall`
-//     margin: 0;
-//     margin-right: 0.5rem;
-//     width: initial;
-//     overflow: hidden;
-//     text-overflow: ellipsis;
-//     flex-shrink: 1;
-//   ``};
-const NetworkCard = styled.div`
+const NetworkCard = styled.div<{ color?: string }>`
+  color: #000000;
   display: flex;
   height: 32px;
   margin-right: 12px;
@@ -185,9 +206,13 @@ const NetworkCard = styled.div`
   justify-content: center;
   border-radius: 4px;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: ${({ color }) => color ?? 'rgba(255, 255, 255, 0.12)'}
   font-size: 13px;
   font-weight: 500;
+  svg {
+    height: 24px;
+    width: 24px;
+  };
   :hover {
     cursor: pointer;
   }
@@ -208,34 +233,33 @@ const NetworkCard = styled.div`
 //   }
 // `
 
-// const activeClassName = 'ACTIVE'
+const activeClassName = 'ACTIVE'
 
-// const StyledNavLink = styled(NavLink).attrs({
-//   activeClassName
-// })`
-//   ${({ theme }) => theme.flexRowNoWrap}
-//   align-items: left;
-//   border-radius: 3rem;
-//   outline: none;
-//   cursor: pointer;
-//   text-decoration: none;
-//   color: ${({ theme }) => theme.text2};
-//   font-size: 1rem;
-//   width: fit-content;
-//   margin: 0 12px;
-//   font-weight: 500;
+const StyledNavLink = styled(NavLink).attrs({
+  activeClassName
+})`
+  ${({ theme }) => theme.flexRowNoWrap}
+  align-items: left;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: ${({ theme }) => theme.text3};
+  font-size: 14px;
+  width: fit-content;
+  margin: 0 20px;
+  font-weight: 400;
+  padding: 10px 0 27px;
 
-//   &.${activeClassName} {
-//     border-radius: 12px;
-//     font-weight: 600;
-//     color: ${({ theme }) => theme.text1};
-//   }
+  &.${activeClassName} {
+    color: ${({ theme }) => theme.primary1};
+    border-bottom: 1px solid ${({ theme }) => theme.primary1};
+  }
 
-//   :hover,
-//   :focus {
-//     color: ${({ theme }) => darken(0.1, theme.text1)};
-//   }
-// `
+  :hover,
+  :focus {
+    color: ${({ theme }) => darken(0.1, theme.primary1)};
+  }
+`
 
 // const StyledExternalLink = styled(ExternalLink).attrs({
 //   activeClassName
@@ -309,6 +333,11 @@ const CloseButton = styled(Base)`
   }
 `
 
+const StyledLogo = styled(Logo)`
+  width: 160px;
+  magin-right: 60px;
+`
+
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
@@ -336,7 +365,7 @@ export default function Header() {
 
   // const toggleClaimModal = useToggleSelfClaimModal()
 
-  const availableClaim: boolean = useUserHasAvailableClaim(account)
+  // const availableClaim: boolean = useUserHasAvailableClaim(account)
 
   // const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
 
@@ -376,9 +405,15 @@ export default function Header() {
       {/* <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
       </Modal> */}
-      {/* <HeaderRow> */}
-      {/* <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+      <HeaderRow>
+        <StyledLogo />
+        <HeaderLinks>
+          {tabs.map(({ title, route }) => (
+            <StyledNavLink id={`stake-nav-link`} to={'/' + route} key={route}>
+              {title}
+            </StyledNavLink>
+          ))}
+          {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
           </StyledNavLink>
           <StyledNavLink
@@ -402,15 +437,19 @@ export default function Header() {
           </StyledNavLink>
           <StyledExternalLink id={`stake-nav-link`} href={'https://uniswap.info'}>
             Charts <span style={{ fontSize: '11px' }}>↗</span>
-          </StyledExternalLink>
-        </HeaderLinks> */}
-      {/* </HeaderRow> */}
+          </StyledExternalLink> */}
+        </HeaderLinks>
+      </HeaderRow>
       <HeaderControls>
         <HeaderElement show={!!account}>
           {/* <HideSmall> */}
           {chainId && NETWORK_LABELS[chainId] && (
-            <NetworkCard title={NETWORK_LABELS[chainId]} onClick={() => setChainModalOpen(true)}>
-              {NETWORK_LABELS[chainId]}
+            <NetworkCard
+              title={NETWORK_LABELS[chainId]}
+              onClick={() => setChainModalOpen(true)}
+              color={NetworkInfo[chainId as number]?.color}
+            >
+              {NetworkInfo[chainId as number]?.icon} {NETWORK_LABELS[chainId]}
             </NetworkCard>
           )}
           {/* </HideSmall> */}
@@ -425,10 +464,10 @@ export default function Header() {
                 <CardNoise />
               </UNIWrapper>
             )} */}
-            {!!account && !availableClaim && aggregateBalance && (
+            {!!account && aggregateBalance && (
               // <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
               <UNIWrapper>
-                <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'none' }}>
+                <UNIAmount active={!!account} style={{ pointerEvents: 'none' }}>
                   {account && (
                     // <HideSmall>
                     <TYPE.white

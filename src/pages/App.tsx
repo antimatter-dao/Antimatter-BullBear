@@ -7,7 +7,7 @@ import Header from '../components/Header'
 import Polling from '../components/Header/Polling'
 // import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
-import Sidebar from '../components/Sidebar'
+// import Sidebar from '../components/Sidebar'
 import Web3ReactManager from '../components/Web3ReactManager'
 // import { ApplicationModal } from '../state/application/actions'
 // import { useModalOpen, useToggleModal } from '../state/application/hooks'
@@ -102,7 +102,7 @@ export default function App() {
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper id="app">
         {/* <URLWarning /> */}
-        <Sidebar />
+        {/* <Sidebar /> */}
         <ContentWrapper>
           <HeaderWrapper id="header">
             <Header />

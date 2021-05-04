@@ -4,6 +4,11 @@ import Swap from '../Swap'
 import AppBody from 'pages/AppBody'
 import { TYPE } from 'theme'
 import AddLiquidity from 'pages/AddLiquidity'
+import useTheme from 'hooks/useTheme'
+import { AutoRow, RowBetween } from 'components/Row'
+import { ButtonEmpty } from 'components/Button'
+import { AutoColumn } from 'components/Column'
+import { ChevronLeft } from 'react-feather'
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -37,7 +42,7 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
     position: absolute;
     top: ${({ selected }) => (selected ? '0' : '-1px')};
     left: 0;
-    stroke: ${({ theme }) => theme.text5};
+    stroke: ${({ theme, selected }) => (selected ? theme.text4 : theme.text5)};
     fill:${({ selected, theme, isFirstChild }) => (selected ? '#141414' : isFirstChild ? 'transparent' : theme.bg1)}
     stroke-width: 1px;
   }
@@ -48,7 +53,7 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
     text-align: center
     top: 0;
     left:${({ isFirstChild }) => (isFirstChild ? '50px' : '90px')};
-    color: #FFFFFF
+    color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   };
 
 `
@@ -60,16 +65,42 @@ enum TABS {
 
 export default function OptionTrade() {
   const [tab, setTab] = useState(TABS.SWAP)
+  const theme = useTheme()
   const handleSetTab = useCallback((tab: TABS) => setTab(tab), [setTab])
   return (
     <Wrapper>
-      <SwitchTab tab={tab} setTab={handleSetTab} />
-      <AppBody maxWidth="100%" style={{ padding: 0, background: 'black', minHeight: '400px' }}>
-        <Elevate>
-          {tab === TABS.SWAP && <Swap></Swap>}
-          {tab === TABS.LIQUIDITY && <AddLiquidity />}
-        </Elevate>
-      </AppBody>
+      <RowBetween style={{ padding: '27px 0' }}>
+        <ButtonEmpty width="auto" color={theme.text1}>
+          <ChevronLeft />
+          Go Back
+        </ButtonEmpty>
+        <AutoColumn justify="center" gap="8px">
+          <TYPE.subHeader fontSize={24} fontWeight={500}>
+            ETH Call Option
+          </TYPE.subHeader>
+          <TYPE.smallGray>0x1c9491865a1de77c5b6e19d2e6a5f1d7a6f2b25f</TYPE.smallGray>
+        </AutoColumn>
+        <div />
+      </RowBetween>
+      <AutoRow justify="center">
+        <div>
+          <SwitchTab tab={tab} setTab={handleSetTab} />
+          <AppBody
+            maxWidth="1114px"
+            style={{ padding: 0, background: 'black', minHeight: '400px', borderColor: theme.text5, width: 1114 }}
+          >
+            <Elevate>
+              {tab === TABS.SWAP && <Swap></Swap>}
+              {tab === TABS.LIQUIDITY && <AddLiquidity />}
+              {tab === TABS.INFO && (
+                <AppBody maxWidth="1116px" style={{ width: 1116, minHeight: '402px', margin: '-1px' }}>
+                  <span></span>
+                </AppBody>
+              )}
+            </Elevate>
+          </AppBody>
+        </div>
+      </AutoRow>
     </Wrapper>
   )
 }

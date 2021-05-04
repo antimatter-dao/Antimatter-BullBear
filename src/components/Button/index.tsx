@@ -229,9 +229,9 @@ export const ButtonOutlinedPrimary = styled(Base)`
   }
 `
 
-export const ButtonEmpty = styled(Base)`
+export const ButtonEmpty = styled(Base)<{ color?: string }>`
   background-color: transparent;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme, color }) => color ?? theme.primary1};
   display: flex;
   justify-content: center;
   align-items: center;

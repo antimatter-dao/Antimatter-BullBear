@@ -8,12 +8,12 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonPrimary } from '../../components/Button'
-import { OutlineCard, LightCard } from '../../components/Card'
+import { /*OutlineCard,*/ LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
-import { AddRemoveTabs } from '../../components/NavigationTabs'
+// import { AddRemoveTabs } from '../../components/NavigationTabs'
 import { MinimalPositionCard } from '../../components/PositionCard'
 import Row, { RowBetween, RowFlat } from '../../components/Row'
 import Card from '../../components/Card'
@@ -313,14 +313,14 @@ export default function AddLiquidity() {
     setTxHash('')
   }, [onFieldAInput, txHash])
 
-  const isCreate = history.location.pathname.includes('/create')
+  // const isCreate = history.location.pathname.includes('/create')
 
   const addIsUnsupported = useIsTransactionUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
 
   return (
     <>
       <AppBody style={{ margin: '-1px' }}>
-        <AddRemoveTabs creating={isCreate} adding={true} />
+        {/* <AddRemoveTabs creating={isCreate} adding={true} /> */}
         <Wrapper>
           <TransactionConfirmationModal
             isOpen={showConfirm}
@@ -339,7 +339,7 @@ export default function AddLiquidity() {
             currencyToAdd={pair?.liquidityToken}
           />
           <AutoColumn gap="30px">
-            {noLiquidity ||
+            {/* {noLiquidity ||
               (isCreate ? (
                 <ColumnCenter>
                   <OutlineCard>
@@ -368,7 +368,7 @@ export default function AddLiquidity() {
                     </AutoColumn>
                   </OutlineCard>
                 </ColumnCenter>
-              ))}
+              ))} */}
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               onUserInput={onFieldAInput}

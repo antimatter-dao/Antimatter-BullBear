@@ -18,7 +18,7 @@ import { BottomGrouping, SwapCallbackError, Wrapper } from '../../components/swa
 import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
-import SwapHeader from '../../components/swap/SwapHeader'
+// import SwapHeader from '../../components/swap/SwapHeader'
 import { ArrowDown } from '../../components/Icons'
 
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
@@ -309,8 +309,8 @@ export default function Swap() {
       />
       <SwapPoolTabs active={'option_trading'} />
       <AppBody style={{ margin: '-1px' }}>
-        <SwapHeader />
-        <Wrapper id="swap-page" style={{ padding: '1rem 0', marginTop: '20px' }}>
+        {/* <SwapHeader /> */}
+        <Wrapper id="swap-page" style={{ padding: '1rem 0' }}>
           <ConfirmSwapModal
             isOpen={showConfirm}
             trade={trade}
