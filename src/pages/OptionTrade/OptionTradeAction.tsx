@@ -1,4 +1,6 @@
 import React, { useCallback, useState } from 'react'
+import { ChevronLeft } from 'react-feather'
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import Swap from '../Swap'
 import AppBody from 'pages/AppBody'
@@ -8,7 +10,11 @@ import useTheme from 'hooks/useTheme'
 import { AutoRow, RowBetween } from 'components/Row'
 import { ButtonEmpty } from 'components/Button'
 import { AutoColumn } from 'components/Column'
-import { ChevronLeft } from 'react-feather'
+import { USDT } from '../../constants'
+import { useCurrency } from 'hooks/Tokens'
+import { currencyId } from 'utils/currencyId'
+import { OptionIcon } from 'components/Icons'
+import { Option } from './'
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -63,48 +69,60 @@ enum TABS {
   INFO = 'info'
 }
 
-export default function OptionTradeAction() {
+export default function OptionTradeAction({ addressA, option }: { addressA?: string; option?: Option }) {
   const [tab, setTab] = useState(TABS.SWAP)
   const theme = useTheme()
+  const history = useHistory()
+  const currencyA = USDT
+  const currencyB = useCurrency(addressA)
+
   const handleSetTab = useCallback((tab: TABS) => setTab(tab), [setTab])
+  const handleBack = useCallback(() => history.push('/option_trading'), [history])
   return (
-    <Wrapper>
-      <RowBetween style={{ padding: '27px 0' }}>
-        <ButtonEmpty width="auto" color={theme.text1}>
-          <ChevronLeft />
-          Go Back
-        </ButtonEmpty>
-        <AutoColumn justify="center" gap="8px">
-          <TYPE.subHeader fontSize={24} fontWeight={500}>
-            ETH Call Option
-          </TYPE.subHeader>
-          <TYPE.smallGray>0x1c9491865a1de77c5b6e19d2e6a5f1d7a6f2b25f</TYPE.smallGray>
-        </AutoColumn>
-        <div />
-      </RowBetween>
-      <AutoRow justify="center">
-        <div>
-          <SwitchTab tab={tab} setTab={handleSetTab} />
-          <AppBody
-            maxWidth="1114px"
-            style={{ padding: 0, background: 'black', minHeight: '400px', borderColor: theme.text5, width: 1114 }}
-          >
-            <Elevate>
-              {tab === TABS.SWAP && <Swap></Swap>}
-              {tab === TABS.LIQUIDITY && <AddLiquidity />}
-              {tab === TABS.INFO && (
-                <AppBody
-                  maxWidth="1116px"
-                  style={{ width: 1116, minHeight: '402px', margin: '-1px', borderColor: theme.text4 }}
-                >
-                  <span></span>
-                </AppBody>
-              )}
-            </Elevate>
-          </AppBody>
-        </div>
-      </AutoRow>
-    </Wrapper>
+    <>
+      {option ? (
+        <Wrapper>
+          <RowBetween style={{ padding: '27px 0' }}>
+            <ButtonEmpty width="auto" color={theme.text1} onClick={handleBack}>
+              <ChevronLeft />
+              Go Back
+            </ButtonEmpty>
+            <AutoColumn justify="center" gap="8px">
+              <TYPE.subHeader fontSize={24} fontWeight={500}>
+                <OptionIcon tokenIcon={option.icon} type={option.type} />
+                {option.title}
+              </TYPE.subHeader>
+              <TYPE.smallGray>{currencyB && currencyId(currencyB)}</TYPE.smallGray>
+            </AutoColumn>
+            <div />
+          </RowBetween>
+          <AutoRow justify="center">
+            <div>
+              <SwitchTab tab={tab} setTab={handleSetTab} />
+              <AppBody
+                maxWidth="1114px"
+                style={{ padding: 0, background: 'black', minHeight: '400px', borderColor: theme.text5, width: 1114 }}
+              >
+                <Elevate>
+                  {tab === TABS.SWAP && <Swap currencyA={currencyA} currencyB={currencyB}></Swap>}
+                  {tab === TABS.LIQUIDITY && <AddLiquidity currencyA={currencyA} currencyB={currencyB} />}
+                  {tab === TABS.INFO && (
+                    <AppBody
+                      maxWidth="1116px"
+                      style={{ width: 1116, minHeight: '402px', margin: '-1px', borderColor: theme.text4 }}
+                    >
+                      <span></span>
+                    </AppBody>
+                  )}
+                </Elevate>
+              </AppBody>
+            </div>
+          </AutoRow>
+        </Wrapper>
+      ) : (
+        <AppBody>Option not available</AppBody>
+      )}
+    </>
   )
 }
 

@@ -4,7 +4,7 @@ import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@uniswap/sdk
 import React, { useCallback, useContext, useState } from 'react'
 import { Plus } from 'react-feather'
 // import ReactGA from 'react-ga'
-import { useHistory, useLocation } from 'react-router-dom'
+// import { useHistory, useLocation } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonPrimary } from '../../components/Button'
@@ -20,7 +20,7 @@ import Card from '../../components/Card'
 import { ROUTER_ADDRESS } from '../../constants'
 import { PairState } from '../../data/Reserves'
 import { useActiveWeb3React } from '../../hooks'
-import { useCurrency } from '../../hooks/Tokens'
+// import { useCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { useWalletModalToggle } from '../../state/application/hooks'
@@ -36,12 +36,18 @@ import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
 import { ConfirmAddModalBottom } from './ConfirmAddModalBottom'
-import { currencyId } from '../../utils/currencyId'
+// import { currencyId } from '../../utils/currencyId'
 import { PoolPriceBar } from './PoolPriceBar'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 
-export default function AddLiquidity() {
+export default function AddLiquidity({
+  currencyA,
+  currencyB
+}: {
+  currencyA?: Currency | null
+  currencyB?: Currency | null
+}) {
   // {
   //   match: {
   //     params: { currencyIdA, currencyIdB }
@@ -50,14 +56,14 @@ export default function AddLiquidity() {
   // }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>
   const { account, chainId, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
-  const history = useHistory()
-  const { search } = useLocation()
-  const query = new URLSearchParams(search)
-  const currencyIdA = query.get('currencyIdA') ?? undefined
-  const currencyIdB = query.get('currencyIdB') ?? undefined
+  // const history = useHistory()
+  // const { search } = useLocation()
+  // const query = new URLSearchParams(search)
+  // const currencyIdA = query.get('currencyIdA') ?? undefined
+  // const currencyIdB = query.get('currencyIdB') ?? undefined
 
-  const currencyA = useCurrency(currencyIdA)
-  const currencyB = useCurrency(currencyIdB)
+  // const currencyA = useCurrency(currencyIdA)
+  // const currencyB = useCurrency(currencyIdB)
 
   const oneCurrencyIsWETH = Boolean(
     chainId &&
@@ -277,32 +283,26 @@ export default function AddLiquidity() {
     currencies[Field.CURRENCY_A]?.symbol
   } and ${parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)} ${currencies[Field.CURRENCY_B]?.symbol}`
 
-  const handleCurrencyASelect = useCallback(
-    (currencyA: Currency) => {
-      const newCurrencyIdA = currencyId(currencyA)
-      if (newCurrencyIdA === currencyIdB) {
-        history.push(`/add/${currencyIdB}/${currencyIdA}`)
-      } else {
-        history.push(`/add/${newCurrencyIdA}/${currencyIdB}`)
-      }
-    },
-    [currencyIdB, history, currencyIdA]
-  )
-  const handleCurrencyBSelect = useCallback(
-    (currencyB: Currency) => {
-      const newCurrencyIdB = currencyId(currencyB)
-      if (currencyIdA === newCurrencyIdB) {
-        if (currencyIdB) {
-          history.push(`/add/${currencyIdB}/${newCurrencyIdB}`)
-        } else {
-          history.push(`/add/${newCurrencyIdB}`)
-        }
-      } else {
-        history.push(`/add/${currencyIdA ? currencyIdA : 'ETH'}/${newCurrencyIdB}`)
-      }
-    },
-    [currencyIdA, history, currencyIdB]
-  )
+  const handleCurrencyASelect = useCallback((currencyA: Currency) => {
+    // const newCurrencyIdA = currencyId(currencyA)
+    // if (newCurrencyIdA === currencyIdB) {
+    //   history.push(`/add/${currencyIdB}/${currencyIdA}`)
+    // } else {
+    //   history.push(`/add/${newCurrencyIdA}/${currencyIdB}`)
+    // }
+  }, [])
+  const handleCurrencyBSelect = useCallback((currencyB: Currency) => {
+    // const newCurrencyIdB = currencyId(currencyB)
+    // if (currencyIdA === newCurrencyIdB) {
+    //   if (currencyIdB) {
+    //     history.push(`/add/${currencyIdB}/${newCurrencyIdB}`)
+    //   } else {
+    //     history.push(`/add/${newCurrencyIdB}`)
+    //   }
+    // } else {
+    //   history.push(`/add/${currencyIdA ? currencyIdA : 'ETH'}/${newCurrencyIdB}`)
+    // }
+  }, [])
 
   const handleDismissConfirmation = useCallback(() => {
     setShowConfirm(false)

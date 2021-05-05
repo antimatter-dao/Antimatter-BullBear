@@ -1,6 +1,6 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
+import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+// import { useHistory } from 'react-router-dom'
 // import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import AddressInputPanel from '../../components/AddressInputPanel'
@@ -49,9 +49,9 @@ import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
 
-export default function Swap() {
+export default function Swap({ currencyA, currencyB }: { currencyA?: Currency | null; currencyB?: Currency | null }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
-  const history = useHistory()
+  // const history = useHistory()
   const theme = useTheme()
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -146,8 +146,8 @@ export default function Swap() {
   // reset if they close warning without tokens in params
   const handleDismissTokenWarning = useCallback(() => {
     setDismissTokenWarning(true)
-    history.push('/swap/')
-  }, [history])
+    // history.push('/swap/')
+  }, [])
 
   // modal and loading
   const [{ showConfirm, tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
@@ -285,6 +285,11 @@ export default function Swap() {
   const handleOutputSelect = useCallback(outputCurrency => onCurrencySelection(Field.OUTPUT, outputCurrency), [
     onCurrencySelection
   ])
+
+  useEffect(() => {
+    handleInputSelect(currencyA)
+    handleOutputSelect(currencyB)
+  }, [currencyA, currencyB, handleInputSelect, handleOutputSelect])
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 

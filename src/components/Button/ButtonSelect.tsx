@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import { ButtonProps } from 'rebass/styled-components'
@@ -10,7 +10,7 @@ import useTheme from '../../hooks/useTheme'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { Dots } from '../swap/styleds'
 
-const StyledDropDown = styled(DropDown)`
+export const StyledDropDown = styled(DropDown)`
   margin: 0 0.25rem 0 0;
   width: 13px;
 
@@ -27,8 +27,7 @@ export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; wi
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   border-radius: 14px;
   border: unset;
-  margin-right: 20px;
-  padding: 0 10px;
+  padding: 0 10px 0 15px;
   border: 1px solid transparent;
 
   :focus,
@@ -39,11 +38,11 @@ export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; wi
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.bg5))};
   }
 `
-const OptionWrapper = styled.div<{ isOpen: boolean }>`
+const OptionWrapper = styled.div<{ isOpen: boolean; width?: string }>`
   position: absolute;
   display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
   flex-direction: column;
-  width: 100%;
+  width: ${({ width }) => width ?? '100%'};
   border-radius: 14px;
   overflow: hidden;
   z-index: 2;
@@ -101,9 +100,12 @@ export default function ButtonSelect({
     }
     return children
   }, [options, children, setIsLoading, selectedId, placeholder])
-  console.log(options)
+  const handleClick = useCallback(() => {
+    setIsOpen(!isOpen)
+    onClick && onClick()
+  }, [])
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', marginRight: ' 20px' }}>
       {label && (
         <AutoRow style={{ marginBottom: '4px' }}>
           <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
@@ -111,14 +113,7 @@ export default function ButtonSelect({
           </TYPE.body>
         </AutoRow>
       )}
-      <ButtonSelectStyle
-        onClick={() => {
-          setIsOpen(!isOpen)
-          onClick && onClick()
-        }}
-        selected={!!selectedId}
-        width={width}
-      >
+      <ButtonSelectStyle onClick={handleClick} selected={!!selectedId} width={width}>
         <RowBetween>
           <div style={{ display: 'flex', alignItems: 'center' }}>{buttonContent}</div>
           <StyledDropDown />
