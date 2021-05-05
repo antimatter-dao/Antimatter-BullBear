@@ -102,10 +102,13 @@ export function useAllOptionTypes() {
   const { account } = useActiveWeb3React()
   const antimatterContract = useAntimatterContract()
   //const optionTypeCount = useOptionTypeCount()
-  const optionTypeIndexes = []
-  for (let i = 1; i < 2; i++) {
-    optionTypeIndexes.push([i])
-  }
+  const optionTypeIndexes = useMemo(() => {
+    const indexes = []
+    for (let i = 0; i < 1; i++) {
+      indexes.push([i])
+    }
+    return indexes
+  }, [])
 
   const callAddressesRes = useSingleContractMultipleData(antimatterContract, 'allCalls', optionTypeIndexes)
   const putAddressesRes = useSingleContractMultipleData(antimatterContract, 'allPuts', optionTypeIndexes)
@@ -210,32 +213,47 @@ export function useAllOptionTypes() {
     NEVER_RELOAD
   )
 
-  return allCalls
-    .filter(item => {
-      return item?.result
-    })
-    .map((item, index) => {
-      const optionTypeData: OptionTypeData = {
-        id: index.toString(),
-        callAddress: callAddresses[index],
-        putAddress: putAddresses[index],
-        callBalance: callBalancesRes[index]?.result?.[0],
-        putBalance: putBalancesRes[index]?.result?.[0],
-        callTotal: callTotalsRes[index]?.result?.[0],
-        putTotal: putTotalsRes[index]?.result?.[0],
-        underlying: item.result?.[0],
-        currency: item.result?.[1],
-        priceFloor: item.result?.[2],
-        priceCap: item.result?.[3],
-        underlyingSymbol:
-          underlyingSymbolRes[index].result?.[0] === 'WETH' ? 'ETH' : underlyingSymbolRes[index].result?.[0],
-        underlyingDecimals:
-          underlyingDecimalsRes[index].result?.[0] === 'WETH' ? 'ETH' : underlyingDecimalsRes[index].result?.[0],
-        currencySymbol: currencySymbolRes[index].result?.[0],
-        currencyDecimals: currencyDecimalsRes[index].result?.[0]
-      }
-      return optionTypeData
-    })
+  const list = useMemo(() => {
+    return allCalls
+      .filter(item => {
+        return item?.result
+      })
+      .map((item, index) => {
+        const optionTypeData: OptionTypeData = {
+          id: index.toString(),
+          callAddress: callAddresses[index],
+          putAddress: putAddresses[index],
+          callBalance: callBalancesRes[index]?.result?.[0],
+          putBalance: putBalancesRes[index]?.result?.[0],
+          callTotal: callTotalsRes[index]?.result?.[0],
+          putTotal: putTotalsRes[index]?.result?.[0],
+          underlying: item.result?.[0],
+          currency: item.result?.[1],
+          priceFloor: item.result?.[2],
+          priceCap: item.result?.[3],
+          underlyingSymbol:
+            underlyingSymbolRes[index].result?.[0] === 'WHT' ? 'HT' : underlyingSymbolRes[index].result?.[0],
+          underlyingDecimals:
+            underlyingDecimalsRes[index].result?.[0] === 'WHT' ? 'HT' : underlyingDecimalsRes[index].result?.[0],
+          currencySymbol: currencySymbolRes[index].result?.[0],
+          currencyDecimals: currencyDecimalsRes[index].result?.[0]
+        }
+        return optionTypeData
+      })
+  }, [
+    allCalls,
+    callAddresses,
+    callBalancesRes,
+    callTotalsRes,
+    currencyDecimalsRes,
+    currencySymbolRes,
+    putAddresses,
+    putBalancesRes,
+    putTotalsRes,
+    underlyingDecimalsRes,
+    underlyingSymbolRes
+  ])
+  return list
 }
 
 export function useMatterOption() {

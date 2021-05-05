@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import { Token } from '@uniswap/sdk'
 import ButtonSelect from 'components/Button/ButtonSelect'
 import AppBody from 'pages/AppBody'
 import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
@@ -9,21 +10,24 @@ import { OptionIcon } from 'components/Icons'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { AutoColumn } from 'components/Column'
 import { shortenAddress } from 'utils'
+import { OptionTypeData, useAllOptionTypes } from 'state/market/hooks'
+import { parseBalance } from 'utils/marketStrategyUtils'
+import { ZERO_ADDRESS } from '../../constants'
 
 interface Option {
   title: string
   address: string
   icon: JSX.Element
-  optionType: OptionType
+  type: Type
   details: {
-    'Option Price Range': string
-    'Underlying Asset': string
-    'Total Current Issuance': string
-    'Market Price': string
+    'Option Price Range': string | undefined
+    'Underlying Asset': string | undefined
+    'Total Current Issuance': string | undefined
+    'Market Price': string | undefined
   }
 }
 
-export enum OptionType {
+export enum Type {
   CALL = 'call',
   PUT = 'put'
 }
@@ -65,37 +69,72 @@ const Divider = styled.div`
   margin: 0 -24px;
 `
 
-export default function OptionTrade() {
-  const [optionList, setOptionList] = useState<Option[] | undefined>(undefined)
+const parseRange = (priceFloor: string, priceCap: string, decimals: string) => {
+  return `$${parseBalance({
+    val: priceFloor,
+    token: new Token(1, ZERO_ADDRESS, Number(decimals ?? '18'))
+  })} ~ $${parseBalance({
+    val: priceCap,
+    token: new Token(1, ZERO_ADDRESS, Number(decimals ?? '18'))
+  })}`
+}
 
-  useEffect(() => {
-    setOptionList([
+function getOptionList(allOptionType: OptionTypeData[]) {
+  return allOptionType.reduce((acc: Option[], item: OptionTypeData): Option[] => {
+    const {
+      callAddress,
+      putAddress,
+      currencyDecimals,
+      priceFloor,
+      priceCap,
+      callTotal,
+      putTotal,
+      underlyingSymbol
+    } = item
+    const range = parseRange(priceFloor, priceCap, currencyDecimals)
+    return [
+      ...acc,
       {
-        title: 'ETH Call Option',
-        address: '0xc0287539b223fe8d0a0e5c4f27ead9083c756cc2',
+        title: underlyingSymbol + ' Call Option',
+        address: callAddress,
         icon: <ETH />,
-        optionType: OptionType.CALL,
+        type: Type.CALL,
         details: {
-          'Option Price Range': '$1000 ~ $3000',
-          'Underlying Asset': 'ETH, USDT',
-          'Total Current Issuance': '1234 Shares',
-          'Market Price': ' $2100'
+          'Option Price Range': range,
+          'Underlying Asset': underlyingSymbol + ', USDT',
+          'Total Current Issuance': callTotal.toString(),
+          'Market Price': '$2100'
         }
       },
       {
-        title: 'ETH Put Option',
-        address: '0xc0287539b223fe8d0a0e5c4f27ead9083c756cc2',
+        title: underlyingSymbol + ' Put Option',
+        address: putAddress,
         icon: <ETH />,
-        optionType: OptionType.PUT,
+        type: Type.PUT,
         details: {
-          'Option Price Range': '$1000 ~ $3000',
-          'Underlying Asset': 'ETH, USDT',
-          'Total Current Issuance': '1234 Shares',
-          'Market Price': ' $2100'
+          'Option Price Range': range,
+          'Underlying Asset': underlyingSymbol + ', USDT',
+          'Total Current Issuance': putTotal.toString(),
+          'Market Price': '$2100'
         }
       }
-    ])
-  }, [setOptionList])
+    ]
+  }, [] as Option[])
+}
+
+export default function OptionTrade() {
+  const [optionList, setOptionList] = useState<Option[] | undefined>(undefined)
+  const [filteredList, setFilteredList] = useState<Option[] | undefined>(undefined)
+  const AllOptionType = useAllOptionTypes()
+  useEffect(() => {
+    if (!AllOptionType || AllOptionType?.length === 0) return
+    const list = getOptionList(AllOptionType)
+    setOptionList(list)
+  }, [setOptionList, AllOptionType])
+
+  useEffect(() => {
+    setFilteredList(optionList)
+  }, [optionList, setFilteredList])
   return (
     <Wrapper id="optionTrade">
       <Search>
@@ -104,9 +143,9 @@ export default function OptionTrade() {
         <ButtonSelect placeholder="Select price range" width="320px" />
         <ButtonOutlinedPrimary>Search</ButtonOutlinedPrimary>
       </Search>
-      {optionList && (
+      {filteredList && (
         <ContentWrapper>
-          {optionList.map(option => (
+          {filteredList.map(option => (
             <OptionCard option={option} key={option.title} />
           ))}
         </ContentWrapper>
@@ -115,13 +154,13 @@ export default function OptionTrade() {
   )
 }
 
-function OptionCard({ option: { title, icon, optionType, address, details } }: { option: Option }) {
+function OptionCard({ option: { title, icon, type, address, details } }: { option: Option }) {
   return (
     <AppBody>
       <AutoColumn gap="20px">
         <AutoRow>
           <Circle>
-            <OptionIcon tokenIcon={icon} optionType={optionType} size="28px" />
+            <OptionIcon tokenIcon={icon} type={type} size="28px" />
           </Circle>
           <AutoColumn>
             <TYPE.mediumHeader fontSize={23}>{title}</TYPE.mediumHeader>
