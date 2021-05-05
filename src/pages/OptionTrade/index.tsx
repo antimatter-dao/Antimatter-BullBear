@@ -1,157 +1,144 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import Swap from '../Swap'
+import ButtonSelect from 'components/Button/ButtonSelect'
 import AppBody from 'pages/AppBody'
+import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
 import { TYPE } from 'theme'
-import AddLiquidity from 'pages/AddLiquidity'
-import useTheme from 'hooks/useTheme'
 import { AutoRow, RowBetween } from 'components/Row'
-import { ButtonEmpty } from 'components/Button'
+import { OptionIcon } from 'components/Icons'
+import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { AutoColumn } from 'components/Column'
-import { ChevronLeft } from 'react-feather'
+import { shortenAddress } from 'utils'
 
-const Wrapper = styled.div`
-  min-height: 100vh;
-  width: 100%;
-  padding: 0 160px;
-`
-
-const Elevate = styled.div`
-  z-index: 2;
-`
-
-const SwitchTabWrapper = styled.div`
-  display: flex;
-  margin-bottom: -1px;
-  margin-left: -1px;
-  flex-direction: row-reverse;
-  justify-content: flex-end;
-`
-
-const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
-  outline: none
-  border:none;
-  background: none;
-  position: relative;
-  min-width: ${({ isFirstChild }) => (isFirstChild ? '157px' : '229px')};
-  padding: 0;
-  height: 42px;
-  margin-left:${({ isFirstChild }) => (isFirstChild ? '0' : '-74px')};
-  svg {
-    z-index:${({ selected }) => (selected ? '2' : '0')}
-    position: absolute;
-    top: ${({ selected }) => (selected ? '0' : '-1px')};
-    left: 0;
-    stroke: ${({ theme, selected }) => (selected ? theme.text4 : theme.text5)};
-    fill:${({ selected, theme, isFirstChild }) => (selected ? '#141414' : isFirstChild ? 'transparent' : theme.bg1)}
-    stroke-width: 1px;
+interface Option {
+  title: string
+  address: string
+  icon: JSX.Element
+  optionType: OptionType
+  details: {
+    'Option Price Range': string
+    'Underlying Asset': string
+    'Total Current Issuance': string
+    'Market Price': string
   }
-  div{
-    z-index: 2;
-    position: absolute;
-    line-height: 41px;
-    text-align: center
-    top: 0;
-    left:${({ isFirstChild }) => (isFirstChild ? '50px' : '90px')};
-    color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
-  };
-
-`
-enum TABS {
-  SWAP = 'swap',
-  LIQUIDITY = 'liquidity',
-  INFO = 'info'
 }
 
+export enum OptionType {
+  CALL = 'call',
+  PUT = 'put'
+}
+
+const Wrapper = styled.div`
+  width: 100%;
+  margin-bottom: auto;
+`
+
+const ContentWrapper = styled.div`
+  display: grid;
+  grid-gap: 24px;
+  grid-template-columns: repeat(auto-fill, 280px);
+  padding: 52px 120px;
+`
+
+const Search = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.text5};
+  padding: 23px;
+  display: flex;
+  justify-content: center;
+`
+
+const Circle = styled.div`
+  margin-right: 16px;
+  border-radius: 50%;
+  border: 1px solid ${({ theme }) => theme.bg5};
+  background-color: ${({ theme }) => theme.bg4};
+  height: 44px;
+  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const Divider = styled.div`
+  border: 1px solid ${({ theme }) => theme.bg4};
+  width: calc(100% + 48px);
+  margin: 0 -24px;
+`
+
 export default function OptionTrade() {
-  const [tab, setTab] = useState(TABS.SWAP)
-  const theme = useTheme()
-  const handleSetTab = useCallback((tab: TABS) => setTab(tab), [setTab])
+  const [optionList, setOptionList] = useState<Option[] | undefined>(undefined)
+
+  useEffect(() => {
+    setOptionList([
+      {
+        title: 'ETH Call Option',
+        address: '0xc0287539b223fe8d0a0e5c4f27ead9083c756cc2',
+        icon: <ETH />,
+        optionType: OptionType.CALL,
+        details: {
+          'Option Price Range': '$1000 ~ $3000',
+          'Underlying Asset': 'ETH, USDT',
+          'Total Current Issuance': '1234 Shares',
+          'Market Price': ' $2100'
+        }
+      },
+      {
+        title: 'ETH Put Option',
+        address: '0xc0287539b223fe8d0a0e5c4f27ead9083c756cc2',
+        icon: <ETH />,
+        optionType: OptionType.PUT,
+        details: {
+          'Option Price Range': '$1000 ~ $3000',
+          'Underlying Asset': 'ETH, USDT',
+          'Total Current Issuance': '1234 Shares',
+          'Market Price': ' $2100'
+        }
+      }
+    ])
+  }, [setOptionList])
   return (
-    <Wrapper>
-      <RowBetween style={{ padding: '27px 0' }}>
-        <ButtonEmpty width="auto" color={theme.text1}>
-          <ChevronLeft />
-          Go Back
-        </ButtonEmpty>
-        <AutoColumn justify="center" gap="8px">
-          <TYPE.subHeader fontSize={24} fontWeight={500}>
-            ETH Call Option
-          </TYPE.subHeader>
-          <TYPE.smallGray>0x1c9491865a1de77c5b6e19d2e6a5f1d7a6f2b25f</TYPE.smallGray>
-        </AutoColumn>
-        <div />
-      </RowBetween>
-      <AutoRow justify="center">
-        <div>
-          <SwitchTab tab={tab} setTab={handleSetTab} />
-          <AppBody
-            maxWidth="1114px"
-            style={{ padding: 0, background: 'black', minHeight: '400px', borderColor: theme.text5, width: 1114 }}
-          >
-            <Elevate>
-              {tab === TABS.SWAP && <Swap></Swap>}
-              {tab === TABS.LIQUIDITY && <AddLiquidity />}
-              {tab === TABS.INFO && (
-                <AppBody maxWidth="1116px" style={{ width: 1116, minHeight: '402px', margin: '-1px' }}>
-                  <span></span>
-                </AppBody>
-              )}
-            </Elevate>
-          </AppBody>
-        </div>
-      </AutoRow>
+    <Wrapper id="optionTrade">
+      <Search>
+        <ButtonSelect placeholder="Select asset type" width="320px" />
+        <ButtonSelect placeholder="Select option type" width="320px" />
+        <ButtonSelect placeholder="Select price range" width="320px" />
+        <ButtonOutlinedPrimary>Search</ButtonOutlinedPrimary>
+      </Search>
+      {optionList && (
+        <ContentWrapper>
+          {optionList.map(option => (
+            <OptionCard option={option} key={option.title} />
+          ))}
+        </ContentWrapper>
+      )}
     </Wrapper>
   )
 }
 
-function SwitchTab({ tab, setTab }: { tab: TABS; setTab: (tab: TABS) => void }) {
-  const swapClick = useCallback(() => setTab(TABS.SWAP), [setTab])
-  const liquidityClick = useCallback(() => setTab(TABS.LIQUIDITY), [setTab])
-  const infoClick = useCallback(() => setTab(TABS.INFO), [setTab])
+function OptionCard({ option: { title, icon, optionType, address, details } }: { option: Option }) {
   return (
-    <SwitchTabWrapper>
-      <Tab onClick={infoClick} selected={tab === TABS.INFO}>
-        Info
-      </Tab>
-      <Tab onClick={liquidityClick} selected={tab === TABS.LIQUIDITY}>
-        Liqidity
-      </Tab>
-      <Tab isFirstChild={true} onClick={swapClick} selected={tab === TABS.SWAP}>
-        Swap
-      </Tab>
-    </SwitchTabWrapper>
-  )
-}
-function Tab({
-  isFirstChild,
-  selected,
-  children,
-  onClick
-}: {
-  isFirstChild?: boolean
-  selected?: boolean
-  children: string
-  onClick: () => void
-}) {
-  return (
-    <TabStyle selected={selected} isFirstChild={isFirstChild} onClick={onClick}>
-      {isFirstChild ? (
-        <svg width="157" height="76" viewBox="0 0 157 76" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M157 42V42C150.187 42 143.885 38.3867 140.443 32.5068L127.793 10.8964C124.205 4.76683 117.635 1 110.533 1H33C15.3269 1 1 15.3269 1 33V76" />
-          {!selected && (
-            <path
-              d="M157 42V42C150.187 42 143.885 38.3867 140.443 32.5068L127.793 10.8964C124.205 4.76683 117.635 1 110.533 1H33C15.3269 1 1 15.3269 1 33V42"
-              fill="#000000"
-            />
-          )}
-        </svg>
-      ) : (
-        <svg width="229" height="43" viewBox="0 0 229 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 42H12.8469C25.0603 42 36.2086 35.0479 41.5827 24.0804L44.1114 18.9196C49.4854 7.95208 60.6338 1 72.8472 1H161.754C169.37 1 176.325 5.32574 179.693 12.157L188.904 30.843C192.272 37.6742 199.227 42 206.843 42H228.5" />
-        </svg>
-      )}
-      <TYPE.smallHeader fontSize={18}>{children}</TYPE.smallHeader>
-    </TabStyle>
+    <AppBody>
+      <AutoColumn gap="20px">
+        <AutoRow>
+          <Circle>
+            <OptionIcon tokenIcon={icon} optionType={optionType} size="28px" />
+          </Circle>
+          <AutoColumn>
+            <TYPE.mediumHeader fontSize={23}>{title}</TYPE.mediumHeader>
+            <TYPE.smallGray>{shortenAddress(address, 7)}</TYPE.smallGray>
+          </AutoColumn>
+        </AutoRow>
+        <Divider />
+        <AutoColumn gap="12px">
+          {Object.keys(details).map(key => (
+            <RowBetween key={key}>
+              <TYPE.smallGray>{key}:</TYPE.smallGray>
+              <TYPE.subHeader>{details[key as keyof typeof details]}</TYPE.subHeader>
+            </RowBetween>
+          ))}
+        </AutoColumn>
+        <ButtonPrimary>Trade</ButtonPrimary>
+      </AutoColumn>
+    </AppBody>
   )
 }

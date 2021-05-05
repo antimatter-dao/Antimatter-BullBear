@@ -40,6 +40,7 @@ import MatterRedemption from './MatterToken/MatterRedemption'
 import WelcomeSlider from 'components/WelcomeSlider'
 import FAQ from './FAQ'
 import OptionTrade from './OptionTrade'
+import OptionTradeAction from './OptionTrade/OptionTradeAction'
 // import WarningModal from 'components/Modal/WarningModal'
 
 const AppWrapper = styled.div`
@@ -117,6 +118,7 @@ export default function App() {
               <Switch>
                 {/* <Route exact strict path="/option_trading" component={Swap} /> */}
                 <Route exact strict path="/option_trading" component={OptionTrade} />
+                <Route exact strict path="/option_trading/:optionType" component={OptionTradeAction} />
                 <Route exact strict path="/option_exercise" component={MarketStrategy} />
                 <Route exact strict path="/generate" component={Generate} />
                 <Route exact strict path="/generate/:currencyIdA/:currencyIdB" component={Generate} />

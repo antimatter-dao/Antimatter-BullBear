@@ -319,7 +319,7 @@ export default function AddLiquidity() {
 
   return (
     <>
-      <AppBody style={{ margin: '-1px' }}>
+      <AppBody style={{ margin: '-1px', borderColor: theme.text4 }}>
         {/* <AddRemoveTabs creating={isCreate} adding={true} /> */}
         <Wrapper>
           <TransactionConfirmationModal
