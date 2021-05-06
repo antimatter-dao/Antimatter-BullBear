@@ -118,8 +118,11 @@ function getOptionList(allOptionType: OptionTypeData[]) {
         underlyingSymbol,
         details: {
           'Option Price Range': range,
-          'Underlying Asset': underlyingSymbol + ', USDT',
-          'Total Current Issuance': callTotal.toString(),
+          'Underlying Asset': underlyingSymbol,
+          'Total Current Issuance': parseBalance({
+            val: callTotal,
+            token: new Token(1, ZERO_ADDRESS, Number(currencyDecimals ?? '18'))
+          }),
           'Market Price': '$2100'
         },
         range: { floor, cap }
@@ -132,8 +135,11 @@ function getOptionList(allOptionType: OptionTypeData[]) {
         underlyingSymbol,
         details: {
           'Option Price Range': range,
-          'Underlying Asset': underlyingSymbol + ', USDT',
-          'Total Current Issuance': putTotal.toString(),
+          'Underlying Asset': underlyingSymbol,
+          'Total Current Issuance': parseBalance({
+            val: putTotal,
+            token: new Token(1, ZERO_ADDRESS, Number(currencyDecimals ?? '18'))
+          }),
           'Market Price': '$2100'
         },
         range: { floor, cap }
@@ -159,7 +165,7 @@ export default function OptionTrade({
   const history = useHistory()
 
   const AllOptionType = useAllOptionTypes()
-  console.log(AllOptionType)
+
   useEffect(() => {
     if (!AllOptionType || AllOptionType?.length === 0) return
     const list = getOptionList(AllOptionType)
@@ -216,6 +222,7 @@ export default function OptionTrade({
         isOpen={currencySearchOpen}
         onDismiss={handleDismissSearch}
         onCurrencySelect={handleSelectAssetType}
+        hasManage={true}
       />
       {addressA ? (
         <OptionTradeAction addressA={addressA} option={option} />

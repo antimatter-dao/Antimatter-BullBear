@@ -6,7 +6,7 @@ import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import { useActiveWeb3React } from '../../hooks'
 import { useAllTokens, useToken, useIsUserAddedToken, useFoundOnInactiveList } from '../../hooks/Tokens'
-import { CloseIcon, TYPE } from '../../theme'
+import { ButtonText, CloseIcon, TYPE } from '../../theme'
 import { isAddress } from '../../utils'
 import Column from '../Column'
 import Row, { RowBetween } from '../Row'
@@ -29,6 +29,14 @@ const ContentWrapper = styled(Column)`
   position: relative;
 `
 
+const Footer = styled.div`
+  width: 100%;
+  border-radius: 20px;
+  padding: 20px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top: 1px solid ${({ theme }) => theme.text5};
+`
 interface CurrencySearchProps {
   isOpen: boolean
   onDismiss: () => void
@@ -39,6 +47,7 @@ interface CurrencySearchProps {
   showManageView: () => void
   showImportView: () => void
   setImportToken: (token: Token) => void
+  hasManage?: boolean
 }
 
 export function CurrencySearch({
@@ -50,7 +59,8 @@ export function CurrencySearch({
   isOpen,
   showManageView,
   showImportView,
-  setImportToken
+  setImportToken,
+  hasManage
 }: CurrencySearchProps) {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
@@ -114,7 +124,10 @@ export function CurrencySearch({
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>()
   const handleInput = useCallback(event => {
-    console.log()
+    const input = event.target.value
+    const checksummedInput = isAddress(input)
+    setSearchQuery(checksummedInput || input)
+    fixedList.current?.scrollTo(0)
   }, [])
 
   const handleEnter = useCallback(
@@ -201,6 +214,15 @@ export function CurrencySearch({
             No results found.
           </TYPE.main>
         </Column>
+      )}
+      {hasManage && (
+        <Footer>
+          <Row justify="center">
+            <ButtonText onClick={showManageView}>
+              <TYPE.main color={theme.primary1}>Manage Token Lists</TYPE.main>
+            </ButtonText>
+          </Row>
+        </Footer>
       )}
     </ContentWrapper>
   )

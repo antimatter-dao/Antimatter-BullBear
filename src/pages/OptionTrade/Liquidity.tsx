@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { Currency, Pair } from '@uniswap/sdk'
+import { Currency, CurrencyAmount, Pair } from '@uniswap/sdk'
 import AddLiquidity from 'pages/AddLiquidity'
 import { AutoColumn } from 'components/Column'
 import { OptionInterface } from './'
@@ -8,12 +8,13 @@ import { FullPositionCardMini } from '../../components/PositionCard'
 import { TYPE } from '../../theme'
 import { OutlineCard } from '../../components/Card'
 import { RowBetween, RowFixed } from '../../components/Row'
-import { usePair } from '../../data/Reserves'
 import { Dots } from '../../components/swap/styleds'
 import RemoveLiquidity from 'pages/RemoveLiquidity'
 import SettingsTab from 'components/Settings'
 import { useActiveWeb3React } from 'hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { useDerivedMintInfo } from 'state/mint/hooks'
+import { Field } from 'state/mint/actions'
 
 const Wrapper = styled.div`
   min-height: 100%;
@@ -53,10 +54,9 @@ export default function Liquidity({
   currencyB?: Currency | null
   option?: OptionInterface
 }) {
-  const [liquidityState, setLiquidityState] = useState<LiquidityState>(LiquidityState.REMOVE)
+  const [liquidityState, setLiquidityState] = useState<LiquidityState>(LiquidityState.ADD)
 
-  const pair = usePair(currencyA ?? undefined, currencyB ?? undefined)
-
+  const { pair, currencyBalances } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
   const handleAdd = useCallback(() => setLiquidityState(LiquidityState.ADD), [])
   const handleRemove = useCallback(() => setLiquidityState(LiquidityState.REMOVE), [])
   return (
@@ -67,14 +67,28 @@ export default function Liquidity({
         <RemoveLiquidity currencyA={currencyA} currencyB={currencyB} onGoBack={handleAdd} />
       )}
       <AdvanceInfoWrapper gap="lg">
-        <OverallLiquidity currencyA={currencyA ?? undefined} currencyB={currencyB ?? undefined} />
-        <LiquidityInfo onRemove={handleRemove} pair={pair?.[1] ?? undefined} />
+        <OverallLiquidity
+          currencyA={currencyA ?? undefined}
+          currencyB={currencyB ?? undefined}
+          currencyBalances={currencyBalances}
+        />
+        <LiquidityInfo onRemove={handleRemove} pair={pair ?? undefined} />
       </AdvanceInfoWrapper>
     </Wrapper>
   )
 }
 
-function OverallLiquidity({ currencyA, currencyB }: { currencyA?: Currency; currencyB?: Currency }) {
+function OverallLiquidity({
+  currencyA,
+  currencyB,
+  currencyBalances
+}: {
+  currencyA?: Currency
+  currencyB?: Currency
+  currencyBalances: {
+    [filed in Field]?: CurrencyAmount | undefined
+  }
+}) {
   return (
     <SectionWrapper>
       <RowBetween>
@@ -85,8 +99,13 @@ function OverallLiquidity({ currencyA, currencyB }: { currencyA?: Currency; curr
       </RowBetween>
       <OutlineCard>
         <AutoColumn gap="lg">
-          <TYPE.body>{currencyB && <CurrencyLogo currency={currencyB} />}</TYPE.body>
-          <TYPE.body>{currencyA && <CurrencyLogo currency={currencyA} />}</TYPE.body>
+          <TYPE.body>
+            {currencyB && <CurrencyLogo currency={currencyB} />}
+            {currencyBalances[Field.CURRENCY_B]?.toFixed()}
+          </TYPE.body>
+          <TYPE.body>
+            {currencyA && <CurrencyLogo currency={currencyA} />} {currencyBalances[Field.CURRENCY_A]?.toFixed()}
+          </TYPE.body>
         </AutoColumn>
       </OutlineCard>
     </SectionWrapper>

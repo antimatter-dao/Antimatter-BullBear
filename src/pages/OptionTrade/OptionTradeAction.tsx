@@ -89,7 +89,7 @@ enum TABS {
 }
 
 export default function OptionTradeAction({ addressA, option }: { addressA?: string; option?: OptionInterface }) {
-  const [tab, setTab] = useState(TABS.LIQUIDITY)
+  const [tab, setTab] = useState(TABS.SWAP)
 
   const theme = useTheme()
   const history = useHistory()
