@@ -7,7 +7,7 @@ import { OptionInterface } from './'
 import { FullPositionCardMini } from '../../components/PositionCard'
 import { TYPE } from '../../theme'
 import { OutlineCard } from '../../components/Card'
-import { RowBetween, RowFixed } from '../../components/Row'
+import { AutoRow, RowBetween, RowFixed } from '../../components/Row'
 import { Dots } from '../../components/swap/styleds'
 import RemoveLiquidity from 'pages/RemoveLiquidity'
 import SettingsTab from 'components/Settings'
@@ -48,7 +48,8 @@ enum LiquidityState {
 }
 export default function Liquidity({
   currencyA,
-  currencyB
+  currencyB,
+  option
 }: {
   currencyA?: Currency | null
   currencyB?: Currency | null
@@ -71,6 +72,7 @@ export default function Liquidity({
           currencyA={currencyA ?? undefined}
           currencyB={currencyB ?? undefined}
           currencyBalances={currencyBalances}
+          tokenTitle={option?.title}
         />
         <LiquidityInfo onRemove={handleRemove} pair={pair ?? undefined} />
       </AdvanceInfoWrapper>
@@ -81,10 +83,12 @@ export default function Liquidity({
 function OverallLiquidity({
   currencyA,
   currencyB,
-  currencyBalances
+  currencyBalances,
+  tokenTitle
 }: {
   currencyA?: Currency
   currencyB?: Currency
+  tokenTitle?: string
   currencyBalances: {
     [filed in Field]?: CurrencyAmount | undefined
   }
@@ -100,11 +104,20 @@ function OverallLiquidity({
       <OutlineCard>
         <AutoColumn gap="lg">
           <TYPE.body>
-            {currencyB && <CurrencyLogo currency={currencyB} />}
-            {currencyBalances[Field.CURRENCY_B]?.toFixed()}
+            <AutoRow gap="10px">
+              {currencyB && <CurrencyLogo currency={currencyB} />}
+              <span>
+                {currencyBalances[Field.CURRENCY_B]?.toFixed()}&nbsp;{tokenTitle}
+              </span>
+            </AutoRow>
           </TYPE.body>
           <TYPE.body>
-            {currencyA && <CurrencyLogo currency={currencyA} />} {currencyBalances[Field.CURRENCY_A]?.toFixed()}
+            <AutoRow gap="10px">
+              {currencyA && <CurrencyLogo currency={currencyA} />}
+              <span>
+                {currencyBalances[Field.CURRENCY_A]?.toFixed()}&nbsp; {currencyA?.symbol}
+              </span>
+            </AutoRow>
           </TYPE.body>
         </AutoColumn>
       </OutlineCard>

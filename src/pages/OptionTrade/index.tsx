@@ -22,6 +22,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { currencyId } from 'utils/currencyId'
 import Loader from 'assets/svg/gray_loader.svg'
+import { useUSDTPrice } from 'utils/useUSDCPrice'
 export interface OptionInterface {
   title: string
   address: string
@@ -295,15 +296,16 @@ function OptionCard({
   option: OptionInterface
   onClick: () => void
 }) {
-  const currency = useCurrency(underlyingAddress ?? undefined)
-
+  const underlyingCurrency = useCurrency(underlyingAddress)
+  const currency = useCurrency(address)
+  const price = useUSDTPrice(currency ?? undefined)
   return (
     <AppBody>
       <AutoColumn gap="20px">
         <AutoRow>
           <Circle>
             <OptionIcon
-              tokenIcon={<CurrencyLogo currency={currency ?? undefined} size="28px" />}
+              tokenIcon={<CurrencyLogo currency={underlyingCurrency ?? undefined} size="28px" />}
               type={type}
               size="28px"
             />
@@ -318,7 +320,9 @@ function OptionCard({
           {Object.keys(details).map(key => (
             <RowBetween key={key}>
               <TYPE.smallGray>{key}:</TYPE.smallGray>
-              <TYPE.subHeader>{details[key as keyof typeof details]}</TYPE.subHeader>
+              <TYPE.subHeader>
+                {key === 'Market Price' ? (price ? `$${price}` : '-') : details[key as keyof typeof details]}
+              </TYPE.subHeader>
             </RowBetween>
           ))}
         </AutoColumn>

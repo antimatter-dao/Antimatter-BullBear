@@ -219,7 +219,7 @@ export function CurrencySearch({
         <Footer>
           <Row justify="center">
             <ButtonText onClick={showManageView}>
-              <TYPE.main color={theme.primary1}>Manage Token Lists</TYPE.main>
+              <TYPE.main color={theme.primary1}>Import token</TYPE.main>
             </ButtonText>
           </Row>
         </Footer>

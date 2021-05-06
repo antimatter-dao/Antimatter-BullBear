@@ -1,6 +1,6 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
 import React, { useEffect, useState } from 'react'
-import { X } from 'react-feather'
+import { ChevronDown, X } from 'react-feather'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
@@ -198,7 +198,9 @@ const UNIWrapper = styled.span`
 
 const NetworkCard = styled.div<{ color?: string }>`
   color: #000000;
+  cursor: pointer;
   display: flex;
+  padding: 0 8px;
   height: 32px;
   margin-right: 12px;
   margin-left: 19px;
@@ -208,7 +210,7 @@ const NetworkCard = styled.div<{ color?: string }>`
   background-color: ${({ color }) => color ?? 'rgba(255, 255, 255, 0.12)'}
   font-size: 13px;
   font-weight: 500;
-  svg {
+  svg:first-child {
     height: 24px;
     width: 24px;
   };
@@ -449,6 +451,7 @@ export default function Header() {
               color={NetworkInfo[chainId as number]?.color}
             >
               {NetworkInfo[chainId as number]?.icon} {NETWORK_LABELS[chainId]}
+              <ChevronDown size={18} style={{ marginLeft: '5px' }} />
             </NetworkCard>
           )}
           {/* </HideSmall> */}
