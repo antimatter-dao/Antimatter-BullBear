@@ -117,7 +117,8 @@ export function theme(darkMode: boolean): DefaultTheme {
       ${mediaWidthTemplates.upToSmall`display:none;`}
     `,
     mobileHeaderHeight: '90px',
-    headerHeight: '65px',
+    headerHeight: '82px',
+
     // css snippets
     flexColumnNoWrap: css`
       display: flex;

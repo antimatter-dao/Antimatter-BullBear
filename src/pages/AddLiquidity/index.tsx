@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@uniswap/sdk'
+import { Currency, /*currencyEquals, WETH */ ETHER, TokenAmount } from '@uniswap/sdk'
 import React, { useCallback, useContext, useState } from 'react'
 import { Plus } from 'react-feather'
 // import ReactGA from 'react-ga'
@@ -8,14 +8,14 @@ import { Plus } from 'react-feather'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonPrimary } from '../../components/Button'
-import { /*OutlineCard,*/ LightCard } from '../../components/Card'
+import { /*OutlineCard,*/ LightCard, TranslucentCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import DoubleCurrencyLogo from '../../components/DoubleLogo'
 // import { AddRemoveTabs } from '../../components/NavigationTabs'
-import { MinimalPositionCard } from '../../components/PositionCard'
-import Row, { RowBetween, RowFlat } from '../../components/Row'
+// import { MinimalPositionCard } from '../../components/PositionCard'
+import Row, { AutoRow, RowBetween } from '../../components/Row'
 import Card from '../../components/Card'
 import { ROUTER_ADDRESS } from '../../constants'
 import { PairState } from '../../data/Reserves'
@@ -65,11 +65,11 @@ export default function AddLiquidity({
   // const currencyA = useCurrency(currencyIdA)
   // const currencyB = useCurrency(currencyIdB)
 
-  const oneCurrencyIsWETH = Boolean(
-    chainId &&
-      ((currencyA && currencyEquals(currencyA, WETH[chainId])) ||
-        (currencyB && currencyEquals(currencyB, WETH[chainId])))
-  )
+  // const oneCurrencyIsWETH = Boolean(
+  //   chainId &&
+  //     ((currencyA && currencyEquals(currencyA, WETH[chainId])) ||
+  //       (currencyB && currencyEquals(currencyB, WETH[chainId])))
+  // )
 
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
 
@@ -227,16 +227,18 @@ export default function AddLiquidity({
     return noLiquidity ? (
       <AutoColumn gap="20px">
         <LightCard mt="20px" borderRadius="20px">
-          <RowFlat style={{ background: theme.translucent }}>
-            <Text fontSize="14px" fontWeight={500} lineHeight="42px" marginRight={10}>
-              {currencies[Field.CURRENCY_A]?.symbol + '/' + currencies[Field.CURRENCY_B]?.symbol}
-            </Text>
-            <DoubleCurrencyLogo
-              currency0={currencies[Field.CURRENCY_A]}
-              currency1={currencies[Field.CURRENCY_B]}
-              size={14}
-            />
-          </RowFlat>
+          <TranslucentCard padding="4px 20px">
+            <AutoRow>
+              <Text fontSize="14px" fontWeight={500} lineHeight="42px" marginRight={10}>
+                {currencies[Field.CURRENCY_A]?.symbol + '/' + currencies[Field.CURRENCY_B]?.symbol}
+              </Text>
+              <DoubleCurrencyLogo
+                currency0={currencies[Field.CURRENCY_A]}
+                currency1={currencies[Field.CURRENCY_B]}
+                size={18}
+              />
+            </AutoRow>
+          </TranslucentCard>
         </LightCard>
       </AutoColumn>
     ) : (
@@ -283,26 +285,26 @@ export default function AddLiquidity({
     currencies[Field.CURRENCY_A]?.symbol
   } and ${parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)} ${currencies[Field.CURRENCY_B]?.symbol}`
 
-  const handleCurrencyASelect = useCallback((currencyA: Currency) => {
-    // const newCurrencyIdA = currencyId(currencyA)
-    // if (newCurrencyIdA === currencyIdB) {
-    //   history.push(`/add/${currencyIdB}/${currencyIdA}`)
-    // } else {
-    //   history.push(`/add/${newCurrencyIdA}/${currencyIdB}`)
-    // }
-  }, [])
-  const handleCurrencyBSelect = useCallback((currencyB: Currency) => {
-    // const newCurrencyIdB = currencyId(currencyB)
-    // if (currencyIdA === newCurrencyIdB) {
-    //   if (currencyIdB) {
-    //     history.push(`/add/${currencyIdB}/${newCurrencyIdB}`)
-    //   } else {
-    //     history.push(`/add/${newCurrencyIdB}`)
-    //   }
-    // } else {
-    //   history.push(`/add/${currencyIdA ? currencyIdA : 'ETH'}/${newCurrencyIdB}`)
-    // }
-  }, [])
+  // const handleCurrencyASelect = useCallback((currencyA: Currency) => {
+  // const newCurrencyIdA = currencyId(currencyA)
+  // if (newCurrencyIdA === currencyIdB) {
+  //   history.push(`/add/${currencyIdB}/${currencyIdA}`)
+  // } else {
+  //   history.push(`/add/${newCurrencyIdA}/${currencyIdB}`)
+  // }
+  // }, [])
+  // const handleCurrencyBSelect = useCallback((currencyB: Currency) => {
+  // const newCurrencyIdB = currencyId(currencyB)
+  // if (currencyIdA === newCurrencyIdB) {
+  //   if (currencyIdB) {
+  //     history.push(`/add/${currencyIdB}/${newCurrencyIdB}`)
+  //   } else {
+  //     history.push(`/add/${newCurrencyIdB}`)
+  //   }
+  // } else {
+  //   history.push(`/add/${currencyIdA ? currencyIdA : 'ETH'}/${newCurrencyIdB}`)
+  // }
+  // }, [])
 
   const handleDismissConfirmation = useCallback(() => {
     setShowConfirm(false)
@@ -319,7 +321,7 @@ export default function AddLiquidity({
 
   return (
     <>
-      <AppBody style={{ margin: '-1px', borderColor: theme.text4 }}>
+      <AppBody style={{ margin: '-1px', borderColor: theme.text4, minHeight: '100%' }}>
         {/* <AddRemoveTabs creating={isCreate} adding={true} /> */}
         <Wrapper>
           <TransactionConfirmationModal
@@ -370,12 +372,13 @@ export default function AddLiquidity({
                 </ColumnCenter>
               ))} */}
             <CurrencyInputPanel
+              disableCurrencySelect={true}
               value={formattedAmounts[Field.CURRENCY_A]}
               onUserInput={onFieldAInput}
               onMax={() => {
                 onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
               }}
-              onCurrencySelect={handleCurrencyASelect}
+              // onCurrencySelect={handleCurrencyASelect}
               showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
               currency={currencies[Field.CURRENCY_A]}
               id="add-liquidity-input-tokena"
@@ -386,9 +389,10 @@ export default function AddLiquidity({
               <Plus size="28" color={theme.text2} />
             </ColumnCenter>
             <CurrencyInputPanel
+              disableCurrencySelect={true}
               value={formattedAmounts[Field.CURRENCY_B]}
               onUserInput={onFieldBInput}
-              onCurrencySelect={handleCurrencyBSelect}
+              // onCurrencySelect={handleCurrencyBSelect}
               onMax={() => {
                 onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
               }}
@@ -467,18 +471,20 @@ export default function AddLiquidity({
           </AutoColumn>
         </Wrapper>
       </AppBody>
-      {!addIsUnsupported ? (
+      {/* {!addIsUnsupported ? (
         pair && !noLiquidity && pairState !== PairState.INVALID ? (
           <AutoColumn style={{ minWidth: '20rem', width: '100%', maxWidth: '400px', marginTop: '1rem' }}>
             <MinimalPositionCard showUnwrapped={oneCurrencyIsWETH} pair={pair} />
           </AutoColumn>
         ) : null
-      ) : (
+      ) : ( */}
+      {addIsUnsupported && (
         <UnsupportedCurrencyFooter
           show={addIsUnsupported}
           currencies={[currencies.CURRENCY_A, currencies.CURRENCY_B]}
         />
       )}
+      {/* )} */}
     </>
   )
 }

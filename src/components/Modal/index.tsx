@@ -41,10 +41,10 @@ export const Wrapper = styled.div`
   `}
 `
 
-export const Filler = styled.div`
-  width: 212px;
-  ${({ theme }) => theme.desktop}
-`
+// export const Filler = styled.div`
+//   width: 212px;
+//   ${({ theme }) => theme.desktop}
+// `
 
 const AnimatedDialogContent = animated(DialogContent)
 // destructure to not pass custom props to Dialog DOM element
@@ -156,7 +156,7 @@ export default function Modal({
               initialFocusRef={initialFocusRef}
               unstable_lockFocusAcrossFrames={false}
             >
-              <Filler />
+              {/* <Filler /> */}
               <Wrapper>
                 <StyledDialogContent
                   {...(isMobile

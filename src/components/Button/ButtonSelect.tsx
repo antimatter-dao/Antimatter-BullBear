@@ -103,7 +103,7 @@ export default function ButtonSelect({
   const handleClick = useCallback(() => {
     setIsOpen(!isOpen)
     onClick && onClick()
-  }, [])
+  }, [isOpen, onClick])
   return (
     <div style={{ position: 'relative', marginRight: ' 20px' }}>
       {label && (

@@ -302,7 +302,7 @@ export default function Swap({ currencyA, currencyB }: { currencyA?: Currency | 
         onDismiss={handleDismissTokenWarning}
       />
       <SwapPoolTabs active={'option_trading'} />
-      <AppBody style={{ margin: '-1px', borderColor: theme.text4 }}>
+      <AppBody style={{ margin: '-1px', borderColor: theme.text4, minHeight: '100%' }}>
         {/* <SwapHeader /> */}
         <Wrapper id="swap-page" style={{ padding: '1rem 0' }}>
           <ConfirmSwapModal
@@ -321,6 +321,7 @@ export default function Swap({ currencyA, currencyB }: { currencyA?: Currency | 
 
           <AutoColumn gap="20px">
             <CurrencyInputPanel
+              disableCurrencySelect={true}
               label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
               value={formattedAmounts[Field.INPUT]}
               showMaxButton={!atMaxAmountInput}
@@ -349,6 +350,7 @@ export default function Swap({ currencyA, currencyB }: { currencyA?: Currency | 
               </AutoRow>
             </AutoColumn>
             <CurrencyInputPanel
+              disableCurrencySelect={true}
               value={formattedAmounts[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
               label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
@@ -520,9 +522,9 @@ export default function Swap({ currencyA, currencyB }: { currencyA?: Currency | 
             ) : null}
           </BottomGrouping>
         </Wrapper>
-        {!swapIsUnsupported ? (
-          <AdvancedSwapDetailsDropdown trade={trade} />
-        ) : (
+
+        <AdvancedSwapDetailsDropdown trade={trade} />
+        {swapIsUnsupported && (
           <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
         )}
       </AppBody>

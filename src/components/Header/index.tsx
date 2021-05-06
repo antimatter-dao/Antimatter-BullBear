@@ -61,8 +61,7 @@ const NetworkInfo: { [key: number]: { color: string; icon: JSX.Element } } = {
   }
 }
 
-export const headerHeight = '65px',
-  headerHeightDisplacement = '32px'
+export const headerHeightDisplacement = '32px'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -91,7 +90,7 @@ const HeaderControls = styled.div`
   flex-direction: row;
   justify-self: flex-end;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    height: ${headerHeight};
+    height: ${({ theme }) => theme.headerHeight};
     flex-direction: row;
     justify-content: space-between;
     align-items: center;

@@ -4,26 +4,33 @@ import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import Swap from '../Swap'
 import AppBody from 'pages/AppBody'
-import { TYPE } from 'theme'
-import AddLiquidity from 'pages/AddLiquidity'
+import { CustomLightSpinner, TYPE } from 'theme'
+import Liquidity from './Liquidity'
 import useTheme from 'hooks/useTheme'
-import { AutoRow, RowBetween } from 'components/Row'
+import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import { ButtonEmpty } from 'components/Button'
 import { AutoColumn } from 'components/Column'
 import { USDT } from '../../constants'
 import { useCurrency } from 'hooks/Tokens'
 import { currencyId } from 'utils/currencyId'
 import { OptionIcon } from 'components/Icons'
-import { Option } from './'
+import { OptionInterface } from './'
+import Loader from 'assets/svg/gray_loader.svg'
+import CurrencyLogo from 'components/CurrencyLogo'
 
 const Wrapper = styled.div`
-  min-height: 100vh;
+  min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
   width: 100%;
   padding: 0 160px;
 `
 
+const ActionWrapper = styled.div`
+  margin-top: 10px;
+`
+
 const Elevate = styled.div`
   z-index: 2;
+  height: 100%;
 `
 
 const SwitchTabWrapper = styled.div`
@@ -32,6 +39,18 @@ const SwitchTabWrapper = styled.div`
   margin-left: -1px;
   flex-direction: row-reverse;
   justify-content: flex-end;
+`
+
+const Circle = styled.div`
+  margin-right: 16px;
+  border-radius: 50%;
+  border: 1px solid ${({ theme }) => theme.bg5};
+  background-color: ${({ theme }) => theme.bg4};
+  height: 32px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
@@ -69,12 +88,15 @@ enum TABS {
   INFO = 'info'
 }
 
-export default function OptionTradeAction({ addressA, option }: { addressA?: string; option?: Option }) {
-  const [tab, setTab] = useState(TABS.SWAP)
+export default function OptionTradeAction({ addressA, option }: { addressA?: string; option?: OptionInterface }) {
+  const [tab, setTab] = useState(TABS.LIQUIDITY)
+
   const theme = useTheme()
   const history = useHistory()
+
   const currencyA = USDT
   const currencyB = useCurrency(addressA)
+  const underlyingCurrency = useCurrency(option?.underlyingAddress ?? undefined)
 
   const handleSetTab = useCallback((tab: TABS) => setTab(tab), [setTab])
   const handleBack = useCallback(() => history.push('/option_trading'), [history])
@@ -87,40 +109,45 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
               <ChevronLeft />
               Go Back
             </ButtonEmpty>
+
             <AutoColumn justify="center" gap="8px">
-              <TYPE.subHeader fontSize={24} fontWeight={500}>
-                <OptionIcon tokenIcon={option.icon} type={option.type} />
-                {option.title}
-              </TYPE.subHeader>
+              <RowFixed>
+                <Circle>
+                  <OptionIcon
+                    tokenIcon={<CurrencyLogo currency={underlyingCurrency ?? undefined} size="20px" />}
+                    type={option.type}
+                    size="20px"
+                  />
+                </Circle>
+                <TYPE.subHeader fontSize={24} fontWeight={500}>
+                  {option.title}
+                </TYPE.subHeader>
+              </RowFixed>
               <TYPE.smallGray>{currencyB && currencyId(currencyB)}</TYPE.smallGray>
             </AutoColumn>
+
             <div />
           </RowBetween>
           <AutoRow justify="center">
-            <div>
+            <ActionWrapper>
               <SwitchTab tab={tab} setTab={handleSetTab} />
               <AppBody
                 maxWidth="1114px"
-                style={{ padding: 0, background: 'black', minHeight: '400px', borderColor: theme.text5, width: 1114 }}
+                style={{ padding: 0, background: 'black', borderColor: theme.text5, width: 1114 }}
               >
                 <Elevate>
                   {tab === TABS.SWAP && <Swap currencyA={currencyA} currencyB={currencyB}></Swap>}
-                  {tab === TABS.LIQUIDITY && <AddLiquidity currencyA={currencyA} currencyB={currencyB} />}
-                  {tab === TABS.INFO && (
-                    <AppBody
-                      maxWidth="1116px"
-                      style={{ width: 1116, minHeight: '402px', margin: '-1px', borderColor: theme.text4 }}
-                    >
-                      <span></span>
-                    </AppBody>
-                  )}
+                  {tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} option={option} />}
+                  {tab === TABS.INFO && <Info option={option} />}
                 </Elevate>
               </AppBody>
-            </div>
+            </ActionWrapper>
           </AutoRow>
         </Wrapper>
       ) : (
-        <AppBody>Option not available</AppBody>
+        <AppBody style={{ minHeight: '402px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <CustomLightSpinner src={Loader} alt="loader" size={'100px'} />
+        </AppBody>
       )}
     </>
   )
@@ -174,5 +201,39 @@ function Tab({
       )}
       <TYPE.smallHeader fontSize={18}>{children}</TYPE.smallHeader>
     </TabStyle>
+  )
+}
+
+function Info({ option }: { option?: OptionInterface }) {
+  const theme = useTheme()
+  return (
+    <AppBody
+      maxWidth="1116px"
+      style={{
+        width: 1116,
+        minHeight: '402px',
+        margin: '-1px',
+        borderColor: theme.text4,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
+      <div>
+        <TYPE.smallHeader style={{ marginBottom: 20 }}>Option Information</TYPE.smallHeader>
+        <AppBody style={{ minWidth: 550, width: '50%' }}>
+          <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
+            {option &&
+              option.details &&
+              Object.keys(option.details).map(key => (
+                <RowBetween key={key}>
+                  <TYPE.darkGray>{key}</TYPE.darkGray>
+                  <TYPE.body>{option.details[key as keyof typeof option.details]}</TYPE.body>
+                </RowBetween>
+              ))}
+          </AutoColumn>
+        </AppBody>
+      </div>
+    </AppBody>
   )
 }

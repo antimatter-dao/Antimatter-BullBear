@@ -32,7 +32,7 @@ const MobilePopupInner = styled.div`
 
 const FixedPopupColumn = styled(AutoColumn)<{ extraPadding: boolean }>`
   position: fixed;
-  top: ${({ extraPadding }) => (extraPadding ? '58px' : '38px')};
+  top: ${({ extraPadding, theme }) => (extraPadding ? theme.headerHeight : '38px')};
   right: 1rem;
   max-width: 340px !important;
   width: 100%;

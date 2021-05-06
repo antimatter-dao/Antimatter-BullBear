@@ -73,7 +73,7 @@ const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: calc(100vh - 65px);
+  min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
   justify-content: center;
   align-items: center;
   flex: 1;
@@ -131,7 +131,7 @@ export default function App() {
                 <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                 <Route exact strict path="/find" component={PoolFinder} />
                 <Route exact strict path="/liquidity" component={Pool} />
-                <Route exact strict path="/matter_token" component={MatterToken} />
+                <Route exact strict path="/farm" component={MatterToken} />
                 <Route exact strict path="/matter_redemption" component={MatterRedemption} />
                 {/* <Route exact strict path="/vote" component={Vote} /> */}
                 <Route exact strict path="/create" component={RedirectToAddLiquidity} />
@@ -151,7 +151,7 @@ export default function App() {
                 <Route component={RedirectPathToSwapOnly} />
               </Switch>
             </Web3ReactManager>
-            <Marginer />
+            {/* <Marginer /> */}
           </BodyWrapper>
         </ContentWrapper>
       </AppWrapper>

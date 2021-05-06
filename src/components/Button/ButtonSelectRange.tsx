@@ -70,9 +70,23 @@ export function ButtonSelectRange({
       </ButtonSelectStyle>
 
       <RangeInputWrapper isOpen={isOpen} ref={node as any} width="372px">
-        <NumberInputPanel label="From" value={floor} onUserInput={handleFloorInput} showMaxButton={false} id="floor" />
+        <NumberInputPanel
+          label="From"
+          value={floor}
+          onUserInput={handleFloorInput}
+          showMaxButton={false}
+          id="floor"
+          hideBalance={true}
+        />
         <p>-</p>
-        <NumberInputPanel label="To" value={cap} onUserInput={handleCapInput} showMaxButton={false} id="cap" />
+        <NumberInputPanel
+          label="To"
+          value={cap}
+          onUserInput={handleCapInput}
+          showMaxButton={false}
+          id="cap"
+          hideBalance={true}
+        />
         <AutoRow>
           <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
             X

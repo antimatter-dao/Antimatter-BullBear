@@ -47,7 +47,7 @@ const QuestionMark = styled.span`
   font-size: 1rem;
 `
 
-export default function QuestionHelper({ text }: { text: string }) {
+export default function QuestionHelper({ text, size = 14 }: { text: string; size?: number }) {
   const [show, setShow] = useState<boolean>(false)
 
   const open = useCallback(() => setShow(true), [setShow])
@@ -57,7 +57,7 @@ export default function QuestionHelper({ text }: { text: string }) {
     <span style={{ marginLeft: 4 }}>
       <Tooltip text={text} show={show}>
         <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
-          <Question size={18} />
+          <Question size={size} />
         </QuestionWrapper>
       </Tooltip>
     </span>

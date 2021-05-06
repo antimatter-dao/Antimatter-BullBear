@@ -40,7 +40,7 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
   return (
     <>
       <AutoColumn gap="0px">
-        {trade && (
+        {trade ? (
           <>
             <DataCard
               data={[
@@ -48,7 +48,10 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
                   title: (
                     <>
                       {isExactIn ? 'Minimum received' : 'Maximum sold'}
-                      <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
+                      <QuestionHelper
+                        text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed."
+                        size={12}
+                      />
                     </>
                   ),
                   content: isExactIn
@@ -63,7 +66,10 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
                   title: (
                     <>
                       Price Impact
-                      <QuestionHelper text="The difference between the market price and estimated price due to trade size." />
+                      <QuestionHelper
+                        text="The difference between the market price and estimated price due to trade size."
+                        size={12}
+                      />
                     </>
                   ),
                   content: <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
@@ -72,7 +78,10 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
                   title: (
                     <>
                       Liquidity Provider Fee
-                      <QuestionHelper text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive." />
+                      <QuestionHelper
+                        text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive."
+                        size={12}
+                      />
                     </>
                   ),
                   content: realizedLPFee
@@ -107,6 +116,47 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
               }
             />
           </>
+        ) : (
+          <DataCard
+            data={[
+              {
+                title: (
+                  <>
+                    {isExactIn ? 'Minimum received' : 'Maximum sold'}
+                    <QuestionHelper
+                      text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed."
+                      size={12}
+                    />
+                  </>
+                ),
+                content: '-'
+              },
+              {
+                title: (
+                  <>
+                    Price Impact
+                    <QuestionHelper
+                      text="The difference between the market price and estimated price due to trade size."
+                      size={12}
+                    />
+                  </>
+                ),
+                content: '-'
+              },
+              {
+                title: (
+                  <>
+                    Liquidity Provider Fee
+                    <QuestionHelper
+                      text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive."
+                      size={12}
+                    />
+                  </>
+                ),
+                content: '-'
+              }
+            ]}
+          />
         )}
       </AutoColumn>
     </>

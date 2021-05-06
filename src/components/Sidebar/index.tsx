@@ -6,7 +6,6 @@ import styled from 'styled-components'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as Menu } from '../../assets/svg/menu.svg'
 import arrowUpUrl from 'assets/svg/arrow_up.svg'
-import { headerHeight } from '../Header'
 import { AutoColumn } from 'components/Column'
 import { Base } from '../Button'
 import { TYPE } from 'theme'
@@ -17,7 +16,7 @@ interface TabContent {
   route: string
 }
 interface Tab extends TabContent {
-  children?: TabContent[]
+  childrenLink?: TabContent[]
 }
 
 const tabs: Tab[] = [
@@ -27,7 +26,7 @@ const tabs: Tab[] = [
   {
     title: 'Matter Token',
     route: 'matter_token',
-    children: [
+    childrenLink: [
       {
         title: 'Farming',
         route: 'matter_token'
@@ -35,8 +34,8 @@ const tabs: Tab[] = [
       { title: 'Matter Option Redemption ', route: 'matter_redemption' }
     ]
   },
-  { title: 'Governance', route: 'governance' }
-  // { title: 'Info', route: 'info' }
+  { title: 'Governance', route: 'governance' },
+  { title: 'Info', route: 'info' }
 ]
 
 // import Logo from '../../assets/svg/logo.svg'
@@ -57,7 +56,7 @@ const StyledSidebar = styled.div`
   display: flex;
   flex-direction: column;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-  height:  calc(100vh - ${headerHeight});
+  height:  calc(100vh - ${({ theme }) => theme.headerHeight});
   `}
   ${({ theme }) => theme.desktop}
 `
@@ -213,7 +212,7 @@ const TogggleMenuWrapper = styled.div`
   border-radius: 32px;
   background: ${({ theme }) => theme.gradient2};
   top: ${({ theme }) => theme.mobileHeaderHeight};
-  height: calc(100vh - ${({ theme }) => theme.mobileHeaderHeight} - ${headerHeight});
+  height: calc(100vh - ${({ theme }) => theme.mobileHeaderHeight + ' - ' + theme.headerHeight}});
 `
 
 function ToggleMenu() {
@@ -225,8 +224,8 @@ function ToggleMenu() {
       {isOpen && (
         <TogggleMenuWrapper>
           <AutoColumn>
-            {tabs.map(({ title, route, children }) =>
-              children ? (
+            {tabs.map(({ title, route, childrenLink }) =>
+              childrenLink ? (
                 <ToggleTab
                   key={title}
                   route={`/${route}`}
@@ -236,8 +235,8 @@ function ToggleMenu() {
                   onClick={() => setIsOpen(!isOpen)}
                 >
                   <>
-                    {children &&
-                      children.map(({ title, route }) => {
+                    {childrenLink &&
+                      childrenLink.map(({ title, route }) => {
                         return (
                           <SubTabMobile
                             key={title}
@@ -364,7 +363,7 @@ export default function Sidebar() {
         </UniIcon>
       </Title> */}
         <StyledLogo />
-        {tabs.map(({ title, route, children }) =>
+        {tabs.map(({ title, route, childrenLink }) =>
           route === tabs[2].route ? (
             <Tab
               key={title}
@@ -392,8 +391,8 @@ export default function Sidebar() {
           ) : route === tabs[3].route ? (
             <ToggleTab key={title} route={`/${route}`} title={title} matchString="/matter">
               <>
-                {children &&
-                  children.map(({ title, route }) => {
+                {childrenLink &&
+                  childrenLink.map(({ title, route }) => {
                     return (
                       <SubTab key={title} isActive={match => Boolean(match)} to={`/${route}`}>
                         {title}

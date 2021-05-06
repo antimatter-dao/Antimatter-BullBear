@@ -1,29 +1,33 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useHistory, RouteComponentProps } from 'react-router'
 import styled from 'styled-components'
-import { Token } from '@uniswap/sdk'
+import { Currency, Token } from '@uniswap/sdk'
 import ButtonSelect from 'components/Button/ButtonSelect'
 import AppBody from 'pages/AppBody'
 import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
-import { TYPE } from 'theme'
-import { AutoRow, RowBetween } from 'components/Row'
+import { CustomLightSpinner, TYPE } from 'theme'
+import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import { OptionIcon } from 'components/Icons'
-import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
+//import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import { AutoColumn } from 'components/Column'
 import { shortenAddress } from 'utils'
 import { OptionTypeData, useAllOptionTypes } from 'state/market/hooks'
-import { parseBalance } from 'utils/marketStrategyUtils'
+import { currencyNameHelper, parseBalance } from 'utils/marketStrategyUtils'
 import { USDT, ZERO_ADDRESS } from '../../constants'
 import { ButtonSelectRange } from 'components/Button/ButtonSelectRange'
 import OptionTradeAction from './OptionTradeAction'
-
-export interface Option {
+import { useCurrency } from 'hooks/Tokens'
+import CurrencyLogo from 'components/CurrencyLogo'
+import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
+import { currencyId } from 'utils/currencyId'
+import Loader from 'assets/svg/gray_loader.svg'
+export interface OptionInterface {
   title: string
   address: string
-  icon: JSX.Element
+  underlyingAddress: string
   type: Type
-  asset: string | undefined
+  underlyingSymbol: string | undefined
   details: {
     'Option Price Range': string | undefined
     'Underlying Asset': string | undefined
@@ -89,7 +93,7 @@ const parsePrice = (price: string, decimals: string) =>
   })
 
 function getOptionList(allOptionType: OptionTypeData[]) {
-  return allOptionType.reduce((acc: Option[], item: OptionTypeData): Option[] => {
+  return allOptionType.reduce((acc: OptionInterface[], item: OptionTypeData): OptionInterface[] => {
     const {
       callAddress,
       putAddress,
@@ -98,6 +102,7 @@ function getOptionList(allOptionType: OptionTypeData[]) {
       priceCap,
       callTotal,
       putTotal,
+      underlying,
       underlyingSymbol
     } = item
     const floor = parsePrice(priceFloor, currencyDecimals)
@@ -106,11 +111,11 @@ function getOptionList(allOptionType: OptionTypeData[]) {
     return [
       ...acc,
       {
-        title: underlyingSymbol + ' Call Option',
+        title: (underlyingSymbol ?? '') + ' Call Option',
         address: callAddress,
-        icon: <ETH />,
+        underlyingAddress: underlying,
         type: Type.CALL,
-        asset: underlyingSymbol,
+        underlyingSymbol,
         details: {
           'Option Price Range': range,
           'Underlying Asset': underlyingSymbol + ', USDT',
@@ -120,11 +125,11 @@ function getOptionList(allOptionType: OptionTypeData[]) {
         range: { floor, cap }
       },
       {
-        title: underlyingSymbol + ' Put Option',
+        title: (underlyingSymbol ?? '') + ' Put Option',
         address: putAddress,
-        icon: <ETH />,
+        underlyingAddress: underlying,
         type: Type.PUT,
-        asset: underlyingSymbol,
+        underlyingSymbol,
         details: {
           'Option Price Range': range,
           'Underlying Asset': underlyingSymbol + ', USDT',
@@ -134,7 +139,7 @@ function getOptionList(allOptionType: OptionTypeData[]) {
         range: { floor, cap }
       }
     ]
-  }, [] as Option[])
+  }, [] as OptionInterface[])
 }
 
 export default function OptionTrade({
@@ -142,10 +147,11 @@ export default function OptionTrade({
     params: { addressA }
   }
 }: RouteComponentProps<{ addressA?: string }>) {
-  const [optionList, setOptionList] = useState<Option[] | undefined>(undefined)
-  const [filteredList, setFilteredList] = useState<Option[] | undefined>(undefined)
-  const [assetTypeQuery, setAssetTypeQuery] = useState('')
+  const [optionList, setOptionList] = useState<OptionInterface[] | undefined>(undefined)
+  const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
+  const [assetTypeQuery, setAssetTypeQuery] = useState<Currency | undefined>(undefined)
   const [optionTypeQuery, setOptionTypeQuery] = useState('')
+  const [currencySearchOpen, setCurrencySearchOpen] = useState(false)
   const [rangeQuery, setRangeQuery] = useState<{ floor: undefined | number; cap: undefined | number }>({
     floor: undefined,
     cap: undefined
@@ -153,6 +159,7 @@ export default function OptionTrade({
   const history = useHistory()
 
   const AllOptionType = useAllOptionTypes()
+  console.log(AllOptionType)
   useEffect(() => {
     if (!AllOptionType || AllOptionType?.length === 0) return
     const list = getOptionList(AllOptionType)
@@ -161,8 +168,9 @@ export default function OptionTrade({
 
   useEffect(() => {
     let list = optionList
-    if (!(assetTypeQuery === '' || assetTypeQuery === ALL.id)) {
-      list = optionList?.filter(option => option.asset === assetTypeQuery)
+    if (assetTypeQuery !== undefined) {
+      const id = currencyId(assetTypeQuery)
+      list = optionList?.filter(option => option.underlyingAddress === id || option.address === id)
     }
     if (!(optionTypeQuery === '' || optionTypeQuery === ALL.id)) {
       list = optionList?.filter(option => option.type === optionTypeQuery)
@@ -189,26 +197,35 @@ export default function OptionTrade({
     return optionList.find(({ address }) => address === addressA)
   }, [addressA, optionList])
 
-  const handleSelectAssetType = useCallback((id: string) => setAssetTypeQuery(id), [])
+  const handleSelectAssetType = useCallback((currency: Currency) => setAssetTypeQuery(currency), [])
   const handleSelectOptionType = useCallback((id: string) => setOptionTypeQuery(id), [])
   const handleRange = useCallback(range => setRangeQuery(range), [])
+  const handleDismissSearch = useCallback(() => setCurrencySearchOpen(false), [])
+  const handleOpenSearch = useCallback(() => setCurrencySearchOpen(true), [])
+  const handleClearSearch = useCallback(() => {
+    setAssetTypeQuery(undefined)
+    setOptionTypeQuery('')
+    setRangeQuery({
+      floor: undefined,
+      cap: undefined
+    })
+  }, [])
   return (
     <>
+      <CurrencySearchModal
+        isOpen={currencySearchOpen}
+        onDismiss={handleDismissSearch}
+        onCurrencySelect={handleSelectAssetType}
+      />
       {addressA ? (
         <OptionTradeAction addressA={addressA} option={option} />
       ) : (
         <Wrapper id="optionTrade">
           <Search>
-            <ButtonSelect
-              placeholder="Select asset type"
-              width="320px"
-              options={[
-                { id: ALL.id, option: ALL.title },
-                { id: 'ETH', option: 'ETH' }
-              ]}
-              selectedId={assetTypeQuery}
-              onSelection={handleSelectAssetType}
-            />
+            <ButtonSelect width="320px" onClick={handleOpenSearch}>
+              {assetTypeQuery && <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />}
+              {currencyNameHelper(assetTypeQuery, 'Select asset type currency')}
+            </ButtonSelect>
             <ButtonSelect
               placeholder="Select option type"
               width="320px"
@@ -227,11 +244,18 @@ export default function OptionTrade({
               rangeFloor={rangeQuery.floor?.toString()}
               onSetRange={handleRange}
             />
-            <ButtonOutlinedPrimary width="184px">
-              <SearchIcon style={{ marginRight: 10 }} />
-              Search
-            </ButtonOutlinedPrimary>
+            <RowFixed>
+              <ButtonOutlinedPrimary width="184px">
+                <SearchIcon style={{ marginRight: 10 }} />
+                Search
+              </ButtonOutlinedPrimary>
+              <div style={{ width: 10 }} />
+              <ButtonPrimary width="184px" onClick={handleClearSearch}>
+                Show All
+              </ButtonPrimary>
+            </RowFixed>
           </Search>
+
           {filteredList && (
             <ContentWrapper>
               {filteredList.map(option => (
@@ -243,6 +267,14 @@ export default function OptionTrade({
               ))}
             </ContentWrapper>
           )}
+          <AutoColumn justify="center" style={{ marginTop: 100 }}>
+            {AllOptionType.length > 0 && filteredList && filteredList.length === 0 && (
+              <TYPE.largeHeader>No option available</TYPE.largeHeader>
+            )}
+            {filteredList === undefined && (
+              <CustomLightSpinner src={Loader} size="100px" style={{ margin: '0 auto' }} />
+            )}
+          </AutoColumn>
         </Wrapper>
       )}
     </>
@@ -250,18 +282,24 @@ export default function OptionTrade({
 }
 
 function OptionCard({
-  option: { title, icon, type, address, details },
+  option: { title, type, address, details, underlyingAddress },
   onClick
 }: {
-  option: Option
+  option: OptionInterface
   onClick: () => void
 }) {
+  const currency = useCurrency(underlyingAddress ?? undefined)
+
   return (
     <AppBody>
       <AutoColumn gap="20px">
         <AutoRow>
           <Circle>
-            <OptionIcon tokenIcon={icon} type={type} size="28px" />
+            <OptionIcon
+              tokenIcon={<CurrencyLogo currency={currency ?? undefined} size="28px" />}
+              type={type}
+              size="28px"
+            />
           </Circle>
           <AutoColumn>
             <TYPE.mediumHeader fontSize={23}>{title}</TYPE.mediumHeader>
