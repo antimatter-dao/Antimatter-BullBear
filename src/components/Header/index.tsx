@@ -47,7 +47,15 @@ const tabs: Tab[] = [
 ]
 
 const NetworkInfo: { [key: number]: { color: string; icon: JSX.Element } } = {
-  1: {
+  [ChainId.MAINNET]: {
+    color: '#FFFFFF',
+    icon: <ETH />
+  },
+  [ChainId.ROPSTEN]: {
+    color: '#FFFFFF',
+    icon: <ETH />
+  },
+  [ChainId.RINKEBY]: {
     color: '#FFFFFF',
     icon: <ETH />
   },
@@ -359,7 +367,6 @@ export default function Header() {
     }
   }, [chainId, setWarningModalOpen])
   // const { t } = useTranslation()
-
   // const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   // const [isDark] = useDarkModeManager()
   // const [darkMode, toggleDarkMode] = useDarkModeManager()

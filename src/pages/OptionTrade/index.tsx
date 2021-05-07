@@ -179,8 +179,10 @@ export default function OptionTrade({
       const id = currencyId(assetTypeQuery)
       list = optionList?.filter(option => option.underlyingAddress === id || option.address === id)
     }
-    if (!(optionTypeQuery === '' || optionTypeQuery === ALL.id)) {
-      list = optionList?.filter(option => option.type === optionTypeQuery)
+    if (optionTypeQuery !== '') {
+      if (optionTypeQuery !== ALL.id) {
+        list = optionList?.filter(option => option.type === optionTypeQuery)
+      }
     }
     if (!(rangeQuery.floor === undefined || rangeQuery.cap === undefined)) {
       list = optionList?.filter(({ range: { floor, cap } }) => {
