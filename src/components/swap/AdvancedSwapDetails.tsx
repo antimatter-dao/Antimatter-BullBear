@@ -159,16 +159,6 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
           />
         )}
       </AutoColumn>
-      <iframe
-        id="tradingview_c46b0"
-        name="tradingview_c46b0"
-        src="https://www.dextools.io/app/assets/vendors/charting_library/en-tv-chart.b555c6a4.html#symbol=DEXT%2FUSD%20-%20UNI&amp;interval=D&amp;widgetbar=%7B%22details%22%3Afalse%2C%22watchlist%22%3Afalse%2C%22watchlist_settings%22%3A%7B%22default_symbols%22%3A%5B%5D%7D%7D&amp;timeFrames=%5B%7B%22text%22%3A%225y%22%2C%22resolution%22%3A%221W%22%7D%2C%7B%22text%22%3A%221y%22%2C%22resolution%22%3A%221W%22%7D%2C%7B%22text%22%3A%226m%22%2C%22resolution%22%3A%22120%22%7D%2C%7B%22text%22%3A%223m%22%2C%22resolution%22%3A%2260%22%7D%2C%7B%22text%22%3A%221m%22%2C%22resolution%22%3A%2230%22%7D%2C%7B%22text%22%3A%225d%22%2C%22resolution%22%3A%225%22%7D%2C%7B%22text%22%3A%221d%22%2C%22resolution%22%3A%221%22%7D%5D&amp;locale=en&amp;uid=tradingview_c46b0&amp;clientId=0x37a0464f8f4c207b54821f3c799afd3d262aa944&amp;userId=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0IjoiVTJGc2RHVmtYMS9YUDRjZExWSjlPbjl1SVNFdUpaamxXdHd2eWQ2TzVhSDVhRlNuYngwekozSTJkZEYwVWFMZTlKallsY0hTL0VyMU1adVFnbjVvZEdseGxlN0ZCYjFvM0EyN0pFTFd0QkpUOE5TQ2RtTmJoTHRUWURScnA4WHdKWDlnUDFDSEVxaTRUM0R5ak9LaTlBPT0iLCJpYXQiOjE2MjA0MDc5NjUsImV4cCI6MTYyMDQwODM2NX0.e0PH8Cl5TibjGbklOYpj7yZ3JYl6yFg77T8MKRaETRY&amp;chartsStorageVer=1&amp;customCSS=css%2Fcustom_dext_dark.css%3F%24%7BHelpersService.APP_VERSION%7D&amp;debug=false&amp;timezone=Asia%2FShanghai&amp;theme=dark"
-        frameBorder="0"
-        allowTransparency={true}
-        scrolling="no"
-        allowFullScreen={false}
-        style={{display: 'block', width: '100%', height: 722}}
-      ></iframe>
     </>
   )
 }
