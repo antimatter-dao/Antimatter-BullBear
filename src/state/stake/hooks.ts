@@ -102,7 +102,6 @@ export function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
   const totalSupplies = useMultipleContractSingleData(rewardsAddresses, STAKING_REWARDS_INTERFACE, 'totalSupply')
   const apys = useMultipleContractSingleData(rewardsAddresses, STAKING_REWARDS_INTERFACE, 'APY')
 
-  console.log('apys', apys)
   // tokens per second, constants
   const rewardRates = useMultipleContractSingleData(
     rewardsAddresses,

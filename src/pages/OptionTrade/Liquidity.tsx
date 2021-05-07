@@ -71,7 +71,7 @@ export default function Liquidity({
         <OverallLiquidity
           currencyA={currencyA ?? undefined}
           currencyB={currencyB ?? undefined}
-          currencyBalances={currencyBalances}
+          currencyAmounts={currencyBalances}
           tokenTitle={option?.title}
         />
         <LiquidityInfo onRemove={handleRemove} pair={pair ?? undefined} />
@@ -83,13 +83,13 @@ export default function Liquidity({
 function OverallLiquidity({
   currencyA,
   currencyB,
-  currencyBalances,
+  currencyAmounts,
   tokenTitle
 }: {
   currencyA?: Currency
   currencyB?: Currency
   tokenTitle?: string
-  currencyBalances: {
+  currencyAmounts: {
     [filed in Field]?: CurrencyAmount | undefined
   }
 }) {
@@ -107,7 +107,7 @@ function OverallLiquidity({
             <AutoRow gap="10px">
               {currencyB && <CurrencyLogo currency={currencyB} />}
               <span>
-                {currencyBalances[Field.CURRENCY_B]?.toFixed()}&nbsp;{tokenTitle}
+                {currencyAmounts[Field.CURRENCY_B]?.toFixed()}&nbsp;{tokenTitle}
               </span>
             </AutoRow>
           </TYPE.body>
@@ -115,7 +115,7 @@ function OverallLiquidity({
             <AutoRow gap="10px">
               {currencyA && <CurrencyLogo currency={currencyA} />}
               <span>
-                {currencyBalances[Field.CURRENCY_A]?.toFixed()}&nbsp; {currencyA?.symbol}
+                {currencyAmounts[Field.CURRENCY_A]?.toFixed()}&nbsp; {currencyA?.symbol}
               </span>
             </AutoRow>
           </TYPE.body>
@@ -138,15 +138,19 @@ function LiquidityInfo({ onRemove, pair }: { onRemove: () => void; pair: Pair | 
           <TYPE.darkGray textAlign="center">Connect to a wallet to view your liquidity.</TYPE.darkGray>
         </EmptyProposals>
       )}
-      {account && pair ? (
-        <FullPositionCardMini pair={pair} onRemove={onRemove} />
-      ) : (
-        <EmptyProposals>
-          <TYPE.darkGray textAlign="center">
-            <Dots>Loading</Dots>
-          </TYPE.darkGray>
-          {/* <TYPE.darkGray textAlign="center">No liquidity found</TYPE.darkGray> */}
-        </EmptyProposals>
+      {account && (
+        <>
+          {pair ? (
+            <FullPositionCardMini pair={pair} onRemove={onRemove} />
+          ) : (
+            <EmptyProposals>
+              <TYPE.darkGray textAlign="center">
+                <Dots>Loading</Dots>
+              </TYPE.darkGray>
+              {/* <TYPE.darkGray textAlign="center">No liquidity found</TYPE.darkGray> */}
+            </EmptyProposals>
+          )}
+        </>
       )}
     </SectionWrapper>
   )

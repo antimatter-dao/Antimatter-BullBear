@@ -223,7 +223,6 @@ export default function OptionTrade({
         isOpen={currencySearchOpen}
         onDismiss={handleDismissSearch}
         onCurrencySelect={handleSelectAssetType}
-        hasManage={true}
       />
       {addressA ? (
         <OptionTradeAction addressA={addressA} option={option} />
