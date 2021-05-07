@@ -238,7 +238,7 @@ export function useTotalUniEarned(): TokenAmount | undefined {
 // based on typed value
 export function useDerivedStakeInfo(
   typedValue: string,
-  stakingToken: Token,
+  stakingToken: Token | undefined,
   userLiquidityUnstaked: TokenAmount | undefined
 ): {
   parsedAmount?: CurrencyAmount

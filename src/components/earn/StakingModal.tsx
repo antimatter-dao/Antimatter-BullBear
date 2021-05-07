@@ -34,12 +34,13 @@ import DataCard from 'components/Card/DataCard'
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
   padding: 1rem;
+  padding-top: 0;
 `
 
 interface StakingModalProps {
   isOpen: boolean
   onDismiss: () => void
-  stakingInfo: StakingInfo
+  stakingInfo: StakingInfo | undefined
   userLiquidityUnstaked: TokenAmount | undefined
 }
 
@@ -48,7 +49,11 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
 
   // track and parse user input
   const [typedValue, setTypedValue] = useState('')
-  const { parsedAmount, error } = useDerivedStakeInfo(typedValue, stakingInfo.stakedAmount.token, userLiquidityUnstaked)
+  const { parsedAmount, error } = useDerivedStakeInfo(
+    typedValue,
+    stakingInfo?.stakedAmount.token,
+    userLiquidityUnstaked
+  )
 
   // state for pending and submitted txn views
   const addTransaction = useTransactionAdder()
@@ -61,16 +66,19 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   }, [onDismiss])
 
   // pair contract for this token to be staked
-  const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
-  const pairContract = usePairContract(dummyPair.liquidityToken.address)
+  const dummyPair =
+    stakingInfo?.tokens[0] && stakingInfo?.tokens[1]
+      ? new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
+      : undefined
+  const pairContract = usePairContract(dummyPair?.liquidityToken.address)
 
   // approval data for stake
   const deadline = useTransactionDeadline()
   const [signatureData, setSignatureData] = useState<{ v: number; r: string; s: string; deadline: number } | null>(null)
-  const [approval, approveCallback] = useApproveCallback(parsedAmount, stakingInfo.stakingRewardAddress)
+  const [approval, approveCallback] = useApproveCallback(parsedAmount, stakingInfo?.stakingRewardAddress)
 
   const isArgentWallet = useIsArgentWallet()
-  const stakingContract = useStakingContract(stakingInfo.stakingRewardAddress)
+  const stakingContract = useStakingContract(stakingInfo?.stakingRewardAddress)
   async function onStake() {
     setAttempting(true)
     if (stakingContract && parsedAmount && deadline) {
@@ -149,7 +157,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
     ]
     const message = {
       owner: account,
-      spender: stakingInfo.stakingRewardAddress,
+      spender: stakingInfo?.stakingRewardAddress,
       value: liquidityAmount.raw.toString(),
       nonce: nonce.toHexString(),
       deadline: deadline.toNumber()
@@ -199,7 +207,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
                 onUserInput={onUserInput}
                 onMax={handleMax}
                 showMaxButton={!atMaxAmount}
-                currency={stakingInfo.stakedAmount.token}
+                currency={stakingInfo?.stakedAmount.token}
                 pair={dummyPair}
                 label="Amount"
                 disableCurrencySelect={true}
@@ -211,7 +219,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
                 data={[
                   {
                     title: `LPT Staked`,
-                    content: stakingInfo.stakedAmount.toSignificant(4) + ' LPT'
+                    content: stakingInfo?.stakedAmount.toSignificant(4) + ' LPT'
                   }
                 ]}
               />

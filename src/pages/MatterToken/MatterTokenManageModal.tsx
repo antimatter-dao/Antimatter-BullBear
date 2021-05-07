@@ -2,8 +2,8 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { useWalletModalToggle } from '../../state/application/hooks'
-import { TYPE } from '../../theme'
-import { ButtonPrimary } from '../../components/Button'
+import { ButtonText, TYPE } from '../../theme'
+import { ButtonEmpty, ButtonPrimary } from '../../components/Button'
 import StakingModal from '../../components/earn/StakingModal'
 import { useStakingInfo } from '../../state/stake/hooks'
 import UnstakingModal from '../../components/earn/UnstakingModal'
@@ -14,15 +14,16 @@ import { CountUp } from 'use-count-up'
 import { usePair } from '../../data/Reserves'
 import usePrevious from '../../hooks/usePrevious'
 // import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
-import { LPT_PAIRS, LPT_RewardPerDay, LPT_TYPE } from 'constants/matterToken/matterTokenTokens'
-import QuestionHelper from '../../components/QuestionHelper'
+import { LPT_PAIRS, LPT_TYPE } from 'constants/matterToken/matterTokenTokens'
 import { ReactComponent as Logo1 } from 'assets/svg/ETH+_USDT.svg'
 import { ReactComponent as Logo2 } from 'assets/svg/ETH-_USDT.svg'
 import { ReactComponent as Logo3 } from 'assets/svg/ETH_Matter.svg'
 import { ReactComponent as Logo4 } from 'assets/svg/Matter+_matter.svg'
 import { AutoRow, RowBetween } from 'components/Row'
-import Card, { OutlineCard } from 'components/Card'
+import Card from 'components/Card'
 import { AutoColumn } from 'components/Column'
+import useTheme from 'hooks/useTheme'
+import { ChevronDown } from 'react-feather'
 
 const sectionPadding = '25px'
 const GridWrapper = styled.div`
@@ -31,8 +32,8 @@ const GridWrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.bg3};
   display: flex;
   flex-direction: column;
-  width: 495px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`  width: 100%;`}
+  width: 420px;
+  height: 337px ${({ theme }) => theme.mediaWidth.upToMedium`  width: 100%;`};
 `
 
 const ClaimRewardWrapper = styled.div`
@@ -46,31 +47,61 @@ const ClaimRewardWrapper = styled.div`
 `
 const OptionCard = styled(Card)`
   padding: 0;
-  svg {
-    height: 24px;
-    width: 24px;
-    margin-right: 10px;
-  }
 `
-const LPTWrapper = styled.div`
-  height: 100%;
-  flex-grow: 1;
-  display: flex;
+// const LPTWrapper = styled.div`
+//   height: 100%;
+//   flex-grow: 1;
+//   display: flex;
 
-  section {
-    width: 50%
-    height: 100%;
-    padding: ${sectionPadding};
-    :first-child {
-      border-right: 1px solid ${({ theme }) => theme.bg3};
-    }
+//   section {
+//     width: 50%
+//     height: 100%;
+//     padding: ${sectionPadding};
+//     :first-child {
+//       border-right: 1px solid ${({ theme }) => theme.bg3};
+//     }
+//   }
+// `
+// const APYCard = styled(OutlineCard)`
+//   border-radius: 10px;
+//   padding: 9px;
+//   min-width: 122px;
+//   width: fit-content;
+// `
+const LogoWrapper = styled.div`
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  background-color: ${({ theme }) => theme.text1};
+  svg {
+    width: 30px;
+    height: 30px;
   }
 `
-const APYCard = styled(OutlineCard)`
-  border-radius: 10px;
-  padding: 9px;
-  min-width: 122px;
-  width: fit-content;
+const AccordionStyle = styled.div`
+  width: 100%;
+  position: relative;
+  button {
+    padding: 14px 2rem;
+    display: flex;
+    justify-content: space-between
+  }
+  & > div {
+    position: absolute;
+    width: 100%
+    top: 100%;
+    left: 0
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-gap: 16px;
+    background-color:${({ theme }) => theme.bg1}
+    border: 1px solid ${({ theme }) => theme.bg3};
+  }
 `
 
 enum STAKING_MODAL_TYPE {
@@ -79,32 +110,32 @@ enum STAKING_MODAL_TYPE {
   CLAIM = 'claim'
 }
 
-function NumberUnitText({ number, unit }: { number: string; unit: string }) {
-  return (
-    <div
-      style={{
-        fontWeight: 500,
-        fontSize: '26px',
-        fontFamily: 'Futura PT',
-        overflowWrap: 'anywhere',
-        lineHeight: '26px'
-      }}
-    >
-      {number}
-      <span
-        style={{
-          marginLeft: '8px',
-          fontFamily: 'Roboto',
-          fontWeight: 400,
-          fontSize: '14px',
-          whiteSpace: 'nowrap'
-        }}
-      >
-        {unit}
-      </span>
-    </div>
-  )
-}
+// function NumberUnitText({ number, unit }: { number: string; unit: string }) {
+//   return (
+//     <div
+//       style={{
+//         fontWeight: 500,
+//         fontSize: '26px',
+//         fontFamily: 'Futura PT',
+//         overflowWrap: 'anywhere',
+//         lineHeight: '26px'
+//       }}
+//     >
+//       {number}
+//       <span
+//         style={{
+//           marginLeft: '8px',
+//           fontFamily: 'Roboto',
+//           fontWeight: 400,
+//           fontSize: '14px',
+//           whiteSpace: 'nowrap'
+//         }}
+//       >
+//         {unit}
+//       </span>
+//     </div>
+//   )
+// }
 
 const Logos = {
   [LPT_TYPE.ETH_CALL_DAI]: <Logo1 />,
@@ -116,6 +147,7 @@ const Logos = {
 export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE }) {
   const [modalType, setModalType] = useState<STAKING_MODAL_TYPE | undefined>(undefined)
   const { account, chainId } = useActiveWeb3React()
+  const theme = useTheme()
   // get currencies and pair
   const [tokenA, tokenB] = [LPT_PAIRS[chainId ?? 1]?.[lptType].currencyA, LPT_PAIRS[chainId ?? 1]?.[lptType].currencyB]
   const [, stakingTokenPair] = usePair(tokenA, tokenB)
@@ -146,26 +178,22 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
 
   return (
     <>
-      {stakingInfo && (
-        <>
-          <StakingModal
-            isOpen={modalType === STAKING_MODAL_TYPE.STAKE}
-            onDismiss={handleCloseModal}
-            stakingInfo={stakingInfo}
-            userLiquidityUnstaked={userLiquidityUnstaked}
-          />
-          <UnstakingModal
-            isOpen={modalType === STAKING_MODAL_TYPE.UNSTAKE}
-            onDismiss={handleCloseModal}
-            stakingInfo={stakingInfo}
-          />
-          <ClaimRewardModal
-            isOpen={modalType === STAKING_MODAL_TYPE.CLAIM}
-            onDismiss={handleCloseModal}
-            stakingInfo={stakingInfo}
-          />
-        </>
-      )}
+      <StakingModal
+        isOpen={modalType === STAKING_MODAL_TYPE.STAKE}
+        onDismiss={handleCloseModal}
+        stakingInfo={stakingInfo}
+        userLiquidityUnstaked={userLiquidityUnstaked}
+      />
+      <UnstakingModal
+        isOpen={modalType === STAKING_MODAL_TYPE.UNSTAKE}
+        onDismiss={handleCloseModal}
+        stakingInfo={stakingInfo}
+      />
+      <ClaimRewardModal
+        isOpen={modalType === STAKING_MODAL_TYPE.CLAIM}
+        onDismiss={handleCloseModal}
+        stakingInfo={stakingInfo}
+      />
       {!modalType && (
         <GridWrapper>
           <ClaimRewardWrapper>
@@ -173,12 +201,12 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
               <RowBetween>
                 <OptionCard>
                   <AutoRow>
-                    {Logos[lptType]}
-                    {lptType}
+                    <LogoWrapper>{Logos[lptType]}</LogoWrapper>
+                    <TYPE.mediumHeader fontSize={18}>{lptType}</TYPE.mediumHeader>
                   </AutoRow>
                 </OptionCard>
 
-                <APYCard>
+                {/* <APYCard>
                   <RowBetween>
                     <TYPE.smallGray fontSize={14}>APY</TYPE.smallGray>
                     {stakingInfo && lptType !== LPT_TYPE.MATTER_CALL_MATTER && (
@@ -187,39 +215,51 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                       </TYPE.body>
                     )}
                   </RowBetween>
-                </APYCard>
+                </APYCard> */}
               </RowBetween>
-              <TYPE.darkGray fontSize={20} fontWeight={400}>
-                Your Staking Rewards Estimation
-              </TYPE.darkGray>
-              <TYPE.largeHeader
-                display="flex"
-                fontSize={58}
-                fontWeight={400}
-                style={{ marginTop: 'auto', alignItems: 'flex-end' }}
-              >
-                <CountUp
-                  key={countUpAmount}
-                  isCounting
-                  decimalPlaces={2}
-                  start={parseFloat(countUpAmountPrevious)}
-                  end={parseFloat(countUpAmount)}
-                  thousandsSeparator={','}
-                  duration={1}
-                />
-                <TYPE.body
-                  style={{ whiteSpace: 'nowrap', marginLeft: 8, marginBottom: 12 }}
-                  fontSize={14}
+              <RowBetween style={{ alignItems: 'flex-end' }}>
+                <TYPE.largeHeader
+                  display="flex"
+                  fontSize={58}
                   fontWeight={400}
-                  fontFamily="Roboto"
+                  style={{ marginTop: 'auto', alignItems: 'flex-end' }}
                 >
-                  Matter Option Token
-                </TYPE.body>
-              </TYPE.largeHeader>
-              <ButtonPrimary height="48px" width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}>
-                Claim Rewards
-              </ButtonPrimary>
+                  <CountUp
+                    key={countUpAmount}
+                    isCounting
+                    decimalPlaces={2}
+                    start={parseFloat(countUpAmountPrevious)}
+                    end={parseFloat(countUpAmount)}
+                    thousandsSeparator={','}
+                    duration={1}
+                  />
+                  <TYPE.body
+                    style={{ whiteSpace: 'nowrap', marginLeft: 8, marginBottom: 12 }}
+                    fontSize={16}
+                    fontWeight={400}
+                    fontFamily="Roboto"
+                  >
+                    Token Earned
+                  </TYPE.body>
+                </TYPE.largeHeader>
+                <ButtonText
+                  onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}
+                  color={theme.primary1}
+                  style={{ whiteSpace: 'nowrap', marginLeft: 8, marginBottom: 12 }}
+                >
+                  Claim Rewards
+                </ButtonText>
+              </RowBetween>
               <RowBetween>
+                <ButtonPrimary width="48%" onClick={handleModalClick(STAKING_MODAL_TYPE.STAKE)}>
+                  Stake LPT
+                </ButtonPrimary>
+                <ButtonPrimary width="48%" onClick={handleModalClick(STAKING_MODAL_TYPE.UNSTAKE)}>
+                  Unstake LPT
+                </ButtonPrimary>
+              </RowBetween>
+
+              {/* <RowBetween>
                 <TYPE.darkGray fontSize={14} fontWeight={400}>
                   Token LPT Staked
                 </TYPE.darkGray>
@@ -227,8 +267,8 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   number={stakingInfo?.totalStakedAmount.toSignificant(4, { groupSeparator: ',' })}
                   unit="LPT"
                 />
-              </RowBetween>
-              <RowBetween>
+              </RowBetween> */}
+              {/* <RowBetween>
                 <TYPE.darkGray style={{ whiteSpace: 'nowrap' }} fontSize={14} fontWeight={400}>
                   Total Network Rewards Per Day
                   <QuestionHelper
@@ -241,19 +281,32 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                 ) : (
                   <NumberUnitText number={LPT_RewardPerDay[lptType]} unit="Matter Option Token" />
                 )}
-              </RowBetween>
+              </RowBetween> */}
             </AutoColumn>
           </ClaimRewardWrapper>
-          <LPTWrapper>
+          <Accordion
+            title="Statistics"
+            data={[
+              {
+                title: 'APY',
+                content: stakingInfo ? `${stakingInfo.apy.divide('10000000000000000').quotient} %` : '-'
+              },
+              { title: 'Your Stake', content: stakingInfo ? `${stakingInfo.stakedAmount?.toSignificant(6)} LPT` : '-' },
+              {
+                title: 'Pooled Total',
+                content: stakingInfo
+                  ? `${stakingInfo.totalStakedAmount.toSignificant(4, { groupSeparator: ',' })} LPT`
+                  : '-'
+              }
+            ]}
+          />
+          {/* <LPTWrapper>
             <section>
               <AutoColumn gap="19px">
                 <TYPE.darkGray fontSize={14} fontWeight={400}>
                   Your Stake
                 </TYPE.darkGray>
                 <NumberUnitText number={stakingInfo?.stakedAmount?.toSignificant(6) ?? '-'} unit="LPT" />
-                <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.UNSTAKE)}>
-                  Unstake LPT
-                </ButtonPrimary>
               </AutoColumn>
             </section>
             <section>
@@ -262,14 +315,39 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   Your Balance
                 </TYPE.darkGray>
                 <NumberUnitText number={userLiquidityUnstaked?.toSignificant(6) ?? '-'} unit="LPT" />
-                <ButtonPrimary width="100%" onClick={handleModalClick(STAKING_MODAL_TYPE.STAKE)}>
-                  Stake LPT
-                </ButtonPrimary>
               </AutoColumn>
             </section>
-          </LPTWrapper>
+          </LPTWrapper> */}
         </GridWrapper>
       )}
     </>
+  )
+}
+
+function Accordion({ title, data }: { title: string; data: { title: string; content: string }[] }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const handleOpen = useCallback(() => setIsOpen(open => !open), [setIsOpen])
+  return (
+    <AccordionStyle>
+      <ButtonEmpty onClick={handleOpen}>
+        <span>{title}</span>
+        <ChevronDown
+          style={{
+            transform: isOpen ? 'rotate(180deg)' : 'none',
+            transition: 'none'
+          }}
+        />
+      </ButtonEmpty>
+      {isOpen && (
+        <div>
+          {data.map(({ title, content }) => (
+            <RowBetween>
+              <TYPE.smallGray>{title}</TYPE.smallGray>
+              <TYPE.small> {content}</TYPE.small>
+            </RowBetween>
+          ))}
+        </div>
+      )}
+    </AccordionStyle>
   )
 }

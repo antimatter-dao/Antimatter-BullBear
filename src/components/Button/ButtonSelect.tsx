@@ -129,7 +129,6 @@ export default function ButtonSelect({
       {!isLoading && options && onSelection && (
         <OptionWrapper isOpen={isOpen} ref={node as any}>
           {options.map(({ id, option }) => {
-            console.log(option)
             return (
               <SelectOption
                 key={id}

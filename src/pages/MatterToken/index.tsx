@@ -7,8 +7,8 @@ const Wrapper = styled.div`
   width: 100%;
   padding: 50px 100px
   grid-template-rows: auto;
-  grid-template-columns: repeat(auto-fill, 495px);
-  grid-gap: 30px;
+  grid-template-columns: repeat(auto-fill, 420px);
+  grid-gap: 20px;
   display: grid;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 100%;

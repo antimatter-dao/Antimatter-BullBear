@@ -22,7 +22,7 @@ const ContentWrapper = styled(AutoColumn)`
 interface StakingModalProps {
   isOpen: boolean
   onDismiss: () => void
-  stakingInfo: StakingInfo
+  stakingInfo: StakingInfo | undefined
 }
 
 export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: StakingModalProps) {
@@ -39,7 +39,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
     onDismiss()
   }
 
-  const stakingContract = useStakingContract(stakingInfo.stakingRewardAddress)
+  const stakingContract = useStakingContract(stakingInfo?.stakingRewardAddress)
 
   async function onWithdraw() {
     if (stakingContract && stakingInfo?.stakedAmount) {
@@ -84,7 +84,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
                     title: 'Unclaimed  +MATTER($1)',
                     content: (
                       <>
-                        <FormattedCurrencyAmount currencyAmount={stakingInfo?.earnedAmount} />
+                        {stakingInfo && <FormattedCurrencyAmount currencyAmount={stakingInfo.earnedAmount} />}
                         MATTER
                       </>
                     )
@@ -93,7 +93,7 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
                     title: 'LPT Staked',
                     content: (
                       <>
-                        <FormattedCurrencyAmount currencyAmount={stakingInfo.stakedAmount} />
+                        {stakingInfo && <FormattedCurrencyAmount currencyAmount={stakingInfo.stakedAmount} />}
                         LPT
                       </>
                     )
