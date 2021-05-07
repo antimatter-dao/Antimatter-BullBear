@@ -177,15 +177,15 @@ export default function OptionTrade({
     let list = optionList
     if (assetTypeQuery !== undefined) {
       const id = currencyId(assetTypeQuery)
-      list = optionList?.filter(option => option.underlyingAddress === id || option.address === id)
+      list = list?.filter(option => option.underlyingAddress === id || option.address === id)
     }
     if (optionTypeQuery !== '') {
       if (optionTypeQuery !== ALL.id) {
-        list = optionList?.filter(option => option.type === optionTypeQuery)
+        list = list?.filter(option => option.type === optionTypeQuery)
       }
     }
     if (!(rangeQuery.floor === undefined || rangeQuery.cap === undefined)) {
-      list = optionList?.filter(({ range: { floor, cap } }) => {
+      list = list?.filter(({ range: { floor, cap } }) => {
         if (!floor || !cap) return true
 
         if (rangeQuery.floor && +rangeQuery.floor > +floor) return false
