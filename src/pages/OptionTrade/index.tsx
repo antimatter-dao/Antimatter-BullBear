@@ -6,7 +6,7 @@ import ButtonSelect from 'components/Button/ButtonSelect'
 import AppBody from 'pages/AppBody'
 import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
 import { CustomLightSpinner, TYPE } from 'theme'
-import { AutoRow, RowBetween, RowFixed } from 'components/Row'
+import { RowBetween, RowFixed } from 'components/Row'
 import { OptionIcon } from 'components/Icons'
 //import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
@@ -87,6 +87,10 @@ const Divider = styled.div`
   margin: 0 -24px;
 `
 
+const TitleWrapper = styled(RowFixed)`
+  flex-wrap: nowrap;
+`
+
 const parsePrice = (price: string, decimals: string) =>
   parseBalance({
     val: price,
@@ -98,7 +102,7 @@ function getOptionList(allOptionType: OptionTypeData[]) {
     const {
       callAddress,
       putAddress,
-      currencyDecimals,
+      underlyingDecimals,
       priceFloor,
       priceCap,
       callTotal,
@@ -106,8 +110,8 @@ function getOptionList(allOptionType: OptionTypeData[]) {
       underlying,
       underlyingSymbol
     } = item
-    const floor = parsePrice(priceFloor, currencyDecimals)
-    const cap = parsePrice(priceCap, currencyDecimals)
+    const floor = parsePrice(priceFloor, underlyingDecimals)
+    const cap = parsePrice(priceCap, underlyingDecimals)
     const range = `$${floor} ~ $${cap}`
     return [
       ...acc,
@@ -122,7 +126,7 @@ function getOptionList(allOptionType: OptionTypeData[]) {
           'Underlying Asset': underlyingSymbol,
           'Total Current Issuance': parseBalance({
             val: callTotal,
-            token: new Token(1, ZERO_ADDRESS, Number(currencyDecimals ?? '18'))
+            token: new Token(1, ZERO_ADDRESS, Number(underlyingDecimals ?? '18'))
           }),
           'Market Price': '$2100'
         },
@@ -139,7 +143,7 @@ function getOptionList(allOptionType: OptionTypeData[]) {
           'Underlying Asset': underlyingSymbol,
           'Total Current Issuance': parseBalance({
             val: putTotal,
-            token: new Token(1, ZERO_ADDRESS, Number(currencyDecimals ?? '18'))
+            token: new Token(1, ZERO_ADDRESS, Number(underlyingDecimals ?? '18'))
           }),
           'Market Price': '$2100'
         },
@@ -303,19 +307,21 @@ function OptionCard({
   return (
     <AppBody>
       <AutoColumn gap="20px">
-        <AutoRow>
+        <TitleWrapper>
           <Circle>
             <OptionIcon
               tokenIcon={<CurrencyLogo currency={underlyingCurrency ?? undefined} size="28px" />}
               type={type}
-              size="28px"
+              size="26px"
             />
           </Circle>
           <AutoColumn>
-            <TYPE.mediumHeader fontSize={23}>{title}</TYPE.mediumHeader>
+            <TYPE.mediumHeader fontSize={20} style={{ whiteSpace: 'nowrap' }}>
+              {title}
+            </TYPE.mediumHeader>
             <TYPE.smallGray>{shortenAddress(address, 7)}</TYPE.smallGray>
           </AutoColumn>
-        </AutoRow>
+        </TitleWrapper>
         <Divider />
         <AutoColumn gap="12px">
           {Object.keys(details).map(key => (
