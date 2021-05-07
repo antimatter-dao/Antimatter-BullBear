@@ -1,17 +1,17 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react'
-import { ETHER, JSBI } from '@uniswap/sdk'
+import { ETHER, Token } from '@uniswap/sdk'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
-import { ButtonError, ButtonPrimary } from '../../components/Button'
+import { ButtonError, ButtonPrimary, ButtonOutlined } from '../../components/Button'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CallOrPutInputPanel from '../../components/CallOrPutInputPanel'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
 import { RowBetween } from '../../components/Row'
 import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
-import { ANTIMATTER_ADDRESS } from '../../constants'
+import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
 import { useMarketCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
@@ -30,7 +30,7 @@ import { tryParseAmount } from '../../state/swap/hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useAntimatterContract } from '../../hooks/useContract'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
-import { parseBalance } from '../../utils/marketStrategyUtils'
+import { isNegative, parseBalance } from '../../utils/marketStrategyUtils'
 
 export default function Generate() {
   const [optionType, setOptionType] = useState('')
@@ -52,6 +52,22 @@ export default function Generate() {
     if (!optionTypes || !optionType) return undefined
     return optionTypes?.[parseInt(optionType)]
   }, [optionTypes, optionType])
+
+  const underlyingToken: Token = new Token(
+    chainId ?? 1,
+    selectedOptionType?.underlying ?? ZERO_ADDRESS,
+    Number(selectedOptionType?.underlyingDecimals.toString() ?? '18')
+  )
+
+  const currencyToken: Token = new Token(
+    chainId ?? 1,
+    selectedOptionType?.currency ?? ZERO_ADDRESS,
+    Number(selectedOptionType?.currencyDecimals.toString() ?? '18')
+  )
+
+  // const callToken: Token = new Token(chainId ?? 1, selectedOptionType?.callAddress ?? ZERO_ADDRESS, 18)
+  //
+  // const putToken: Token = new Token(chainId ?? 1, selectedOptionType?.putAddress ?? ZERO_ADDRESS, 18)
 
   const { delta, error } = useDerivedStrategyInfo(
     true,
@@ -75,12 +91,12 @@ export default function Generate() {
 
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(
-    tryParseAmount(delta?.totalUnd.toString(), currencyA ?? undefined),
-    ANTIMATTER_ADDRESS
+    tryParseAmount(delta?.totalUnd.toString(), currencyA?.symbol === 'WETH' ? ETHER : currencyA ?? undefined),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
   )
   const [approvalB, approveBCallback] = useApproveCallback(
-    tryParseAmount(delta?.totalCur.toString(), currencyB ?? undefined),
-    ANTIMATTER_ADDRESS
+    tryParseAmount(delta?.totalCur.toString(), currencyB?.symbol === 'WETH' ? ETHER : currencyB ?? undefined),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
   )
 
   const addTransaction = useTransactionAdder()
@@ -96,6 +112,7 @@ export default function Generate() {
 
     const estimate = antimatterContract?.estimateGas.mint
     const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.mint
+    let value: string | undefined | null = null
     const args = [
       optionTypes[parseInt(optionType)].callAddress,
       tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.call
@@ -108,11 +125,21 @@ export default function Generate() {
       delta.dCur.toString()
     ]
 
+
+    if (optionTypes[parseInt(optionType)].underlyingSymbol === 'ETH') {
+      value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
+    }
+
+    if (optionTypes[parseInt(optionType)].currencySymbol === 'ETH') {
+      value = isNegative(delta.dCur) ? '0' : delta.dCur.toString()
+    }
+
     setAttemptingTxn(true)
     if (estimate) {
-      await estimate(...args)
+      await estimate(...args, value ? { value } : {})
         .then(estimatedGasLimit =>
           method(...args, {
+            ...(value ? { value } : {}),
             gasLimit: calculateGasMargin(estimatedGasLimit)
           }).then(response => {
             setPutTyped(undefined)
@@ -146,13 +173,13 @@ export default function Generate() {
       optionTypes.map(item => {
         return {
           id: item.id,
-          option: `${item.underlyingSymbol} (${JSBI.divide(
-            JSBI.BigInt(item.priceFloor),
-            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.underlyingDecimals ?? 18))
-          )}$${JSBI.divide(
-            JSBI.BigInt(item.priceCap),
-            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(item.currencyDecimals ?? 18))
-          )})`
+          option: `${item.underlyingSymbol ?? '-'} (${parseBalance({
+            val: item.priceFloor,
+            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
+          })}$${parseBalance({
+            val: item.priceCap,
+            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
+          })})`
         }
       }),
     [optionTypes]
@@ -171,6 +198,8 @@ export default function Generate() {
         currencyA={currencyA}
         currencyB={currencyB}
         onGenerate={onGenerate}
+        underlyingToken={underlyingToken}
+        currencyToken={currencyToken}
       />
     )
   }
@@ -216,10 +245,17 @@ export default function Generate() {
               <CallOrPutInputPanel
                 value={callTyped ?? ''}
                 onUserInput={setCallTyped}
-                currency={undefined}
+                currency={currencyA || undefined}
                 id="generate-output-token"
                 showCommonBases
-                defaultSymbol={'Call Token'}
+                defaultSymbol={
+                  optionTypes[parseInt(optionType)]?.underlyingSymbol
+                    ? `+${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance({
+                        val: selectedOptionType?.priceFloor,
+                        token: currencyToken
+                      })})`
+                    : 'Call Token'
+                }
                 halfWidth={true}
                 isCall={true}
               />
@@ -235,11 +271,18 @@ export default function Generate() {
               <CallOrPutInputPanel
                 value={putTyped ?? ''}
                 onUserInput={setPutTyped}
-                currency={undefined}
+                currency={currencyA || undefined}
                 id="generate-output-token"
                 showCommonBases
                 halfWidth={true}
-                defaultSymbol={'Put Token'}
+                defaultSymbol={
+                  optionTypes[parseInt(optionType)]?.underlyingSymbol
+                    ? `-${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance({
+                        val: selectedOptionType?.priceCap,
+                        token: currencyToken
+                      })})`
+                    : 'Put Token'
+                }
                 negativeMarginTop={tokenType === TOKEN_TYPES.callPut ? '-20px' : '0'}
                 isCall={false}
               />
@@ -248,8 +291,20 @@ export default function Generate() {
             {currencyA && currencyB && delta?.dUnd && delta.dCur && (
               <GenerateBar
                 cardTitle={``}
-                callVol={delta && parseBalance(delta.dUnd, 4)}
-                putVol={delta && parseBalance(delta.dCur, 4)}
+                callVol={
+                  delta &&
+                  parseBalance({
+                    val: delta.dUnd,
+                    token: underlyingToken
+                  })
+                }
+                putVol={
+                  delta &&
+                  parseBalance({
+                    val: delta.dCur,
+                    token: currencyToken
+                  })
+                }
                 subTitle="Output Token"
                 currency0={currencyA}
                 currency1={currencyB}
@@ -257,9 +312,9 @@ export default function Generate() {
             )}
 
             {!optionType || !delta ? (
-              <ButtonPrimary disabled={true}>
-                <TYPE.main mb="4px">Enter Amount</TYPE.main>
-              </ButtonPrimary>
+              <ButtonOutlined style={{ opacity: '0.5' }} disabled={true}>
+                <TYPE.main>Enter Amount</TYPE.main>
+              </ButtonOutlined>
             ) : !account ? (
               <ButtonPrimary onClick={toggleWalletModal} borderRadius="49px">
                 Connect Wallet
@@ -300,17 +355,20 @@ export default function Generate() {
                       )}
                     </RowBetween>
                   )}
-                <ButtonError
-                  onClick={() => {
-                    expertMode ? onGenerate() : setShowConfirm(true)
-                  }}
-                  disabled={!isValid || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED}
-                  error={!isValid && !callTyped && !putTyped}
-                >
-                  <Text fontSize={16} fontWeight={500}>
-                    {error ?? 'Generate'}
-                  </Text>
-                </ButtonError>
+                {error && <ButtonOutlined style={{ opacity: '0.5' }}>{error}</ButtonOutlined>}
+                {!error && (
+                  <ButtonError
+                    onClick={() => {
+                      expertMode ? onGenerate() : setShowConfirm(true)
+                    }}
+                    disabled={!isValid || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED}
+                    error={!isValid && !callTyped && !putTyped}
+                  >
+                    <Text fontSize={16} fontWeight={500}>
+                      {error ?? 'Generate'}
+                    </Text>
+                  </ButtonError>
+                )}
               </AutoColumn>
             )}
           </AutoColumn>

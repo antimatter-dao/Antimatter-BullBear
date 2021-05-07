@@ -22,7 +22,7 @@ import { RowBetween, RowFixed, AutoRow } from '../Row'
 import Toggle from '../Toggle'
 import TransactionSettings from '../TransactionSettings'
 import { ReactComponent as Settings } from '../../assets/svg/setting.svg'
-import { Filler, Wrapper } from '../Modal'
+import { /*Filler,*/ Wrapper } from '../Modal'
 import { Marginer } from 'pages/App'
 
 const StyledMenuIcon = styled(Settings)`
@@ -230,7 +230,7 @@ export default function SettingsTab({
       {(open || showConfirmation) && <Overlay />}
       {open && (
         <OverlayWrapper>
-          <Filler />
+          {/* <Filler /> */}
           <Wrapper>
             <MenuFlyout ref={node as any}>
               <AutoColumn gap="28px" style={{ padding: '30px 30px 48px' }} justify="center">

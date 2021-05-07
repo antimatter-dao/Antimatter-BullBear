@@ -126,10 +126,8 @@ export function useUserRedeemSlippageTolerance(): [number, (slippage: number) =>
   const userRedeemSlippageTolerance = useSelector<AppState, AppState['user']['userRedeemSlippageTolerance']>(state => {
     return state.user.userRedeemSlippageTolerance
   })
-  console.log('redeem hook')
   const setUserRedeemSlippageTolerance = useCallback(
     (userRedeemSlippageTolerance: number) => {
-      console.log('dispatch redeem')
       dispatch(updateUserRedeemSlippageTolerance({ userRedeemSlippageTolerance }))
     },
     [dispatch]
@@ -144,10 +142,8 @@ export function useUserGenerationSlippageTolerance(): [number, (slippage: number
       return state.user.userGenerationSlippageTolerance
     }
   )
-  console.log('generation hook')
   const setUserGenerationSlippageTolerance = useCallback(
     (userGenerationSlippageTolerance: number) => {
-      console.log('dispatch generation')
       dispatch(updateUserGenerationSlippageTolerance({ userGenerationSlippageTolerance }))
     },
     [dispatch]

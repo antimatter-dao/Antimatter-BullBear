@@ -1,7 +1,7 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
-import { ButtonProps, Text } from 'rebass/styled-components'
+import { ButtonProps } from 'rebass/styled-components'
 import { ButtonOutlined, Base } from '.'
 import { RowBetween, AutoRow } from '../Row'
 import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
@@ -10,7 +10,7 @@ import useTheme from '../../hooks/useTheme'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { Dots } from '../swap/styleds'
 
-const StyledDropDown = styled(DropDown)`
+export const StyledDropDown = styled(DropDown)`
   margin: 0 0.25rem 0 0;
   width: 13px;
 
@@ -20,16 +20,14 @@ const StyledDropDown = styled(DropDown)`
   }
 `
 
-const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; width?: string }>`
+export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; width?: string }>`
   width: ${({ width }) => (width ? width : '100%')};
   height: 3rem;
   background-color: ${({ theme }) => theme.bg2};
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   border-radius: 14px;
   border: unset;
-  padding: 0 0.3rem;
-  margin-right: 20px;
-  padding: 0 10px;
+  padding: 0 10px 0 15px;
   border: 1px solid transparent;
 
   :focus,
@@ -40,11 +38,11 @@ const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; width?: s
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.bg5))};
   }
 `
-const OptionWrapper = styled.div<{ isOpen: boolean }>`
+const OptionWrapper = styled.div<{ isOpen: boolean; width?: string }>`
   position: absolute;
   display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
   flex-direction: column;
-  width: 100%;
+  width: ${({ width }) => width ?? '100%'};
   border-radius: 14px;
   overflow: hidden;
   z-index: 2;
@@ -65,6 +63,7 @@ const SelectOption = styled(Base)<{ selected: boolean }>`
   :active {
     background-color: ${({ theme }) => theme.bg3};
   }
+  justify-content: flex-start;
 `
 
 export default function ButtonSelect({
@@ -73,13 +72,17 @@ export default function ButtonSelect({
   options,
   onSelection,
   selectedId,
-  onClick
+  onClick,
+  width,
+  placeholder = 'Select Option Type'
 }: ButtonProps & {
   label?: string
   onSelection?: (id: string) => void
-  options?: { id: string; option: string }[]
+  options?: { id: string; option: string | JSX.Element }[]
   selectedId?: string
   onClick?: () => void
+  placeholder?: string
+  width?: string
 }) {
   const node = useRef<HTMLDivElement>()
   const theme = useTheme()
@@ -91,14 +94,18 @@ export default function ButtonSelect({
       if (options.length > 0) {
         setIsLoading(false)
         const selected = options.find(({ id }) => id === selectedId)
-        return selected ? selected.option : 'Select OptionCard Type'
+        return selected ? selected.option : placeholder
       }
-      return 'Select OptionCard Type'
+      return placeholder
     }
     return children
-  }, [options, children, setIsLoading, selectedId])
+  }, [options, children, setIsLoading, selectedId, placeholder])
+  const handleClick = useCallback(() => {
+    setIsOpen(!isOpen)
+    onClick && onClick()
+  }, [isOpen, onClick])
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', marginRight: ' 20px' }}>
       {label && (
         <AutoRow style={{ marginBottom: '4px' }}>
           <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
@@ -106,13 +113,7 @@ export default function ButtonSelect({
           </TYPE.body>
         </AutoRow>
       )}
-      <ButtonSelectStyle
-        onClick={() => {
-          setIsOpen(!isOpen)
-          onClick && onClick()
-        }}
-        selected={!!selectedId}
-      >
+      <ButtonSelectStyle onClick={handleClick} selected={!!selectedId} width={width}>
         <RowBetween>
           <div style={{ display: 'flex', alignItems: 'center' }}>{buttonContent}</div>
           <StyledDropDown />
@@ -127,20 +128,20 @@ export default function ButtonSelect({
       )}
       {!isLoading && options && onSelection && (
         <OptionWrapper isOpen={isOpen} ref={node as any}>
-          {options.map(({ id, option }) => (
-            <SelectOption
-              key={id}
-              selected={selectedId === id}
-              onClick={() => {
-                onSelection(id)
-                setIsOpen(false)
-              }}
-            >
-              <Text fontSize={16} fontWeight={500}>
-                {option}
-              </Text>
-            </SelectOption>
-          ))}
+          {options.map(({ id, option }) => {
+            return (
+              <SelectOption
+                key={id}
+                selected={selectedId === id}
+                onClick={() => {
+                  onSelection(id)
+                  setIsOpen(false)
+                }}
+              >
+                <div style={{ fontSize: 16, fontWeight: 500 }}>{option}</div>
+              </SelectOption>
+            )
+          })}
         </OptionWrapper>
       )}
     </div>

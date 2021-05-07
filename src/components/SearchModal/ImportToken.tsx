@@ -31,12 +31,13 @@ const WarningWrapper = styled(Card)<{ highWarning: boolean }>`
   width: fit-content;
 `
 
-const AddressText = styled(TYPE.blue)`
+const AddressText = styled.div`
   font-size: 12px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  font-weight: 500;
+  color: ${({ theme }) => theme.blue1}
+    ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 10px;
-`}
+`};
 `
 
 interface ImportProps {

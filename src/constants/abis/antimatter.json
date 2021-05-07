@@ -165,6 +165,11 @@
       },
       {
         "internalType": "address",
+        "name": "WETH",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
         "name": "feeTo",
         "type": "address"
       }
@@ -184,6 +189,11 @@
       {
         "internalType": "address",
         "name": "implPut",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "WETH",
         "type": "address"
       },
       {
@@ -289,7 +299,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -358,7 +368,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -397,7 +407,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -456,13 +466,13 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "address payable",
         "name": "sender",
         "type": "address"
       },
@@ -500,7 +510,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -539,7 +549,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -598,13 +608,13 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "address payable",
         "name": "sender",
         "type": "address"
       },
@@ -642,7 +652,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -785,12 +795,12 @@
     "outputs": [
       {
         "internalType": "int256",
-        "name": "dUnd",
+        "name": "undMax",
         "type": "int256"
       },
       {
         "internalType": "int256",
-        "name": "dCur",
+        "name": "curMax",
         "type": "int256"
       },
       {
@@ -878,6 +888,19 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "feeRate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1014,7 +1037,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -1083,7 +1106,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -1122,7 +1145,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -1181,13 +1204,13 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "address payable",
         "name": "sender",
         "type": "address"
       },
@@ -1225,7 +1248,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -1264,7 +1287,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -1323,13 +1346,13 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "address payable",
         "name": "sender",
         "type": "address"
       },
@@ -1367,7 +1390,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -1509,7 +1532,7 @@
         "type": "uint256"
       }
     ],
-    "name": "prices",
+    "name": "priceValue",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1518,12 +1541,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "priceCall",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "pricePut",
+        "name": "valueReserve",
         "type": "uint256"
       }
     ],
@@ -1538,7 +1556,7 @@
         "type": "address"
       }
     ],
-    "name": "prices1",
+    "name": "priceValue1",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1547,12 +1565,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "priceCall",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "pricePut",
+        "name": "valueReserve",
         "type": "uint256"
       }
     ],
@@ -1582,7 +1595,7 @@
         "type": "uint256"
       }
     ],
-    "name": "prices4",
+    "name": "priceValue4",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1591,12 +1604,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "priceCall",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "pricePut",
+        "name": "valueReserve",
         "type": "uint256"
       }
     ],
@@ -1725,6 +1733,93 @@
     "name": "setConfigI",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "feeRate_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "feeTo",
+        "type": "address"
+      }
+    ],
+    "name": "setFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "underlying",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "currency",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "priceFloor",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "priceCap",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "dCall",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "dPut",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "undMax",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "curMax",
+        "type": "int256"
+      }
+    ],
+    "name": "swap",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "call",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "put",
+        "type": "address"
+      },
+      {
+        "internalType": "int256",
+        "name": "dUnd",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "dCur",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "payable",
     "type": "function"
   },
   {

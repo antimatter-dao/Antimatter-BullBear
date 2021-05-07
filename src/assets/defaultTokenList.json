@@ -26,7 +26,7 @@
     {
       "name": "AntiMatter.Finance ETH perpetual put contract floor $200 cap $300",
       "address": "0x747434F3334Ec885De96e2A8e053DcAeE0E7F492",
-      "symbol": "-ETH(200$300)",
+      "symbol": "-ETH($300)",
       "decimals": 18,
       "chainId": 3,
       "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x747434f3334ec885de96e2a8e053dcaee0e7f492.png"
@@ -34,10 +34,50 @@
     {
       "name": "AntiMatter.Finance ETH perpetual call contract floor $200 cap $300",
       "address": "0x1dA4A25AE837259cB2f14E362BA94aF015F77d7d",
-      "symbol": "+ETH(200$300)",
+      "symbol": "+ETH($200)",
       "decimals": 18,
       "chainId": 3,
-      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x1dA4A25AE837259cB2f14E362BA94aF015F77d7d.png"
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x1da4a25ae837259cb2f14e362ba94af015f77d7d.png"
+    },
+    {
+      "name": "Antimatter.Finance Governance Token",
+      "address": "0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F",
+      "symbol": "MATTER",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/antimatter-finance/chainswap-assets/main/0x1c9491865a1de77c5b6e19d2e6a5f1d7a6f2b25f.png"
+    },
+    {
+      "name": "Tether USD",
+      "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+      "symbol": "USDT",
+      "decimals": 6,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
+    },
+    {
+      "name": "AntiMatter.Finance ETH Perpetual Call Option Floor $1000 Cap $3000",
+      "address": "0x3843a61f2960108287A51806c683fc854dC00354",
+      "symbol": "+ETH($1000)",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0x3843a61f2960108287a51806c683fc854dc00354.png"
+    },
+    {
+      "name": "AntiMatter.Finance ETH Perpetual Put Option Floor $1000 Cap $3000",
+      "address": "0xfE41168Fe09359c4b010E414c724c643dF4159A3",
+      "symbol": "-ETH($3000)",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0xfe41168fe09359c4b010e414c724c643df4159a3.png"
+    },
+    {
+      "name": "AntiMatter.Finance MATTER Perpetual Call Option Floor $1 Cap $100",
+      "address": "0xD5eE7F431fFB7F03a19CFAE69A1E75a450Ec2021",
+      "symbol": "+MATTER($1)",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/williamzng/chainswap-assets/main/blockchains/ethereum/0xd5ee7f431ffb7f03a19cfae69a1e75a450ec2021.png"
     }
   ],
   "version": {

@@ -129,7 +129,7 @@ export default function RedeemTokenPanel({
         <LabelRow>
           <AutoRow justify="space-between">
             <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
-              {label}
+              {isCall ? 'Call token' : 'Put token'}
             </TYPE.body>
             {account && (
               <TYPE.body

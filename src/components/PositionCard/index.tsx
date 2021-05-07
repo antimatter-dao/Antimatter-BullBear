@@ -12,13 +12,13 @@ import { useTokenBalance } from '../../state/wallet/hooks'
 import { ExternalLink, TYPE } from '../../theme'
 import { currencyId } from '../../utils/currencyId'
 import { unwrappedToken } from '../../utils/wrappedCurrency'
-import { ButtonPrimary, ButtonSecondary, ButtonEmpty, ButtonOutlined } from '../Button'
-import { transparentize } from 'polished'
+import { ButtonPrimary, ButtonSecondary, ButtonEmpty, ButtonOutlined, ButtonOutlinedPrimary } from '../Button'
+// import { transparentize } from 'polished'
 import { CardNoise } from '../earn/styled'
 
 // import { useColor } from '../../hooks/useColor'
 
-import Card, { /* GreyCard,*/ LightCard } from '../Card'
+import Card, { /* GreyCard,*/ LightCard, OutlineCard } from '../Card'
 import DataCard from '../Card/DataCard'
 import { AutoColumn } from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
@@ -38,12 +38,7 @@ export const HoverCard = styled(Card)`
     border: 1px solid ${({ theme }) => darken(0.06, theme.bg2)};
   }
 `
-const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
-  border: none;
-  background: ${({ theme, bgColor }) =>
-    bgColor
-      ? `radial-gradient(91.85% 100% at 1.84% 0%, ${transparentize(0.8, bgColor)} 0%, ${theme.bg3} 100%)`
-      : 'transparent'};
+const StyledPositionCard = styled(OutlineCard)`
   position: relative;
   overflow: hidden;
 `
@@ -55,7 +50,7 @@ interface PositionCardProps {
   stakedBalance?: TokenAmount // optional balance to indicate that liquidity is deposited in mining pool
 }
 
-export function MinimalPositionCard({ pair, showUnwrapped = false, border }: PositionCardProps) {
+export function MinimalPositionCard({ pair, showUnwrapped = false }: PositionCardProps) {
   const { account } = useActiveWeb3React()
 
   const currency0 = showUnwrapped ? pair.token0 : unwrappedToken(pair.token0)
@@ -191,7 +186,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border }: Pos
   )
 }
 
-export default function FullPositionCard({ pair, border, stakedBalance }: PositionCardProps) {
+export default function FullPositionCard({ pair, stakedBalance }: PositionCardProps) {
   const { account } = useActiveWeb3React()
 
   const currency0 = unwrappedToken(pair.token0)
@@ -223,11 +218,11 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
       : [undefined, undefined]
 
   // const backgroundColor = useColor(pair?.token0)
-  const backgroundColor = undefined
+
   const theme = useTheme()
 
   return (
-    <StyledPositionCard border={border} bgColor={backgroundColor} style={{ padding: '14px' }}>
+    <StyledPositionCard style={{ padding: '14px' }}>
       <CardNoise />
       <AutoColumn gap="12px">
         <FixedHeightRow>
@@ -371,5 +366,101 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
         )}
       </AutoColumn>
     </StyledPositionCard>
+  )
+}
+
+export function FullPositionCardMini({ pair, stakedBalance, onRemove }: PositionCardProps & { onRemove: () => void }) {
+  const { account } = useActiveWeb3React()
+
+  const currency0 = unwrappedToken(pair.token0)
+  const currency1 = unwrappedToken(pair.token1)
+
+  const userDefaultPoolBalance = useTokenBalance(account ?? undefined, pair.liquidityToken)
+  const totalPoolTokens = useTotalSupply(pair.liquidityToken)
+
+  // if staked balance balance provided, add to standard liquidity amount
+  const userPoolBalance = stakedBalance ? userDefaultPoolBalance?.add(stakedBalance) : userDefaultPoolBalance
+
+  const poolTokenPercentage =
+    !!userPoolBalance && !!totalPoolTokens && JSBI.greaterThanOrEqual(totalPoolTokens.raw, userPoolBalance.raw)
+      ? new Percent(userPoolBalance.raw, totalPoolTokens.raw)
+      : undefined
+
+  const [token0Deposited, token1Deposited] =
+    !!pair &&
+    !!totalPoolTokens &&
+    !!userPoolBalance &&
+    // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
+    JSBI.greaterThanOrEqual(totalPoolTokens.raw, userPoolBalance.raw)
+      ? [
+          pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false),
+          pair.getLiquidityValue(pair.token1, totalPoolTokens, userPoolBalance, false)
+        ]
+      : [undefined, undefined]
+
+  return (
+    <DataCard
+      rowHeight="23px"
+      cardTitle={
+        <RowBetween width="100%">
+          <AutoRow gap="8px" width="100%">
+            <div>
+              <CurrencyLogo currency={currency0} size="24px"></CurrencyLogo>
+              <CurrencyLogo currency={currency1} size="24px"></CurrencyLogo>
+            </div>
+            <Text fontWeight={500} fontSize={16}>
+              {!currency0 || !currency1 ? <Dots>Loading</Dots> : `${currency0.symbol}/${currency1.symbol}`}
+            </Text>
+          </AutoRow>
+          <ButtonOutlinedPrimary padding="4px" onClick={onRemove} width="120px">
+            Remove
+          </ButtonOutlinedPrimary>
+        </RowBetween>
+      }
+      cardBottom={
+        <ExternalLink
+          style={{ textAlign: 'center', fontSize: 12, margin: '0 auto', justifySelf: 'center' }}
+          href={`https://uniswap.info/account/${account}`}
+        >
+          View accrued fees and analytics
+        </ExternalLink>
+      }
+      data={[
+        {
+          title: 'Your total pool tokens:',
+          content: userPoolBalance ? userPoolBalance.toSignificant(4) : '-'
+        },
+        {
+          title: `Pooled ${currency0.symbol}:`,
+          content: token0Deposited ? (
+            <>
+              {token0Deposited?.toSignificant(6)}{' '}
+              <CurrencyLogo size="20px" style={{ marginLeft: '8px' }} currency={currency0} />
+            </>
+          ) : (
+            '-'
+          )
+        },
+        {
+          title: `Pooled ${currency1.symbol}:`,
+          content: token1Deposited ? (
+            <RowFixed>
+              <Text fontSize={12} fontWeight={500} marginLeft={'6px'}>
+                {token1Deposited?.toSignificant(6)}
+              </Text>
+              <CurrencyLogo size="20px" style={{ marginLeft: '8px' }} currency={currency1} />
+            </RowFixed>
+          ) : (
+            '-'
+          )
+        },
+        {
+          title: 'Your pool share:',
+          content: poolTokenPercentage
+            ? (poolTokenPercentage.toFixed(2) === '0.00' ? '<0.01' : poolTokenPercentage.toFixed(2)) + '%'
+            : '-'
+        }
+      ]}
+    />
   )
 }

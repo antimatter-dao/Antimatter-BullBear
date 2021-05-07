@@ -60,12 +60,10 @@ export const BlueCard = ({ children, ...rest }: CardProps) => {
 }
 
 export const GradientCard = styled(Card)`
-  background: linear-gradient(
-    283.31deg,
-    rgba(255, 255, 255, 0.18) -2.53%,
-    rgba(255, 255, 255, 0.17) 18.66%,
-    rgba(255, 255, 255, 0) 98.68%
-  );
+  background: ${({ theme }) => theme.gradient1}
   color: ${({ theme }) => theme.text1};
   font-weight: 500;
+`
+export const TranslucentCard = styled(Card)`
+  background-color: ${({ theme }) => theme.translucent};
 `
