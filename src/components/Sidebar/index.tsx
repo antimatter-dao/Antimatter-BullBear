@@ -35,8 +35,8 @@ const tabs: Tab[] = [
       { title: 'Matter Option Redemption ', route: 'matter_redemption' }
     ]
   },
-  { title: 'Governance', route: 'governance' },
-  { title: 'Info', route: 'info' }
+  { title: 'Governance', route: 'governance' }
+  // { title: 'Info', route: 'info' }
 ]
 
 // import Logo from '../../assets/svg/logo.svg'
