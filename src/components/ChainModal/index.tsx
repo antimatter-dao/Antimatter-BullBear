@@ -72,13 +72,13 @@ export default function ChainModal({ isOpen, onDismiss }: { isOpen: boolean; onD
               </ExternalLink>
             </Button>
             <Button onClick={onDismiss} disabled>
-              <p>
+              <div>
                 <BSC />
                 <AutoColumn>
                   Antimatter BSC Chain
                   <TYPE.smallGray> Coming Soon</TYPE.smallGray>
                 </AutoColumn>
-              </p>
+              </div>
             </Button>
           </AutoColumn>
         </Modal>
