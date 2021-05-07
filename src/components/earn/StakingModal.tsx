@@ -5,9 +5,9 @@ import Modal from '../Modal'
 import { AutoColumn } from '../Column'
 import styled from 'styled-components'
 import { RowBetween } from '../Row'
-import { TYPE, CloseIcon } from '../../theme'
-import { ButtonConfirmed, ButtonError } from '../Button'
-import ProgressCircles from '../ProgressSteps'
+import { TYPE } from '../../theme'
+import { ArrowLeftButton, ButtonConfirmed, ButtonError } from '../Button'
+// import ProgressCircles from '../ProgressSteps'
 import CurrencyInputPanel from '../CurrencyInputPanel'
 import { TokenAmount, Pair } from '@uniswap/sdk'
 import { useActiveWeb3React } from '../../hooks'
@@ -16,29 +16,31 @@ import { usePairContract, useStakingContract } from '../../hooks/useContract'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { splitSignature } from 'ethers/lib/utils'
 import { StakingInfo, useDerivedStakeInfo } from '../../state/stake/hooks'
-import { wrappedCurrencyAmount } from '../../utils/wrappedCurrency'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { LoadingView, SubmittedView } from '../ModalViews'
+import AppBody from 'pages/AppBody'
+import DataCard from 'components/Card/DataCard'
 
-const HypotheticalRewardRate = styled.div<{ dim: boolean }>`
-  display: flex;
-  justify-content: space-between;
-  padding-right: 20px;
-  padding-left: 20px;
+// const HypotheticalRewardRate = styled.div<{ dim: boolean }>`
+//   display: flex;
+//   justify-content: space-between;
+//   padding-right: 20px;
+//   padding-left: 20px;
 
-  opacity: ${({ dim }) => (dim ? 0.5 : 1)};
-`
+//   opacity: ${({ dim }) => (dim ? 0.5 : 1)};
+// `
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
   padding: 1rem;
+  padding-top: 0;
 `
 
 interface StakingModalProps {
   isOpen: boolean
   onDismiss: () => void
-  stakingInfo: StakingInfo
+  stakingInfo: StakingInfo | undefined
   userLiquidityUnstaked: TokenAmount | undefined
 }
 
@@ -47,17 +49,11 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
 
   // track and parse user input
   const [typedValue, setTypedValue] = useState('')
-  const { parsedAmount, error } = useDerivedStakeInfo(typedValue, stakingInfo.stakedAmount.token, userLiquidityUnstaked)
-  const parsedAmountWrapped = wrappedCurrencyAmount(parsedAmount, chainId)
-
-  let hypotheticalRewardRate: TokenAmount = new TokenAmount(stakingInfo.rewardRate.token, '0')
-  if (parsedAmountWrapped?.greaterThan('0')) {
-    hypotheticalRewardRate = stakingInfo.getHypotheticalRewardRate(
-      stakingInfo.stakedAmount.add(parsedAmountWrapped),
-      stakingInfo.totalStakedAmount.add(parsedAmountWrapped),
-      stakingInfo.totalRewardRate
-    )
-  }
+  const { parsedAmount, error } = useDerivedStakeInfo(
+    typedValue,
+    stakingInfo?.stakedAmount.token,
+    userLiquidityUnstaked
+  )
 
   // state for pending and submitted txn views
   const addTransaction = useTransactionAdder()
@@ -70,16 +66,19 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   }, [onDismiss])
 
   // pair contract for this token to be staked
-  const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
-  const pairContract = usePairContract(dummyPair.liquidityToken.address)
+  const dummyPair =
+    stakingInfo?.tokens[0] && stakingInfo?.tokens[1]
+      ? new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
+      : undefined
+  const pairContract = usePairContract(dummyPair?.liquidityToken.address)
 
   // approval data for stake
   const deadline = useTransactionDeadline()
   const [signatureData, setSignatureData] = useState<{ v: number; r: string; s: string; deadline: number } | null>(null)
-  const [approval, approveCallback] = useApproveCallback(parsedAmount, stakingInfo.stakingRewardAddress)
+  const [approval, approveCallback] = useApproveCallback(parsedAmount, stakingInfo?.stakingRewardAddress)
 
   const isArgentWallet = useIsArgentWallet()
-  const stakingContract = useStakingContract(stakingInfo.stakingRewardAddress)
+  const stakingContract = useStakingContract(stakingInfo?.stakingRewardAddress)
   async function onStake() {
     setAttempting(true)
     if (stakingContract && parsedAmount && deadline) {
@@ -158,7 +157,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
     ]
     const message = {
       owner: account,
-      spender: stakingInfo.stakingRewardAddress,
+      spender: stakingInfo?.stakingRewardAddress,
       value: liquidityAmount.raw.toString(),
       nonce: nonce.toHexString(),
       deadline: deadline.toNumber()
@@ -193,73 +192,92 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   }
 
   return (
-    <Modal isOpen={isOpen} onDismiss={wrappedOnDismiss} maxHeight={90}>
-      {!attempting && !hash && (
-        <ContentWrapper gap="lg">
-          <RowBetween>
-            <TYPE.mediumHeader>Deposit</TYPE.mediumHeader>
-            <CloseIcon onClick={wrappedOnDismiss} />
-          </RowBetween>
-          <CurrencyInputPanel
-            value={typedValue}
-            onUserInput={onUserInput}
-            onMax={handleMax}
-            showMaxButton={!atMaxAmount}
-            currency={stakingInfo.stakedAmount.token}
-            pair={dummyPair}
-            label={''}
-            disableCurrencySelect={true}
-            customBalanceText={'Available to deposit: '}
-            id="stake-liquidity-token"
-          />
+    <>
+      {isOpen && (
+        <AppBody>
+          {!attempting && !hash && (
+            <ContentWrapper gap="lg">
+              <RowBetween style={{ margin: '0 -1rem' }}>
+                <ArrowLeftButton onClick={onDismiss} />
+                <TYPE.mediumHeader>Stake LPT </TYPE.mediumHeader>
+                <div />
+              </RowBetween>
+              <CurrencyInputPanel
+                value={typedValue}
+                onUserInput={onUserInput}
+                onMax={handleMax}
+                showMaxButton={!atMaxAmount}
+                currency={stakingInfo?.stakedAmount.token}
+                pair={dummyPair}
+                label="Amount"
+                disableCurrencySelect={true}
+                customBalanceText={'Stake: '}
+                id="stake-liquidity-token"
+                hideSelect={true}
+              />
+              <DataCard
+                data={[
+                  {
+                    title: `LPT Staked`,
+                    content: stakingInfo?.stakedAmount.toSignificant(4) + ' LPT'
+                  }
+                ]}
+              />
+              {/* <HypotheticalRewardRate dim={!hypotheticalRewardRate.greaterThan('0')}>
+                <div>
+                  <TYPE.black fontWeight={600}>Weekly Rewards</TYPE.black>
+                </div>
 
-          <HypotheticalRewardRate dim={!hypotheticalRewardRate.greaterThan('0')}>
-            <div>
-              <TYPE.black fontWeight={600}>Weekly Rewards</TYPE.black>
-            </div>
+                <TYPE.black>
+                  {hypotheticalRewardRate
+                    .multiply((60 * 60 * 24 * 7).toString())
+                    .toSignificant(4, { groupSeparator: ',' })}{' '}
+                  UNI / week
+                </TYPE.black>
+              </HypotheticalRewardRate> */}
 
-            <TYPE.black>
-              {hypotheticalRewardRate.multiply((60 * 60 * 24 * 7).toString()).toSignificant(4, { groupSeparator: ',' })}{' '}
-              UNI / week
-            </TYPE.black>
-          </HypotheticalRewardRate>
+              <RowBetween>
+                <ButtonConfirmed
+                  mr="0.5rem"
+                  onClick={onAttemptToApprove}
+                  confirmed={approval === ApprovalState.APPROVED || signatureData !== null}
+                  disabled={approval !== ApprovalState.NOT_APPROVED || signatureData !== null}
+                >
+                  Approve
+                </ButtonConfirmed>
+                <ButtonError
+                  disabled={!!error || (signatureData === null && approval !== ApprovalState.APPROVED)}
+                  error={!!error && !!parsedAmount}
+                  onClick={onStake}
+                >
+                  {error ?? 'Stake LPT'}
+                </ButtonError>
+              </RowBetween>
+              {/* <ProgressCircles
+                steps={[approval === ApprovalState.APPROVED || signatureData !== null]}
+                disabled={true}
+              /> */}
+            </ContentWrapper>
+          )}
 
-          <RowBetween>
-            <ButtonConfirmed
-              mr="0.5rem"
-              onClick={onAttemptToApprove}
-              confirmed={approval === ApprovalState.APPROVED || signatureData !== null}
-              disabled={approval !== ApprovalState.NOT_APPROVED || signatureData !== null}
-            >
-              Approve
-            </ButtonConfirmed>
-            <ButtonError
-              disabled={!!error || (signatureData === null && approval !== ApprovalState.APPROVED)}
-              error={!!error && !!parsedAmount}
-              onClick={onStake}
-            >
-              {error ?? 'Deposit'}
-            </ButtonError>
-          </RowBetween>
-          <ProgressCircles steps={[approval === ApprovalState.APPROVED || signatureData !== null]} disabled={true} />
-        </ContentWrapper>
+          <Modal isOpen={attempting && !hash} onDismiss={wrappedOnDismiss}>
+            <LoadingView onDismiss={wrappedOnDismiss}>
+              <AutoColumn gap="12px" justify={'center'}>
+                <TYPE.body fontSize={18}>Waiting For Confirmation...</TYPE.body>
+                <TYPE.body fontSize={14}>Stake {parsedAmount?.toSignificant(4)} LPT</TYPE.body>
+              </AutoColumn>
+            </LoadingView>
+          </Modal>
+
+          <Modal isOpen={attempting && !!hash} onDismiss={wrappedOnDismiss}>
+            <SubmittedView onDismiss={wrappedOnDismiss} hash={hash}>
+              <AutoColumn gap="24px" justify={'center'}>
+                <TYPE.body fontSize={18}>Your LPT was Staked</TYPE.body>
+              </AutoColumn>
+            </SubmittedView>
+          </Modal>
+        </AppBody>
       )}
-      {attempting && !hash && (
-        <LoadingView onDismiss={wrappedOnDismiss}>
-          <AutoColumn gap="12px" justify={'center'}>
-            <TYPE.largeHeader>Depositing Liquidity</TYPE.largeHeader>
-            <TYPE.body fontSize={20}>{parsedAmount?.toSignificant(4)} UNI-V2</TYPE.body>
-          </AutoColumn>
-        </LoadingView>
-      )}
-      {attempting && hash && (
-        <SubmittedView onDismiss={wrappedOnDismiss} hash={hash}>
-          <AutoColumn gap="12px" justify={'center'}>
-            <TYPE.largeHeader>Transaction Submitted</TYPE.largeHeader>
-            <TYPE.body fontSize={20}>Deposited {parsedAmount?.toSignificant(4)} UNI-V2</TYPE.body>
-          </AutoColumn>
-        </SubmittedView>
-      )}
-    </Modal>
+    </>
   )
 }

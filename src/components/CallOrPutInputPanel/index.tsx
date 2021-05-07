@@ -116,11 +116,13 @@ export default function CallOrPutInputPanel({
               <CurrencyLogo currency={currency} size={'24px'} />
               <CallOrPutIcon src={isCall ? CallIcon : PutIcon} />
               <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
-                {(currency && currency.symbol && currency.symbol.length > 20
+                {defaultSymbol
+                  ? defaultSymbol
+                  : currency && currency.symbol && currency.symbol.length > 20
                   ? currency.symbol.slice(0, 4) +
                     '...' +
                     currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                  : currency?.symbol) || defaultSymbol}
+                  : currency?.symbol}
               </StyledTokenName>
             </Aligner>
           </Aligner>

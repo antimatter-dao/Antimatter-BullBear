@@ -1,8 +1,8 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import ReactGA from 'react-ga'
+import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+// import { useHistory } from 'react-router-dom'
+// import ReactGA from 'react-ga'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonError, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
 import Card, { GreyCard } from '../../components/Card'
@@ -18,15 +18,15 @@ import { BottomGrouping, SwapCallbackError, Wrapper } from '../../components/swa
 import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
-import SwapHeader from '../../components/swap/SwapHeader'
+// import SwapHeader from '../../components/swap/SwapHeader'
 import { ArrowDown } from '../../components/Icons'
-
+import useTheme from 'hooks/useTheme'
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
-import { getTradeVersion } from '../../data/V1'
+// import { getTradeVersion } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
-import useENSAddress from '../../hooks/useENSAddress'
+// import useENSAddress from '../../hooks/useENSAddress'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useToggledVersion'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
@@ -48,11 +48,11 @@ import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
-import { RouteComponentProps } from 'react-router-dom'
 
-export default function Swap({ history }: RouteComponentProps) {
+export default function Swap({ currencyA, currencyB }: { currencyA?: Currency | null; currencyB?: Currency | null }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
-
+  // const history = useHistory()
+  const theme = useTheme()
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
@@ -76,7 +76,6 @@ export default function Swap({ history }: RouteComponentProps) {
     })
 
   const { account } = useActiveWeb3React()
-  const theme = useContext(ThemeContext)
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle()
@@ -105,7 +104,7 @@ export default function Swap({ history }: RouteComponentProps) {
     typedValue
   )
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
-  const { address: recipientAddress } = useENSAddress(recipient)
+  // const { address: recipientAddress } = useENSAddress(recipient)
   const toggledVersion = useToggledVersion()
   const tradesByVersion = {
     [Version.v1]: v1Trade,
@@ -147,8 +146,8 @@ export default function Swap({ history }: RouteComponentProps) {
   // reset if they close warning without tokens in params
   const handleDismissTokenWarning = useCallback(() => {
     setDismissTokenWarning(true)
-    history.push('/swap/')
-  }, [history])
+    // history.push('/swap/')
+  }, [])
 
   // modal and loading
   const [{ showConfirm, tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
@@ -213,25 +212,25 @@ export default function Swap({ history }: RouteComponentProps) {
       .then(hash => {
         setSwapState({ attemptingTxn: false, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash })
 
-        ReactGA.event({
-          category: 'Swap',
-          action:
-            recipient === null
-              ? 'Swap w/o Send'
-              : (recipientAddress ?? recipient) === account
-              ? 'Swap w/o Send + recipient'
-              : 'Swap w/ Send',
-          label: [
-            trade?.inputAmount?.currency?.symbol,
-            trade?.outputAmount?.currency?.symbol,
-            getTradeVersion(trade)
-          ].join('/')
-        })
+        // ReactGA.event({
+        //   category: 'Swap',
+        //   action:
+        //     recipient === null
+        //       ? 'Swap w/o Send'
+        //       : (recipientAddress ?? recipient) === account
+        //       ? 'Swap w/o Send + recipient'
+        //       : 'Swap w/ Send',
+        //   label: [
+        //     trade?.inputAmount?.currency?.symbol,
+        //     trade?.outputAmount?.currency?.symbol,
+        //     getTradeVersion(trade)
+        //   ].join('/')
+        // })
 
-        ReactGA.event({
-          category: 'Routing',
-          action: singleHopOnly ? 'Swap with multihop disabled' : 'Swap with multihop enabled'
-        })
+        // ReactGA.event({
+        //   category: 'Routing',
+        //   action: singleHopOnly ? 'Swap with multihop disabled' : 'Swap with multihop enabled'
+        // })
       })
       .catch(error => {
         setSwapState({
@@ -242,17 +241,7 @@ export default function Swap({ history }: RouteComponentProps) {
           txHash: undefined
         })
       })
-  }, [
-    priceImpactWithoutFee,
-    swapCallback,
-    tradeToConfirm,
-    showConfirm,
-    recipient,
-    recipientAddress,
-    account,
-    trade,
-    singleHopOnly
-  ])
+  }, [priceImpactWithoutFee, swapCallback, tradeToConfirm, showConfirm])
 
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
@@ -297,6 +286,11 @@ export default function Swap({ history }: RouteComponentProps) {
     onCurrencySelection
   ])
 
+  useEffect(() => {
+    handleInputSelect(currencyA)
+    handleOutputSelect(currencyB)
+  }, [currencyA, currencyB, handleInputSelect, handleOutputSelect])
+
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
   return (
@@ -308,9 +302,9 @@ export default function Swap({ history }: RouteComponentProps) {
         onDismiss={handleDismissTokenWarning}
       />
       <SwapPoolTabs active={'option_trading'} />
-      <AppBody>
-        <SwapHeader />
-        <Wrapper id="swap-page" style={{ padding: '1rem 0', marginTop: '20px' }}>
+      <AppBody style={{ margin: '-1px', borderColor: theme.text4, minHeight: '100%' }}>
+        {/* <SwapHeader /> */}
+        <Wrapper id="swap-page" style={{ padding: '1rem 0' }}>
           <ConfirmSwapModal
             isOpen={showConfirm}
             trade={trade}
@@ -327,6 +321,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
           <AutoColumn gap="20px">
             <CurrencyInputPanel
+              disableCurrencySelect={true}
               label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
               value={formattedAmounts[Field.INPUT]}
               showMaxButton={!atMaxAmountInput}
@@ -355,6 +350,7 @@ export default function Swap({ history }: RouteComponentProps) {
               </AutoRow>
             </AutoColumn>
             <CurrencyInputPanel
+              disableCurrencySelect={true}
               value={formattedAmounts[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
               label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
@@ -526,12 +522,12 @@ export default function Swap({ history }: RouteComponentProps) {
             ) : null}
           </BottomGrouping>
         </Wrapper>
-      </AppBody>
-      {!swapIsUnsupported ? (
+
         <AdvancedSwapDetailsDropdown trade={trade} />
-      ) : (
-        <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
-      )}
+        {swapIsUnsupported && (
+          <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
+        )}
+      </AppBody>
     </>
   )
 }

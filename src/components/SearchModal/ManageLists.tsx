@@ -34,7 +34,7 @@ const Wrapper = styled(Column)`
   height: 100%;
 `
 
-const UnpaddedLinkStyledButton = styled(LinkStyledButton)`
+const UnpaddedLinkStyledButton = styled(props => <LinkStyledButton {...props} />)`
   padding: 0;
   font-size: 1rem;
   opacity: ${({ disabled }) => (disabled ? '0.4' : '1')};
@@ -75,9 +75,11 @@ const StyledTitleText = styled.div<{ active: boolean }>`
   color: ${({ theme }) => theme.text1};
 `
 
-const StyledListUrlText = styled(TYPE.main)<{ active: boolean }>`
+const StyledListUrlText = styled.div<{ active: boolean }>`
   font-size: 12px;
+  font-weight:500
   color: ${({ theme }) => theme.text2};
+  margin-right: 6px;
 `
 
 const RowWrapper = styled(Row)<{ bgColor: string; active: boolean }>`
@@ -174,9 +176,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
           <StyledTitleText active={isActive}>{list.name}</StyledTitleText>
         </Row>
         <RowFixed mt="4px">
-          <StyledListUrlText active={isActive} mr="6px">
-            {list.tokens.length} tokens
-          </StyledListUrlText>
+          <StyledListUrlText active={isActive}>{list.tokens.length} tokens</StyledListUrlText>
           <StyledMenu ref={node as any}>
             <ButtonEmpty onClick={toggle} ref={setReferenceElement} padding="0">
               <Settings stroke={theme.text1} size={12} />

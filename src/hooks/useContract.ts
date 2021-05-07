@@ -118,7 +118,8 @@ export function useUniContract(): Contract | null {
 }
 
 export function useAntimatterContract(): Contract | null {
-  return useContract(ANTIMATTER_ADDRESS, ANTIMATTER_ABI, true)
+  const { chainId } = useActiveWeb3React()
+  return useContract(chainId ? ANTIMATTER_ADDRESS[chainId] : undefined, ANTIMATTER_ABI, true)
 }
 
 export function useCallOrPutContract(address: string): Contract | null {

@@ -3,8 +3,9 @@ import styled from 'styled-components'
 import { darken } from 'polished'
 
 import { RowBetween } from '../Row'
-import { ChevronDown } from 'react-feather'
+import { ChevronDown, ArrowLeft } from 'react-feather'
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
+import useTheme from 'hooks/useTheme'
 
 interface StyleProp {
   borderRadius?: string
@@ -184,7 +185,7 @@ export const ButtonUNIGradient = styled(ButtonPrimary)`
 `
 
 export const ButtonOutlined = styled(Base)`
-  border: 1px solid ${({ theme }) => theme.bg5};
+  border: 1px solid ${({ theme }) => theme.text5};
   background-color: transparent;
   color: ${({ theme }) => theme.text1};
 
@@ -228,9 +229,9 @@ export const ButtonOutlinedPrimary = styled(Base)`
   }
 `
 
-export const ButtonEmpty = styled(Base)`
+export const ButtonEmpty = styled(Base)<{ color?: string }>`
   background-color: transparent;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme, color }) => color ?? theme.primary1};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -383,4 +384,13 @@ export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonPr
   } else {
     return <ButtonPrimary {...rest} />
   }
+}
+
+export function ArrowLeftButton({ onClick }: { onClick: () => void }) {
+  const theme = useTheme()
+  return (
+    <ButtonEmpty onClick={onClick} padding="8px" width="fit-content">
+      <ArrowLeft color={theme.text1} />
+    </ButtonEmpty>
+  )
 }

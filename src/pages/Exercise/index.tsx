@@ -38,17 +38,6 @@ export default function Exercise({ history }: RouteComponentProps) {
           />
 
           <NumberInputPanel
-            disabled={true}
-            label={'Token Exercise'}
-            value={'You have the rights to purchase ETH at 100 USDT'}
-            showMaxButton={false}
-            hideBalance={true}
-            onUserInput={() => {}}
-            onMax={() => {}}
-            id="swap-currency-input"
-          />
-
-          <NumberInputPanel
             label={'CALL Tokens Amount to Exercise'}
             value={''}
             showMaxButton={true}

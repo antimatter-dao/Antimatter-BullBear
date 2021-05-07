@@ -11,7 +11,7 @@ import { Marginer } from '../../pages/App'
 
 const AnimatedDialogOverlay = animated(DialogOverlay)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
+export const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
   &[data-reach-dialog-overlay] {
     z-index: 2;
     background-color: transparent;
@@ -22,6 +22,10 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     justify-content: center;
 
     background-color: ${({ theme }) => theme.modalBG};
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+    height: calc(100% - ${theme.headerHeight});
+    justify-content: flex-end;
+    `}
   }
 `
 export const Wrapper = styled.div`
@@ -30,17 +34,22 @@ export const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  ${({ theme }) => theme.mediaWidth.upToSmall`          
+    margin-top: auto;
+    max-height: calc(100% - ${theme.mobileHeaderHeight});
+    overflow-y: auto;
+  `}
 `
 
-export const Filler = styled.div`
-  width: 212px;
-  ${({ theme }) => theme.desktop}
-`
+// export const Filler = styled.div`
+//   width: 212px;
+//   ${({ theme }) => theme.desktop}
+// `
 
 const AnimatedDialogContent = animated(DialogContent)
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, maxWidth, ...rest }) => (
+export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, maxWidth, minWidth, ...rest }) => (
   <AnimatedDialogContent {...rest} />
 )).attrs({
   'aria-label': 'dialog'
@@ -53,6 +62,11 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, maxW
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     padding: 0px;
     width: 50vw;
+    ${({ minWidth }) =>
+      minWidth &&
+      css`
+        min-width: ${minWidth}px;
+      `}
     overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
     overflow-x: hidden;
 
@@ -81,14 +95,13 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, maxW
       margin: 0;
     `}
     ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
-      width:  85vw;
-      ${mobile &&
-        css`
-          width: 100vw;
-          border-radius: 20px;
-          border-bottom-left-radius: 0;
-          border-bottom-right-radius: 0;
-        `}
+      width: 100vw;
+      border-radius: 20px;
+      border-bottom-left-radius: unset;
+      border-bottom-right-radius: unset;
+      max-height: calc(100% - ${theme.mobileHeaderHeight});
+      overflow-y: auto;
+      
     `}
   }
 `
@@ -143,7 +156,7 @@ export default function Modal({
               initialFocusRef={initialFocusRef}
               unstable_lockFocusAcrossFrames={false}
             >
-              <Filler />
+              {/* <Filler /> */}
               <Wrapper>
                 <StyledDialogContent
                   {...(isMobile

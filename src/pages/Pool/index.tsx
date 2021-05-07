@@ -10,7 +10,7 @@ import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
 import { StyledInternalLink /*, ExternalLink*/, TYPE, HideSmall } from '../../theme'
 import { Text } from 'rebass'
 import Card from '../../components/Card'
-import { RowBetween, RowFixed } from '../../components/Row'
+import { RowBetween } from '../../components/Row'
 import { ButtonPrimary /*, ButtonSecondary*/ } from '../../components/Button'
 import { AutoColumn } from '../../components/Column'
 
@@ -39,14 +39,6 @@ const TitleRow = styled(RowBetween)`
     width: 100%;
     flex-direction: column-reverse;
   `};
-`
-
-const ButtonRow = styled(RowFixed)`
-  gap: 8px;
-
-  width: 100%;
-  flex-direction: row-reverse;
-  justify-content: space-between;
 `
 
 const ResponsiveButtonPrimary = styled(ButtonPrimary)`
@@ -159,16 +151,17 @@ export default function Pool() {
                   <TYPE.mediumHeader style={{ justifySelf: 'flex-start' }}>Your liquidity</TYPE.mediumHeader>
                 </HideSmall>
               </TitleRow>
-              <ButtonRow>
-                <ResponsiveButtonPrimary as={Link} padding="14px 10px" to="/create/ETH">
-                  Create a pair
-                </ResponsiveButtonPrimary>
-                <ResponsiveButtonPrimary id="join-pool-button" as={Link} padding="14px 10px" to="/add/ETH">
-                  <Text fontWeight={500} fontSize={16}>
-                    Add Liquidity
-                  </Text>
-                </ResponsiveButtonPrimary>
-              </ButtonRow>
+              <ResponsiveButtonPrimary
+                style={{ width: '100%' }}
+                id="join-pool-button"
+                as={Link}
+                padding="14px 10px"
+                to="/add/ETH"
+              >
+                <Text fontWeight={500} fontSize={16}>
+                  Add Liquidity
+                </Text>
+              </ResponsiveButtonPrimary>
 
               {!account ? (
                 <Card padding="12px" border={`1px solid ${theme.text3}`} borderRadius="14px">

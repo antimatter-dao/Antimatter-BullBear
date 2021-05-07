@@ -2,10 +2,11 @@ import React from 'react'
 import { Text } from 'rebass'
 import { ButtonPrimary } from '../../components/Button'
 import { DeltaData } from '../../state/market/hooks'
-import { Currency } from '@uniswap/sdk'
+import { Currency, Token } from '@uniswap/sdk'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { parseBalance } from '../../utils/marketStrategyUtils'
 import { TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
+import { ZERO_ADDRESS } from '../../constants'
 
 export function ConfirmRedeemModalBottom({
   tokenType = TOKEN_TYPES.callPut,
@@ -29,8 +30,8 @@ export function ConfirmRedeemModalBottom({
       <GenerateBar
         cardTitle={``}
         subTitle="Output Token"
-        callVol={parseBalance(delta?.dUnd, 4)}
-        putVol={parseBalance(delta?.dCur, 4)}
+        callVol={parseBalance({ val: delta?.dUnd, token: new Token(1, ZERO_ADDRESS, currencyA?.decimals ?? 18) })}
+        putVol={parseBalance({ val: delta?.dCur, token: new Token(1, ZERO_ADDRESS, currencyB?.decimals ?? 18) })}
         currency0={currencyA ?? undefined}
         currency1={currencyB ?? undefined}
       />

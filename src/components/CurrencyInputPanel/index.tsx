@@ -15,14 +15,17 @@ import { useActiveWeb3React } from '../../hooks'
 import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
 
-const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean }>`
+const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean; hideSelect?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   padding: ${({ selected }) => (selected ? '0 0.5rem 0 1rem' : '0 0.65rem 0 0.75rem')};
-  width: ${({ halfWidth }) => (halfWidth ? '48%' : '55%')}};
+  width: ${({ halfWidth, hideSelect }) => (hideSelect ? '100%' : halfWidth ? '48%' : '55%')}};
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 14px;
   height: 3rem;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  width: 100%;
+`};
 `
 
 const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>`
@@ -47,6 +50,17 @@ const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>
   :hover {
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.bg5))};
   }
+  ${({ theme, selected }) => theme.mediaWidth.upToSmall`
+  position: absolute;
+  right: 0;
+  width: 50%;
+  z-index: 2;
+  color:${selected ? theme.text1 : theme.primary1}
+  border: 1px solid ${selected ? theme.text4 : theme.primary1}
+  :hover,:focus,:active {
+    border: 1px solid ${selected ? theme.text4 : theme.primary1}
+  }
+  `}
 `
 
 const CustomNumericalInput = styled(NumericalInput)`
@@ -79,6 +93,12 @@ const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
     stroke: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
     stroke-width: 1.5px;
   }
+  ${({ theme, selected }) =>
+    selected
+      ? ''
+      : theme.mediaWidth.upToExtraSmall`
+  display: none
+`};
 `
 
 const InputPanel = styled.div<{ hideInput?: boolean; negativeMarginTop?: string }>`
@@ -131,6 +151,7 @@ interface CurrencyInputPanelProps {
   hideBalance?: boolean
   pair?: Pair | null
   hideInput?: boolean
+  hideSelect?: boolean
   otherCurrency?: Currency | null
   id: string
   showCommonBases?: boolean
@@ -151,6 +172,7 @@ export default function CurrencyInputPanel({
   hideBalance = false,
   pair = null, // used for double token logo
   hideInput = false,
+  hideSelect = false,
   otherCurrency,
   id,
   showCommonBases,
@@ -195,44 +217,47 @@ export default function CurrencyInputPanel({
           </LabelRow>
         )}
         <Aligner>
-          <CurrencySelect
-            selected={!!currency}
-            className="open-currency-select-button"
-            onClick={() => {
-              if (!disableCurrencySelect) {
-                setModalOpen(true)
-              }
-            }}
-            halfWidth={halfWidth}
-          >
-            <Aligner>
+          {!hideSelect && (
+            <CurrencySelect
+              selected={!!currency}
+              className="open-currency-select-button"
+              onClick={() => {
+                if (!disableCurrencySelect) {
+                  setModalOpen(true)
+                }
+              }}
+              halfWidth={halfWidth}
+            >
               <Aligner>
-                {pair ? (
-                  <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
-                ) : currency ? (
-                  <CurrencyLogo currency={currency} size={'24px'} />
-                ) : null}
-                {pair ? (
-                  <StyledTokenName className="pair-name-container">
-                    {pair?.token0.symbol}:{pair?.token1.symbol}
-                  </StyledTokenName>
-                ) : (
-                  <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
-                    {(currency && currency.symbol && currency.symbol.length > 20
-                      ? currency.symbol.slice(0, 4) +
-                        '...' +
-                        currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                      : currency?.symbol) || t('selectToken')}
-                  </StyledTokenName>
-                )}
+                <Aligner>
+                  {pair ? (
+                    <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+                  ) : currency ? (
+                    <CurrencyLogo currency={currency} size={'24px'} />
+                  ) : null}
+                  {pair ? (
+                    <StyledTokenName className="pair-name-container">
+                      {pair?.token0.symbol}:{pair?.token1.symbol}
+                    </StyledTokenName>
+                  ) : (
+                    <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
+                      {(currency && currency.symbol && currency.symbol.length > 20
+                        ? currency.symbol.slice(0, 4) +
+                          '...' +
+                          currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+                        : currency?.symbol) || t('selectToken')}
+                    </StyledTokenName>
+                  )}
+                </Aligner>
+                {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
               </Aligner>
-              {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
-            </Aligner>
-          </CurrencySelect>
+            </CurrencySelect>
+          )}
           <InputRow
             style={hideInput ? { padding: '0', borderRadius: '8px' } : {}}
             halfWidth={halfWidth}
             selected={disableCurrencySelect}
+            hideSelect={hideSelect}
           >
             {!hideInput && (
               <>

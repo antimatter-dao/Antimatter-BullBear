@@ -55,7 +55,7 @@ export function colors(darkMode: boolean): Colors {
     bg5: darkMode ? '#A1A1A1' : '#888D9B',
 
     //specialty colors
-    modalBG: darkMode ? 'rgba(0,0,0,.5)' : 'rgba(0,0,0,0.3)',
+    modalBG: darkMode ? 'rgba(0,0,0,.7)' : 'rgba(0,0,0,0.3)',
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
 
     //primary colors
@@ -117,6 +117,7 @@ export function theme(darkMode: boolean): DefaultTheme {
       ${mediaWidthTemplates.upToSmall`display:none;`}
     `,
     mobileHeaderHeight: '90px',
+    headerHeight: '82px',
 
     // css snippets
     flexColumnNoWrap: css`
@@ -144,7 +145,7 @@ const TextWrapper = styled(Text)<{ color: keyof Colors }>`
 
 export const TYPE = {
   main(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'text2'} {...props} />
+    return <TextWrapper fontWeight={500} color={'text1'} {...props} />
   },
   link(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'primary1'} {...props} />
@@ -172,6 +173,9 @@ export const TYPE = {
   },
   small(props: TextProps) {
     return <TextWrapper fontWeight={400} fontSize={12} {...props} />
+  },
+  smallGray(props: TextProps) {
+    return <TextWrapper fontWeight={400} fontSize={12} color={'text3'} {...props} />
   },
   blue(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'blue1'} {...props} />

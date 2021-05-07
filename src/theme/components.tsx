@@ -5,7 +5,7 @@ import styled, { keyframes } from 'styled-components'
 import { darken } from 'polished'
 import { ArrowLeft, X, ExternalLink as LinkIconFeather, Trash } from 'react-feather'
 
-export const ButtonText = styled.button`
+export const ButtonText = styled.button<{ color?: string }>`
   outline: none;
   border: none;
   font-size: inherit;
@@ -13,7 +13,7 @@ export const ButtonText = styled.button`
   margin: 0;
   background: none;
   cursor: pointer;
-
+  color: ${({ color }) => color ?? 'inherit'};
   :hover {
     opacity: 0.7;
   }

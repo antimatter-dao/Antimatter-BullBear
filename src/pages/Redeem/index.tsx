@@ -1,25 +1,24 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react'
 import { Plus } from 'react-feather'
-import { ETHER } from '@uniswap/sdk'
+import { ChainId, ETHER, Token, WETH } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
-import { ButtonError, ButtonPrimary } from '../../components/Button'
+import { ButtonError, ButtonOutlined, ButtonPrimary } from '../../components/Button'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import RedeemTokenPanel from '../../components/MarketStrategy/RedeemTokenPanel'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
-import { AutoRow } from '../../components/Row'
+import { AutoRow, RowBetween } from '../../components/Row'
 import { useActiveWeb3React } from '../../hooks'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useIsExpertMode } from '../../state/user/hooks'
-import { TYPE } from '../../theme'
 import AppBody from '../AppBody'
 import { Wrapper } from '../Pool/styleds'
 import { ConfirmRedeemModalBottom } from './ConfirmRedeemModalBottom'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useMarketCurrency } from '../../hooks/Tokens'
-import { OptionTypeData, useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
+import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
 import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
 import { TypeRadioButton, TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
@@ -27,13 +26,9 @@ import { useAntimatterContract } from '../../hooks/useContract'
 import { calculateGasMargin } from '../../utils'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { isNegative, parseBalance, parsedGreaterThan } from '../../utils/marketStrategyUtils'
-
-const findPrice = (option?: OptionTypeData, isCall?: boolean) => {
-  if (!option) {
-    return ''
-  }
-  return isCall ? parseBalance(option.priceFloor) : parseBalance(option.priceCap)
-}
+import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback'
+import { Dots } from 'components/swap/styleds'
+import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
 
 export default function Redeem() {
   const [optionTypeIndex, setOptionTypeIndex] = useState('')
@@ -43,6 +38,7 @@ export default function Redeem() {
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [txHash, setTxHash] = useState<string>('')
 
   const antimatterContract = useAntimatterContract()
   const optionTypes = useAllOptionTypes()
@@ -60,6 +56,18 @@ export default function Redeem() {
     return optionTypes?.[parseInt(optionTypeIndex)]
   }, [optionTypes, optionTypeIndex])
 
+  const underlyingToken: Token = new Token(
+    chainId ?? 1,
+    selectedOptionType?.underlying ?? ZERO_ADDRESS,
+    Number(selectedOptionType?.underlyingDecimals.toString() ?? '18')
+  )
+
+  const currencyToken: Token = new Token(
+    chainId ?? 1,
+    selectedOptionType?.currency ?? ZERO_ADDRESS,
+    Number(selectedOptionType?.currencyDecimals.toString() ?? '18')
+  )
+
   const { delta, error, balances } = useDerivedStrategyInfo(
     false,
     selectedOptionType ?? undefined,
@@ -67,6 +75,7 @@ export default function Redeem() {
     putTypedAmount ? '-' + putTypedAmount : undefined,
     tokenType
   )
+  const isValid = !error
   const redeemError = useMemo(() => {
     if (
       balances &&
@@ -82,7 +91,17 @@ export default function Redeem() {
   // txn values
   // const deadline = useTransactionDeadline() // custom from users settings
   // const [allowedSlippage] = useUserSlippageTolerance() // custom from users
-  const [txHash, setTxHash] = useState<string>('')
+  // check whether the user has approved the router on the tokens
+  const [approvalA, approveACallback] = useApproveCallback(
+    tryParseAmount(delta?.totalUnd.toString(), currencyA?.symbol === 'WETH' ? ETHER : currencyA ?? undefined),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
+  )
+  const [approvalB, approveBCallback] = useApproveCallback(
+    tryParseAmount(delta?.totalCur.toString(), currencyB?.symbol === 'WETH' ? ETHER : currencyB ?? undefined),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
+  )
+  const approval1 = isNegative(delta?.totalUnd.toString()) ? ApprovalState.APPROVED : approvalA
+  const approval2 = isNegative(delta?.totalCur.toString()) ? ApprovalState.APPROVED : approvalB
 
   async function onRedeem() {
     if (!chainId || !library || !account) return
@@ -109,15 +128,23 @@ export default function Redeem() {
       delta.dCur.toString()
     ]
 
-    console.log('args--->', args)
+    let value: string | undefined | null = null
+
+    if (optionTypes[parseInt(optionTypeIndex)].underlyingSymbol === 'ETH') {
+      value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
+    }
+
+    if (optionTypes[parseInt(optionTypeIndex)].currencySymbol === 'ETH') {
+      value = isNegative(delta.dCur) ? '0' : delta.dCur.toString()
+    }
 
     setAttemptingTxn(true)
 
     if (estimate) {
-      await estimate(...args)
+      await estimate(...args, value ? { value } : {})
         .then(estimatedGasLimit =>
-          // .then(() =>
           method(...args, {
+            ...(value ? { value } : {}),
             gasLimit: calculateGasMargin(estimatedGasLimit)
           }).then(response => {
             setAttemptingTxn(false)
@@ -126,6 +153,8 @@ export default function Redeem() {
             })
 
             setTxHash(response.hash)
+            setCallTypedAmount('')
+            setPutTypedAmount('')
           })
         )
         .catch(error => {
@@ -180,18 +209,18 @@ export default function Redeem() {
       optionTypes.map(item => {
         return {
           id: item.id,
-          option: `${item.underlyingSymbol} (${parseBalance(item.priceFloor)}$${parseBalance(item.priceCap)})`
+          option: `${item.underlyingSymbol} (${parseBalance({
+            val: item.priceFloor,
+            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
+          })}$${parseBalance({
+            val: item.priceCap,
+            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
+          })})`
         }
       }),
     [optionTypes]
   )
   const handleCheck = useCallback((tokenType: string) => {
-    if (tokenType === TOKEN_TYPES.call) {
-      setPutTypedAmount('')
-    }
-    if (tokenType === TOKEN_TYPES.put) {
-      setCallTypedAmount('')
-    }
     setTokenType(tokenType)
   }, [])
 
@@ -229,9 +258,16 @@ export default function Redeem() {
                 <RedeemTokenPanel
                   value={callTypedAmount ?? ''}
                   onUserInput={setCallTypedAmount}
-                  label="Call Token"
+                  label={
+                    optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
+                      ? `+${optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}($${parseBalance({
+                          val: selectedOptionType?.priceFloor,
+                          token: currencyToken
+                        })})`
+                      : 'Call Token'
+                  }
                   currency={currencyA}
-                  currencyBalance={parseBalance(balances?.callBalance)}
+                  currencyBalance={parseBalance({ val: balances?.callBalance, token: WETH[ChainId.MAINNET] })}
                   isCall={true}
                 />
                 <ColumnCenter>
@@ -240,45 +276,32 @@ export default function Redeem() {
                 <RedeemTokenPanel
                   value={putTypedAmount ?? ''}
                   onUserInput={setPutTypedAmount}
-                  label="Put Token"
-                  currency={currencyB}
+                  label={
+                    optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
+                      ? `+${optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}($${parseBalance({
+                          val: optionTypes[parseInt(optionTypeIndex)]?.priceCap,
+                          token: currencyToken
+                        })})`
+                      : 'Call Token'
+                  }
+                  currency={currencyA}
                   negativeMarginTop="-25px"
-                  currencyBalance={parseBalance(balances?.putBalance)}
+                  currencyBalance={parseBalance({ val: balances?.putBalance, token: WETH[ChainId.MAINNET] })}
                   isCall={false}
                 />
               </>
             ) : (
               <>
-                {currencyA && currencyB && (
-                  <AutoColumn gap="4px">
-                    <AutoRow>
-                      <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
-                        Token Exercise
-                      </TYPE.body>
-                    </AutoRow>
-                    <div
-                      style={{
-                        width: '100%',
-                        border: `1px solid ${theme.bg3}`,
-                        padding: '0 20px',
-                        borderRadius: '14px',
-                        color: theme.text3,
-                        height: '3rem',
-                        lineHeight: '48px'
-                      }}
-                    >
-                      {`You have the rights to ${isCallToken ? 'purchase' : 'sell'} ${currencyA?.symbol ??
-                        ''} at ${findPrice(selectedOptionType, isCallToken)} ${currencyB?.symbol ?? ''}`}
-                    </div>
-                  </AutoColumn>
-                )}
                 <RedeemTokenPanel
                   inputOnly={true}
                   value={isCallToken ? callTypedAmount : putTypedAmount}
                   onUserInput={isCallToken ? setCallTypedAmount : setPutTypedAmount}
                   label={`${isCallToken ? 'CALL' : 'PUT'} Tokens Amount to Exercise`}
                   currency={isCallToken ? currencyA : currencyB}
-                  currencyBalance={parseBalance(isCallToken ? balances?.callBalance : balances?.putBalance)}
+                  currencyBalance={parseBalance({
+                    val: isCallToken ? balances?.callBalance : balances?.putBalance,
+                    token: WETH[ChainId.MAINNET]
+                  })}
                   isCall={isCallToken}
                 />
               </>
@@ -289,8 +312,8 @@ export default function Redeem() {
                 currency0={currencyA}
                 currency1={currencyB}
                 subTitle="Output Token"
-                callVol={delta && parseBalance(delta.dUnd, 4)}
-                putVol={delta && parseBalance(delta.dCur, 4)}
+                callVol={delta && parseBalance({ val: delta.dUnd, token: underlyingToken })}
+                putVol={delta && parseBalance({ val: delta.dCur, token: currencyToken })}
               />
             )}
 
@@ -298,16 +321,55 @@ export default function Redeem() {
               <ButtonPrimary onClick={toggleWalletModal}>Connect Wallet</ButtonPrimary>
             ) : (
               <AutoColumn gap={'md'}>
-                <ButtonError
-                  onClick={() => {
-                    expertMode ? onRedeem() : setShowConfirm(true)
-                  }}
-                  disabled={!!redeemError}
-                >
-                  <Text fontSize={16} fontWeight={500}>
-                    {redeemError ?? (tokenType === TOKEN_TYPES.callPut ? 'Redeem' : 'Exercise')}
-                  </Text>
-                </ButtonError>
+                {(approval1 === ApprovalState.NOT_APPROVED ||
+                  approval1 === ApprovalState.PENDING ||
+                  approval2 === ApprovalState.NOT_APPROVED ||
+                  approval2 === ApprovalState.PENDING) &&
+                  isValid && (
+                    <RowBetween>
+                      {approval1 !== ApprovalState.APPROVED && (
+                        <ButtonPrimary
+                          onClick={approveACallback}
+                          disabled={approval1 === ApprovalState.PENDING}
+                          width={approval2 !== ApprovalState.APPROVED ? '48%' : '100%'}
+                        >
+                          {approval1 === ApprovalState.PENDING ? (
+                            <Dots>Approving {optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}</Dots>
+                          ) : (
+                            'Approve ' + optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
+                          )}
+                        </ButtonPrimary>
+                      )}
+                      {approval2 !== ApprovalState.APPROVED && (
+                        <ButtonPrimary
+                          onClick={approveBCallback}
+                          disabled={approval2 === ApprovalState.PENDING}
+                          width={approval1 !== ApprovalState.APPROVED ? '48%' : '100%'}
+                        >
+                          {approval2 === ApprovalState.PENDING ? (
+                            <Dots>Approving {optionTypes[parseInt(optionTypeIndex)]?.currencySymbol}</Dots>
+                          ) : (
+                            'Approve ' + optionTypes[parseInt(optionTypeIndex)]?.currencySymbol
+                          )}
+                        </ButtonPrimary>
+                      )}
+                    </RowBetween>
+                  )}
+                {redeemError && <ButtonOutlined style={{ opacity: '0.5' }}>{redeemError}</ButtonOutlined>}
+                {!redeemError && (
+                  <ButtonError
+                    onClick={() => {
+                      expertMode ? onRedeem() : setShowConfirm(true)
+                    }}
+                    disabled={
+                      !!redeemError || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED
+                    }
+                  >
+                    <Text fontSize={16} fontWeight={500}>
+                      {redeemError ?? (tokenType === TOKEN_TYPES.callPut ? 'Redeem' : 'Exercise')}
+                    </Text>
+                  </ButtonError>
+                )}
               </AutoColumn>
             )}
           </AutoColumn>

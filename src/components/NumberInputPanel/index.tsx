@@ -93,7 +93,8 @@ export default function NumberInputPanel({
   showMaxButton,
   id,
   customBalanceText,
-  negativeMarginTop
+  negativeMarginTop,
+  onUserInput
 }: NumberInputPanelProps) {
   const { account } = useActiveWeb3React()
   const theme = useTheme()
@@ -125,7 +126,7 @@ export default function NumberInputPanel({
             className="token-amount-input"
             value={value}
             onUserInput={val => {
-              //onUserInput(val)
+              onUserInput(val)
             }}
           />
           {account && showMaxButton && <StyledBalanceMax onClick={onMax}>Max</StyledBalanceMax>}
