@@ -104,7 +104,7 @@ export function useAllOptionTypes() {
   //const optionTypeCount = useOptionTypeCount()
   const optionTypeIndexes = useMemo(() => {
     const indexes = []
-    for (let i = 0; i < 1; i++) {
+    for (let i = 1; i < 2; i++) {
       indexes.push([i])
     }
     return indexes
