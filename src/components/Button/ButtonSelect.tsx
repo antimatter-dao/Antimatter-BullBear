@@ -46,6 +46,7 @@ const OptionWrapper = styled.div<{ isOpen: boolean; width?: string }>`
   border-radius: 14px;
   overflow: hidden;
   z-index: 2;
+  margin-top: 4px;
   background-color: ${({ theme }) => theme.bg2};
   & button:last-child {
     border: none;

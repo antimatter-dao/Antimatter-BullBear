@@ -5,13 +5,13 @@ import { Currency, Token } from '@uniswap/sdk'
 import ButtonSelect from 'components/Button/ButtonSelect'
 import AppBody from 'pages/AppBody'
 import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
-import { CustomLightSpinner, TYPE } from 'theme'
+import { CustomLightSpinner, ExternalLink, TYPE } from 'theme'
 import { RowBetween, RowFixed } from 'components/Row'
 import { OptionIcon } from 'components/Icons'
 //import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import { AutoColumn } from 'components/Column'
-import { shortenAddress } from 'utils'
+import { getEtherscanLink, shortenAddress } from 'utils'
 import { OptionTypeData, useAllOptionTypes } from 'state/market/hooks'
 import { currencyNameHelper, parseBalance } from 'utils/marketStrategyUtils'
 import { USDT, ZERO_ADDRESS } from '../../constants'
@@ -23,6 +23,7 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { currencyId } from 'utils/currencyId'
 import Loader from 'assets/svg/gray_loader.svg'
 import { useUSDTPrice } from 'utils/useUSDCPrice'
+import { useActiveWeb3React } from 'hooks'
 export interface OptionInterface {
   title: string
   address: string
@@ -124,11 +125,12 @@ function getOptionList(allOptionType: OptionTypeData[]) {
         underlyingSymbol,
         details: {
           'Option Price Range': range,
-          'Underlying Asset': underlyingSymbol,
-          'Total Current Issuance': parseBalance({
-            val: callTotal,
-            token: new Token(1, ZERO_ADDRESS, Number(underlyingDecimals ?? '18'))
-          }),
+          'Underlying Asset': underlyingSymbol ? underlyingSymbol + ', USDT' : '-',
+          'Total Current Issuance':
+            parseBalance({
+              val: callTotal,
+              token: new Token(1, ZERO_ADDRESS, Number(underlyingDecimals ?? '18'))
+            }) + ' Shares',
           'Market Price': '$2100'
         },
         range: { floor, cap }
@@ -141,11 +143,12 @@ function getOptionList(allOptionType: OptionTypeData[]) {
         underlyingSymbol,
         details: {
           'Option Price Range': range,
-          'Underlying Asset': underlyingSymbol,
-          'Total Current Issuance': parseBalance({
-            val: putTotal,
-            token: new Token(1, ZERO_ADDRESS, Number(underlyingDecimals ?? '18'))
-          }),
+          'Underlying Asset': underlyingSymbol ? underlyingSymbol + ', USDT' : '-',
+          'Total Current Issuance':
+            parseBalance({
+              val: putTotal,
+              token: new Token(1, ZERO_ADDRESS, Number(underlyingDecimals ?? '18'))
+            }) + ' Shares',
           'Market Price': '$2100'
         },
         range: { floor, cap }
@@ -238,7 +241,7 @@ export default function OptionTrade({
           <Search>
             <ButtonSelect width="320px" onClick={handleOpenSearch}>
               {assetTypeQuery && <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />}
-              {currencyNameHelper(assetTypeQuery, 'Select asset type currency')}
+              {currencyNameHelper(assetTypeQuery, 'Select asset type')}
             </ButtonSelect>
             <ButtonSelect
               placeholder="Select option type"
@@ -248,7 +251,7 @@ export default function OptionTrade({
               options={[
                 { id: ALL.id, option: ALL.title },
                 { id: Type.CALL, option: 'Call Option' },
-                { id: Type.PUT, option: 'Call Put' }
+                { id: Type.PUT, option: 'Put Option' }
               ]}
             />
             <ButtonSelectRange
@@ -302,6 +305,7 @@ function OptionCard({
   option: OptionInterface
   onClick: () => void
 }) {
+  const { chainId } = useActiveWeb3React()
   const underlyingCurrency = useCurrency(underlyingAddress)
   const currency = useCurrency(address)
   const price = useUSDTPrice(currency ?? undefined)
@@ -316,11 +320,13 @@ function OptionCard({
               size="26px"
             />
           </Circle>
-          <AutoColumn>
+          <AutoColumn gap="5px">
             <TYPE.mediumHeader fontSize={20} style={{ whiteSpace: 'nowrap' }}>
               {title}
             </TYPE.mediumHeader>
-            <TYPE.smallGray>{shortenAddress(address, 7)}</TYPE.smallGray>
+            <ExternalLink href={chainId ? getEtherscanLink(chainId, address, 'token') : ''}>
+              <TYPE.smallGray>{shortenAddress(address, 7)}</TYPE.smallGray>
+            </ExternalLink>
           </AutoColumn>
         </TitleWrapper>
         <Divider />
@@ -329,7 +335,7 @@ function OptionCard({
             <RowBetween key={key}>
               <TYPE.smallGray>{key}:</TYPE.smallGray>
               <TYPE.subHeader>
-                {key === 'Market Price' ? (price ? `$${price}` : '-') : details[key as keyof typeof details]}
+                {key === 'Market Price' ? (price ? `$${price.toFixed()}` : '-') : details[key as keyof typeof details]}
               </TYPE.subHeader>
             </RowBetween>
           ))}

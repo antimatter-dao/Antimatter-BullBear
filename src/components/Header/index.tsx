@@ -30,20 +30,30 @@ import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as HECO } from '../../assets/svg/huobi_inverted.svg'
 import { ReactComponent as BSC } from '../../assets/svg/binance.svg'
+
 interface TabContent {
   title: string
-  route: string
+  route?: string
+  link?: string
 }
 interface Tab extends TabContent {
-  children?: TabContent[]
+  subTab?: TabContent[]
 }
 
 const tabs: Tab[] = [
   { title: 'Option Trading', route: 'option_trading' },
   { title: 'Option Exercise', route: 'option_exercise' },
+  { title: 'Option Creation', route: 'option_creation' },
   { title: 'Farm', route: 'farm' },
-  { title: 'Governance', route: 'governance' }
-  // { title: 'About', route: 'info' }
+  { title: 'Governance', route: 'governance' },
+  {
+    title: 'About',
+    subTab: [
+      { title: 'Support', route: '/support' },
+      { title: 'Docs', route: '/docs' },
+      { title: 'Statistic', link: '/support' }
+    ]
+  }
 ]
 
 const NetworkInfo: { [key: number]: { color: string; icon: JSX.Element } } = {
@@ -138,7 +148,6 @@ const HeaderElement = styled.div<{
     border: 1px solid ${({ theme, show }) => (show ? theme.text1 : 'transparent')};
     border-radius: 4px;
     height: 32px;
-    padding: 0 16px;
     display: flex;
     align-items: center;
     font-size: 13px;
@@ -208,7 +217,7 @@ const NetworkCard = styled.div<{ color?: string }>`
   color: #000000;
   cursor: pointer;
   display: flex;
-  padding: 0 8px;
+  padding: 0 4px;
   height: 32px;
   margin-right: 12px;
   margin-left: 19px;
@@ -258,7 +267,7 @@ const StyledNavLink = styled(NavLink).attrs({
   margin: 0 20px;
   font-weight: 400;
   padding: 10px 0 27px;
-
+  transition: 0.5s;
   &.${activeClassName} {
     color: ${({ theme }) => theme.primary1};
     border-bottom: 1px solid ${({ theme }) => theme.primary1};
@@ -267,6 +276,61 @@ const StyledNavLink = styled(NavLink).attrs({
   :hover,
   :focus {
     color: ${({ theme }) => darken(0.1, theme.primary1)};
+  }
+`
+
+const StyledDropdown = styled.div`
+  ${({ theme }) => theme.flexRowNoWrap}
+  align-items: center;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: ${({ theme }) => theme.text3};
+  font-size: 14px;
+  width: fit-content;
+  margin: 0 20px;
+  font-weight: 400;
+  padding: 10px 0 27px;
+  transition: 0.5s;
+  position: relative;
+  & > div {
+    height: 0;
+    position: absolute;
+    top: 40px;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 172px;
+    a {
+      color: #ffffff;
+      background-color: ${({ theme }) => theme.bg2};
+      text-decoration: none;
+      padding: 14px 17px;
+      border-bottom: 1px solid ${({ theme }) => theme.text5}
+      transition: 0.5s;
+      :last-child{
+        border: none;
+      }
+      :hover {
+        background-color: ${({ theme }) => theme.bg4};
+        color: ${({ theme }) => darken(0.1, theme.primary1)};
+      }
+    }
+  }
+  svg{
+    margin-left: 5px;
+  }
+  :hover,
+  :focus {
+    color: ${({ theme }) => darken(0.1, theme.primary1)};
+    svg {
+      transform: rotate(180deg);
+    }
+    & > div {
+      height: auto;
+      border: 1px solid ${({ theme }) => theme.text5};
+    }
   }
 `
 
@@ -352,7 +416,7 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan',
-  [ChainId.MAINNET]: 'Ethereum Mainnet'
+  [ChainId.MAINNET]: 'Eth'
 }
 
 export default function Header() {
@@ -416,11 +480,26 @@ export default function Header() {
       <HeaderRow>
         <StyledLogo />
         <HeaderLinks>
-          {tabs.map(({ title, route }) => (
-            <StyledNavLink id={`stake-nav-link`} to={'/' + route} key={route}>
-              {title}
-            </StyledNavLink>
-          ))}
+          {tabs.map(({ title, route, subTab }) => {
+            if (subTab) {
+              return (
+                <StyledDropdown>
+                  {title}
+                  <ChevronDown size={15} />
+                  <div>
+                    {subTab.map(({ title, route, link }) => {
+                      return link ? <a href={link}>{title}</a> : route ? <NavLink to={route}>{title}</NavLink> : null
+                    })}
+                  </div>
+                </StyledDropdown>
+              )
+            }
+            return (
+              <StyledNavLink id={`stake-nav-link`} to={'/' + route} key={route}>
+                {title}
+              </StyledNavLink>
+            )
+          })}
           {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
           </StyledNavLink>

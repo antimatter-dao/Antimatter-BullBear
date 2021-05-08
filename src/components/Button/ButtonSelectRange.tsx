@@ -2,14 +2,18 @@ import React, { useMemo, useRef, useState, useCallback } from 'react'
 import { ButtonProps } from 'rebass/styled-components'
 import styled from 'styled-components'
 import { ButtonOutlined } from '.'
-import { AutoRow, RowBetween } from '../Row'
+import { RowBetween } from '../Row'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import NumberInputPanel from 'components/NumberInputPanel'
 import { ButtonSelectStyle, StyledDropDown } from './ButtonSelect'
+import { Minus, X } from 'react-feather'
+import useTheme from 'hooks/useTheme'
 
 const RangeInputWrapper = styled.div<{ isOpen: boolean; width?: string }>`
   display: ${({ isOpen }) => (isOpen ? ' grid' : 'none')};
-  grid-template-columns: 2fr 1fr 2fr 48px;
+  grid-template-columns: 3fr auto 3fr auto;
+  grid-gap: 4px;
+  align-items: center;
   position: absolute;
   padding: 20px;
   width: ${({ width }) => width ?? '100%'};
@@ -17,7 +21,15 @@ const RangeInputWrapper = styled.div<{ isOpen: boolean; width?: string }>`
   border-radius: 14px;
   overflow: hidden;
   z-index: 2;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.bg1};
+  margin-top: 4px;
+  & > svg {
+    margin-top: 15px;
+  }
+  & > button {
+    margin-top: 15px;
+    margin-left: 10px;
+  }
 `
 
 export function ButtonSelectRange({
@@ -37,6 +49,8 @@ export function ButtonSelectRange({
   const [isOpen, setIsOpen] = useState(false)
   const [floor, setFloor] = useState('')
   const [cap, setCap] = useState('')
+
+  const theme = useTheme()
 
   const handleClose = useCallback(() => setIsOpen(false), [])
 
@@ -78,7 +92,7 @@ export function ButtonSelectRange({
           id="floor"
           hideBalance={true}
         />
-        <p>-</p>
+        <Minus size={25} color={theme.text3} />
         <NumberInputPanel
           label="To"
           value={cap}
@@ -87,11 +101,10 @@ export function ButtonSelectRange({
           id="cap"
           hideBalance={true}
         />
-        <AutoRow>
-          <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
-            X
-          </ButtonOutlined>
-        </AutoRow>
+
+        <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
+          <X size={60} color={theme.text3} />
+        </ButtonOutlined>
       </RangeInputWrapper>
     </div>
   )

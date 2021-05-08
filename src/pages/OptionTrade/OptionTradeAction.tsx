@@ -69,7 +69,7 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
     left: 0;
     stroke: ${({ theme, selected }) => (selected ? theme.text4 : theme.text5)};
     fill:${({ selected, theme, isFirstChild }) => (selected ? '#141414' : isFirstChild ? 'transparent' : theme.bg1)}
-    stroke-width: 1px;
+    stroke-width: .5px;
   }
   div{
     z-index: 2;
@@ -163,7 +163,7 @@ function SwitchTab({ tab, setTab }: { tab: TABS; setTab: (tab: TABS) => void }) 
         Info
       </Tab>
       <Tab onClick={liquidityClick} selected={tab === TABS.LIQUIDITY}>
-        Liqidity
+        Liquidity
       </Tab>
       <Tab isFirstChild={true} onClick={swapClick} selected={tab === TABS.SWAP}>
         Swap
@@ -191,6 +191,8 @@ function Tab({
             <path
               d="M157 42V42C150.187 42 143.885 38.3867 140.443 32.5068L127.793 10.8964C124.205 4.76683 117.635 1 110.533 1H33C15.3269 1 1 15.3269 1 33V42"
               fill="#000000"
+              strokeWidth="0"
+              stroke="transparent"
             />
           )}
         </svg>
