@@ -232,9 +232,9 @@ export function useAllOptionTypes() {
           priceFloor: item.result?.[2],
           priceCap: item.result?.[3],
           underlyingSymbol:
-            underlyingSymbolRes[index].result?.[0] === 'WHT' ? 'HT' : underlyingSymbolRes[index].result?.[0],
+            underlyingSymbolRes[index].result?.[0] === 'WETH' ? 'ETH' : underlyingSymbolRes[index].result?.[0],
           underlyingDecimals:
-            underlyingDecimalsRes[index].result?.[0] === 'WHT' ? 'HT' : underlyingDecimalsRes[index].result?.[0],
+            underlyingDecimalsRes[index].result?.[0] === 'WETH' ? 'ETH' : underlyingDecimalsRes[index].result?.[0],
           currencySymbol: currencySymbolRes[index].result?.[0],
           currencyDecimals: currencyDecimalsRes[index].result?.[0]
         }
