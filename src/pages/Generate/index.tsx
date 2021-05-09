@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useState, useMemo } from 'react'
 import { ETHER, Token } from '@uniswap/sdk'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
+import { RouteComponentProps } from 'react-router'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonPrimary, ButtonOutlined } from '../../components/Button'
@@ -31,9 +32,14 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useAntimatterContract } from '../../hooks/useContract'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { isNegative, parseBalance } from '../../utils/marketStrategyUtils'
+import { parsePrice } from 'pages/OptionTrade'
 
-export default function Generate() {
-  const [optionType, setOptionType] = useState('')
+export default function Generate({
+  match: {
+    params: { optionTypeIndex }
+  }
+}: RouteComponentProps<{ optionTypeIndex?: string }>) {
+  // const [optionType, setOptionType] = useState('')
   const [callTyped, setCallTyped] = useState<string>()
   const [putTyped, setPutTyped] = useState<string>()
   const [tokenType, setTokenType] = useState(TOKEN_TYPES.callPut)
@@ -42,32 +48,28 @@ export default function Generate() {
 
   const { account, chainId, library } = useActiveWeb3React()
   const optionTypes = useAllOptionTypes()
-  const currencyA = useMarketCurrency(optionTypes[parseInt(optionType)]?.underlying)
-  const currencyB = useMarketCurrency(optionTypes[parseInt(optionType)]?.currency)
-  const antimatterContract = useAntimatterContract()
-  const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
-  const expertMode = useIsExpertMode()
-
+  const optionType = optionTypeIndex ?? ''
   const selectedOptionType = useMemo(() => {
     if (!optionTypes || !optionType) return undefined
     return optionTypes?.[parseInt(optionType)]
   }, [optionTypes, optionType])
+  const currencyA = useMarketCurrency(selectedOptionType?.underlying)
+  const currencyB = useMarketCurrency(selectedOptionType?.currency)
+  const antimatterContract = useAntimatterContract()
+  const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
+  const expertMode = useIsExpertMode()
 
   const underlyingToken: Token = new Token(
     chainId ?? 1,
     selectedOptionType?.underlying ?? ZERO_ADDRESS,
-    Number(selectedOptionType?.underlyingDecimals.toString() ?? '18')
+    Number(selectedOptionType?.underlyingDecimals?.toString() ?? '18')
   )
 
   const currencyToken: Token = new Token(
     chainId ?? 1,
     selectedOptionType?.currency ?? ZERO_ADDRESS,
-    Number(selectedOptionType?.currencyDecimals.toString() ?? '18')
+    Number(selectedOptionType?.currencyDecimals?.toString() ?? '18')
   )
-
-  // const callToken: Token = new Token(chainId ?? 1, selectedOptionType?.callAddress ?? ZERO_ADDRESS, 18)
-  //
-  // const putToken: Token = new Token(chainId ?? 1, selectedOptionType?.putAddress ?? ZERO_ADDRESS, 18)
 
   const { delta, error } = useDerivedStrategyInfo(
     true,
@@ -76,8 +78,6 @@ export default function Generate() {
     putTyped ?? undefined,
     tokenType
   )
-
-  // const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
 
   const isValid = !error
 
@@ -125,7 +125,6 @@ export default function Generate() {
       delta.dCur.toString()
     ]
 
-
     if (optionTypes[parseInt(optionType)].underlyingSymbol === 'ETH') {
       value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
     }
@@ -168,22 +167,22 @@ export default function Generate() {
     }
   }
 
-  const selectOptions = useMemo(
-    () =>
-      optionTypes.map(item => {
-        return {
-          id: item.id,
-          option: `${item.underlyingSymbol ?? '-'} (${parseBalance({
-            val: item.priceFloor,
-            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
-          })}$${parseBalance({
-            val: item.priceCap,
-            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
-          })})`
-        }
-      }),
-    [optionTypes]
-  )
+  // const selectOptions = useMemo(
+  //   () =>
+  //     optionTypes.map(item => {
+  //       return {
+  //         id: item.id,
+  //         option: `${item.underlyingSymbol ?? '-'} (${parseBalance({
+  //           val: item.priceFloor,
+  //           token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
+  //         })}$${parseBalance({
+  //           val: item.priceCap,
+  //           token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
+  //         })})`
+  //       }
+  //     }),
+  //   [optionTypes]
+  // )
   const modalHeader = useCallback(() => {
     return <AutoColumn gap="20px"></AutoColumn>
   }, [])
@@ -234,12 +233,13 @@ export default function Generate() {
             pendingText="Generating"
           />
           <AutoColumn gap="20px">
-            <ButtonSelect
-              label="Option Type"
-              onSelection={setOptionType}
-              options={selectOptions}
-              selectedId={optionType}
-            />
+            <ButtonSelect label="Option Type" disabled={true}>
+              {selectedOptionType &&
+                `${selectedOptionType.underlyingSymbol ?? '-'} (${parsePrice(
+                  selectedOptionType.priceFloor,
+                  (selectedOptionType.currencyDecimals = '6')
+                )}$${parsePrice(selectedOptionType.priceCap, (selectedOptionType.currencyDecimals = '6'))})`}
+            </ButtonSelect>
             <TypeRadioButton selected={tokenType} onCheck={(tokenType: string) => setTokenType(tokenType)} />
             {(tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.call) && (
               <CallOrPutInputPanel
@@ -249,8 +249,8 @@ export default function Generate() {
                 id="generate-output-token"
                 showCommonBases
                 defaultSymbol={
-                  optionTypes[parseInt(optionType)]?.underlyingSymbol
-                    ? `+${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance({
+                  selectedOptionType?.underlyingSymbol
+                    ? `+${selectedOptionType?.underlyingSymbol}($${parseBalance({
                         val: selectedOptionType?.priceFloor,
                         token: currencyToken
                       })})`
@@ -276,8 +276,8 @@ export default function Generate() {
                 showCommonBases
                 halfWidth={true}
                 defaultSymbol={
-                  optionTypes[parseInt(optionType)]?.underlyingSymbol
-                    ? `-${optionTypes[parseInt(optionType)]?.underlyingSymbol}($${parseBalance({
+                  selectedOptionType?.underlyingSymbol
+                    ? `-${selectedOptionType?.underlyingSymbol}($${parseBalance({
                         val: selectedOptionType?.priceCap,
                         token: currencyToken
                       })})`
@@ -334,9 +334,9 @@ export default function Generate() {
                           width={approvalB !== ApprovalState.APPROVED ? '48%' : '100%'}
                         >
                           {approvalA === ApprovalState.PENDING ? (
-                            <Dots>Approving {optionTypes[parseInt(optionType)]?.underlyingSymbol}</Dots>
+                            <Dots>Approving {selectedOptionType?.underlyingSymbol}</Dots>
                           ) : (
-                            'Approve ' + optionTypes[parseInt(optionType)]?.underlyingSymbol
+                            'Approve ' + selectedOptionType?.underlyingSymbol
                           )}
                         </ButtonPrimary>
                       )}
@@ -347,9 +347,9 @@ export default function Generate() {
                           width={approvalA !== ApprovalState.APPROVED ? '48%' : '100%'}
                         >
                           {approvalB === ApprovalState.PENDING ? (
-                            <Dots>Approving {optionTypes[parseInt(optionType)]?.currencySymbol}</Dots>
+                            <Dots>Approving {selectedOptionType?.currencySymbol}</Dots>
                           ) : (
-                            'Approve ' + optionTypes[parseInt(optionType)]?.currencySymbol
+                            'Approve ' + selectedOptionType?.currencySymbol
                           )}
                         </ButtonPrimary>
                       )}

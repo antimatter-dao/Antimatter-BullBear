@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react'
 import { Plus } from 'react-feather'
+import { RouteComponentProps } from 'react-router'
 import { ChainId, ETHER, Token, WETH } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
@@ -29,9 +30,13 @@ import { isNegative, parseBalance, parsedGreaterThan } from '../../utils/marketS
 import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback'
 import { Dots } from 'components/swap/styleds'
 import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
+import { parsePrice } from 'pages/OptionTrade'
 
-export default function Redeem() {
-  const [optionTypeIndex, setOptionTypeIndex] = useState('')
+export default function Redeem({
+  match: {
+    params: { optionTypeIndex }
+  }
+}: RouteComponentProps<{ optionTypeIndex?: string }>) {
   const [callTypedAmount, setCallTypedAmount] = useState<string>('')
   const [putTypedAmount, setPutTypedAmount] = useState<string>('')
   const [tokenType, setTokenType] = useState(TOKEN_TYPES.callPut)
@@ -47,14 +52,14 @@ export default function Redeem() {
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
   const expertMode = useIsExpertMode()
   const addTransaction = useTransactionAdder()
-  const currencyA = useMarketCurrency(optionTypes[parseInt(optionTypeIndex)]?.underlying)
-  const currencyB = useMarketCurrency(optionTypes[parseInt(optionTypeIndex)]?.currency)
 
   const isCallToken = useMemo(() => tokenType === TOKEN_TYPES.call, [tokenType])
   const selectedOptionType = useMemo(() => {
     if (!optionTypes || !optionTypeIndex) return undefined
     return optionTypes?.[parseInt(optionTypeIndex)]
   }, [optionTypes, optionTypeIndex])
+  const currencyA = useMarketCurrency(selectedOptionType?.underlying)
+  const currencyB = useMarketCurrency(selectedOptionType?.currency)
 
   const underlyingToken: Token = new Token(
     chainId ?? 1,
@@ -117,7 +122,7 @@ export default function Redeem() {
     const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.burn
 
     const args = [
-      optionTypes[parseInt(optionTypeIndex)].callAddress,
+      selectedOptionType?.callAddress,
       tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.call
         ? '-' + tryParseAmount(callTypedAmount ?? '0', ETHER)?.raw.toString()
         : '0',
@@ -130,11 +135,11 @@ export default function Redeem() {
 
     let value: string | undefined | null = null
 
-    if (optionTypes[parseInt(optionTypeIndex)].underlyingSymbol === 'ETH') {
+    if (selectedOptionType?.underlyingSymbol === 'ETH') {
       value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
     }
 
-    if (optionTypes[parseInt(optionTypeIndex)].currencySymbol === 'ETH') {
+    if (selectedOptionType?.currencySymbol === 'ETH') {
       value = isNegative(delta.dCur) ? '0' : delta.dCur.toString()
     }
 
@@ -204,22 +209,6 @@ export default function Redeem() {
     setTxHash('')
   }, [txHash])
 
-  const selectOptions = useMemo(
-    () =>
-      optionTypes.map(item => {
-        return {
-          id: item.id,
-          option: `${item.underlyingSymbol} (${parseBalance({
-            val: item.priceFloor,
-            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
-          })}$${parseBalance({
-            val: item.priceCap,
-            token: new Token(1, ZERO_ADDRESS, Number(item.currencyDecimals ?? '18'))
-          })})`
-        }
-      }),
-    [optionTypes]
-  )
   const handleCheck = useCallback((tokenType: string) => {
     setTokenType(tokenType)
   }, [])
@@ -246,12 +235,13 @@ export default function Redeem() {
           />
 
           <AutoColumn gap="24px">
-            <ButtonSelect
-              label="Option Type"
-              onSelection={setOptionTypeIndex}
-              options={selectOptions}
-              selectedId={optionTypeIndex}
-            />
+            <ButtonSelect label="Option Type" disabled={true}>
+              {selectedOptionType &&
+                `${selectedOptionType.underlyingSymbol ?? '-'} (${parsePrice(
+                  selectedOptionType.priceFloor,
+                  (selectedOptionType.currencyDecimals = '6')
+                )}$${parsePrice(selectedOptionType.priceCap, (selectedOptionType.currencyDecimals = '6'))})`}
+            </ButtonSelect>
             <TypeRadioButton selected={tokenType} onCheck={handleCheck} />
             {tokenType === TOKEN_TYPES.callPut ? (
               <>
@@ -259,8 +249,8 @@ export default function Redeem() {
                   value={callTypedAmount ?? ''}
                   onUserInput={setCallTypedAmount}
                   label={
-                    optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
-                      ? `+${optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}($${parseBalance({
+                    selectedOptionType?.underlyingSymbol
+                      ? `+${selectedOptionType?.underlyingSymbol}($${parseBalance({
                           val: selectedOptionType?.priceFloor,
                           token: currencyToken
                         })})`
@@ -277,9 +267,9 @@ export default function Redeem() {
                   value={putTypedAmount ?? ''}
                   onUserInput={setPutTypedAmount}
                   label={
-                    optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
-                      ? `+${optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}($${parseBalance({
-                          val: optionTypes[parseInt(optionTypeIndex)]?.priceCap,
+                    selectedOptionType?.underlyingSymbol
+                      ? `+${selectedOptionType?.underlyingSymbol}($${parseBalance({
+                          val: selectedOptionType?.priceCap,
                           token: currencyToken
                         })})`
                       : 'Call Token'
@@ -334,9 +324,9 @@ export default function Redeem() {
                           width={approval2 !== ApprovalState.APPROVED ? '48%' : '100%'}
                         >
                           {approval1 === ApprovalState.PENDING ? (
-                            <Dots>Approving {optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol}</Dots>
+                            <Dots>Approving {selectedOptionType?.underlyingSymbol}</Dots>
                           ) : (
-                            'Approve ' + optionTypes[parseInt(optionTypeIndex)]?.underlyingSymbol
+                            'Approve ' + selectedOptionType?.underlyingSymbol
                           )}
                         </ButtonPrimary>
                       )}
@@ -347,9 +337,9 @@ export default function Redeem() {
                           width={approval1 !== ApprovalState.APPROVED ? '48%' : '100%'}
                         >
                           {approval2 === ApprovalState.PENDING ? (
-                            <Dots>Approving {optionTypes[parseInt(optionTypeIndex)]?.currencySymbol}</Dots>
+                            <Dots>Approving {selectedOptionType?.currencySymbol}</Dots>
                           ) : (
-                            'Approve ' + optionTypes[parseInt(optionTypeIndex)]?.currencySymbol
+                            'Approve ' + selectedOptionType?.currencySymbol
                           )}
                         </ButtonPrimary>
                       )}

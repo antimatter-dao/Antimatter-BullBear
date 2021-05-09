@@ -36,7 +36,7 @@ const tabs: Tab[] = [
   {
     title: 'About',
     subTab: [
-      { title: 'Docs', link: 'docs.antimatter.finance' },
+      { title: 'Docs', link: 'https://docs.antimatter.finance/' },
       { title: 'Github', link: 'https://github.com/antimatter-finance' },
       {
         title: 'Auditing Report',
@@ -46,13 +46,6 @@ const tabs: Tab[] = [
   }
 ]
 
-// const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-//   [ChainId.RINKEBY]: 'Rinkeby',
-//   [ChainId.ROPSTEN]: 'Ropsten',
-//   [ChainId.GÖRLI]: 'Görli',
-//   [ChainId.KOVAN]: 'Kovan',
-//   [ChainId.MAINNET]: 'ETH'
-// }
 const NetworkInfo: {
   [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
 } = {
@@ -401,19 +394,34 @@ export default function Header() {
           {tabs.map(({ title, route, subTab }) => {
             if (subTab) {
               return (
-                <StyledDropdown>
+                <StyledDropdown key={title}>
                   {title}
                   <ChevronDown size={15} />
                   <Dropdown>
                     {subTab.map(({ title, route, link }) => {
                       return link ? (
-                        <ExternalLink href={link}>{title}</ExternalLink>
+                        <ExternalLink href={link} key={title}>
+                          {title}
+                        </ExternalLink>
                       ) : route ? (
                         <NavLink to={route}>{title}</NavLink>
                       ) : null
                     })}
                   </Dropdown>
                 </StyledDropdown>
+              )
+            }
+            if (route === 'option_exercise') {
+              return (
+                <StyledNavLink
+                  key={route}
+                  to={`/${route}`}
+                  isActive={(match, { pathname }) =>
+                    Boolean(match) || pathname.startsWith('/generate') || pathname.startsWith('/redeem')
+                  }
+                >
+                  {title}
+                </StyledNavLink>
               )
             }
             return (
@@ -439,7 +447,7 @@ export default function Header() {
                       return null
                     }
                     return info.link ? (
-                      <ExternalLink href={info.link}>
+                      <ExternalLink href={info.link} key={info.link}>
                         {parseInt(key) === chainId && (
                           <span style={{ position: 'absolute', left: '15px' }}>
                             <Check size={18} />
@@ -456,18 +464,7 @@ export default function Header() {
           )}
           {/* </HideSmall> */}
           <div>
-            {/* {availableClaim && !showClaimPopup && (
-              <UNIWrapper onClick={toggleClaimModal}>
-                <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                  <TYPE.white padding="0 2px">
-                    {claimTxn && !claimTxn?.receipt ? <Dots>Claiming UNI</Dots> : 'Claim UNI'}
-                  </TYPE.white>
-                </UNIAmount>
-                <CardNoise />
-              </UNIWrapper>
-            )} */}
             {!!account && aggregateBalance && (
-              // <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
               <UNIWrapper>
                 <UNIAmount active={!!account} style={{ pointerEvents: 'none' }}>
                   {account && (

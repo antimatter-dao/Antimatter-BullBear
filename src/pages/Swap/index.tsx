@@ -1,7 +1,7 @@
 import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 // import { useHistory } from 'react-router-dom'
-// import ReactGA from 'react-ga'
+import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonError, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
@@ -22,11 +22,11 @@ import ProgressSteps from '../../components/ProgressSteps'
 import { ArrowDown } from '../../components/Icons'
 import useTheme from 'hooks/useTheme'
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
-// import { getTradeVersion } from '../../data/V1'
+import { getTradeVersion } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
-// import useENSAddress from '../../hooks/useENSAddress'
+import useENSAddress from '../../hooks/useENSAddress'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useToggledVersion, { DEFAULT_VERSION, Version } from '../../hooks/useToggledVersion'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
@@ -104,7 +104,7 @@ export default function Swap({ currencyA, currencyB }: { currencyA?: Currency | 
     typedValue
   )
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
-  // const { address: recipientAddress } = useENSAddress(recipient)
+  const { address: recipientAddress } = useENSAddress(recipient)
   const toggledVersion = useToggledVersion()
   const tradesByVersion = {
     [Version.v1]: v1Trade,
@@ -212,25 +212,25 @@ export default function Swap({ currencyA, currencyB }: { currencyA?: Currency | 
       .then(hash => {
         setSwapState({ attemptingTxn: false, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash })
 
-        // ReactGA.event({
-        //   category: 'Swap',
-        //   action:
-        //     recipient === null
-        //       ? 'Swap w/o Send'
-        //       : (recipientAddress ?? recipient) === account
-        //       ? 'Swap w/o Send + recipient'
-        //       : 'Swap w/ Send',
-        //   label: [
-        //     trade?.inputAmount?.currency?.symbol,
-        //     trade?.outputAmount?.currency?.symbol,
-        //     getTradeVersion(trade)
-        //   ].join('/')
-        // })
+        ReactGA.event({
+          category: 'Swap',
+          action:
+            recipient === null
+              ? 'Swap w/o Send'
+              : (recipientAddress ?? recipient) === account
+              ? 'Swap w/o Send + recipient'
+              : 'Swap w/ Send',
+          label: [
+            trade?.inputAmount?.currency?.symbol,
+            trade?.outputAmount?.currency?.symbol,
+            getTradeVersion(trade)
+          ].join('/')
+        })
 
-        // ReactGA.event({
-        //   category: 'Routing',
-        //   action: singleHopOnly ? 'Swap with multihop disabled' : 'Swap with multihop enabled'
-        // })
+        ReactGA.event({
+          category: 'Routing',
+          action: singleHopOnly ? 'Swap with multihop disabled' : 'Swap with multihop enabled'
+        })
       })
       .catch(error => {
         setSwapState({
@@ -241,7 +241,17 @@ export default function Swap({ currencyA, currencyB }: { currencyA?: Currency | 
           txHash: undefined
         })
       })
-  }, [priceImpactWithoutFee, swapCallback, tradeToConfirm, showConfirm])
+  }, [
+    priceImpactWithoutFee,
+    swapCallback,
+    tradeToConfirm,
+    showConfirm,
+    recipient,
+    recipientAddress,
+    account,
+    trade,
+    singleHopOnly
+  ])
 
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)

@@ -28,9 +28,6 @@ import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 // import Swap from './Swap'
 import { /*OpenClaimAddressModalAndRedirectToSwap,*/ RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
-// import Vote from './Vote'
-// import VotePage from './Vote/VotePage'
-import MarketStrategy from './MarketStrategy'
 import Generate from './Generate'
 import Redeem from './Redeem'
 import Exercise from './Exercise'
@@ -41,6 +38,7 @@ import WelcomeSlider from 'components/WelcomeSlider'
 import FAQ from './FAQ'
 import OptionTrade from './OptionTrade'
 import OptionCreation from './OptionCreation'
+import OptionExercise from './OptionExercise'
 // import WarningModal from 'components/Modal/WarningModal'
 
 const AppWrapper = styled.div`
@@ -120,11 +118,11 @@ export default function App() {
                 <Route exact strict path="/option_creation" component={OptionCreation} />
                 <Route exact strict path="/option_trading" component={OptionTrade} />
                 <Route exact strict path="/option_trading/:addressA/:addressB" component={OptionTrade} />
-                <Route exact strict path="/option_exercise" component={MarketStrategy} />
-                <Route exact strict path="/generate" component={Generate} />
-                <Route exact strict path="/generate/:currencyIdA/:currencyIdB" component={Generate} />
+                <Route exact strict path="/option_exercise" component={OptionExercise} />
+                {/* <Route exact strict path="/generate" component={Generate} /> */}
+                <Route exact strict path="/generate/:optionTypeIndex" component={Generate} />
                 <Route exact strict path="/redeem" component={Redeem} />
-                <Route exact strict path="/redeem/:currencyIdA/:currencyIdB" component={Redeem} />
+                <Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />
                 <Route exact strict path="/governance" component={ComingSoon} />
                 <Route exact strict path="/info" component={Info} />
                 <Route exact strict path="/exercise" component={Exercise} />
@@ -135,7 +133,6 @@ export default function App() {
                 <Route exact strict path="/liquidity" component={Pool} />
                 <Route exact strict path="/farm" component={MatterToken} />
                 <Route exact strict path="/matter_redemption" component={MatterRedemption} />
-                {/* <Route exact strict path="/vote" component={Vote} /> */}
                 <Route exact strict path="/create" component={RedirectToAddLiquidity} />
                 <Route exact path="/add" component={AddLiquidity} />
                 <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />

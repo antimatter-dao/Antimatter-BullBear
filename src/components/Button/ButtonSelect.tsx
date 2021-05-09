@@ -37,6 +37,14 @@ export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; wi
   :hover {
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.bg5))};
   }
+  &:disabled {
+    :hover {
+      border-color: transparent;
+    }
+    opacity: 100%;
+    cursor: auto;
+    color: ${({ theme }) => theme.text1};
+  }
 `
 const OptionWrapper = styled.div<{ isOpen: boolean; width?: string }>`
   position: absolute;
@@ -75,8 +83,10 @@ export default function ButtonSelect({
   selectedId,
   onClick,
   width,
+  disabled,
   placeholder = 'Select Option Type'
 }: ButtonProps & {
+  disabled?: boolean
   label?: string
   onSelection?: (id: string) => void
   options?: { id: string; option: string | JSX.Element }[]
@@ -114,10 +124,10 @@ export default function ButtonSelect({
           </TYPE.body>
         </AutoRow>
       )}
-      <ButtonSelectStyle onClick={handleClick} selected={!!selectedId} width={width}>
+      <ButtonSelectStyle onClick={handleClick} selected={!!selectedId} width={width} disabled={disabled}>
         <RowBetween>
           <div style={{ display: 'flex', alignItems: 'center' }}>{buttonContent}</div>
-          <StyledDropDown />
+          {!disabled && <StyledDropDown />}
         </RowBetween>
       </ButtonSelectStyle>
       {isLoading && options && onSelection && (

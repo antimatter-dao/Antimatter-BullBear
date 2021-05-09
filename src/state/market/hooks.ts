@@ -390,10 +390,10 @@ export function useDerivedStrategyInfo(
         dCur: delta.result?.curMax,
         totalUnd: delta.result?.totalUnd,
         totalCur: delta.result?.totalCur,
-        callBalance: balancesRes?.[0].result?.[0],
-        putBalance: balancesRes?.[1].result?.[0],
-        underlyingBalance: balancesRes?.[2].result?.[0],
-        currencyBalance: balancesRes?.[3].result?.[0]
+        callBalance: balancesRes?.[0]?.result?.[0],
+        putBalance: balancesRes?.[1]?.result?.[0],
+        underlyingBalance: balancesRes?.[2]?.result?.[0],
+        currencyBalance: balancesRes?.[3]?.result?.[0]
       }
     : undefined
   const balances = balancesRes
