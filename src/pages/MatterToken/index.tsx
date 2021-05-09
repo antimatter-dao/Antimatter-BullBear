@@ -5,7 +5,7 @@ import MatterTokenManageModal from './MatterTokenManageModal'
 
 const Wrapper = styled.div`
   width: 100%;
-  padding: 50px 100px
+  padding: 50px;
   grid-template-rows: auto;
   grid-template-columns: repeat(auto-fill, 420px);
   grid-gap: 20px;
@@ -14,6 +14,7 @@ const Wrapper = styled.div`
     grid-template-columns: 100%;
     padding:0
   `}
+  justify-content: center;
 `
 export default function MatterToken() {
   return (

@@ -4,7 +4,7 @@ import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import Swap from '../Swap'
 import AppBody from 'pages/AppBody'
-import { CustomLightSpinner, TYPE } from 'theme'
+import { CustomLightSpinner, ExternalLink, TYPE } from 'theme'
 import Liquidity from './Liquidity'
 import useTheme from 'hooks/useTheme'
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
@@ -17,6 +17,8 @@ import { OptionIcon } from 'components/Icons'
 import { OptionInterface } from './'
 import Loader from 'assets/svg/gray_loader.svg'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { getEtherscanLink } from 'utils'
+import { useActiveWeb3React } from 'hooks'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -80,8 +82,17 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
     left:${({ isFirstChild }) => (isFirstChild ? '50px' : '90px')};
     color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   };
-
 `
+
+export const StyledExternalLink = styled(ExternalLink)`
+  text-decoration: none;
+  font-size: 12px;
+  color: ${({ theme }) => theme.text3};
+  :hover {
+    color: ${({ theme }) => theme.text4};
+  }
+`
+
 enum TABS {
   SWAP = 'swap',
   LIQUIDITY = 'liquidity',
@@ -89,6 +100,7 @@ enum TABS {
 }
 
 export default function OptionTradeAction({ addressA, option }: { addressA?: string; option?: OptionInterface }) {
+  const { chainId } = useActiveWeb3React()
   const [tab, setTab] = useState(TABS.SWAP)
 
   const theme = useTheme()
@@ -123,7 +135,11 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
                   {option.title}
                 </TYPE.subHeader>
               </RowFixed>
-              <TYPE.smallGray>{currencyB && currencyId(currencyB)}</TYPE.smallGray>
+              {currencyB && chainId && (
+                <StyledExternalLink href={getEtherscanLink(chainId, currencyId(currencyB), 'token')}>
+                  {currencyId(currencyB)}
+                </StyledExternalLink>
+              )}
             </AutoColumn>
 
             <div />

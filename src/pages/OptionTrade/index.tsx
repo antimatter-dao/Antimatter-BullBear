@@ -61,6 +61,7 @@ const ContentWrapper = styled.div`
   grid-gap: 24px;
   grid-template-columns: repeat(auto-fill, 280px);
   padding: 52px 120px;
+  justify-content: center;
 `
 
 const Search = styled.div`
@@ -91,6 +92,14 @@ const Divider = styled.div`
 const TitleWrapper = styled(RowFixed)`
   flex-wrap: nowrap;
 `
+export const StyledExternalLink = styled(ExternalLink)`
+  text-decoration: none;
+  font-size: 12px;
+  color: ${({ theme }) => theme.text3};
+  :hover {
+    color: ${({ theme }) => theme.text4};
+  }
+`
 
 const parsePrice = (price: string, decimals: string) =>
   parseBalance({
@@ -115,17 +124,18 @@ function getOptionList(allOptionType: OptionTypeData[]) {
     const floor = parsePrice(priceFloor, currencyDecimals)
     const cap = parsePrice(priceCap, currencyDecimals)
     const range = `$${floor} ~ $${cap}`
+    const symbol = underlyingSymbol === 'WETH' ? 'ETH' : underlyingSymbol
     return [
       ...acc,
       {
-        title: (underlyingSymbol ?? '') + ' Call Option',
+        title: (symbol ?? '') + ' Call Option',
         address: callAddress,
         underlyingAddress: underlying,
         type: Type.CALL,
-        underlyingSymbol,
+        underlyingSymbol: symbol,
         details: {
           'Option Price Range': range,
-          'Underlying Asset': underlyingSymbol ? underlyingSymbol + ', USDT' : '-',
+          'Underlying Asset': symbol ? symbol + ', USDT' : '-',
           'Total Current Issuance':
             parseBalance({
               val: callTotal,
@@ -140,10 +150,10 @@ function getOptionList(allOptionType: OptionTypeData[]) {
         address: putAddress,
         underlyingAddress: underlying,
         type: Type.PUT,
-        underlyingSymbol,
+        underlyingSymbol: symbol,
         details: {
           'Option Price Range': range,
-          'Underlying Asset': underlyingSymbol ? underlyingSymbol + ', USDT' : '-',
+          'Underlying Asset': symbol ? symbol + ', USDT' : '-',
           'Total Current Issuance':
             parseBalance({
               val: putTotal,
@@ -324,9 +334,9 @@ function OptionCard({
             <TYPE.mediumHeader fontSize={20} style={{ whiteSpace: 'nowrap' }}>
               {title}
             </TYPE.mediumHeader>
-            <ExternalLink href={chainId ? getEtherscanLink(chainId, address, 'token') : ''}>
-              <TYPE.smallGray>{shortenAddress(address, 7)}</TYPE.smallGray>
-            </ExternalLink>
+            <StyledExternalLink href={chainId ? getEtherscanLink(chainId, address, 'token') : ''}>
+              {shortenAddress(address, 7)}
+            </StyledExternalLink>
           </AutoColumn>
         </TitleWrapper>
         <Divider />

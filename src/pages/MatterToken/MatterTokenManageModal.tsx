@@ -23,7 +23,7 @@ import { AutoRow, RowBetween } from 'components/Row'
 import Card from 'components/Card'
 import { AutoColumn } from 'components/Column'
 import useTheme from 'hooks/useTheme'
-import { ChevronDown } from 'react-feather'
+import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 
 const sectionPadding = '25px'
 const GridWrapper = styled.div`
@@ -33,7 +33,7 @@ const GridWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 420px;
-  height: 337px ${({ theme }) => theme.mediaWidth.upToMedium`  width: 100%;`};
+  ${({ theme }) => theme.mediaWidth.upToMedium`  width: 100%;`};
 `
 
 const ClaimRewardWrapper = styled.div`
@@ -86,21 +86,29 @@ const AccordionStyle = styled.div`
   width: 100%;
   position: relative;
   button {
-    padding: 14px 2rem;
+    padding: 14px 2rem 0;
     display: flex;
     justify-content: space-between
   }
   & > div {
-    position: absolute;
     width: 100%
-    top: 100%;
-    left: 0
-    padding: 20px;
+    padding: 10px 32px 20px;
     display: grid;
     grid-template-columns: 100%;
     grid-gap: 16px;
-    background-color:${({ theme }) => theme.bg1}
-    border: 1px solid ${({ theme }) => theme.bg3};
+  }
+`
+
+const Network = styled.div`
+  border: 1px solid ${({ theme }) => theme.text5};
+  padding: 5px 8px 5px 5px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  svg {
+    height: 20px;
+    width: 20px;
+    margin-right: 5px;
   }
 `
 
@@ -200,10 +208,16 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
             <AutoColumn gap="25px">
               <RowBetween>
                 <OptionCard>
-                  <AutoRow>
-                    <LogoWrapper>{Logos[lptType]}</LogoWrapper>
-                    <TYPE.mediumHeader fontSize={18}>{lptType}</TYPE.mediumHeader>
-                  </AutoRow>
+                  <RowBetween>
+                    <AutoRow>
+                      <LogoWrapper>{Logos[lptType]}</LogoWrapper>
+                      <TYPE.mediumHeader fontSize={18}>{lptType}</TYPE.mediumHeader>
+                    </AutoRow>
+                    <Network>
+                      <ETH />
+                      <TYPE.small>ETH</TYPE.small>
+                    </Network>
+                  </RowBetween>
                 </OptionCard>
 
                 {/* <APYCard>
@@ -325,29 +339,30 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
 }
 
 function Accordion({ title, data }: { title: string; data: { title: string; content: string }[] }) {
-  const [isOpen, setIsOpen] = useState(false)
-  const handleOpen = useCallback(() => setIsOpen(open => !open), [setIsOpen])
+  // const [isOpen, setIsOpen] = useState(false)
+  // /const handleOpen = useCallback(() => setIsOpen(open => !open), [setIsOpen])
   return (
     <AccordionStyle>
-      <ButtonEmpty onClick={handleOpen}>
+      {/* <ButtonEmpty onClick={handleOpen}> */}
+      <ButtonEmpty>
         <span>{title}</span>
-        <ChevronDown
-          style={{
-            transform: isOpen ? 'rotate(180deg)' : 'none',
-            transition: 'none'
-          }}
-        />
+        {/* <ChevronDown
+        style={{
+          transform: isOpen ? 'rotate(180deg)' : 'none',
+          transition: 'none'
+        }}
+        /> */}
       </ButtonEmpty>
-      {isOpen && (
-        <div>
-          {data.map(({ title, content }) => (
-            <RowBetween>
-              <TYPE.smallGray>{title}</TYPE.smallGray>
-              <TYPE.small> {content}</TYPE.small>
-            </RowBetween>
-          ))}
-        </div>
-      )}
+      {/* {isOpen && ( */}
+      <div>
+        {data.map(({ title, content }) => (
+          <RowBetween key={title}>
+            <TYPE.smallGray>{title}</TYPE.smallGray>
+            <TYPE.small> {content}</TYPE.small>
+          </RowBetween>
+        ))}
+      </div>
+      {/* )} */}
     </AccordionStyle>
   )
 }

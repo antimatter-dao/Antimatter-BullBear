@@ -1,35 +1,22 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
-import React, { useEffect, useState } from 'react'
-import { ChevronDown, X } from 'react-feather'
+import React from 'react'
+import { Check, ChevronDown } from 'react-feather'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
-// import { useDarkModeManager } from '../../state/user/hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
-// import { CardNoise } from '../earn/styled'
-import { /*ExternalLink, */ TYPE } from '../../theme'
-import { Base } from 'components/Button'
-// import { YellowCard } from '../Card'
-// import { Moon, Sun } from 'react-feather'
-// import Menu from '../Menu'
+import { ExternalLink, TYPE } from '../../theme'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
-// import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
-// import { useUserHasAvailableClaim } from '../../state/claim/hooks'
-// import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
-// import { Dots } from '../swap/styleds'
 import usePrevious from '../../hooks/usePrevious'
-import Modal from 'components/Modal'
-import ChainModal from 'components/ChainModal'
-// import { Text } from 'rebass'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
-import { ReactComponent as HECO } from '../../assets/svg/huobi_inverted.svg'
-import { ReactComponent as BSC } from '../../assets/svg/binance.svg'
+import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
+import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
 
 interface TabContent {
   title: string
@@ -49,34 +36,55 @@ const tabs: Tab[] = [
   {
     title: 'About',
     subTab: [
-      { title: 'Support', route: '/support' },
-      { title: 'Docs', route: '/docs' },
-      { title: 'Statistic', link: '/support' }
+      { title: 'Docs', link: 'docs.antimatter.finance' },
+      { title: 'Github', link: 'https://github.com/antimatter-finance' },
+      {
+        title: 'Auditing Report',
+        link: 'https://github.com/antimatter-finance/antimatter-finance.github.io/blob/main/audit_en.pdf'
+      }
     ]
   }
 ]
 
-const NetworkInfo: { [key: number]: { color: string; icon: JSX.Element } } = {
-  [ChainId.MAINNET]: {
+// const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
+//   [ChainId.RINKEBY]: 'Rinkeby',
+//   [ChainId.ROPSTEN]: 'Ropsten',
+//   [ChainId.GÖRLI]: 'Görli',
+//   [ChainId.KOVAN]: 'Kovan',
+//   [ChainId.MAINNET]: 'ETH'
+// }
+const NetworkInfo: {
+  [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
+} = {
+  1: {
     color: '#FFFFFF',
-    icon: <ETH />
+    icon: <ETH />,
+    link: 'https://app.antimatter.finance',
+    title: 'ETH'
   },
   [ChainId.ROPSTEN]: {
     color: '#FFFFFF',
-    icon: <ETH />
+    icon: <ETH />,
+    title: 'Ropsten'
   },
   [ChainId.RINKEBY]: {
     color: '#FFFFFF',
-    icon: <ETH />
+    icon: <ETH />,
+    title: 'Rinkeby'
   },
   128: {
     color: '#059BDC',
-    icon: <HECO />
-  },
-  56: {
-    color: '#F0B90B',
-    icon: <BSC />
+    icon: <HECOInvert />,
+    linkIcon: <HECO />,
+    link: 'https://heco.antimatter.finance',
+    title: 'HECO'
   }
+  // 56: {
+  //   color: '#F0B90B',
+  //   icon: <BSCInvert />,
+  //   linkIcon: <BSC />,
+  //  title:'BSC'
+  // }
 }
 
 export const headerHeightDisplacement = '32px'
@@ -154,11 +162,6 @@ const HeaderElement = styled.div<{
   }
 `
 
-// const HeaderElementWrap = styled.div`
-//   display: flex;
-//   align-items: center;
-// `
-
 const HeaderRow = styled(RowFixed)`
   align-items: flex-start
     ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -227,29 +230,40 @@ const NetworkCard = styled.div<{ color?: string }>`
   background-color: ${({ color }) => color ?? 'rgba(255, 255, 255, 0.12)'}
   font-size: 13px;
   font-weight: 500;
-  svg:first-child {
+  position: relative;
+  &> svg:first-child {
     height: 24px;
     width: 24px;
   };
   :hover {
     cursor: pointer;
+    .dropdown_wrapper {
+      top: 100%;
+      left: -20px;
+      height: 10px;
+      position: absolute;
+      width: 172px;
+      &>div{
+        height: auto;
+        margin-top: 10px;
+        border: 1px solid ${({ theme }) => theme.text5};
+        a{
+        position: relative;
+          & >svg{
+            height: 24px;
+            width: 24px;
+            margin-right: 15px;
+            margin-left: 30px;
+          }
+        }
+      }
+    }
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0
 `};
-`
 
-// const BalanceText = styled(Text)`
-//   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-//     display: none;
-//   `};
-//   ::after {
-//     content: '';
-//     border-right: 1px solid ${({ theme }) => theme.text1};
-//     margin: 0 16px;
-//     height: 16px;
-//   }
-// `
+`
 
 const activeClassName = 'ACTIVE'
 
@@ -293,32 +307,7 @@ const StyledDropdown = styled.div`
   padding: 10px 0 27px;
   transition: 0.5s;
   position: relative;
-  & > div {
-    height: 0;
-    position: absolute;
-    top: 40px;
-    border-radius: 14px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    width: 172px;
-    a {
-      color: #ffffff;
-      background-color: ${({ theme }) => theme.bg2};
-      text-decoration: none;
-      padding: 14px 17px;
-      border-bottom: 1px solid ${({ theme }) => theme.text5}
-      transition: 0.5s;
-      :last-child{
-        border: none;
-      }
-      :hover {
-        background-color: ${({ theme }) => theme.bg4};
-        color: ${({ theme }) => darken(0.1, theme.primary1)};
-      }
-    }
-  }
-  svg{
+  svg {
     margin-left: 5px;
   }
   :hover,
@@ -328,42 +317,38 @@ const StyledDropdown = styled.div`
       transform: rotate(180deg);
     }
     & > div {
+      top: 40px;
       height: auto;
       border: 1px solid ${({ theme }) => theme.text5};
     }
   }
 `
-
-// const StyledExternalLink = styled(ExternalLink).attrs({
-//   activeClassName
-// })<{ isActive?: boolean }>`
-//   ${({ theme }) => theme.flexRowNoWrap}
-//   align-items: left;
-//   border-radius: 3rem;
-//   outline: none;
-//   cursor: pointer;
-//   text-decoration: none;
-//   color: ${({ theme }) => theme.text2};
-//   font-size: 1rem;
-//   width: fit-content;
-//   margin: 0 12px;
-//   font-weight: 500;
-
-//   &.${activeClassName} {
-//     border-radius: 12px;
-//     font-weight: 600;
-//     color: ${({ theme }) => theme.text1};
-//   }
-
-//   :hover,
-//   :focus {
-//     color: ${({ theme }) => darken(0.1, theme.text1)};
-//   }
-
-//   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-//       display: none;
-// `}
-// `
+const Dropdown = styled.div`
+  height: 0;
+  position: absolute;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 172px;
+  a {
+    color: #ffffff;
+    background-color: ${({ theme }) => theme.bg2};
+    text-decoration: none;
+    padding: 14px 17px;
+    border-bottom: 1px solid ${({ theme }) => theme.text5}
+    transition: 0.5s;
+    display: flex;
+    align-items: center;
+    :last-child{
+      border: none;
+    }
+    :hover {
+      background-color: ${({ theme }) => theme.bg4};
+      color: ${({ theme }) => darken(0.1, theme.primary1)};
+    }
+  }
+`
 
 export const StyledMenuButton = styled.button`
   position: relative;
@@ -394,89 +379,22 @@ export const StyledMenuButton = styled.button`
   }
 `
 
-const CloseButton = styled(Base)`
-  background: none;
-  width: auto;
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  :active,
-  :focus {
-    border: none;
-  }
-`
-
 const StyledLogo = styled(Logo)`
   width: 160px;
   magin-right: 60px;
 `
 
-const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.RINKEBY]: 'Rinkeby',
-  [ChainId.ROPSTEN]: 'Ropsten',
-  [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',
-  [ChainId.MAINNET]: 'Eth'
-}
-
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
-  const [warningModalOpen, setWarningModalOpen] = useState(false)
-  const [chainModalOpen, setChainModalOpen] = useState(false)
-  useEffect(() => {
-    if (chainId && chainId !== ChainId.MAINNET && chainId !== ChainId.RINKEBY && chainId !== ChainId.ROPSTEN) {
-      setWarningModalOpen(true)
-    } else {
-      setWarningModalOpen(false)
-    }
-  }, [chainId, setWarningModalOpen])
-  // const { t } = useTranslation()
-  // const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  // const [isDark] = useDarkModeManager()
-  // const [darkMode, toggleDarkMode] = useDarkModeManager()
-
-  // const toggleClaimModal = useToggleSelfClaimModal()
-
-  // const availableClaim: boolean = useUserHasAvailableClaim(account)
-
-  // const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
 
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
-
-  // const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
-  // const showClaimPopup = useShowClaimPopup()
 
   const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame>
-      <ChainModal isOpen={chainModalOpen} onDismiss={() => setChainModalOpen(false)} />
       <ClaimModal />
-      <Modal isOpen={warningModalOpen} onDismiss={() => setWarningModalOpen(false)} maxHeight={400}>
-        <div
-          style={{
-            height: '400px',
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            alignItems: 'center',
-            position: 'relative',
-            padding: '48px'
-          }}
-        >
-          <CloseButton onClick={() => setWarningModalOpen(false)}>
-            <X />
-          </CloseButton>
-          <TYPE.largeHeader fontSize="24px">Product Launch Phase I</TYPE.largeHeader>
-          <TYPE.body fontSize="16px" marginTop={'20px'} color={'rgba(255, 255, 255, 0.6)'}>
-            The product is in public testing, please switch your wallet network to Ropston or rinkeby network.
-          </TYPE.body>
-        </div>
-      </Modal>
-      {/* <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
-        <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
-      </Modal> */}
       <HeaderRow>
         <StyledLogo />
         <HeaderLinks>
@@ -486,11 +404,15 @@ export default function Header() {
                 <StyledDropdown>
                   {title}
                   <ChevronDown size={15} />
-                  <div>
+                  <Dropdown>
                     {subTab.map(({ title, route, link }) => {
-                      return link ? <a href={link}>{title}</a> : route ? <NavLink to={route}>{title}</NavLink> : null
+                      return link ? (
+                        <ExternalLink href={link}>{title}</ExternalLink>
+                      ) : route ? (
+                        <NavLink to={route}>{title}</NavLink>
+                      ) : null
                     })}
-                  </div>
+                  </Dropdown>
                 </StyledDropdown>
               )
             }
@@ -500,44 +422,36 @@ export default function Header() {
               </StyledNavLink>
             )
           })}
-          {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            {t('swap')}
-          </StyledNavLink>
-          <StyledNavLink
-            id={`pool-nav-link`}
-            to={'/pool'}
-            isActive={(match, { pathname }) =>
-              Boolean(match) ||
-              pathname.startsWith('/add') ||
-              pathname.startsWith('/remove') ||
-              pathname.startsWith('/create') ||
-              pathname.startsWith('/find')
-            }
-          >
-            {t('pool')}
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/uni'}>
-            UNI
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
-            Vote
-          </StyledNavLink>
-          <StyledExternalLink id={`stake-nav-link`} href={'https://uniswap.info'}>
-            Charts <span style={{ fontSize: '11px' }}>↗</span>
-          </StyledExternalLink> */}
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
         <HeaderElement show={!!account}>
           {/* <HideSmall> */}
-          {chainId && NETWORK_LABELS[chainId] && (
-            <NetworkCard
-              title={NETWORK_LABELS[chainId]}
-              onClick={() => setChainModalOpen(true)}
-              color={NetworkInfo[chainId as number]?.color}
-            >
-              {NetworkInfo[chainId as number]?.icon} {NETWORK_LABELS[chainId]}
+          {chainId && NetworkInfo[chainId] && (
+            <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
+              {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
               <ChevronDown size={18} style={{ marginLeft: '5px' }} />
+              <div className="dropdown_wrapper">
+                <Dropdown>
+                  {Object.keys(NetworkInfo).map(key => {
+                    const info = NetworkInfo[parseInt(key) as keyof typeof NetworkInfo]
+                    if (!info) {
+                      return null
+                    }
+                    return info.link ? (
+                      <ExternalLink href={info.link}>
+                        {parseInt(key) === chainId && (
+                          <span style={{ position: 'absolute', left: '15px' }}>
+                            <Check size={18} />
+                          </span>
+                        )}
+                        {info.linkIcon ?? info.icon}
+                        {info.title}
+                      </ExternalLink>
+                    ) : null
+                  })}
+                </Dropdown>
+              </div>
             </NetworkCard>
           )}
           {/* </HideSmall> */}
