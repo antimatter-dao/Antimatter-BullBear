@@ -59,7 +59,7 @@ export function colors(darkMode: boolean): Colors {
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
 
     //primary colors
-    primary1: darkMode ? '#B2F355' : '#ff007a',
+    primary1: darkMode ? '#B2F355' : '#FF007A',
     primary2: darkMode ? '#B2F355' : '#FF8CC3',
     primary3: darkMode ? '#B2F355' : '#FF99C9',
     primary4: darkMode ? '#739A3B' : '#F6DDE8',
@@ -76,8 +76,8 @@ export function colors(darkMode: boolean): Colors {
     // other
     red1: '#FF0000',
     red2: '#FF2828',
-    red3: '#FF4B4B ',
-    green1: ' #24FF00',
+    red3: '#FF4B4B',
+    green1: '#24FF00',
     yellow1: '#FFE270',
     yellow2: '#F3841E',
     blue1: '#2172E5',
