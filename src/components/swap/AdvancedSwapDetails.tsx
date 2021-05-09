@@ -106,7 +106,7 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
                   )}
                   {!showRoute && (
                     <InfoLink
-                      href={'https://uniswap.info/pair/' + trade.route.pairs[0].liquidityToken.address}
+                      href={'https://info.uniswap.org/#/pools' + trade.route.pairs[0].liquidityToken.address}
                       target="_blank"
                     >
                       View pair analytics

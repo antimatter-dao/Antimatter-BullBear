@@ -69,6 +69,7 @@ export default function Liquidity({
       )}
       <AdvanceInfoWrapper gap="lg">
         <OverallLiquidity
+          pair={pair}
           currencyA={currencyA ?? undefined}
           currencyB={currencyB ?? undefined}
           currencyAmounts={currencyBalances}
@@ -84,7 +85,8 @@ function OverallLiquidity({
   currencyA,
   currencyB,
   currencyAmounts,
-  tokenTitle
+  tokenTitle,
+  pair
 }: {
   currencyA?: Currency
   currencyB?: Currency
@@ -92,6 +94,7 @@ function OverallLiquidity({
   currencyAmounts: {
     [filed in Field]?: CurrencyAmount | undefined
   }
+  pair: Pair | undefined | null
 }) {
   return (
     <SectionWrapper>
@@ -107,7 +110,7 @@ function OverallLiquidity({
             <AutoRow gap="10px">
               {currencyB && <CurrencyLogo currency={currencyB} />}
               <span>
-                {currencyAmounts[Field.CURRENCY_B]?.toFixed()}&nbsp;{tokenTitle}
+                {pair ? pair.reserve0.toFixed() : '-'}&nbsp;{tokenTitle}
               </span>
             </AutoRow>
           </TYPE.body>
@@ -115,7 +118,7 @@ function OverallLiquidity({
             <AutoRow gap="10px">
               {currencyA && <CurrencyLogo currency={currencyA} />}
               <span>
-                {currencyAmounts[Field.CURRENCY_A]?.toFixed()}&nbsp; {currencyA?.symbol}
+                {pair ? pair.reserve1.toFixed() : '-'}&nbsp; {currencyA?.symbol}
               </span>
             </AutoRow>
           </TYPE.body>
