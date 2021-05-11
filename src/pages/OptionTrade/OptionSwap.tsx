@@ -36,6 +36,7 @@ export default function OptionSwap({
       <IframeWrapper>
         <iframe
           id="graph_iframe"
+          title="graph_iframe"
           src={`https://v2.info.uniswap.org/token/${currencyB ? currencyId(currencyB) : ''}`}
           scrolling="no"
         />
