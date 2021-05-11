@@ -90,7 +90,7 @@ const HeaderFrame = styled.div`
   top: 0;
   position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
-  padding: 27px 61px 0;
+  padding: 27px 50px 0;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
@@ -189,7 +189,6 @@ const AccountElement = styled.div<{ active: boolean }>`
 const UNIAmount = styled(AccountElement)`
   color: white;
   font-weight: 500;
-
   &:after {
     content: '';
     border-right: 1px solid ${({ theme }) => theme.text1};
@@ -241,6 +240,7 @@ const NetworkCard = styled.div<{ color?: string }>`
         margin-top: 10px;
         border: 1px solid ${({ theme }) => theme.text5};
         a{
+          padding: 8px 17px;
         position: relative;
           & >svg{
             height: 24px;
@@ -463,7 +463,7 @@ export default function Header() {
             </NetworkCard>
           )}
           {/* </HideSmall> */}
-          <div>
+          <div style={{ paddingLeft: 8 }}>
             {!!account && aggregateBalance && (
               <UNIWrapper>
                 <UNIAmount active={!!account} style={{ pointerEvents: 'none' }}>

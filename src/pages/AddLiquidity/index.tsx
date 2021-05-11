@@ -245,19 +245,22 @@ export default function AddLiquidity({
       <AutoColumn gap="20px" style={{ padding: '0 2rem' }}>
         <Card style={{ marginTop: '20px', backgroundColor: theme.translucent }} padding="15px">
           <RowBetween>
+            <AutoColumn></AutoColumn>
             <Row>
-              <Text fontSize="14px" fontWeight={500} lineHeight="42px" marginRight={10}>
-                {liquidityMinted?.toSignificant(6)}
-              </Text>
+              <DoubleCurrencyLogo
+                currency0={currencies[Field.CURRENCY_A]}
+                currency1={currencies[Field.CURRENCY_B]}
+                size={20}
+              />
               <Text fontSize="14px" color={theme.text2}>
                 {currencies[Field.CURRENCY_A]?.symbol + '/' + currencies[Field.CURRENCY_B]?.symbol + ' Pool Tokens'}
               </Text>
             </Row>
-            <DoubleCurrencyLogo
-              currency0={currencies[Field.CURRENCY_A]}
-              currency1={currencies[Field.CURRENCY_B]}
-              size={28}
-            />
+            <Row>
+              <Text fontSize="14px" fontWeight={500} lineHeight="42px" marginRight={10}>
+                {liquidityMinted?.toSignificant(6)}
+              </Text>
+            </Row>
           </RowBetween>
         </Card>
         <TYPE.body fontSize={12} textAlign="left" padding={'8px 0 0 0 '} color={theme.text3}>

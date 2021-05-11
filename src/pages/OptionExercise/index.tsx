@@ -36,6 +36,9 @@ export function getOptionList(allOptionType: OptionTypeData[]) {
       underlyingSymbol,
       callAddress,
       putAddress,
+      callBalance,
+      underlyingDecimals,
+      putBalance,
       id
     } = item
     const floor = parsePrice(priceFloor, currencyDecimals)
@@ -47,7 +50,6 @@ export function getOptionList(allOptionType: OptionTypeData[]) {
       {
         title: `${symbol ?? ''}(${floor}$${cap})`,
         underlyingAddress: underlying,
-        type: Type.CALL,
         underlyingSymbol: symbol,
         optionType: id,
         addresses: {
@@ -56,7 +58,9 @@ export function getOptionList(allOptionType: OptionTypeData[]) {
         },
         details: {
           'Option Price Range': range,
-          'Underlying Asset': symbol ? symbol : '-'
+          'Underlying Asset': symbol ? symbol : '-',
+          'Your Call Position': parsePrice(callBalance, underlyingDecimals),
+          'Your Put Position': parsePrice(putBalance, underlyingDecimals)
         },
         range: { floor, cap }
       }

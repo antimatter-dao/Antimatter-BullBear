@@ -19,6 +19,7 @@ import Loader from 'assets/svg/gray_loader.svg'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { getEtherscanLink } from 'utils'
 import { useActiveWeb3React } from 'hooks'
+import { ChainId, WETH } from '@uniswap/sdk'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -106,7 +107,7 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
   const theme = useTheme()
   const history = useHistory()
 
-  const currencyA = USDT
+  const currencyA = chainId === ChainId.MAINNET ? USDT : chainId && WETH[chainId]
   const currencyB = useCurrency(addressA)
   const underlyingCurrency = useCurrency(option?.underlyingAddress ?? undefined)
 

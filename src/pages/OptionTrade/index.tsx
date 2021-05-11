@@ -34,13 +34,15 @@ export interface OptionInterface {
   }
   optionType?: string
   underlyingAddress: string
-  type: Type
+  type?: Type
   underlyingSymbol: string | undefined
   details: {
     'Option Price Range': string | undefined
     'Underlying Asset': string | undefined
     'Total Current Issuance'?: string | undefined
     'Market Price'?: string | undefined
+    'Your Call Position'?: string | undefined
+    'Your Put Position'?: string | undefined
   }
   range: {
     floor: string | undefined
@@ -80,8 +82,8 @@ export const ContentWrapper = styled.div`
 const StyledSearch = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 23px;
+  padding-left: 50px
   display: flex;
-  justify-content: center;
 `
 
 const Circle = styled.div`
@@ -325,7 +327,7 @@ export function OptionCard({
       <AutoColumn gap="20px">
         <TitleWrapper>
           <Circle>
-            {address ? (
+            {type ? (
               <OptionIcon
                 tokenIcon={<CurrencyLogo currency={underlyingCurrency ?? undefined} size="28px" />}
                 type={type}
