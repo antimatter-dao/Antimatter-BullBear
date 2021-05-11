@@ -434,7 +434,9 @@ export default function Header() {
                           {titleContent ?? title}
                         </ExternalLink>
                       ) : route ? (
-                        <NavLink to={route}>{titleContent ?? title}</NavLink>
+                        <NavLink to={route} key={title}>
+                          {titleContent ?? title}
+                        </NavLink>
                       ) : null
                     })}
                   </Dropdown>

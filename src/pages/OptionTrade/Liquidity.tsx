@@ -1,9 +1,8 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { Currency, CurrencyAmount, Pair } from '@uniswap/sdk'
+import { Currency, Pair } from '@uniswap/sdk'
 import AddLiquidity from 'pages/AddLiquidity'
 import { AutoColumn } from 'components/Column'
-import { OptionInterface } from './'
 import { FullPositionCardMini } from '../../components/PositionCard'
 import { TYPE } from '../../theme'
 import { OutlineCard } from '../../components/Card'
@@ -13,8 +12,6 @@ import RemoveLiquidity from 'pages/RemoveLiquidity'
 import SettingsTab from 'components/Settings'
 import { useActiveWeb3React } from 'hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { useDerivedMintInfo } from 'state/mint/hooks'
-import { Field } from 'state/mint/actions'
 
 const Wrapper = styled.div`
   min-height: 100%;
@@ -49,15 +46,14 @@ enum LiquidityState {
 export default function Liquidity({
   currencyA,
   currencyB,
-  option
+  pair
 }: {
   currencyA?: Currency | null
   currencyB?: Currency | null
-  option?: OptionInterface
+  pair: Pair | null | undefined
 }) {
   const [liquidityState, setLiquidityState] = useState<LiquidityState>(LiquidityState.ADD)
 
-  const { pair, currencyBalances } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
   const handleAdd = useCallback(() => setLiquidityState(LiquidityState.ADD), [])
   const handleRemove = useCallback(() => setLiquidityState(LiquidityState.REMOVE), [])
   return (
@@ -68,34 +64,14 @@ export default function Liquidity({
         <RemoveLiquidity currencyA={currencyA} currencyB={currencyB} onGoBack={handleAdd} />
       )}
       <AdvanceInfoWrapper gap="lg">
-        <OverallLiquidity
-          pair={pair}
-          currencyA={currencyA ?? undefined}
-          currencyB={currencyB ?? undefined}
-          currencyAmounts={currencyBalances}
-          tokenTitle={option?.title}
-        />
+        <OverallLiquidity pair={pair} />
         <LiquidityInfo onRemove={handleRemove} pair={pair ?? undefined} />
       </AdvanceInfoWrapper>
     </Wrapper>
   )
 }
 
-function OverallLiquidity({
-  currencyA,
-  currencyB,
-  currencyAmounts,
-  tokenTitle,
-  pair
-}: {
-  currencyA?: Currency
-  currencyB?: Currency
-  tokenTitle?: string
-  currencyAmounts: {
-    [filed in Field]?: CurrencyAmount | undefined
-  }
-  pair: Pair | undefined | null
-}) {
+function OverallLiquidity({ pair }: { pair: Pair | undefined | null }) {
   return (
     <SectionWrapper>
       <RowBetween>
@@ -108,17 +84,17 @@ function OverallLiquidity({
         <AutoColumn gap="lg">
           <TYPE.body>
             <AutoRow gap="10px">
-              {currencyB && <CurrencyLogo currency={currencyB} />}
+              {pair?.token0 && <CurrencyLogo currency={pair.token0} />}
               <span>
-                {pair ? pair.reserve0.toFixed() : '-'}&nbsp;{tokenTitle}
+                {pair ? pair.reserve0.toFixed() : '-'}&nbsp;{pair?.token0?.symbol}
               </span>
             </AutoRow>
           </TYPE.body>
           <TYPE.body>
             <AutoRow gap="10px">
-              {currencyA && <CurrencyLogo currency={currencyA} />}
+              {pair?.token1 && <CurrencyLogo currency={pair.token1} />}
               <span>
-                {pair ? pair.reserve1.toFixed() : '-'}&nbsp; {currencyA?.symbol}
+                {pair ? pair.reserve1.toFixed() : '-'}&nbsp; {pair?.token1?.symbol}
               </span>
             </AutoRow>
           </TYPE.body>

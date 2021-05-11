@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react'
 import { ChevronLeft } from 'react-feather'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
-import Swap from '../Swap'
+import OptionSwap from './OptionSwap'
 import AppBody from 'pages/AppBody'
 import { CustomLightSpinner, ExternalLink, TYPE } from 'theme'
 import Liquidity from './Liquidity'
@@ -20,6 +20,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { getEtherscanLink } from 'utils'
 import { useActiveWeb3React } from 'hooks'
 import { ChainId, WETH } from '@uniswap/sdk'
+import { useDerivedMintInfo } from 'state/mint/hooks'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -110,6 +111,7 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
   const currencyA = chainId === ChainId.MAINNET ? USDT : chainId && WETH[chainId]
   const currencyB = useCurrency(addressA)
   const underlyingCurrency = useCurrency(option?.underlyingAddress ?? undefined)
+  const { pair } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
 
   const handleSetTab = useCallback((tab: TABS) => setTab(tab), [setTab])
   const handleBack = useCallback(() => history.push('/option_trading'), [history])
@@ -150,11 +152,13 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
               <SwitchTab tab={tab} setTab={handleSetTab} />
               <AppBody
                 maxWidth="1114px"
-                style={{ padding: 0, background: 'black', borderColor: theme.text5, width: 1114 }}
+                style={{ padding: 0, background: 'black', borderColor: theme.text5, width: 1114, overflow: 'hidden' }}
               >
                 <Elevate>
-                  {tab === TABS.SWAP && <Swap currencyA={currencyA} currencyB={currencyB}></Swap>}
-                  {tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} option={option} />}
+                  {tab === TABS.SWAP && (
+                    <OptionSwap currencyA={currencyA} currencyB={currencyB} pair={pair}></OptionSwap>
+                  )}
+                  {tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}
                   {tab === TABS.INFO && <Info option={option} />}
                 </Elevate>
               </AppBody>
