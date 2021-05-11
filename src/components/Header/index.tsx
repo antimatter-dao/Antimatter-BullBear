@@ -17,11 +17,13 @@ import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
 import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
+import useTheme from 'hooks/useTheme'
 
 interface TabContent {
   title: string
   route?: string
   link?: string
+  titleContent?: JSX.Element
 }
 interface Tab extends TabContent {
   subTab?: TabContent[]
@@ -41,6 +43,11 @@ const tabs: Tab[] = [
       {
         title: 'Auditing Report',
         link: 'https://github.com/antimatter-finance/antimatter-finance.github.io/blob/main/audit_en.pdf'
+      },
+      {
+        title: 'faq',
+        titleContent: <FAQButton />,
+        route: 'faq'
       }
     ]
   }
@@ -377,6 +384,29 @@ const StyledLogo = styled(Logo)`
   magin-right: 60px;
 `
 
+function FAQButton() {
+  const theme = useTheme()
+  return (
+    <RowFixed>
+      <RowFixed
+        justify="center"
+        style={{
+          borderRadius: '50%',
+          border: `1px solid ${theme.primary1}`,
+          width: '18px',
+          height: '18px',
+          marginRight: '12px'
+        }}
+      >
+        <TYPE.body fontSize={14} color={theme.primary1}>
+          ?
+        </TYPE.body>
+      </RowFixed>
+      FAQ
+    </RowFixed>
+  )
+}
+
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
 
@@ -398,13 +428,13 @@ export default function Header() {
                   {title}
                   <ChevronDown size={15} />
                   <Dropdown>
-                    {subTab.map(({ title, route, link }) => {
+                    {subTab.map(({ title, route, link, titleContent }) => {
                       return link ? (
                         <ExternalLink href={link} key={title}>
-                          {title}
+                          {titleContent ?? title}
                         </ExternalLink>
                       ) : route ? (
-                        <NavLink to={route}>{title}</NavLink>
+                        <NavLink to={route}>{titleContent ?? title}</NavLink>
                       ) : null
                     })}
                   </Dropdown>
