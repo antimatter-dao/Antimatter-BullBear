@@ -155,9 +155,7 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
                 style={{ padding: 0, background: 'black', borderColor: theme.text5, width: 1114, overflow: 'hidden' }}
               >
                 <Elevate>
-                  {tab === TABS.SWAP && (
-                    <OptionSwap currencyA={currencyA} currencyB={currencyB} pair={pair}></OptionSwap>
-                  )}
+                  {tab === TABS.SWAP && <OptionSwap currencyA={currencyA} currencyB={currencyB}></OptionSwap>}
                   {tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}
                   {tab === TABS.INFO && <Info option={option} />}
                 </Elevate>

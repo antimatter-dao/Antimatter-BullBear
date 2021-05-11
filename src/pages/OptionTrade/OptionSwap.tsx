@@ -1,23 +1,23 @@
 import React from 'react'
-import { Currency, Pair } from '@uniswap/sdk'
+import { Currency } from '@uniswap/sdk'
 import Swap from '../Swap'
 import styled from 'styled-components'
+import { currencyId } from 'utils/currencyId'
 
 const Wrapper = styled.div`
   display: flex;
 `
 const IframeWrapper = styled.div`
   width: 100%;
-  margin-left: 16px;
+  margin: 0 0 0 16px;
   max-height: 480px;
   overflow: hidden;
-  border-radius: 32px;
   position: relative;
   iframe {
     position: absolute;
-    top: -308px;
-    left: -566px;
-    width: 1196px;
+    top: -207px;
+    left: -573px;
+    width: 1229px
     border: none;
     height: 2000px;
   }
@@ -25,19 +25,20 @@ const IframeWrapper = styled.div`
 
 export default function OptionSwap({
   currencyA,
-  currencyB,
-  pair
+  currencyB
 }: {
   currencyA?: Currency | null
   currencyB?: Currency | null
-  pair: Pair | null | undefined
 }) {
-  const address = pair?.token0 && pair?.token1 ? Pair.getAddress(pair.token0, pair.token1) : ''
   return (
     <Wrapper>
       <Swap currencyA={currencyA} currencyB={currencyB}></Swap>
       <IframeWrapper>
-        <iframe id="graph_iframe" src={`https://v2.info.uniswap.org/pair/${address}`} scrolling="no" />
+        <iframe
+          id="graph_iframe"
+          src={`https://v2.info.uniswap.org/token/${currencyB ? currencyId(currencyB) : ''}`}
+          scrolling="no"
+        />
       </IframeWrapper>
     </Wrapper>
   )
