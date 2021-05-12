@@ -82,9 +82,10 @@ export default function ButtonSelect({
   onSelection,
   selectedId,
   onClick,
-  width,
+  width = '100%',
   disabled,
-  placeholder = 'Select Option Type'
+  placeholder = 'Select Option Type',
+  marginRight = '20px'
 }: ButtonProps & {
   disabled?: boolean
   label?: string
@@ -94,6 +95,7 @@ export default function ButtonSelect({
   onClick?: () => void
   placeholder?: string
   width?: string
+  marginRight?: string
 }) {
   const node = useRef<HTMLDivElement>()
   const theme = useTheme()
@@ -116,7 +118,7 @@ export default function ButtonSelect({
     onClick && onClick()
   }, [isOpen, onClick])
   return (
-    <div style={{ position: 'relative', marginRight: ' 20px' }}>
+    <div style={{ position: 'relative', marginRight: marginRight, width: width }}>
       {label && (
         <AutoRow style={{ marginBottom: '4px' }}>
           <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
@@ -124,7 +126,7 @@ export default function ButtonSelect({
           </TYPE.body>
         </AutoRow>
       )}
-      <ButtonSelectStyle onClick={handleClick} selected={!!selectedId} width={width} disabled={disabled}>
+      <ButtonSelectStyle onClick={handleClick} selected={!!selectedId} disabled={disabled}>
         <RowBetween>
           <div style={{ display: 'flex', alignItems: 'center' }}>{buttonContent}</div>
           {!disabled && <StyledDropDown />}

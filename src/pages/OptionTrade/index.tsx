@@ -16,6 +16,7 @@ import { OptionTypeData, useAllOptionTypes } from 'state/market/hooks'
 import { currencyNameHelper, parseBalance } from 'utils/marketStrategyUtils'
 import { USDT, ZERO_ADDRESS } from '../../constants'
 import { ButtonSelectRange } from 'components/Button/ButtonSelectRange'
+import { ButtonSelectNumericalInput } from 'components/Button/ButtonSelectNumericalInput'
 import OptionTradeAction from './OptionTradeAction'
 import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
@@ -25,7 +26,9 @@ import Loader from 'assets/svg/gray_loader.svg'
 import { useUSDTPrice } from 'utils/useUSDCPrice'
 import { useActiveWeb3React } from 'hooks'
 import { XCircle } from 'react-feather'
+import useTheme from 'hooks/useTheme'
 export interface OptionInterface {
+  optionTypeId: string | undefined
   title: string
   address?: string
   addresses?: {
@@ -84,6 +87,10 @@ const StyledSearch = styled.div`
   padding: 23px;
   padding-left: 50px
   display: flex;
+  flex-wrap: wrap;
+  & > * {
+    margin-bottom: 8px;
+  }
 `
 
 const Circle = styled.div`
@@ -125,6 +132,7 @@ export const parsePrice = (price: string, decimals: string) =>
 function getOptionList(allOptionType: OptionTypeData[]) {
   return allOptionType.reduce((acc: OptionInterface[], item: OptionTypeData): OptionInterface[] => {
     const {
+      id,
       callAddress,
       putAddress,
       underlyingDecimals,
@@ -143,6 +151,7 @@ function getOptionList(allOptionType: OptionTypeData[]) {
     return [
       ...acc,
       {
+        optionTypeId: id,
         title: (symbol ?? '') + ' Call Option',
         address: callAddress,
         underlyingAddress: underlying,
@@ -161,6 +170,7 @@ function getOptionList(allOptionType: OptionTypeData[]) {
         range: { floor, cap }
       },
       {
+        optionTypeId: id,
         title: (underlyingSymbol ?? '') + ' Put Option',
         address: putAddress,
         underlyingAddress: underlying,
@@ -187,16 +197,21 @@ export function filterOption({
   optionList,
   assetTypeQuery,
   optionTypeQuery,
-  rangeQuery
+  rangeQuery,
+  optionIdQuery
 }: {
   chainId: ChainId | undefined
   optionList: OptionInterface[] | undefined
   assetTypeQuery: Currency | undefined
   optionTypeQuery: string
+  optionIdQuery: string
   rangeQuery: Range
 }) {
   if (!optionList) return undefined
   let list = optionList
+  if (optionIdQuery) {
+    return list.filter(option => option.optionTypeId === optionIdQuery.trim()) ?? []
+  }
   if (assetTypeQuery !== undefined) {
     const id = currencyId(assetTypeQuery)
     list = list?.filter(option => {
@@ -236,6 +251,7 @@ export default function OptionTrade({
   const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
   const [assetTypeQuery, setAssetTypeQuery] = useState<Currency | undefined>(undefined)
   const [optionTypeQuery, setOptionTypeQuery] = useState('')
+  const [optionIdQuery, setOptionIdQuery] = useState('')
   const [rangeQuery, setRangeQuery] = useState<Range>({
     floor: undefined,
     cap: undefined
@@ -251,10 +267,10 @@ export default function OptionTrade({
   }, [setOptionList, AllOptionType])
 
   useEffect(() => {
-    const list = filterOption({ optionList, assetTypeQuery, optionTypeQuery, rangeQuery, chainId })
+    const list = filterOption({ optionList, assetTypeQuery, optionTypeQuery, rangeQuery, chainId, optionIdQuery })
     setFilteredList(list)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assetTypeQuery, optionList, optionTypeQuery, rangeQuery.cap, rangeQuery.floor, setFilteredList])
+  }, [assetTypeQuery, optionList, optionTypeQuery, rangeQuery.cap, rangeQuery.floor, setFilteredList, optionIdQuery])
 
   const option = useMemo(() => {
     if (!optionList || optionList.length === 0) {
@@ -265,10 +281,12 @@ export default function OptionTrade({
 
   const handleSelectAssetType = useCallback((currency: Currency) => setAssetTypeQuery(currency), [])
   const handleSelectOptionType = useCallback((id: string) => setOptionTypeQuery(id), [])
+  const handleSelectOptionId = useCallback((id: string) => setOptionIdQuery(id), [])
   const handleRange = useCallback(range => setRangeQuery(range), [])
   const handleClearSearch = useCallback(() => {
     setAssetTypeQuery(undefined)
     setOptionTypeQuery('')
+    setOptionIdQuery('')
     setRangeQuery({
       floor: undefined,
       cap: undefined
@@ -286,7 +304,9 @@ export default function OptionTrade({
             optionTypeQuery={optionTypeQuery}
             onOptionType={handleSelectOptionType}
             onRange={handleRange}
+            onOptionId={handleSelectOptionId}
             clearSearch={handleClearSearch}
+            optionIdQuery={optionIdQuery}
             rangeQuery={rangeQuery}
           />
           {filteredList && (
@@ -369,16 +389,20 @@ export function Search({
   onAssetType,
   onOptionType,
   onRange,
+  onOptionId,
   assetTypeQuery,
   optionTypeQuery,
+  optionIdQuery,
   rangeQuery,
   clearSearch
 }: {
   onAssetType: (currency: Currency) => void
   onOptionType?: (type: string) => void
+  onOptionId: (type: string) => void
   onRange: (range: Range) => void
   assetTypeQuery: Currency | undefined
   optionTypeQuery?: string
+  optionIdQuery: string
   rangeQuery: Range
   clearSearch: () => void
 }) {
@@ -386,13 +410,19 @@ export function Search({
   const handleDismissSearch = useCallback(() => setCurrencySearchOpen(false), [])
   const handleOpenAssetSearch = useCallback(() => setCurrencySearchOpen(true), [])
 
+  const theme = useTheme()
+
   return (
     <>
       <CurrencySearchModal isOpen={currencySearchOpen} onDismiss={handleDismissSearch} onCurrencySelect={onAssetType} />
       <StyledSearch>
         <ButtonSelect width="320px" onClick={handleOpenAssetSearch}>
-          {assetTypeQuery && <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />}
-          {currencyNameHelper(assetTypeQuery, 'Select asset type')}
+          <TYPE.body color={assetTypeQuery ? theme.text1 : theme.text3}>
+            <RowFixed>
+              {assetTypeQuery && <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />}
+              {currencyNameHelper(assetTypeQuery, 'Select asset type')}
+            </RowFixed>
+          </TYPE.body>
         </ButtonSelect>
         {onOptionType && (
           <ButtonSelect
@@ -413,6 +443,12 @@ export function Search({
           rangeCap={rangeQuery.cap?.toString()}
           rangeFloor={rangeQuery.floor?.toString()}
           onSetRange={onRange}
+        />
+        <ButtonSelectNumericalInput
+          placeholder="Select option ID"
+          width="320px"
+          value={optionIdQuery}
+          onSetValue={onOptionId}
         />
         <RowFixed>
           <ButtonOutlinedPrimary width="184px">

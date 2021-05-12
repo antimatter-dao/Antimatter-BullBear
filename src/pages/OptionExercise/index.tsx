@@ -48,6 +48,7 @@ export function getOptionList(allOptionType: OptionTypeData[]) {
     return [
       ...acc,
       {
+        optionTypeId: id,
         title: `${symbol ?? ''}(${floor}$${cap})`,
         underlyingAddress: underlying,
         underlyingSymbol: symbol,
@@ -73,6 +74,7 @@ export default function OptionExercise() {
   const [optionList, setOptionList] = useState<OptionInterface[] | undefined>(undefined)
   const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
   const [assetTypeQuery, setAssetTypeQuery] = useState<Currency | undefined>(undefined)
+  const [optionIdQuery, setOptionIdQuery] = useState('')
   const [rangeQuery, setRangeQuery] = useState<Range>({
     floor: undefined,
     cap: undefined
@@ -88,15 +90,17 @@ export default function OptionExercise() {
   }, [setOptionList, AllOptionType])
 
   useEffect(() => {
-    const list = filterOption({ optionList, assetTypeQuery, optionTypeQuery: '', rangeQuery, chainId })
+    const list = filterOption({ optionList, assetTypeQuery, optionTypeQuery: '', rangeQuery, optionIdQuery, chainId })
     setFilteredList(list)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assetTypeQuery, optionList, rangeQuery.cap, rangeQuery.floor, setFilteredList])
+  }, [assetTypeQuery, optionList, rangeQuery.cap, rangeQuery.floor, setFilteredList, optionIdQuery])
 
   const handleSelectAssetType = useCallback((currency: Currency) => setAssetTypeQuery(currency), [])
   const handleRange = useCallback(range => setRangeQuery(range), [])
+  const handleSelectOptionId = useCallback((id: string) => setOptionIdQuery(id), [])
   const handleClearSearch = useCallback(() => {
     setAssetTypeQuery(undefined)
+    setOptionIdQuery('')
     setRangeQuery({
       floor: undefined,
       cap: undefined
@@ -106,8 +110,10 @@ export default function OptionExercise() {
     <Wrapper id="optionExercise">
       <Search
         onAssetType={handleSelectAssetType}
-        assetTypeQuery={assetTypeQuery}
+        onOptionId={handleSelectOptionId}
         onRange={handleRange}
+        optionIdQuery={optionIdQuery}
+        assetTypeQuery={assetTypeQuery}
         clearSearch={handleClearSearch}
         rangeQuery={rangeQuery}
       />
@@ -119,9 +125,13 @@ export default function OptionExercise() {
               key={option.title}
               buttons={
                 <>
-                  <ButtonPrimary onClick={() => history.push(`/generate/${option.optionType}`)}>Generate</ButtonPrimary>
+                  <ButtonPrimary style={{ padding: 8 }} onClick={() => history.push(`/generate/${option.optionType}`)}>
+                    Generate
+                  </ButtonPrimary>
                   <div style={{ width: 10 }} />
-                  <ButtonPrimary onClick={() => history.push(`/redeem/${option.optionType}`)}>Redeem</ButtonPrimary>
+                  <ButtonPrimary style={{ padding: 8 }} onClick={() => history.push(`/redeem/${option.optionType}`)}>
+                    Redeem
+                  </ButtonPrimary>
                 </>
               }
             />
