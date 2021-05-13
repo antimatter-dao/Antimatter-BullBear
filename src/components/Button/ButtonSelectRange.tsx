@@ -73,12 +73,12 @@ export function ButtonSelectRange({
   const handleFloorInput = useCallback(val => setFloor(val), [])
   const handleCapInput = useCallback(val => setCap(val), [])
   return (
-    <div style={{ position: 'relative', marginRight: ' 20px' }}>
+    <div style={{ position: 'relative', marginRight: ' 20px', width: width }}>
       <ButtonSelectStyle
         onClick={() => {
           setIsOpen(!isOpen)
         }}
-        width={width}
+        width="100%"
         selected={!!rangeCap || !!rangeFloor}
       >
         <RowBetween>

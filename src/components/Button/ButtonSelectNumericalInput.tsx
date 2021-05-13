@@ -69,12 +69,11 @@ export function ButtonSelectNumericalInput({
   }
   const handleValInput = useCallback(val => (intOnly ? setVal(parseInt(val) + '') : setVal(val)), [intOnly])
   return (
-    <div style={{ position: 'relative', marginRight: ' 20px' }}>
+    <div style={{ position: 'relative', marginRight: ' 20px', width: width }}>
       <ButtonSelectStyle
         onClick={() => {
           setIsOpen(!isOpen)
         }}
-        width={width}
         selected={!!value}
       >
         <RowBetween>

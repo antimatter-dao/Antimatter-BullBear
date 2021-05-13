@@ -87,10 +87,16 @@ const StyledSearch = styled.div`
   padding: 23px;
   padding-left: 50px
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap
   & > * {
     margin-bottom: 8px;
   }
+  & > div {
+    flex-shrink: 1;
+  }
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    flex-wrap: wrap
+  `}
 `
 
 const Circle = styled.div`
