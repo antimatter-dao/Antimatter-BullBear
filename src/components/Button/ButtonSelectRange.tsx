@@ -1,12 +1,12 @@
 import React, { useMemo, useRef, useState, useCallback } from 'react'
 import { ButtonProps } from 'rebass/styled-components'
 import styled from 'styled-components'
-import { ButtonOutlined } from '.'
+// import { ButtonOutlined } from '.'
 import { RowBetween } from '../Row'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import NumberInputPanel from 'components/NumberInputPanel'
 import { ButtonSelectStyle, StyledDropDown } from './ButtonSelect'
-import { Minus, X } from 'react-feather'
+import { Minus } from 'react-feather'
 import useTheme from 'hooks/useTheme'
 import { Range } from 'pages/OptionTrade'
 
@@ -44,16 +44,18 @@ export function ButtonSelectRange({
   width?: string
   rangeFloor?: string
   rangeCap?: string
-  onSetRange: (range: Range) => void
+  onSetRange: (range: any) => void
 }) {
   const node = useRef<HTMLDivElement>()
   const [isOpen, setIsOpen] = useState(false)
-  const [floor, setFloor] = useState('')
-  const [cap, setCap] = useState('')
+  // const [floor, setFloor] = useState('')
+  // const [cap, setCap] = useState('')
 
   const theme = useTheme()
 
-  const handleClose = useCallback(() => setIsOpen(false), [])
+  const handleClose = useCallback(() => {
+    setIsOpen(false)
+  }, [])
 
   useOnClickOutside(node, handleClose)
 
@@ -61,17 +63,20 @@ export function ButtonSelectRange({
     if (!rangeFloor && !rangeCap) {
       return placeholder
     }
-    return `$${rangeFloor} ~ $${rangeCap}`
+    return `$${rangeFloor ?? ''} ~ $${rangeCap ?? ''}`
   }, [placeholder, rangeFloor, rangeCap])
 
-  const handleClick = () => {
-    onSetRange({ floor, cap })
-    handleClose()
-    setFloor('')
-    setCap('')
-  }
-  const handleFloorInput = useCallback(val => setFloor(val), [])
-  const handleCapInput = useCallback(val => setCap(val), [])
+  // const handleClick = () => {
+  //   onSetRange({ floor, cap })
+  //   handleClose()
+  //   setFloor('')
+  //   setCap('')
+  // }
+  // const handleFloorInput = useCallback(val => setFloor(val), [])
+  // const handleCapInput = useCallback(val => setCap(val), [])
+
+  const handleFloorInput = useCallback(val => onSetRange((prev: Range) => ({ ...prev, floor: val })), [onSetRange])
+  const handleCapInput = useCallback(val => onSetRange((prev: Range) => ({ ...prev, cap: val })), [onSetRange])
   return (
     <div style={{ position: 'relative', marginRight: ' 20px', width: width }}>
       <ButtonSelectStyle
@@ -89,8 +94,8 @@ export function ButtonSelectRange({
 
       <RangeInputWrapper isOpen={isOpen} ref={node as any} width="372px">
         <NumberInputPanel
-          label="From"
-          value={floor}
+          label="From($)"
+          value={rangeFloor ?? ''}
           onUserInput={handleFloorInput}
           showMaxButton={false}
           id="floor"
@@ -98,17 +103,17 @@ export function ButtonSelectRange({
         />
         <Minus size={25} color={theme.text3} />
         <NumberInputPanel
-          label="To"
-          value={cap}
+          label="To($)"
+          value={rangeCap ?? ''}
           onUserInput={handleCapInput}
           showMaxButton={false}
           id="cap"
           hideBalance={true}
         />
 
-        <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
+        {/* <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
           <X size={60} color={theme.text3} />
-        </ButtonOutlined>
+        </ButtonOutlined> */}
       </RangeInputWrapper>
     </div>
   )

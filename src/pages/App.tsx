@@ -121,7 +121,7 @@ export default function App() {
                 <Route exact strict path="/option_exercise" component={OptionExercise} />
                 {/* <Route exact strict path="/generate" component={Generate} /> */}
                 <Route exact strict path="/generate/:optionTypeIndex" component={Generate} />
-                <Route exact strict path="/redeem" component={Redeem} />
+                {/* <Route exact strict path="/redeem" component={Redeem} /> */}
                 <Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />
                 <Route exact strict path="/governance" component={ComingSoon} />
                 <Route exact strict path="/info" component={Info} />

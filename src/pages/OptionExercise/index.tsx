@@ -1,20 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
-import { Currency } from '@uniswap/sdk'
+import { Token } from '@uniswap/sdk'
 import { ButtonPrimary } from 'components/Button'
-import { OptionTypeData, useAllOptionTypes } from 'state/market/hooks'
-import {
-  OptionCard,
-  Search,
-  OptionInterface,
-  Range,
-  filterOption,
-  AlternativeDisplay,
-  ContentWrapper,
-  parsePrice
-} from '../OptionTrade'
+import { OptionCard, Search, OptionInterface, AlternativeDisplay, ContentWrapper } from '../OptionTrade'
 import { useActiveWeb3React } from 'hooks'
+import { getUnderlyingList, getOtionTypeList } from 'utils/option/httpRequests'
 
 export enum Type {
   CALL = 'call',
@@ -26,97 +17,37 @@ const Wrapper = styled.div`
   margin-bottom: auto;
 `
 
-export function getOptionList(allOptionType: OptionTypeData[]) {
-  return allOptionType.reduce((acc: OptionInterface[], item: OptionTypeData): OptionInterface[] => {
-    const {
-      currencyDecimals = '6',
-      priceFloor,
-      priceCap,
-      underlying,
-      underlyingSymbol,
-      callAddress,
-      putAddress,
-      callBalance,
-      underlyingDecimals,
-      putBalance,
-      id
-    } = item
-    const floor = parsePrice(priceFloor, currencyDecimals)
-    const cap = parsePrice(priceCap, currencyDecimals)
-    const range = `$${floor} ~ $${cap}`
-    const symbol = underlyingSymbol === 'WETH' ? 'ETH' : underlyingSymbol
-    return [
-      ...acc,
-      {
-        optionTypeId: id,
-        title: `${symbol ?? ''}(${floor}$${cap})`,
-        underlyingAddress: underlying,
-        underlyingSymbol: symbol,
-        optionType: id,
-        addresses: {
-          callAddress,
-          putAddress
-        },
-        details: {
-          'Option Price Range': range,
-          'Underlying Asset': symbol ? symbol : '-',
-          'Your Call Position': parsePrice(callBalance, underlyingDecimals),
-          'Your Put Position': parsePrice(putBalance, underlyingDecimals)
-        },
-        range: { floor, cap }
-      }
-    ]
-  }, [] as OptionInterface[])
-}
-
 export default function OptionExercise() {
   const { chainId } = useActiveWeb3React()
+  const [tokenList, setTokenList] = useState<Token[] | undefined>(undefined)
   const [optionList, setOptionList] = useState<OptionInterface[] | undefined>(undefined)
   const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
-  const [assetTypeQuery, setAssetTypeQuery] = useState<Currency | undefined>(undefined)
-  const [optionIdQuery, setOptionIdQuery] = useState('')
-  const [rangeQuery, setRangeQuery] = useState<Range>({
-    floor: undefined,
-    cap: undefined
-  })
   const history = useHistory()
 
-  const AllOptionType = useAllOptionTypes()
+  const handleSearch = useCallback(
+    body => {
+      const query = Object.keys(body).reduce((acc, key, idx) => `${acc}${idx === 0 ? '' : '&'}${key}=${body[key]}`, '')
+      const handleFilteredList = (list: OptionInterface[]) => setFilteredList(list)
+
+      getOtionTypeList(handleFilteredList, chainId, query)
+    },
+    [chainId]
+  )
 
   useEffect(() => {
-    if (!AllOptionType || AllOptionType?.length === 0) return
-    const list = getOptionList(AllOptionType)
-    setOptionList(list)
-  }, [setOptionList, AllOptionType])
+    getUnderlyingList((list: Token[] | undefined) => setTokenList(list), chainId)
+    getOtionTypeList(list => setOptionList(list), chainId)
+  }, [chainId])
 
   useEffect(() => {
-    const list = filterOption({ optionList, assetTypeQuery, optionTypeQuery: '', rangeQuery, optionIdQuery, chainId })
-    setFilteredList(list)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assetTypeQuery, optionList, rangeQuery.cap, rangeQuery.floor, setFilteredList, optionIdQuery])
+    if (optionList) {
+      setFilteredList(optionList)
+    }
+  }, [optionList])
 
-  const handleSelectAssetType = useCallback((currency: Currency) => setAssetTypeQuery(currency), [])
-  const handleRange = useCallback(range => setRangeQuery(range), [])
-  const handleSelectOptionId = useCallback((id: string) => setOptionIdQuery(id), [])
-  const handleClearSearch = useCallback(() => {
-    setAssetTypeQuery(undefined)
-    setOptionIdQuery('')
-    setRangeQuery({
-      floor: undefined,
-      cap: undefined
-    })
-  }, [])
   return (
     <Wrapper id="optionExercise">
-      <Search
-        onAssetType={handleSelectAssetType}
-        onOptionId={handleSelectOptionId}
-        onRange={handleRange}
-        optionIdQuery={optionIdQuery}
-        assetTypeQuery={assetTypeQuery}
-        clearSearch={handleClearSearch}
-        rangeQuery={rangeQuery}
-      />
+      <Search onSearch={handleSearch} tokenList={tokenList} />
       {filteredList && (
         <ContentWrapper>
           {filteredList.map(option => (
@@ -138,7 +69,7 @@ export default function OptionExercise() {
           ))}
         </ContentWrapper>
       )}
-      <AlternativeDisplay AllOptionType={AllOptionType} filteredList={filteredList} />
+      <AlternativeDisplay optionList={optionList} filteredList={filteredList} />
     </Wrapper>
   )
 }

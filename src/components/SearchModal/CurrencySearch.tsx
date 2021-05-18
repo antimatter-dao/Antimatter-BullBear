@@ -48,6 +48,7 @@ interface CurrencySearchProps {
   showImportView: () => void
   setImportToken: (token: Token) => void
   hasManage?: boolean
+  tokenList?: Token[]
 }
 
 export function CurrencySearch({
@@ -60,7 +61,8 @@ export function CurrencySearch({
   showManageView,
   showImportView,
   setImportToken,
-  hasManage
+  hasManage,
+  tokenList
 }: CurrencySearchProps) {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
@@ -195,7 +197,11 @@ export function CurrencySearch({
                 height={height}
                 showETH={showETH}
                 currencies={
-                  filteredInactiveTokens ? filteredSortedTokens.concat(filteredInactiveTokens) : filteredSortedTokens
+                  tokenList
+                    ? tokenList
+                    : filteredInactiveTokens
+                    ? filteredSortedTokens.concat(filteredInactiveTokens)
+                    : filteredSortedTokens
                 }
                 breakIndex={inactiveTokens && filteredSortedTokens ? filteredSortedTokens.length : undefined}
                 onCurrencySelect={handleCurrencySelect}

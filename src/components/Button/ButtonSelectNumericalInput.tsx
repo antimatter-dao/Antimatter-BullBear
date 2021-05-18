@@ -1,13 +1,13 @@
 import React, { useMemo, useRef, useState, useCallback } from 'react'
 import { ButtonProps } from 'rebass/styled-components'
 import styled from 'styled-components'
-import { ButtonOutlined } from '.'
+// import { ButtonOutlined } from '.'
 import { RowBetween } from '../Row'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import NumberInputPanel from 'components/NumberInputPanel'
 import { ButtonSelectStyle, StyledDropDown } from './ButtonSelect'
-import { X } from 'react-feather'
-import useTheme from 'hooks/useTheme'
+// import { X } from 'react-feather'
+// import useTheme from 'hooks/useTheme'
 
 const RangeInputWrapper = styled.div<{ isOpen: boolean; width?: string }>`
   display: ${({ isOpen }) => (isOpen ? ' grid' : 'none')};
@@ -47,11 +47,12 @@ export function ButtonSelectNumericalInput({
 }) {
   const node = useRef<HTMLDivElement>()
   const [isOpen, setIsOpen] = useState(false)
-  const [val, setVal] = useState('')
 
-  const theme = useTheme()
+  // const theme = useTheme()
 
-  const handleClose = useCallback(() => setIsOpen(false), [])
+  const handleClose = useCallback(() => {
+    setIsOpen(false)
+  }, [])
 
   useOnClickOutside(node, handleClose)
 
@@ -62,12 +63,18 @@ export function ButtonSelectNumericalInput({
     return value
   }, [placeholder, value])
 
-  const handleClick = () => {
-    onSetValue(val)
-    handleClose()
-    setVal('')
-  }
-  const handleValInput = useCallback(val => (intOnly ? setVal(parseInt(val) + '') : setVal(val)), [intOnly])
+  // const handleClick = () => {
+  //   onSetValue(val)
+  //   handleClose()
+  //   setVal('')
+  // }
+
+  //const handleValInput = useCallback(val => (intOnly ? setVal(parseInt(val) + '') : setVal(val)), [intOnly])
+  const handleValInput = useCallback(val => (intOnly ? onSetValue(parseInt(val) + '') : onSetValue(val)), [
+    intOnly,
+    onSetValue
+  ])
+
   return (
     <div style={{ position: 'relative', marginRight: ' 20px', width: width }}>
       <ButtonSelectStyle
@@ -85,15 +92,15 @@ export function ButtonSelectNumericalInput({
       <RangeInputWrapper isOpen={isOpen} ref={node as any} width="372px">
         <NumberInputPanel
           label="Option Id"
-          value={val}
+          value={`${value ?? ''}`}
           onUserInput={handleValInput}
           showMaxButton={false}
           id="cap"
           hideBalance={true}
         />
-        <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
+        {/* <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
           <X size={60} color={theme.text3} />
-        </ButtonOutlined>
+        </ButtonOutlined> */}
       </RangeInputWrapper>
     </div>
   )

@@ -30,7 +30,7 @@ import { isNegative, parseBalance, parsedGreaterThan } from '../../utils/marketS
 import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback'
 import { Dots } from 'components/swap/styleds'
 import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
-import { parsePrice } from 'pages/OptionTrade'
+import { parsePrice } from 'utils/option/utils'
 
 export default function Redeem({
   match: {
