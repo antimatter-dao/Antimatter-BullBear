@@ -65,7 +65,7 @@ export default function Liquidity({
       )}
       <AdvanceInfoWrapper gap="lg">
         <OverallLiquidity pair={pair} />
-        <LiquidityInfo onRemove={handleRemove} pair={pair ?? undefined} />
+        <LiquidityInfo onRemove={handleRemove} pair={pair} />
       </AdvanceInfoWrapper>
     </Wrapper>
   )
@@ -104,7 +104,7 @@ function OverallLiquidity({ pair }: { pair: Pair | undefined | null }) {
   )
 }
 
-function LiquidityInfo({ onRemove, pair }: { onRemove: () => void; pair: Pair | undefined }) {
+function LiquidityInfo({ onRemove, pair }: { onRemove: () => void; pair: Pair | undefined | null }) {
   const { account } = useActiveWeb3React()
 
   return (
@@ -124,7 +124,7 @@ function LiquidityInfo({ onRemove, pair }: { onRemove: () => void; pair: Pair | 
           ) : (
             <EmptyProposals>
               <TYPE.darkGray textAlign="center">
-                <Dots>Loading</Dots>
+                {pair === null ? <>No pool available</> : <Dots>Loading</Dots>}
               </TYPE.darkGray>
               {/* <TYPE.darkGray textAlign="center">No liquidity found</TYPE.darkGray> */}
             </EmptyProposals>

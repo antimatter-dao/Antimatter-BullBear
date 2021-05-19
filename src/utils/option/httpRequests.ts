@@ -15,7 +15,7 @@ export interface SearchQuery {
   underlying?: string
 }
 
-const domain = 'http://47.241.192.211:8443'
+const domain = 'https://testapi.antimatter.finance:80'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
 
 export function getUnderlyingList(setList: (list: Token[] | undefined) => void, chainId: ChainId | undefined) {
