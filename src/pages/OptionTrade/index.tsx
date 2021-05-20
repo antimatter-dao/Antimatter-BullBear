@@ -34,7 +34,7 @@ import {
 } from 'utils/option/httpRequests'
 
 export interface OptionInterface {
-  optionTypeId: string | undefined
+  optionId: string | undefined
   title: string
   address?: string
   addresses?: {
@@ -113,6 +113,7 @@ const StyledSearch = styled.div`
 `
 
 const Circle = styled.div`
+  flex-shrink: 0;
   margin-right: 16px;
   border-radius: 50%;
   border: 1px solid ${({ theme }) => theme.bg5};
@@ -237,7 +238,7 @@ export default function OptionTrade({
 }
 
 export function OptionCard({
-  option: { title, type, address, details, underlyingAddress },
+  option: { title, type, address, details, underlyingAddress, optionId },
   buttons
 }: {
   option: OptionInterface
@@ -263,7 +264,11 @@ export function OptionCard({
             )}
           </Circle>
           <AutoColumn gap="5px">
-            <TYPE.mediumHeader fontSize={20} style={{ whiteSpace: 'nowrap' }}>
+            <TYPE.smallGray>Option Id&nbsp;:&nbsp;{optionId}</TYPE.smallGray>
+            <TYPE.mediumHeader
+              fontSize={20}
+              style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
+            >
               {title}
             </TYPE.mediumHeader>
             {address && (
@@ -278,7 +283,7 @@ export function OptionCard({
           {Object.keys(details).map(key => (
             <RowBetween key={key}>
               <TYPE.smallGray>{key}:</TYPE.smallGray>
-              <TYPE.subHeader>
+              <TYPE.subHeader style={{ textAlign: 'right' }}>
                 {key === 'Market Price' ? (price ? `$${price.toFixed()}` : '-') : details[key as keyof typeof details]}
               </TYPE.subHeader>
             </RowBetween>

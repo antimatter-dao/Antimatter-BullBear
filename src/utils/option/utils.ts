@@ -30,7 +30,7 @@ export function formatCallOption(allOptionType: OptionTypeData[]) {
     return [
       ...acc,
       {
-        optionTypeId: id,
+        optionId: id,
         title: (symbol ?? '') + ' Call Option',
         address: callAddress,
         underlyingAddress: underlying,
@@ -69,8 +69,8 @@ export function formatPutOption(allOptionType: OptionTypeData[]) {
     return [
       ...acc,
       {
-        optionTypeId: id,
-        title: (underlyingSymbol ?? '') + ' Put Option',
+        optionId: id,
+        title: (symbol ?? '') + ' Put Option',
         address: putAddress,
         underlyingAddress: underlying,
         currencyAddress: currency,
@@ -110,7 +110,7 @@ export function formatAndSplitOption(allOptionType: OptionTypeData[]) {
     return [
       ...acc,
       {
-        optionTypeId: id,
+        optionId: id,
         title: (symbol ?? '') + ' Call Option',
         address: callAddress,
         underlyingAddress: underlying,
@@ -129,8 +129,8 @@ export function formatAndSplitOption(allOptionType: OptionTypeData[]) {
         range: { floor, cap }
       },
       {
-        optionTypeId: id,
-        title: (underlyingSymbol ?? '') + ' Put Option',
+        optionId: id,
+        title: (symbol ?? '') + ' Put Option',
         address: putAddress,
         underlyingAddress: underlying,
         type: Type.PUT,
@@ -174,7 +174,7 @@ export function formatOptionType(allOptionType: OptionTypeData[]) {
     return [
       ...acc,
       {
-        optionTypeId: id,
+        optionId: id,
         title: `${symbol ?? ''}(${floor}$${cap})`,
         underlyingAddress: underlying,
         currencyAddress: currency,
