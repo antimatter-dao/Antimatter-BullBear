@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState, useMemo } from 'react'
+import React, { useCallback, useContext, useState, useEffect } from 'react'
 import { ETHER, Token } from '@uniswap/sdk'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -11,7 +11,7 @@ import TransactionConfirmationModal, { ConfirmationModalContent } from '../../co
 import CallOrPutInputPanel from '../../components/CallOrPutInputPanel'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
 import { RowBetween } from '../../components/Row'
-import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
+import { OptionTypeData, useDerivedStrategyInfo } from '../../state/market/hooks'
 import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
 import { useMarketCurrency } from '../../hooks/Tokens'
@@ -33,6 +33,7 @@ import { useAntimatterContract } from '../../hooks/useContract'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { isNegative, parseBalance } from '../../utils/marketStrategyUtils'
 import { parsePrice } from 'utils/option/utils'
+import { getSingleOptionType } from 'utils/option/httpRequests'
 
 export default function Generate({
   match: {
@@ -43,16 +44,21 @@ export default function Generate({
   const [callTyped, setCallTyped] = useState<string>()
   const [putTyped, setPutTyped] = useState<string>()
   const [tokenType, setTokenType] = useState(TOKEN_TYPES.callPut)
+  const [selectedOptionType, setselectedOptionType] = useState<OptionTypeData | undefined>(undefined)
 
   const theme = useContext(ThemeContext)
 
   const { account, chainId, library } = useActiveWeb3React()
-  const optionTypes = useAllOptionTypes()
-  const optionType = optionTypeIndex ?? ''
-  const selectedOptionType = useMemo(() => {
-    if (!optionTypes || !optionType) return undefined
-    return optionTypes?.[parseInt(optionType)]
-  }, [optionTypes, optionType])
+  // const optionTypes = useAllOptionTypes()
+  // const optionType = optionTypeIndex ?? ''
+  // const selectedOptionType = useMemo(() => {
+  //   if (!optionTypes || !optionType) return undefined
+  //   return optionTypes?.[parseInt(optionType)]
+  // }, [optionTypes, optionType])
+  useEffect(() => getSingleOptionType(data => setselectedOptionType(data), chainId, optionTypeIndex), [
+    chainId,
+    optionTypeIndex
+  ])
   const currencyA = useMarketCurrency(selectedOptionType?.underlying)
   const currencyB = useMarketCurrency(selectedOptionType?.currency)
   const antimatterContract = useAntimatterContract()
@@ -114,7 +120,7 @@ export default function Generate({
     const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.mint
     let value: string | undefined | null = null
     const args = [
-      optionTypes[parseInt(optionType)].callAddress,
+      selectedOptionType?.callAddress,
       tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.call
         ? tryParseAmount(TOKEN_TYPES.callPut || TOKEN_TYPES.call ? callTyped : '0', ETHER)?.raw.toString()
         : '0',
@@ -125,11 +131,11 @@ export default function Generate({
       delta.dCur.toString()
     ]
 
-    if (optionTypes[parseInt(optionType)].underlyingSymbol === 'ETH') {
+    if (selectedOptionType?.underlyingSymbol === 'ETH') {
       value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
     }
 
-    if (optionTypes[parseInt(optionType)].currencySymbol === 'ETH') {
+    if (selectedOptionType?.currencySymbol === 'ETH') {
       value = isNegative(delta.dCur) ? '0' : delta.dCur.toString()
     }
 
@@ -211,7 +217,7 @@ export default function Generate({
     }
     setTxHash('')
   }, [txHash])
-
+  console.log(999, selectedOptionType)
   return (
     <>
       <AppBody>
@@ -311,7 +317,7 @@ export default function Generate({
               />
             )}
 
-            {!optionType || !delta ? (
+            {!selectedOptionType || !delta ? (
               <ButtonOutlined style={{ opacity: '0.5' }} disabled={true}>
                 <TYPE.main>Enter Amount</TYPE.main>
               </ButtonOutlined>

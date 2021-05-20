@@ -59,7 +59,8 @@ export function formatPutOption(allOptionType: OptionTypeData[]) {
       putTotal,
       underlying,
       underlyingSymbol,
-      currencySymbol
+      currencySymbol,
+      currency
     } = item
     const floor = parsePrice(priceFloor, currencyDecimals)
     const cap = parsePrice(priceCap, currencyDecimals)
@@ -72,6 +73,7 @@ export function formatPutOption(allOptionType: OptionTypeData[]) {
         title: (underlyingSymbol ?? '') + ' Put Option',
         address: putAddress,
         underlyingAddress: underlying,
+        currencyAddress: currency,
         type: Type.PUT,
         underlyingSymbol: symbol,
         details: {
@@ -162,6 +164,7 @@ export function formatOptionType(allOptionType: OptionTypeData[]) {
       callBalance,
       underlyingDecimals,
       putBalance,
+      currency,
       id
     } = item
     const floor = parsePrice(priceFloor, currencyDecimals)
@@ -174,7 +177,9 @@ export function formatOptionType(allOptionType: OptionTypeData[]) {
         optionTypeId: id,
         title: `${symbol ?? ''}(${floor}$${cap})`,
         underlyingAddress: underlying,
+        currencyAddress: currency,
         underlyingSymbol: symbol,
+        underlyingDecimals,
         optionType: id,
         addresses: {
           callAddress,
