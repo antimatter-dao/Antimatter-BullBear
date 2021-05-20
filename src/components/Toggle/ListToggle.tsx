@@ -12,13 +12,17 @@ const Wrapper = styled(ButtonOutlined)<{ isActive?: boolean; activeElement?: boo
   align-items: center;
   justify-content: space-between;
   font-size: 14px;
+  :hover{
+    box-shadow: unset
+    border-color: ${({ theme }) => theme.primary1};
+    opacity: .8
+  }
 `
 
 const ToggleElement = styled.span<{ isActive?: boolean; bgColor?: string }>`
   border-radius: 50%;
-  height: 20px;
-  width: 20px;
-  margin: 0 6px;
+  height: 15px;
+  width: 15px;
   background-color: ${({ isActive, bgColor, theme }) => (isActive ? theme.primary1 : theme.bg5)};
   :hover {
     opacity: 0.8;

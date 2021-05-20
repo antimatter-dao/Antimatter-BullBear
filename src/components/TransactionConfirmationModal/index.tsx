@@ -171,6 +171,7 @@ interface ConfirmationModalProps {
   attemptingTxn: boolean
   pendingText: string
   currencyToAdd?: Currency | undefined
+  submittedContent?: () => React.ReactNode
 }
 
 export default function TransactionConfirmationModal({
@@ -180,7 +181,8 @@ export default function TransactionConfirmationModal({
   hash,
   pendingText,
   content,
-  currencyToAdd
+  currencyToAdd,
+  submittedContent
 }: ConfirmationModalProps) {
   const { chainId } = useActiveWeb3React()
 
@@ -192,12 +194,20 @@ export default function TransactionConfirmationModal({
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
       ) : hash ? (
-        <TransactionSubmittedContent
-          chainId={chainId}
-          hash={hash}
-          onDismiss={onDismiss}
-          currencyToAdd={currencyToAdd}
-        />
+        <>
+          (
+          {submittedContent ? (
+            submittedContent
+          ) : (
+            <TransactionSubmittedContent
+              chainId={chainId}
+              hash={hash}
+              onDismiss={onDismiss}
+              currencyToAdd={currencyToAdd}
+            />
+          )}
+          ){' '}
+        </>
       ) : (
         content()
       )}

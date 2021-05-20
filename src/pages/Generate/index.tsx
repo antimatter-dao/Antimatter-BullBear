@@ -32,7 +32,7 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useAntimatterContract } from '../../hooks/useContract'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { isNegative, parseBalance } from '../../utils/marketStrategyUtils'
-import { parsePrice } from 'pages/OptionTrade'
+import { parsePrice } from 'utils/option/utils'
 
 export default function Generate({
   match: {

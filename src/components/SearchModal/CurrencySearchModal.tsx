@@ -17,6 +17,7 @@ interface CurrencySearchModalProps {
   otherSelectedCurrency?: Currency | null
   showCommonBases?: boolean
   hasManage?: boolean
+  tokenList?: Token[]
 }
 
 export enum CurrencyModalView {
@@ -33,7 +34,8 @@ export default function CurrencySearchModal({
   selectedCurrency,
   otherSelectedCurrency,
   showCommonBases = false,
-  hasManage = false
+  hasManage = false,
+  tokenList
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage)
   const lastOpen = useLast(isOpen)
@@ -69,6 +71,7 @@ export default function CurrencySearchModal({
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={80} minHeight={minHeight}>
       {modalView === CurrencyModalView.search ? (
         <CurrencySearch
+          tokenList={tokenList}
           isOpen={isOpen}
           onDismiss={onDismiss}
           onCurrencySelect={handleCurrencySelect}

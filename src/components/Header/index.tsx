@@ -17,11 +17,13 @@ import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
 import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
+import useTheme from 'hooks/useTheme'
 
 interface TabContent {
   title: string
   route?: string
   link?: string
+  titleContent?: JSX.Element
 }
 interface Tab extends TabContent {
   subTab?: TabContent[]
@@ -41,6 +43,11 @@ const tabs: Tab[] = [
       {
         title: 'Auditing Report',
         link: 'https://github.com/antimatter-finance/antimatter-finance.github.io/blob/main/audit_en.pdf'
+      },
+      {
+        title: 'faq',
+        titleContent: <FAQButton />,
+        route: 'faq'
       }
     ]
   }
@@ -90,7 +97,7 @@ const HeaderFrame = styled.div`
   top: 0;
   position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
-  padding: 27px 61px 0;
+  padding: 27px 50px 0;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
@@ -189,7 +196,6 @@ const AccountElement = styled.div<{ active: boolean }>`
 const UNIAmount = styled(AccountElement)`
   color: white;
   font-weight: 500;
-
   &:after {
     content: '';
     border-right: 1px solid ${({ theme }) => theme.text1};
@@ -224,10 +230,18 @@ const NetworkCard = styled.div<{ color?: string }>`
   font-size: 13px;
   font-weight: 500;
   position: relative;
-  &> svg:first-child {
+  & > svg:first-child {
     height: 24px;
     width: 24px;
-  };
+  }
+  .dropdown_wrapper {
+    &>div{
+      a {
+        padding: 8px 17px;
+      }
+    }
+  }
+
   :hover {
     cursor: pointer;
     .dropdown_wrapper {
@@ -377,6 +391,29 @@ const StyledLogo = styled(Logo)`
   magin-right: 60px;
 `
 
+function FAQButton() {
+  const theme = useTheme()
+  return (
+    <RowFixed>
+      <RowFixed
+        justify="center"
+        style={{
+          borderRadius: '50%',
+          border: `1px solid ${theme.primary1}`,
+          width: '18px',
+          height: '18px',
+          marginRight: '12px'
+        }}
+      >
+        <TYPE.body fontSize={14} color={theme.primary1}>
+          ?
+        </TYPE.body>
+      </RowFixed>
+      FAQ
+    </RowFixed>
+  )
+}
+
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
 
@@ -398,13 +435,15 @@ export default function Header() {
                   {title}
                   <ChevronDown size={15} />
                   <Dropdown>
-                    {subTab.map(({ title, route, link }) => {
+                    {subTab.map(({ title, route, link, titleContent }) => {
                       return link ? (
                         <ExternalLink href={link} key={title}>
-                          {title}
+                          {titleContent ?? title}
                         </ExternalLink>
                       ) : route ? (
-                        <NavLink to={route}>{title}</NavLink>
+                        <NavLink to={route} key={title}>
+                          {titleContent ?? title}
+                        </NavLink>
                       ) : null
                     })}
                   </Dropdown>
@@ -463,7 +502,7 @@ export default function Header() {
             </NetworkCard>
           )}
           {/* </HideSmall> */}
-          <div>
+          <div style={{ paddingLeft: 8 }}>
             {!!account && aggregateBalance && (
               <UNIWrapper>
                 <UNIAmount active={!!account} style={{ pointerEvents: 'none' }}>

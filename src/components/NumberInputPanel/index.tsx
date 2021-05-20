@@ -78,6 +78,7 @@ interface NumberInputPanelProps {
   showMaxButton: boolean
   label?: string
   hideBalance?: boolean
+  hideLabel?: boolean
   id: string
   showCommonBases?: boolean
   customBalanceText?: string
@@ -90,6 +91,7 @@ export default function NumberInputPanel({
   onMax,
   label = 'Input',
   hideBalance = false,
+  hideLabel = false,
   showMaxButton,
   id,
   customBalanceText,
@@ -104,9 +106,11 @@ export default function NumberInputPanel({
       <Container>
         <LabelRow>
           <AutoRow justify="space-between">
-            <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
-              {label}
-            </TYPE.body>
+            {!hideLabel && (
+              <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
+                {label}
+              </TYPE.body>
+            )}
             {account && (
               <TYPE.body
                 onClick={onMax}
@@ -115,7 +119,7 @@ export default function NumberInputPanel({
                 fontSize={14}
                 style={{ display: 'inline', cursor: 'pointer' }}
               >
-                {!hideBalance ? (customBalanceText ?? 'Your balance: ') + '' : ' -'}
+                {!hideBalance ? (customBalanceText ?? 'Your balance: ') + '' : ''}
               </TYPE.body>
             )}
           </AutoRow>

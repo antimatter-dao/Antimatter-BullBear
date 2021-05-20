@@ -94,11 +94,17 @@ export function CrossCircle({ size, onClick, color }: { size?: string; onClick?:
   )
 }
 
-export function OptionIcon({ size, tokenIcon, type }: { size?: string; tokenIcon: JSX.Element; type: Type }) {
+export function OptionIcon({ size, tokenIcon, type }: { size?: string; tokenIcon: JSX.Element; type?: Type }) {
   return (
-    <OptionIconWrapper size={size}>
-      {tokenIcon}
-      {type === 'call' ? <CallType className="optionType" /> : <PutType className="optionType" />}
-    </OptionIconWrapper>
+    <>
+      {type ? (
+        <OptionIconWrapper size={size}>
+          {tokenIcon}
+          {type === 'call' ? <CallType className="optionType" /> : <PutType className="optionType" />}
+        </OptionIconWrapper>
+      ) : (
+        <IconWrapper size={size}>{tokenIcon}</IconWrapper>
+      )}
+    </>
   )
 }
