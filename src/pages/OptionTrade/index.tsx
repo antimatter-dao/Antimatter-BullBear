@@ -94,12 +94,12 @@ export const ContentWrapper = styled.div`
 `
 
 const StyledSearch = styled.div`
-  max-width: 1280px;
   margin: auto;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 23px;
   padding-left: 50px;
   display: flex;
+  justify-content: center;
   flex-wrap: nowrap;
   & > * {
     margin-bottom: 8px;
@@ -361,7 +361,7 @@ export function Search({
         tokenList={tokenList}
       />
       <StyledSearch>
-        <ButtonSelect width="320px" onClick={handleOpenAssetSearch}>
+        <ButtonSelect width="186px" onClick={handleOpenAssetSearch}>
           <TYPE.body color={assetTypeQuery ? theme.text1 : theme.text3}>
             <RowFixed>
               {assetTypeQuery && <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />}
@@ -372,7 +372,7 @@ export function Search({
         {onOptionType && (
           <ButtonSelect
             placeholder="Select option type"
-            width="320px"
+            width="186px"
             selectedId={optionTypeQuery}
             onSelection={onOptionType}
             options={[
@@ -384,24 +384,24 @@ export function Search({
         )}
         <ButtonSelectRange
           placeholder="Select price range"
-          width="320px"
+          width="186px"
           rangeCap={rangeQuery.cap?.toString()}
           rangeFloor={rangeQuery.floor?.toString()}
           onSetRange={setRangeQuery}
         />
         <ButtonSelectNumericalInput
           placeholder="Select option ID"
-          width="320px"
+          width="186px"
           value={optionIdQuery}
           onSetValue={setOptionIdQuery}
         />
         <RowFixed>
-          <ButtonOutlinedPrimary width="184px" onClick={handleSearch}>
+          <ButtonOutlinedPrimary width="186px" onClick={handleSearch}>
             <SearchIcon style={{ marginRight: 10 }} />
             Search
           </ButtonOutlinedPrimary>
           <div style={{ width: 10 }} />
-          <ButtonPrimary width="184px" onClick={handleClear}>
+          <ButtonPrimary width="186px" onClick={handleClear}>
             Show All
           </ButtonPrimary>
         </RowFixed>
