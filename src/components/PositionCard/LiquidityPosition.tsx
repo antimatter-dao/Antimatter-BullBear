@@ -164,7 +164,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
 
           <ExternalLink
             style={{ width: '100%', textAlign: 'center', color: theme.text1 }}
-            href={`https://uniswap.info/account/${account}`}
+            href={`https://info.uniswap.org/#/account/${account}`}
           >
             View accrued fees and analytics
           </ExternalLink>
