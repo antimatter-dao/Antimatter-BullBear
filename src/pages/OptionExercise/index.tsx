@@ -5,7 +5,8 @@ import { Token } from '@uniswap/sdk'
 import { ButtonPrimary } from 'components/Button'
 import { OptionCard, Search, OptionInterface, AlternativeDisplay, ContentWrapper } from '../OptionTrade'
 import { useActiveWeb3React } from 'hooks'
-import { getUnderlyingList, getOtionTypeList } from 'utils/option/httpRequests'
+import { getUnderlyingList, getOptionTypeList } from 'utils/option/httpRequests'
+import { ZERO_ADDRESS } from 'constants/index'
 
 export enum Type {
   CALL = 'call',
@@ -26,17 +27,22 @@ export default function OptionExercise() {
 
   const handleSearch = useCallback(
     body => {
-      const query = Object.keys(body).reduce((acc, key, idx) => `${acc}${idx === 0 ? '' : '&'}${key}=${body[key]}`, '')
+      const query = Object.keys(body).reduce((acc, key, idx) => {
+        if (key === 'underlying' && body.underlying === ZERO_ADDRESS) {
+          return acc
+        }
+        return `${acc}${idx === 0 ? '' : '&'}${key}=${body[key]}`
+      }, '')
       const handleFilteredList = (list: OptionInterface[]) => setFilteredList(list)
 
-      getOtionTypeList(handleFilteredList, chainId, query)
+      getOptionTypeList(handleFilteredList, chainId, query)
     },
     [chainId]
   )
 
   useEffect(() => {
     getUnderlyingList((list: Token[] | undefined) => setTokenList(list), chainId)
-    getOtionTypeList(list => setOptionList(list), chainId)
+    getOptionTypeList(list => setOptionList(list), chainId)
   }, [chainId])
 
   useEffect(() => {

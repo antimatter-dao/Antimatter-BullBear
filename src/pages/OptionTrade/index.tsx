@@ -12,7 +12,7 @@ import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import { AutoColumn } from 'components/Column'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import { currencyNameHelper } from 'utils/marketStrategyUtils'
-import { USDT } from '../../constants'
+import { USDT, ZERO_ADDRESS } from '../../constants'
 import { ButtonSelectRange } from 'components/Button/ButtonSelectRange'
 import { ButtonSelectNumericalInput } from 'components/Button/ButtonSelectNumericalInput'
 import OptionTradeAction from './OptionTradeAction'
@@ -43,6 +43,9 @@ export interface OptionInterface {
   }
   optionType?: string
   underlyingAddress: string
+  underlyingDecimals?: string
+  currencyAddress?: string
+  currencyDecimals?: string
   type?: Type
   underlyingSymbol: string | undefined
   details: {
@@ -84,7 +87,8 @@ export const ContentWrapper = styled.div`
   grid-template-columns: repeat(auto-fill, 280px);
   padding: 52px 120px;
   justify-content: center;
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 30px`}
+  ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
+  ${({ theme }) => theme.mediaWidth.upToSmall`padding: 10px`}
 `
 
 const StyledSearch = styled.div`
@@ -134,52 +138,6 @@ export const StyledExternalLink = styled(ExternalLink)`
   }
 `
 
-export function filterOption({
-  // chainId,
-  optionList,
-  // assetTypeQuery,
-  optionTypeQuery
-}: // rangeQuery,
-// optionIdQuery
-{
-  // chainId: ChainId | undefined
-  optionList: OptionInterface[] | undefined
-  // assetTypeQuery: Currency | undefined
-  optionTypeQuery: string
-  // optionIdQuery: string
-  // rangeQuery: Range
-}) {
-  if (!optionList) return undefined
-  let list = optionList
-  // if (optionIdQuery) {
-  //   return list.filter(option => `${option.optionTypeId}` === optionIdQuery.trim())
-  // }
-  // if (assetTypeQuery !== undefined) {
-  //   const id = currencyId(assetTypeQuery)
-  //   list = list?.filter(option => {
-  //     const underlyingAddress =
-  //       chainId && WETH[chainId] && option.underlyingAddress === currencyId(WETH[chainId])
-  //         ? currencyId(ETHER)
-  //         : option.underlyingAddress
-  //     return underlyingAddress === id || option.address === id
-  //   })
-  // }
-  if (optionTypeQuery !== '') {
-    if (optionTypeQuery !== ALL.id) {
-      list = list?.filter(option => option.type === optionTypeQuery)
-    }
-  }
-  // if (!(rangeQuery.floor === undefined || rangeQuery.cap === undefined)) {
-  //   list = list?.filter(({ range: { floor, cap } }) => {
-  //     if (!floor || !cap) return true
-  //     if (rangeQuery.floor && +rangeQuery.floor > +floor) return false
-  //     if (rangeQuery.cap && +rangeQuery.cap < +cap) return false
-  //     return true
-  //   })
-  // }
-  return list
-}
-
 export default function OptionTrade({
   match: {
     params: { addressA }
@@ -200,7 +158,12 @@ export default function OptionTrade({
   }, [])
   const handleSearch = useCallback(
     body => {
-      const query = Object.keys(body).reduce((acc, key, idx) => `${acc}${idx === 0 ? '' : '&'}${key}=${body[key]}`, '')
+      const query = Object.keys(body).reduce((acc, key, idx) => {
+        if (key === 'underlying' && body.underlying === ZERO_ADDRESS) {
+          return acc
+        }
+        return `${acc}${idx === 0 ? '' : '&'}${key}=${body[key]}`
+      }, '')
       const handleFilteredList = (list: OptionInterface[]) => setFilteredList(list)
 
       if (optionTypeQuery === Type.CALL) {
@@ -369,13 +332,14 @@ export function Search({
   }, [assetTypeQuery, onSearch, optionIdQuery, rangeQuery.cap, rangeQuery.floor])
   const handleClear = useCallback(() => {
     clearSearch && clearSearch()
+    onSearch({})
     setAssetTypeQuery(undefined)
     setOptionIdQuery('')
     setRangeQuery({
       floor: undefined,
       cap: undefined
     })
-  }, [clearSearch])
+  }, [clearSearch, onSearch])
 
   const theme = useTheme()
 

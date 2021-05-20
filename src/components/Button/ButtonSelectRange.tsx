@@ -1,12 +1,12 @@
 import React, { useMemo, useRef, useState, useCallback } from 'react'
 import { ButtonProps } from 'rebass/styled-components'
 import styled from 'styled-components'
-// import { ButtonOutlined } from '.'
+import { ButtonOutlined } from '.'
 import { RowBetween } from '../Row'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import NumberInputPanel from 'components/NumberInputPanel'
 import { ButtonSelectStyle, StyledDropDown } from './ButtonSelect'
-import { Minus } from 'react-feather'
+import { Minus, X } from 'react-feather'
 import useTheme from 'hooks/useTheme'
 import { Range } from 'pages/OptionTrade'
 
@@ -75,8 +75,18 @@ export function ButtonSelectRange({
   // const handleFloorInput = useCallback(val => setFloor(val), [])
   // const handleCapInput = useCallback(val => setCap(val), [])
 
-  const handleFloorInput = useCallback(val => onSetRange((prev: Range) => ({ ...prev, floor: val })), [onSetRange])
-  const handleCapInput = useCallback(val => onSetRange((prev: Range) => ({ ...prev, cap: val })), [onSetRange])
+  const handleClick = () => {
+    onSetRange({ floor: '', cap: '' })
+  }
+
+  const handleFloorInput = useCallback(
+    val => onSetRange((prev: Range) => ({ ...prev, floor: val ? parseInt(val) + '' : '' })),
+    [onSetRange]
+  )
+  const handleCapInput = useCallback(
+    val => onSetRange((prev: Range) => ({ ...prev, cap: val ? parseInt(val) + '' : '' })),
+    [onSetRange]
+  )
   return (
     <div style={{ position: 'relative', marginRight: ' 20px', width: width }}>
       <ButtonSelectStyle
@@ -94,7 +104,8 @@ export function ButtonSelectRange({
 
       <RangeInputWrapper isOpen={isOpen} ref={node as any} width="372px">
         <NumberInputPanel
-          label="From($)"
+          intOnly
+          label="Price floor($)"
           value={rangeFloor ?? ''}
           onUserInput={handleFloorInput}
           showMaxButton={false}
@@ -103,7 +114,8 @@ export function ButtonSelectRange({
         />
         <Minus size={25} color={theme.text3} />
         <NumberInputPanel
-          label="To($)"
+          intOnly
+          label="Price ceiling($)"
           value={rangeCap ?? ''}
           onUserInput={handleCapInput}
           showMaxButton={false}
@@ -111,9 +123,9 @@ export function ButtonSelectRange({
           hideBalance={true}
         />
 
-        {/* <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
+        <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
           <X size={60} color={theme.text3} />
-        </ButtonOutlined> */}
+        </ButtonOutlined>
       </RangeInputWrapper>
     </div>
   )

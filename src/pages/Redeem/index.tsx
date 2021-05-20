@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState, useMemo } from 'react'
+import React, { useCallback, useContext, useState, useMemo, useEffect } from 'react'
 import { Plus } from 'react-feather'
 import { RouteComponentProps } from 'react-router'
 import { ChainId, ETHER, Token, WETH } from '@uniswap/sdk'
@@ -19,7 +19,7 @@ import { Wrapper } from '../Pool/styleds'
 import { ConfirmRedeemModalBottom } from './ConfirmRedeemModalBottom'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { useMarketCurrency } from '../../hooks/Tokens'
-import { useAllOptionTypes, useDerivedStrategyInfo } from '../../state/market/hooks'
+import { useDerivedStrategyInfo, OptionTypeData } from '../../state/market/hooks'
 import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
 import { TypeRadioButton, TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
@@ -31,6 +31,7 @@ import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback'
 import { Dots } from 'components/swap/styleds'
 import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
 import { parsePrice } from 'utils/option/utils'
+import { getSingleOptionType } from 'utils/option/httpRequests'
 
 export default function Redeem({
   match: {
@@ -44,20 +45,22 @@ export default function Redeem({
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string>('')
+  const [selectedOptionType, setselectedOptionType] = useState<OptionTypeData | undefined>(undefined)
 
   const antimatterContract = useAntimatterContract()
-  const optionTypes = useAllOptionTypes()
   const { account, chainId, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
   const expertMode = useIsExpertMode()
   const addTransaction = useTransactionAdder()
 
+  useEffect(() => getSingleOptionType(data => setselectedOptionType(data), chainId, optionTypeIndex), [
+    chainId,
+    optionTypeIndex
+  ])
+
   const isCallToken = useMemo(() => tokenType === TOKEN_TYPES.call, [tokenType])
-  const selectedOptionType = useMemo(() => {
-    if (!optionTypes || !optionTypeIndex) return undefined
-    return optionTypes?.[parseInt(optionTypeIndex)]
-  }, [optionTypes, optionTypeIndex])
+
   const currencyA = useMarketCurrency(selectedOptionType?.underlying)
   const currencyB = useMarketCurrency(selectedOptionType?.currency)
 

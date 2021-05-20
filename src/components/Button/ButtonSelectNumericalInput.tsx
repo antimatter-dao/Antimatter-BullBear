@@ -1,13 +1,13 @@
 import React, { useMemo, useRef, useState, useCallback } from 'react'
 import { ButtonProps } from 'rebass/styled-components'
 import styled from 'styled-components'
-// import { ButtonOutlined } from '.'
+import { ButtonOutlined } from '.'
 import { RowBetween } from '../Row'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import NumberInputPanel from 'components/NumberInputPanel'
 import { ButtonSelectStyle, StyledDropDown } from './ButtonSelect'
-// import { X } from 'react-feather'
-// import useTheme from 'hooks/useTheme'
+import { X } from 'react-feather'
+import useTheme from 'hooks/useTheme'
 
 const RangeInputWrapper = styled.div<{ isOpen: boolean; width?: string }>`
   display: ${({ isOpen }) => (isOpen ? ' grid' : 'none')};
@@ -48,7 +48,7 @@ export function ButtonSelectNumericalInput({
   const node = useRef<HTMLDivElement>()
   const [isOpen, setIsOpen] = useState(false)
 
-  // const theme = useTheme()
+  const theme = useTheme()
 
   const handleClose = useCallback(() => {
     setIsOpen(false)
@@ -68,9 +68,12 @@ export function ButtonSelectNumericalInput({
   //   handleClose()
   //   setVal('')
   // }
+  const handleClick = () => {
+    onSetValue('')
+  }
 
   //const handleValInput = useCallback(val => (intOnly ? setVal(parseInt(val) + '') : setVal(val)), [intOnly])
-  const handleValInput = useCallback(val => (intOnly ? onSetValue(parseInt(val) + '') : onSetValue(val)), [
+  const handleValInput = useCallback(val => (intOnly ? onSetValue(val ? parseInt(val) + '' : '') : onSetValue(val)), [
     intOnly,
     onSetValue
   ])
@@ -97,10 +100,11 @@ export function ButtonSelectNumericalInput({
           showMaxButton={false}
           id="cap"
           hideBalance={true}
+          intOnly={true}
         />
-        {/* <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
+        <ButtonOutlined onClick={handleClick} width="48px" style={{ height: '48px', borderRadius: 14 }}>
           <X size={60} color={theme.text3} />
-        </ButtonOutlined> */}
+        </ButtonOutlined>
       </RangeInputWrapper>
     </div>
   )
