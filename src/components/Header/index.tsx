@@ -94,6 +94,8 @@ const HeaderFrame = styled.div`
   justify-content: space-between;
   flex-direction: row;
   width: 100%;
+  max-width: 1280px;
+  margin: auto;
   top: 0;
   position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.text5};

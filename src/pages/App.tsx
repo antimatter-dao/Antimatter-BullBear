@@ -55,6 +55,7 @@ const ContentWrapper = styled.div`
   width: 100%;
   max-height: 100vh;
   overflow: auto;
+  align-items: center;
 `
 
 const HeaderWrapper = styled.div`

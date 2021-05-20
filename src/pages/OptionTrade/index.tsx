@@ -82,21 +82,25 @@ const Wrapper = styled.div`
 `
 
 export const ContentWrapper = styled.div`
+  max-width: 1280px;
+  margin: auto;
   display: grid;
   grid-gap: 24px;
   grid-template-columns: repeat(auto-fill, 280px);
-  padding: 52px 120px;
+  padding: 52px 0px;
   justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
   ${({ theme }) => theme.mediaWidth.upToSmall`padding: 10px`}
 `
 
 const StyledSearch = styled.div`
+  max-width: 1280px;
+  margin: auto;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 23px;
-  padding-left: 50px
+  padding-left: 50px;
   display: flex;
-  flex-wrap: nowrap
+  flex-wrap: nowrap;
   & > * {
     margin-bottom: 8px;
   }
