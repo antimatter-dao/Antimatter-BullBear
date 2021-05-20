@@ -5,7 +5,7 @@ import { Currency, Token, JSBI } from '@uniswap/sdk'
 import ButtonSelect from 'components/Button/ButtonSelect'
 import AppBody from 'pages/AppBody'
 import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
-import { CustomLightSpinner, ExternalLink, TYPE } from 'theme'
+import { AnimatedImg, AnimatedWrapper, ExternalLink, TYPE } from 'theme'
 import { RowBetween, RowFixed } from 'components/Row'
 import { OptionIcon } from 'components/Icons'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
@@ -20,7 +20,7 @@ import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { currencyId } from 'utils/currencyId'
-import Loader from 'assets/svg/gray_loader.svg'
+import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { useUSDTPrice } from 'utils/useUSDCPrice'
 import { useActiveWeb3React } from 'hooks'
 import { XCircle } from 'react-feather'
@@ -453,7 +453,13 @@ export function AlternativeDisplay({
           <TYPE.body>Please change your search query and try again</TYPE.body>
         </AutoColumn>
       )}
-      {filteredList === undefined && <CustomLightSpinner src={Loader} size="100px" style={{ margin: '0 auto' }} />}
+      {filteredList === undefined && (
+        <AnimatedWrapper>
+          <AnimatedImg>
+            <img src={Loader} alt="loading-icon" />
+          </AnimatedImg>
+        </AnimatedWrapper>
+      )}
     </AutoColumn>
   )
 }
