@@ -87,7 +87,7 @@ export const ContentWrapper = styled.div`
   display: grid;
   grid-gap: 24px;
   grid-template-columns: repeat(auto-fill, 280px);
-  padding: 52px 0px;
+  padding: 52px 0;
   justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
   ${({ theme }) => theme.mediaWidth.upToSmall`padding: 10px`}
