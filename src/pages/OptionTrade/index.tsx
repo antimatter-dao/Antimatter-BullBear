@@ -32,6 +32,7 @@ import {
   getSingleOtionList,
   SearchQuery
 } from 'utils/option/httpRequests'
+import { useNetwork } from 'hooks/useNetwork'
 
 export interface OptionInterface {
   optionId: string | undefined
@@ -82,6 +83,7 @@ const Wrapper = styled.div`
 `
 
 export const ContentWrapper = styled.div`
+  position: relative;
   max-width: 1280px;
   margin: auto;
   display: grid;
@@ -162,6 +164,7 @@ export default function OptionTrade({
   const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
   const [optionTypeQuery, setOptionTypeQuery] = useState('')
   const history = useHistory()
+  const { httpHandlingFunctions, networkErrorModal, networkPendingSpinner, wrapperId } = useNetwork()
 
   const handleSelectOptionType = useCallback((id: string) => setOptionTypeQuery(id), [])
   const handleSetTokenList = useCallback((list: Token[] | undefined) => setTokenList(list), [])
@@ -180,16 +183,16 @@ export default function OptionTrade({
       const handleFilteredList = (list: OptionInterface[]) => setFilteredList(list)
 
       if (optionTypeQuery === Type.CALL) {
-        getCallOptionList(handleFilteredList, chainId, query)
+        getCallOptionList(httpHandlingFunctions, handleFilteredList, chainId, query)
         return
       }
       if (optionTypeQuery === Type.PUT) {
-        getPutOptionList(handleFilteredList, chainId, query)
+        getPutOptionList(httpHandlingFunctions, handleFilteredList, chainId, query)
         return
       }
-      getSingleOtionList(handleFilteredList, chainId, query)
+      getSingleOtionList(httpHandlingFunctions, handleFilteredList, chainId, query)
     },
-    [chainId, optionTypeQuery]
+    [chainId, httpHandlingFunctions, optionTypeQuery]
   )
 
   const option = useMemo(() => {
@@ -200,9 +203,9 @@ export default function OptionTrade({
   }, [addressA, optionList])
 
   useEffect(() => {
-    getUnderlyingList(handleSetTokenList, chainId)
-    getSingleOtionList(handleSetOptionList, chainId)
-  }, [chainId, handleSetTokenList, handleSetOptionList])
+    getUnderlyingList(handleSetTokenList, chainId, httpHandlingFunctions.errorFunction)
+    getSingleOtionList(httpHandlingFunctions, handleSetOptionList, chainId)
+  }, [chainId, handleSetTokenList, handleSetOptionList, httpHandlingFunctions.errorFunction, httpHandlingFunctions])
 
   useEffect(() => {
     if (optionList) {
@@ -212,6 +215,7 @@ export default function OptionTrade({
 
   return (
     <>
+      {networkErrorModal}
       {addressA ? (
         <OptionTradeAction addressA={addressA} option={option} />
       ) : (
@@ -224,7 +228,8 @@ export default function OptionTrade({
             tokenList={tokenList}
           />
           {filteredList && (
-            <ContentWrapper>
+            <ContentWrapper id={wrapperId}>
+              {networkPendingSpinner}
               {filteredList.map((option, idx) => (
                 <OptionCard
                   option={option}

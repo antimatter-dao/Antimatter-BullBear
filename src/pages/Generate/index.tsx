@@ -34,6 +34,7 @@ import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { isNegative, parseBalance } from '../../utils/marketStrategyUtils'
 import { parsePrice } from 'utils/option/utils'
 import { getSingleOptionType } from 'utils/option/httpRequests'
+import { useNetwork } from 'hooks/useNetwork'
 
 export default function Generate({
   match: {
@@ -49,16 +50,17 @@ export default function Generate({
   const theme = useContext(ThemeContext)
 
   const { account, chainId, library } = useActiveWeb3React()
+  const { httpHandlingFunctions, networkErrorModal } = useNetwork()
   // const optionTypes = useAllOptionTypes()
   // const optionType = optionTypeIndex ?? ''
   // const selectedOptionType = useMemo(() => {
   //   if (!optionTypes || !optionType) return undefined
   //   return optionTypes?.[parseInt(optionType)]
   // }, [optionTypes, optionType])
-  useEffect(() => getSingleOptionType(data => setselectedOptionType(data), chainId, optionTypeIndex), [
-    chainId,
-    optionTypeIndex
-  ])
+  useEffect(
+    () => getSingleOptionType(httpHandlingFunctions, data => setselectedOptionType(data), chainId, optionTypeIndex),
+    [chainId, httpHandlingFunctions, optionTypeIndex]
+  )
   const currencyA = useMarketCurrency(selectedOptionType?.underlying)
   const currencyB = useMarketCurrency(selectedOptionType?.currency)
   const antimatterContract = useAntimatterContract()
@@ -217,9 +219,10 @@ export default function Generate({
     }
     setTxHash('')
   }, [txHash])
-  console.log(999, selectedOptionType)
+
   return (
     <>
+      {networkErrorModal}
       <AppBody>
         <MarketStrategyTabs generation />
         <Wrapper>

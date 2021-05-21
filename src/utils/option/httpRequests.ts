@@ -17,10 +17,20 @@ export interface SearchQuery {
   underlying?: string
 }
 
+export interface HttpHandlingFunctions {
+  errorFunction: () => void
+  pendingFunction: () => void
+  pendingCompleteFunction: () => void
+}
+
 const domain = 'https://testapi.antimatter.finance'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
 
-export function getUnderlyingList(setList: (list: Token[] | undefined) => void, chainId: ChainId | undefined) {
+export function getUnderlyingList(
+  setList: (list: Token[] | undefined) => void,
+  chainId: ChainId | undefined,
+  errorFunction: () => void
+) {
   const request = new Request(domain + '/app/getUnderlyingList', {
     method: 'GET',
     headers
@@ -31,6 +41,7 @@ export function getUnderlyingList(setList: (list: Token[] | undefined) => void, 
       if (response.status === 200) {
         return response.json()
       } else {
+        errorFunction()
         throw new Error('server Error')
       }
     })
@@ -53,36 +64,48 @@ export function getUnderlyingList(setList: (list: Token[] | undefined) => void, 
       }
     })
     .catch(error => {
+      errorFunction()
       console.error(error)
     })
 }
 
-export function getPutOptionList(setList: (list: OptionInterface[]) => void, chainId: ChainId | undefined, query = '') {
+export function getPutOptionList(
+  { errorFunction, pendingFunction, pendingCompleteFunction }: HttpHandlingFunctions,
+  setList: (list: OptionInterface[]) => void,
+  chainId: ChainId | undefined,
+  query = ''
+) {
   if (!chainId) return
   const request = new Request(`${domain}/app/getPutCreateOptionList?chainId=${chainId}${query ? '&' + query : ''}`, {
     method: 'POST',
     body: '',
     headers
   })
-
+  pendingFunction()
   fetch(request)
     .then(response => {
       if (response.status === 200) {
         return response.json()
       } else {
+        errorFunction()
+        pendingCompleteFunction()
         throw new Error('server error')
       }
     })
     .then(response => {
       const list = formatPutOption(response.data)
       setList(list)
+      pendingCompleteFunction()
     })
     .catch(error => {
+      errorFunction()
+      pendingCompleteFunction()
       console.error(error)
     })
 }
 
 export function getCallOptionList(
+  { errorFunction, pendingFunction, pendingCompleteFunction }: HttpHandlingFunctions,
   setList: (list: OptionInterface[]) => void,
   chainId: ChainId | undefined,
   query = ''
@@ -93,12 +116,14 @@ export function getCallOptionList(
     body: '',
     headers
   })
-
+  pendingFunction()
   fetch(request)
     .then(response => {
       if (response.status === 200) {
         return response.json()
       } else {
+        pendingCompleteFunction()
+        errorFunction()
         throw new Error('server error')
       }
     })
@@ -106,13 +131,17 @@ export function getCallOptionList(
       console.debug(response)
       const list = formatCallOption(response.data)
       setList(list)
+      pendingCompleteFunction()
     })
     .catch(error => {
+      pendingCompleteFunction()
+      errorFunction()
       console.error(error)
     })
 }
 
 export function getSingleOtionList(
+  { errorFunction, pendingFunction, pendingCompleteFunction }: HttpHandlingFunctions,
   setList: (list: OptionInterface[]) => void,
   chainId: ChainId | undefined,
   query = ''
@@ -123,26 +152,32 @@ export function getSingleOtionList(
     body: '',
     headers
   })
+  pendingFunction()
 
   fetch(request)
     .then(response => {
       if (response.status === 200) {
         return response.json()
       } else {
+        pendingCompleteFunction()
+        errorFunction()
         throw new Error('server error')
       }
     })
     .then(response => {
-      console.debug(response)
-      const list = formatAndSplitOption(response.data.records)
+      const list = formatAndSplitOption(response.data.list)
       setList(list)
+      pendingCompleteFunction()
     })
     .catch(error => {
+      pendingCompleteFunction()
+      errorFunction()
       console.error(error)
     })
 }
 
 export function getOptionTypeList(
+  { errorFunction, pendingFunction, pendingCompleteFunction }: HttpHandlingFunctions,
   setList: (list: OptionInterface[]) => void,
   chainId: ChainId | undefined,
   query = ''
@@ -154,24 +189,32 @@ export function getOptionTypeList(
     headers
   })
 
+  pendingFunction()
+
   fetch(request)
     .then(response => {
       if (response.status === 200) {
         return response.json()
       } else {
+        pendingCompleteFunction()
+        errorFunction()
         throw new Error('server error')
       }
     })
     .then(response => {
-      const list = formatOptionType(response.data.records)
+      const list = formatOptionType(response.data.list)
       setList(list)
+      pendingCompleteFunction()
     })
     .catch(error => {
+      pendingCompleteFunction()
+      errorFunction()
       console.error(error)
     })
 }
 
 export function getSingleOptionType(
+  { errorFunction, pendingFunction, pendingCompleteFunction }: HttpHandlingFunctions,
   setData: (list: OptionTypeData) => void,
   chainId: ChainId | undefined,
   id: string | undefined
@@ -182,19 +225,25 @@ export function getSingleOptionType(
     body: '',
     headers
   })
+  pendingFunction()
 
   fetch(request)
     .then(response => {
       if (response.status === 200) {
         return response.json()
       } else {
+        pendingCompleteFunction()
+        errorFunction()
         throw new Error('server error')
       }
     })
     .then(response => {
-      response.data.records?.[0] && setData(response.data.records[0])
+      response.data.list?.[0] && setData(response.data.list[0])
+      pendingCompleteFunction()
     })
     .catch(error => {
+      pendingCompleteFunction()
+      errorFunction()
       console.error(error)
     })
 }

@@ -7,6 +7,7 @@ import { OptionCard, Search, OptionInterface, AlternativeDisplay, ContentWrapper
 import { useActiveWeb3React } from 'hooks'
 import { getUnderlyingList, getOptionTypeList } from 'utils/option/httpRequests'
 import { ZERO_ADDRESS } from 'constants/index'
+import { useNetwork } from 'hooks/useNetwork'
 
 export enum Type {
   CALL = 'call',
@@ -24,6 +25,7 @@ export default function OptionExercise() {
   const [optionList, setOptionList] = useState<OptionInterface[] | undefined>(undefined)
   const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
   const history = useHistory()
+  const { httpHandlingFunctions, networkErrorModal, networkPendingSpinner } = useNetwork()
 
   const handleSearch = useCallback(
     body => {
@@ -35,15 +37,15 @@ export default function OptionExercise() {
       }, '')
       const handleFilteredList = (list: OptionInterface[]) => setFilteredList(list)
 
-      getOptionTypeList(handleFilteredList, chainId, query)
+      getOptionTypeList(httpHandlingFunctions, handleFilteredList, chainId, query)
     },
-    [chainId]
+    [chainId, httpHandlingFunctions]
   )
 
   useEffect(() => {
-    getUnderlyingList((list: Token[] | undefined) => setTokenList(list), chainId)
-    getOptionTypeList(list => setOptionList(list), chainId)
-  }, [chainId])
+    getUnderlyingList((list: Token[] | undefined) => setTokenList(list), chainId, httpHandlingFunctions.errorFunction)
+    getOptionTypeList(httpHandlingFunctions, list => setOptionList(list), chainId)
+  }, [chainId, httpHandlingFunctions])
 
   useEffect(() => {
     if (optionList) {
@@ -52,30 +54,37 @@ export default function OptionExercise() {
   }, [optionList])
 
   return (
-    <Wrapper id="optionExercise">
-      <Search onSearch={handleSearch} tokenList={tokenList} />
-      {filteredList && (
-        <ContentWrapper>
-          {filteredList.map(option => (
-            <OptionCard
-              option={option}
-              key={option.title}
-              buttons={
-                <>
-                  <ButtonPrimary style={{ padding: 8 }} onClick={() => history.push(`/generate/${option.optionType}`)}>
-                    Generate
-                  </ButtonPrimary>
-                  <div style={{ width: 10 }} />
-                  <ButtonPrimary style={{ padding: 8 }} onClick={() => history.push(`/redeem/${option.optionType}`)}>
-                    Redeem
-                  </ButtonPrimary>
-                </>
-              }
-            />
-          ))}
-        </ContentWrapper>
-      )}
-      <AlternativeDisplay optionList={optionList} filteredList={filteredList} />
-    </Wrapper>
+    <>
+      {networkErrorModal}
+      <Wrapper id="optionExercise">
+        <Search onSearch={handleSearch} tokenList={tokenList} />
+        {filteredList && (
+          <ContentWrapper>
+            {networkPendingSpinner}
+            {filteredList.map(option => (
+              <OptionCard
+                option={option}
+                key={option.title}
+                buttons={
+                  <>
+                    <ButtonPrimary
+                      style={{ padding: 8 }}
+                      onClick={() => history.push(`/generate/${option.optionType}`)}
+                    >
+                      Generate
+                    </ButtonPrimary>
+                    <div style={{ width: 10 }} />
+                    <ButtonPrimary style={{ padding: 8 }} onClick={() => history.push(`/redeem/${option.optionType}`)}>
+                      Redeem
+                    </ButtonPrimary>
+                  </>
+                }
+              />
+            ))}
+          </ContentWrapper>
+        )}
+        <AlternativeDisplay optionList={optionList} filteredList={filteredList} />
+      </Wrapper>
+    </>
   )
 }

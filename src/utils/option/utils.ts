@@ -11,6 +11,9 @@ export const parsePrice = (price: string, decimals: string) =>
   })
 
 export function formatCallOption(allOptionType: OptionTypeData[]) {
+  if (!Array.isArray(allOptionType)) {
+    return []
+  }
   return allOptionType.reduce((acc: OptionInterface[], item: OptionTypeData): OptionInterface[] => {
     const {
       id,
@@ -49,6 +52,9 @@ export function formatCallOption(allOptionType: OptionTypeData[]) {
 }
 
 export function formatPutOption(allOptionType: OptionTypeData[]) {
+  if (!Array.isArray(allOptionType)) {
+    return []
+  }
   return allOptionType.reduce((acc: OptionInterface[], item: OptionTypeData): OptionInterface[] => {
     const {
       id,
@@ -89,6 +95,9 @@ export function formatPutOption(allOptionType: OptionTypeData[]) {
 }
 
 export function formatAndSplitOption(allOptionType: OptionTypeData[]) {
+  if (!Array.isArray(allOptionType)) {
+    return []
+  }
   return allOptionType.reduce((acc: OptionInterface[], item: OptionTypeData): OptionInterface[] => {
     const {
       id,
@@ -152,6 +161,9 @@ export function formatAndSplitOption(allOptionType: OptionTypeData[]) {
 }
 
 export function formatOptionType(allOptionType: OptionTypeData[]) {
+  if (!Array.isArray(allOptionType)) {
+    return []
+  }
   return allOptionType.reduce((acc: OptionInterface[], item: OptionTypeData): OptionInterface[] => {
     const {
       currencyDecimals = '6',
