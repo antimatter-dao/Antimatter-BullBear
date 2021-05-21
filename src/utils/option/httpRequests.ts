@@ -130,6 +130,7 @@ export function getCallOptionList(
     .then(response => {
       console.debug(response)
       const list = formatCallOption(response.data)
+      console.debug('getCallOptionList', list)
       setList(list)
       pendingCompleteFunction()
     })
@@ -166,6 +167,7 @@ export function getSingleOtionList(
     })
     .then(response => {
       const list = formatAndSplitOption(response.data.list)
+      console.debug('getSingleOtionList', list)
       setList(list)
       pendingCompleteFunction()
     })

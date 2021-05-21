@@ -42,6 +42,10 @@ export default function OptionExercise() {
     [chainId, httpHandlingFunctions]
   )
 
+  const handleClearSearch = useCallback(() => {
+    setFilteredList(optionList)
+  }, [optionList])
+
   useEffect(() => {
     getUnderlyingList((list: Token[] | undefined) => setTokenList(list), chainId, httpHandlingFunctions.errorFunction)
     getOptionTypeList(httpHandlingFunctions, list => setOptionList(list), chainId)
@@ -57,7 +61,7 @@ export default function OptionExercise() {
     <>
       {networkErrorModal}
       <Wrapper id="optionExercise">
-        <Search onSearch={handleSearch} tokenList={tokenList} />
+        <Search onSearch={handleSearch} tokenList={tokenList} onClear={handleClearSearch} />
         {filteredList && (
           <ContentWrapper>
             {networkPendingSpinner}
