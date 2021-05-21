@@ -32,6 +32,7 @@ import { Dots } from 'components/swap/styleds'
 import { ANTIMATTER_ADDRESS, ZERO_ADDRESS } from '../../constants'
 import { parsePrice } from 'utils/option/utils'
 import { getSingleOptionType } from 'utils/option/httpRequests'
+import { useNetwork } from 'hooks/useNetwork'
 
 export default function Redeem({
   match: {
@@ -53,11 +54,12 @@ export default function Redeem({
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
   const expertMode = useIsExpertMode()
   const addTransaction = useTransactionAdder()
+  const { httpHandlingFunctions, networkErrorModal } = useNetwork()
 
-  useEffect(() => getSingleOptionType(data => setselectedOptionType(data), chainId, optionTypeIndex), [
-    chainId,
-    optionTypeIndex
-  ])
+  useEffect(
+    () => getSingleOptionType(httpHandlingFunctions, data => setselectedOptionType(data), chainId, optionTypeIndex),
+    [chainId, optionTypeIndex, httpHandlingFunctions]
+  )
 
   const isCallToken = useMemo(() => tokenType === TOKEN_TYPES.call, [tokenType])
 
@@ -218,6 +220,7 @@ export default function Redeem({
 
   return (
     <>
+      {networkErrorModal}
       <AppBody>
         <MarketStrategyTabs generation={false} />
         <Wrapper>

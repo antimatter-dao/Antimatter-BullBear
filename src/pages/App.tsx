@@ -37,7 +37,7 @@ import Info from './Info'
 import WelcomeSlider from 'components/WelcomeSlider'
 import FAQ from './FAQ'
 import OptionTrade from './OptionTrade'
-// import OptionCreation from './OptionCreation'
+import OptionCreation from './OptionCreation'
 import OptionExercise from './OptionExercise'
 // import WarningModal from 'components/Modal/WarningModal'
 
@@ -116,7 +116,7 @@ export default function App() {
             <Web3ReactManager>
               <Switch>
                 {/* <Route exact strict path="/option_trading" component={Swap} /> */}
-                <Route exact strict path="/option_creation" component={ComingSoon} />
+                <Route exact strict path="/option_creation" component={OptionCreation} />
                 <Route exact strict path="/option_trading" component={OptionTrade} />
                 <Route exact strict path="/option_trading/:addressA/:addressB" component={OptionTrade} />
                 <Route exact strict path="/option_exercise" component={OptionExercise} />

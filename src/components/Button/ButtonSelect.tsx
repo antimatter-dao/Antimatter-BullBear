@@ -43,7 +43,7 @@ export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; wi
     }
     opacity: 100%;
     cursor: auto;
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.text3};
   }
 `
 const OptionWrapper = styled.div<{ isOpen: boolean; width?: string }>`
