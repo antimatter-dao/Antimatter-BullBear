@@ -6,7 +6,7 @@ import { formatCallOption, formatPutOption, formatAndSplitOption, formatOptionTy
 
 export interface Underlying {
   underlying: string
-  underlyingDecimals: number
+  underlyingDecimals: string
   underlyingSymbol: string
 }
 
@@ -42,7 +42,9 @@ export function getUnderlyingList(setList: (list: Token[] | undefined) => void, 
           (acc: Token[], { underlying, underlyingDecimals, underlyingSymbol }: Underlying) => {
             if (set.has(underlying)) return acc
             set.add(underlying)
-            acc.push(new Token(chainId, underlying, underlyingDecimals, underlyingSymbol))
+            acc.push(
+              new Token(chainId, underlying, underlyingDecimals ? parseInt(underlyingDecimals) : 18, underlyingSymbol)
+            )
             return acc
           },
           [All]

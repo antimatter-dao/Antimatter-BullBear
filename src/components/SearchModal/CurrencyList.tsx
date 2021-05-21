@@ -21,6 +21,7 @@ import { LightGreyCard } from 'components/Card'
 import TokenListLogo from '../../assets/svg/tokenlist.svg'
 import QuestionHelper from 'components/QuestionHelper'
 import useTheme from 'hooks/useTheme'
+import { ZERO_ADDRESS } from 'constants/index'
 
 function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
@@ -116,7 +117,7 @@ function CurrencyRow({
   const isOnSelectedList = isTokenOnList(selectedTokenList, currency)
   const customAdded = useIsUserAddedToken(currency)
   const balance = useCurrencyBalance(account ?? undefined, currency)
-
+  console.log(key)
   // only show add or remove buttons if not on selected list
   return (
     <MenuItem
@@ -137,7 +138,7 @@ function CurrencyRow({
       </Column>
       <TokenTags currency={currency} />
       <RowFixed style={{ justifySelf: 'flex-end' }}>
-        {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
+        {balance ? <Balance balance={balance} /> : account ? key === ZERO_ADDRESS ? null : <Loader /> : null}
       </RowFixed>
     </MenuItem>
   )

@@ -133,7 +133,15 @@ const Divider = styled.div`
 
 const TitleWrapper = styled(RowFixed)`
   flex-wrap: nowrap;
+  width: 100%;
 `
+const OptionId = styled(TYPE.smallGray)`
+  text-align: right;
+  width: 100%;
+  right: 0;
+  position: absolute;
+`
+
 export const StyledExternalLink = styled(ExternalLink)`
   text-decoration: none;
   font-size: 12px;
@@ -263,8 +271,9 @@ export function OptionCard({
               <CurrencyLogo currency={underlyingCurrency ?? undefined} size="28px" />
             )}
           </Circle>
-          <AutoColumn gap="5px">
-            <TYPE.smallGray>Option Id&nbsp;:&nbsp;{optionId}</TYPE.smallGray>
+          <AutoColumn gap="5px" style={{ width: '100%', position: 'relative' }}>
+            <OptionId>Option Id&nbsp;:&nbsp;{optionId}</OptionId>
+            <div style={{ height: 8 }}></div>
             <TYPE.mediumHeader
               fontSize={20}
               style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
@@ -283,7 +292,9 @@ export function OptionCard({
           {Object.keys(details).map(key => (
             <RowBetween key={key}>
               <TYPE.smallGray>{key}:</TYPE.smallGray>
-              <TYPE.subHeader style={{ textAlign: 'right' }}>
+              <TYPE.subHeader
+                style={{ textAlign: 'right', overflow: 'hidden', whiteSpace: 'pre-wrap', textOverflow: 'ellipsis' }}
+              >
                 {key === 'Market Price' ? (price ? `$${price.toFixed()}` : '-') : details[key as keyof typeof details]}
               </TYPE.subHeader>
             </RowBetween>

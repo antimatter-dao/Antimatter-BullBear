@@ -17,6 +17,7 @@ import { USDT } from '../../constants'
 import TransactionConfirmationModal, { ConfirmationModalContent } from 'components/TransactionConfirmationModal'
 import { OutlineCard, TranslucentCard } from 'components/Card'
 import { SubmittedView } from 'components/ModalViews'
+import { Dots } from 'components/swap/styleds'
 
 const InputWrapper = styled(RowBetween)`
   & > div {
@@ -134,7 +135,13 @@ export default function OptionCreation() {
           <AutoColumn gap="15px">
             <TYPE.body>1. Option underlying asset pair:</TYPE.body>
             <RowBetween>
-              <ButtonSelect width="46%" onClick={handleOpenAssetSearch} label="Asset to create option " marginRight="0">
+              <ButtonSelect
+                width="46%"
+                onClick={handleOpenAssetSearch}
+                label="Asset to create option "
+                marginRight="0"
+                disabled
+              >
                 <TYPE.body color={asset0 ? theme.text1 : theme.text3}>
                   <RowFixed>
                     {asset0 && <CurrencyLogo currency={asset0} size={'24px'} style={{ marginRight: 20 }} />}
@@ -151,6 +158,7 @@ export default function OptionCreation() {
                 selectedId={asset1Id}
                 onSelection={handleSelectAsset1}
                 options={asset1Options}
+                disabled
               />
             </RowBetween>
           </AutoColumn>
@@ -175,7 +183,9 @@ export default function OptionCreation() {
               />
             </InputWrapper>
           </AutoColumn>
-          <ButtonPrimary>Create</ButtonPrimary>
+          <ButtonPrimary disabled>
+            Coming Soon <Dots />
+          </ButtonPrimary>
         </AutoColumn>
       </AppBody>
     </>

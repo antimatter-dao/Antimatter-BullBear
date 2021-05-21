@@ -76,15 +76,15 @@ export function ButtonSelectRange({
   // const handleCapInput = useCallback(val => setCap(val), [])
 
   const handleClick = () => {
-    onSetRange({ floor: '', cap: '' })
+    onSetRange({ floor: undefined, cap: undefined })
   }
 
   const handleFloorInput = useCallback(
-    val => onSetRange((prev: Range) => ({ ...prev, floor: val ? parseInt(val) + '' : '' })),
+    val => onSetRange((prev: Range) => ({ ...prev, floor: val ? parseInt(val) + '' : undefined })),
     [onSetRange]
   )
   const handleCapInput = useCallback(
-    val => onSetRange((prev: Range) => ({ ...prev, cap: val ? parseInt(val) + '' : '' })),
+    val => onSetRange((prev: Range) => ({ ...prev, cap: val ? parseInt(val) + '' : undefined })),
     [onSetRange]
   )
   return (
