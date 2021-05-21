@@ -171,7 +171,8 @@ export default function OptionTrade({
   const handleSetOptionList = useCallback((list: OptionInterface[] | undefined) => setOptionList(list), [])
   const handleClearSearch = useCallback(() => {
     setOptionTypeQuery('')
-  }, [])
+    setFilteredList(optionList)
+  }, [optionList])
   const handleSearch = useCallback(
     body => {
       const query = Object.keys(body).reduce((acc, key, idx) => {
@@ -212,7 +213,7 @@ export default function OptionTrade({
       setFilteredList(optionList)
     }
   }, [optionList])
-
+  console.log(optionTypeQuery, filteredList)
   return (
     <>
       {networkErrorModal}
@@ -223,7 +224,7 @@ export default function OptionTrade({
           <Search
             optionTypeQuery={optionTypeQuery}
             onOptionType={handleSelectOptionType}
-            clearSearch={handleClearSearch}
+            onClear={handleClearSearch}
             onSearch={handleSearch}
             tokenList={tokenList}
           />
@@ -314,13 +315,13 @@ export function OptionCard({
 export function Search({
   onOptionType,
   optionTypeQuery,
-  clearSearch,
+  onClear,
   onSearch,
   tokenList
 }: {
   onOptionType?: (type: string) => void
   optionTypeQuery?: string
-  clearSearch?: () => void
+  onClear?: () => void
   onSearch: (query: SearchQuery) => void
   tokenList?: Token[]
 }) {
@@ -356,15 +357,14 @@ export function Search({
     onSearch(body)
   }, [assetTypeQuery, onSearch, optionIdQuery, rangeQuery.cap, rangeQuery.floor])
   const handleClear = useCallback(() => {
-    clearSearch && clearSearch()
-    onSearch({})
+    onClear && onClear()
     setAssetTypeQuery(undefined)
     setOptionIdQuery('')
     setRangeQuery({
       floor: undefined,
       cap: undefined
     })
-  }, [clearSearch, onSearch])
+  }, [onClear])
 
   const theme = useTheme()
 

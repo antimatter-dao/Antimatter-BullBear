@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
+// import { useTranslation } from 'react-i18next'
 import { Currency } from '@uniswap/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
@@ -14,7 +14,7 @@ const InputRow = styled.div<{ inputOnly: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   padding: 0 0.5rem 0 1rem;
-  width: ${({ inputOnly }) => (inputOnly ? '100%' : '55%')}
+  width: ${({ inputOnly }) => (inputOnly ? '100%' : '50%')}
   background-color: ${({ theme }) => theme.bg2};
   border-radius: 14px;
   height: 3rem;
@@ -22,11 +22,11 @@ const InputRow = styled.div<{ inputOnly: boolean }>`
 
 const CurrencySelect = styled.div<{ selected: boolean }>`
   align-items: center;
-  width: 40%;
+  width: 48%;
   height: 3rem;
   line-height: 48px;
   font-weight: 500;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: transparent;
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   border-radius: 14px;
   box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
@@ -118,7 +118,7 @@ export default function RedeemTokenPanel({
   inputOnly,
   isCall
 }: CurrencyInputPanelProps) {
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
 
   const { account } = useActiveWeb3React()
   const theme = useTheme()
@@ -158,7 +158,8 @@ export default function RedeemTokenPanel({
                 <Aligner>
                   {currency ? <CallPutToken currency={currency} isCall={isCall} /> : null}
                   <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
-                    {(currency && currency.symbol && label) || t('selectToken')}
+                    {/* {(currency && currency.symbol && label) || t('selectToken')} */}
+                    {(currency && currency.symbol && label) || ''}
                   </StyledTokenName>
                 </Aligner>
               </Aligner>
