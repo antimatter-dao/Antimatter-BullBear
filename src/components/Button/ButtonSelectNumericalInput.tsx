@@ -79,7 +79,7 @@ export function ButtonSelectNumericalInput({
   ])
 
   return (
-    <div style={{ position: 'relative', marginRight: ' 20px', width: width }}>
+    <div style={{ position: 'relative', marginRight: ' 20px', width: width, flex: 1 }}>
       <ButtonSelectStyle
         onClick={() => {
           setIsOpen(!isOpen)

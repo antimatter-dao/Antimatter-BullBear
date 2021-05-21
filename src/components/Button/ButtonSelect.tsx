@@ -118,7 +118,7 @@ export default function ButtonSelect({
     onClick && onClick()
   }, [isOpen, onClick])
   return (
-    <div style={{ position: 'relative', marginRight: marginRight, width: width }}>
+    <div style={{ position: 'relative', marginRight: marginRight, width: width, flex: 1 }}>
       {label && (
         <AutoRow style={{ marginBottom: '4px' }}>
           <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>

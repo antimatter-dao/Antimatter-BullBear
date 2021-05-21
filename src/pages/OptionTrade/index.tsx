@@ -62,6 +62,7 @@ export interface OptionInterface {
     cap: string | undefined
   }
 }
+
 export interface Range {
   floor: undefined | number | string
   cap: undefined | number | string
@@ -95,14 +96,18 @@ export const ContentWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`padding: 10px`}
 `
 
+const WrapperSearch = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.text5};
+`
+
 const StyledSearch = styled.div`
   margin: auto;
-  border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 23px;
   padding-left: 50px;
   display: flex;
   justify-content: center;
   flex-wrap: nowrap;
+  max-width: 1280px;
   & > * {
     margin-bottom: 8px;
   }
@@ -139,8 +144,8 @@ const TitleWrapper = styled(RowFixed)`
 `
 const OptionId = styled(TYPE.smallGray)`
   text-align: right;
-  width: 100%;
-  right: 0;
+  top: 12px;
+  right: 20px;
   position: absolute;
 `
 
@@ -263,7 +268,8 @@ export function OptionCard({
   const currency = useCurrency(address)
   const price = useUSDTPrice(currency ?? undefined)
   return (
-    <AppBody>
+    <AppBody style={{ position: 'relative' }}>
+      <OptionId>Option Id&nbsp;:&nbsp;{optionId}</OptionId>
       <AutoColumn gap="20px">
         <TitleWrapper>
           <Circle>
@@ -278,8 +284,7 @@ export function OptionCard({
             )}
           </Circle>
           <AutoColumn gap="5px" style={{ width: '100%', position: 'relative' }}>
-            <OptionId>Option Id&nbsp;:&nbsp;{optionId}</OptionId>
-            <div style={{ height: 8 }}></div>
+            <div style={{ height: 8 }} />
             <TYPE.mediumHeader
               fontSize={20}
               style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
@@ -376,52 +381,51 @@ export function Search({
         onCurrencySelect={setAssetTypeQuery}
         tokenList={tokenList}
       />
-      <StyledSearch>
-        <ButtonSelect width="186px" onClick={handleOpenAssetSearch}>
-          <TYPE.body color={assetTypeQuery ? theme.text1 : theme.text3}>
-            <RowFixed>
-              {assetTypeQuery && <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />}
-              {currencyNameHelper(assetTypeQuery, 'Select asset type')}
-            </RowFixed>
-          </TYPE.body>
-        </ButtonSelect>
-        {onOptionType && (
-          <ButtonSelect
-            placeholder="Select option type"
-            width="186px"
-            selectedId={optionTypeQuery}
-            onSelection={onOptionType}
-            options={[
-              { id: ALL.id, option: ALL.title },
-              { id: Type.CALL, option: 'Call Option' },
-              { id: Type.PUT, option: 'Put Option' }
-            ]}
+      <WrapperSearch>
+        <StyledSearch>
+          <ButtonSelect onClick={handleOpenAssetSearch}>
+            <TYPE.body color={assetTypeQuery ? theme.text1 : theme.text3}>
+              <RowFixed>
+                {assetTypeQuery && <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />}
+                {currencyNameHelper(assetTypeQuery, 'Select asset type')}
+              </RowFixed>
+            </TYPE.body>
+          </ButtonSelect>
+          {onOptionType && (
+            <ButtonSelect
+              placeholder="Select option type"
+              selectedId={optionTypeQuery}
+              onSelection={onOptionType}
+              options={[
+                { id: ALL.id, option: ALL.title },
+                { id: Type.CALL, option: 'Call Option' },
+                { id: Type.PUT, option: 'Put Option' }
+              ]}
+            />
+          )}
+          <ButtonSelectRange
+            placeholder="Select price range"
+            rangeCap={rangeQuery.cap?.toString()}
+            rangeFloor={rangeQuery.floor?.toString()}
+            onSetRange={setRangeQuery}
           />
-        )}
-        <ButtonSelectRange
-          placeholder="Select price range"
-          width="186px"
-          rangeCap={rangeQuery.cap?.toString()}
-          rangeFloor={rangeQuery.floor?.toString()}
-          onSetRange={setRangeQuery}
-        />
-        <ButtonSelectNumericalInput
-          placeholder="Select option ID"
-          width="186px"
-          value={optionIdQuery}
-          onSetValue={setOptionIdQuery}
-        />
-        <RowFixed>
-          <ButtonOutlinedPrimary width="186px" onClick={handleSearch}>
-            <SearchIcon style={{ marginRight: 10 }} />
-            Search
-          </ButtonOutlinedPrimary>
-          <div style={{ width: 10 }} />
-          <ButtonPrimary width="186px" onClick={handleClear}>
-            Show All
-          </ButtonPrimary>
-        </RowFixed>
-      </StyledSearch>
+          <ButtonSelectNumericalInput
+            placeholder="Select option ID"
+            value={optionIdQuery}
+            onSetValue={setOptionIdQuery}
+          />
+          <RowFixed>
+            <ButtonOutlinedPrimary width="186px" onClick={handleSearch}>
+              <SearchIcon style={{ marginRight: 10 }} />
+              Search
+            </ButtonOutlinedPrimary>
+            <div style={{ width: 10 }} />
+            <ButtonPrimary width="186px" onClick={handleClear}>
+              Show All
+            </ButtonPrimary>
+          </RowFixed>
+        </StyledSearch>
+      </WrapperSearch>
     </>
   )
 }

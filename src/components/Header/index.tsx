@@ -1,7 +1,7 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
 import React from 'react'
 import { Check, ChevronDown } from 'react-feather'
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
@@ -25,6 +25,7 @@ interface TabContent {
   link?: string
   titleContent?: JSX.Element
 }
+
 interface Tab extends TabContent {
   subTab?: TabContent[]
 }
@@ -429,7 +430,9 @@ export default function Header() {
     <HeaderFrame>
       <ClaimModal />
       <HeaderRow>
-        <StyledLogo />
+        <Link to={'/'}>
+          <StyledLogo />
+        </Link>
         <HeaderLinks>
           {tabs.map(({ title, route, subTab }) => {
             if (subTab) {
@@ -491,8 +494,8 @@ export default function Header() {
                         <ExternalLink href={info.link} key={info.link}>
                           {parseInt(key) === chainId && (
                             <span style={{ position: 'absolute', left: '15px' }}>
-                            <Check size={18} />
-                          </span>
+                              <Check size={18} />
+                            </span>
                           )}
                           {info.linkIcon ?? info.icon}
                           {info.title}
@@ -526,7 +529,7 @@ export default function Header() {
                       </TYPE.white>
                       // </HideSmall>
                     )}
-                    MATTER1
+                    MATTER
                   </UNIAmount>
                   {/* <CardNoise /> */}
                 </UNIWrapper>
@@ -548,7 +551,6 @@ export default function Header() {
           <Menu />
         </HeaderElementWrap> */}
         </HeaderControls>
-
       </HeaderRow>
     </HeaderFrame>
   )

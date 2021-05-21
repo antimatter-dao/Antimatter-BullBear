@@ -1,5 +1,4 @@
 import { ChainId, Token } from '@uniswap/sdk'
-import { ZERO_ADDRESS } from 'constants/index'
 import { OptionInterface } from 'pages/OptionTrade'
 import { OptionTypeData } from 'state/market/hooks'
 import { formatCallOption, formatPutOption, formatAndSplitOption, formatOptionType } from './utils'
@@ -48,7 +47,6 @@ export function getUnderlyingList(
     .then(response => {
       if (response.data.underlyingList && chainId) {
         const set = new Set()
-        const All = new Token(chainId, ZERO_ADDRESS, 18, 'All')
         const list = response.data.underlyingList.reduce(
           (acc: Token[], { underlying, underlyingDecimals, underlyingSymbol }: Underlying) => {
             if (set.has(underlying)) return acc
@@ -58,7 +56,7 @@ export function getUnderlyingList(
             )
             return acc
           },
-          [All]
+          []
         )
         response.data && setList(list)
       }

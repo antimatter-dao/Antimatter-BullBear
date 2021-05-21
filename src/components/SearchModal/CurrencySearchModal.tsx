@@ -8,6 +8,7 @@ import usePrevious from 'hooks/usePrevious'
 import Manage from './Manage'
 import { TokenList } from '@uniswap/token-lists'
 import { ImportList } from './ImportList'
+import { ZERO_ADDRESS } from '../../constants'
 
 interface CurrencySearchModalProps {
   isOpen: boolean
@@ -34,7 +35,7 @@ export default function CurrencySearchModal({
   selectedCurrency,
   otherSelectedCurrency,
   showCommonBases = false,
-  hasManage = false,
+  hasManage = true,
   tokenList
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage)
@@ -53,6 +54,12 @@ export default function CurrencySearchModal({
     },
     [onDismiss, onCurrencySelect]
   )
+
+  const onShowAll = useCallback(() => {
+    const All = new Token(1, ZERO_ADDRESS, 18, 'All')
+    onCurrencySelect(All)
+    onDismiss()
+  }, [onDismiss, onCurrencySelect])
 
   // for token import view
   const prevView = usePrevious(modalView)
@@ -80,7 +87,7 @@ export default function CurrencySearchModal({
           showCommonBases={showCommonBases}
           showImportView={() => setModalView(CurrencyModalView.importToken)}
           setImportToken={setImportToken}
-          showManageView={() => setModalView(CurrencyModalView.manage)}
+          showManageView={onShowAll}
           hasManage={hasManage}
         />
       ) : modalView === CurrencyModalView.importToken && importToken ? (

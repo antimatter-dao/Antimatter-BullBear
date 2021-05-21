@@ -225,7 +225,7 @@ export function CurrencySearch({
         <Footer>
           <Row justify="center">
             <ButtonText onClick={showManageView}>
-              <TYPE.main color={theme.primary1}>Import token</TYPE.main>
+              <TYPE.main color={theme.primary1}>Show all</TYPE.main>
             </ButtonText>
           </Row>
         </Footer>
