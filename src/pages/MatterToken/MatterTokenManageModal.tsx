@@ -29,7 +29,7 @@ import { useCurrency } from 'hooks/Tokens'
 import JSBI from 'jsbi'
 
 const sectionPadding = '25px'
-export const cardWidth = '360px'
+export const cardWidth = '380px'
 
 const GridWrapper = styled.div`
   background: ${({ theme }) => theme.gradient2};
@@ -174,7 +174,6 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
   const countUpAmount = stakingInfo?.apy
     ? JSBI.toNumber(stakingInfo.apy.divide('10000000000000000').quotient).toString()
     : '0'
-  console.log(countUpAmount)
   const countUpAmountPrevious = usePrevious(countUpAmount) ?? '0'
 
   const toggleWalletModal = useWalletModalToggle()
@@ -223,7 +222,7 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                         currency0={currency0 ?? undefined}
                         currency1={currency1 ?? undefined}
                         size={28}
-                        margin={true}
+                        mr="10px"
                       />
 
                       <TYPE.small fontSize={12}>{lptType}</TYPE.small>

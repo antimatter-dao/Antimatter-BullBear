@@ -6,7 +6,7 @@ import MatterTokenManageModal, { cardWidth } from './MatterTokenManageModal'
 const Wrapper = styled.div`
   width: 100%;
   padding: 50px;
-  grid-template-rows: auto;
+  grid-template-rows: 340px;
   grid-template-columns: repeat(auto-fill, ${cardWidth});
   grid-gap: 20px;
   display: grid;
