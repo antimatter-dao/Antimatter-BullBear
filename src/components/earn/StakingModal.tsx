@@ -196,7 +196,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
       {isOpen && (
         <AppBody>
           {!attempting && !hash && (
-            <ContentWrapper gap="lg">
+            <ContentWrapper gap="10px">
               <RowBetween style={{ margin: '0 -1rem' }}>
                 <ArrowLeftButton onClick={onDismiss} />
                 <TYPE.mediumHeader>Stake LPT </TYPE.mediumHeader>
@@ -236,9 +236,9 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
                 </TYPE.black>
               </HypotheticalRewardRate> */}
 
-              <RowBetween>
+              <AutoColumn gap="8px">
                 <ButtonConfirmed
-                  mr="0.5rem"
+                  padding="10px"
                   onClick={onAttemptToApprove}
                   confirmed={approval === ApprovalState.APPROVED || signatureData !== null}
                   disabled={approval !== ApprovalState.NOT_APPROVED || signatureData !== null}
@@ -246,13 +246,14 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
                   Approve
                 </ButtonConfirmed>
                 <ButtonError
+                  padding="10px"
                   disabled={!!error || (signatureData === null && approval !== ApprovalState.APPROVED)}
                   error={!!error && !!parsedAmount}
                   onClick={onStake}
                 >
                   {error ?? 'Stake LPT'}
                 </ButtonError>
-              </RowBetween>
+              </AutoColumn>
               {/* <ProgressCircles
                 steps={[approval === ApprovalState.APPROVED || signatureData !== null]}
                 disabled={true}

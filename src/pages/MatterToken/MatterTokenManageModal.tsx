@@ -1,45 +1,49 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useCallback, useState } from 'react'
+import { CountUp } from 'use-count-up'
 import styled from 'styled-components'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { ButtonText, TYPE } from '../../theme'
-import { ButtonEmpty, ButtonPrimary } from '../../components/Button'
+import { ButtonPrimary } from '../../components/Button'
 import StakingModal from '../../components/earn/StakingModal'
 import { useStakingInfo } from '../../state/stake/hooks'
 import UnstakingModal from '../../components/earn/UnstakingModal'
 import ClaimRewardModal from '../../components/earn/ClaimRewardModal'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
-import { CountUp } from 'use-count-up'
 import { usePair } from '../../data/Reserves'
 import usePrevious from '../../hooks/usePrevious'
 // import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
 import { LPT_PAIRS, LPT_TYPE } from 'constants/matterToken/matterTokenTokens'
-import { ReactComponent as Logo1 } from 'assets/svg/ETH+_USDT.svg'
-import { ReactComponent as Logo2 } from 'assets/svg/ETH-_USDT.svg'
-import { ReactComponent as Logo3 } from 'assets/svg/ETH_Matter.svg'
-import { ReactComponent as Logo4 } from 'assets/svg/Matter+_matter.svg'
+// import { ReactComponent as Logo1 } from 'assets/svg/ETH+_USDT.svg'
+// import { ReactComponent as Logo2 } from 'assets/svg/ETH-_USDT.svg'
+// import { ReactComponent as Logo3 } from 'assets/svg/ETH_Matter.svg'
+// import { ReactComponent as Logo4 } from 'assets/svg/Matter+_matter.svg'
 import { AutoRow, RowBetween } from 'components/Row'
 import Card from 'components/Card'
 import { AutoColumn } from 'components/Column'
 import useTheme from 'hooks/useTheme'
-import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
+// import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
+import DoubleCurrencyLogoReverse from 'components/DoubleLogo/DoubleLogoReverse'
+import { useCurrency } from 'hooks/Tokens'
+import JSBI from 'jsbi'
 
 const sectionPadding = '25px'
+export const cardWidth = '360px'
+
 const GridWrapper = styled.div`
   background: ${({ theme }) => theme.gradient2};
   border-radius: 36px;
   border: 1px solid ${({ theme }) => theme.bg3};
   display: flex;
   flex-direction: column;
-  width: 420px;
+  width: ${cardWidth};
   ${({ theme }) => theme.mediaWidth.upToMedium`  width: 100%;`};
 `
 
 const ClaimRewardWrapper = styled.div`
   height: 100%;
   width: 100%
-  border-bottom: 1px solid ${({ theme }) => theme.bg3};
   padding: ${sectionPadding};
   display: flex;
   flex-direction: column;
@@ -68,49 +72,49 @@ const OptionCard = styled(Card)`
 //   min-width: 122px;
 //   width: fit-content;
 // `
-const LogoWrapper = styled.div`
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 10px;
-  background-color: ${({ theme }) => theme.text1};
-  svg {
-    width: 30px;
-    height: 30px;
-  }
-`
-const AccordionStyle = styled.div`
-  width: 100%;
-  position: relative;
-  button {
-    padding: 14px 2rem 0;
-    display: flex;
-    justify-content: space-between
-  }
-  & > div {
-    width: 100%
-    padding: 10px 32px 20px;
-    display: grid;
-    grid-template-columns: 100%;
-    grid-gap: 16px;
-  }
-`
+// const LogoWrapper = styled.div`
+//   border-radius: 50%;
+//   width: 32px;
+//   height: 32px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   margin-right: 10px;
+//   background-color: ${({ theme }) => theme.text1};
+//   svg {
+//     width: 30px;
+//     height: 30px;
+//   }
+// `
+// const AccordionStyle = styled.div`
+//   width: 100%;
+//   position: relative;
+//   button {
+//     padding: 14px 2rem 0;
+//     display: flex;
+//     justify-content: space-between
+//   }
+//   & > div {
+//     width: 100%
+//     padding: 10px 32px 20px;
+//     display: grid;
+//     grid-template-columns: 100%;
+//     grid-gap: 16px;
+//   }
+// `
 
-const Network = styled.div`
-  border: 1px solid ${({ theme }) => theme.text5};
-  padding: 5px 8px 5px 5px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  svg {
-    height: 20px;
-    width: 20px;
-    margin-right: 5px;
-  }
-`
+// const Network = styled.div`
+//   border: 1px solid ${({ theme }) => theme.text5};
+//   padding: 5px 8px 5px 5px;
+//   border-radius: 4px;
+//   display: flex;
+//   align-items: center;
+//   svg {
+//     height: 20px;
+//     width: 20px;
+//     margin-right: 5px;
+//   }
+// `
 
 enum STAKING_MODAL_TYPE {
   STAKE = 'stake',
@@ -145,12 +149,12 @@ enum STAKING_MODAL_TYPE {
 //   )
 // }
 
-const Logos = {
-  [LPT_TYPE.ETH_CALL_DAI]: <Logo1 />,
-  [LPT_TYPE.ETH_PUT_DAI]: <Logo2 />,
-  [LPT_TYPE.MATTER_ETH]: <Logo3 />,
-  [LPT_TYPE.MATTER_CALL_MATTER]: <Logo4 />
-}
+// const Logos = {
+//   [LPT_TYPE.ETH_CALL_DAI]: <Logo1 />,
+//   [LPT_TYPE.ETH_PUT_DAI]: <Logo2 />,
+//   [LPT_TYPE.MATTER_ETH]: <Logo3 />,
+//   [LPT_TYPE.MATTER_CALL_MATTER]: <Logo4 />
+// }
 
 export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE }) {
   const [modalType, setModalType] = useState<STAKING_MODAL_TYPE | undefined>(undefined)
@@ -160,12 +164,17 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
   const [tokenA, tokenB] = [LPT_PAIRS[chainId ?? 1]?.[lptType].currencyA, LPT_PAIRS[chainId ?? 1]?.[lptType].currencyB]
   const [, stakingTokenPair] = usePair(tokenA, tokenB)
   const stakingInfo = useStakingInfo(stakingTokenPair)?.[0]
+  const currency0 = useCurrency(tokenA?.address)
+  const currency1 = useCurrency(tokenB?.address)
   // detect existing unstaked LP position to show add button if none found
   const userLiquidityUnstaked = useTokenBalance(account ?? undefined, stakingInfo?.stakedAmount?.token)
   // const showAddLiquidityButton = Boolean(stakingInfo?.stakedAmount?.equalTo('0') && userLiquidityUnstaked?.equalTo('0'))
 
-  const countUpAmount = stakingInfo?.active ? stakingInfo?.earnedAmount?.toSignificant(6) ?? '-' : '0'
-
+  // const countUpAmount = stakingInfo?.active ? stakingInfo?.earnedAmount?.toSignificant(6) ?? '-' : '0'
+  const countUpAmount = stakingInfo?.apy
+    ? JSBI.toNumber(stakingInfo.apy.divide('10000000000000000').quotient).toString()
+    : '0'
+  console.log(countUpAmount)
   const countUpAmountPrevious = usePrevious(countUpAmount) ?? '0'
 
   const toggleWalletModal = useWalletModalToggle()
@@ -205,21 +214,33 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
       {!modalType && (
         <GridWrapper>
           <ClaimRewardWrapper>
-            <AutoColumn gap="25px">
+            <AutoColumn gap="20px">
               <RowBetween>
                 <OptionCard>
                   <RowBetween>
                     <AutoRow>
-                      <LogoWrapper>{Logos[lptType]}</LogoWrapper>
-                      <TYPE.mediumHeader fontSize={18}>{lptType}</TYPE.mediumHeader>
+                      <DoubleCurrencyLogoReverse
+                        currency0={currency0 ?? undefined}
+                        currency1={currency1 ?? undefined}
+                        size={28}
+                        margin={true}
+                      />
+
+                      <TYPE.small fontSize={12}>{lptType}</TYPE.small>
                     </AutoRow>
-                    <Network>
+                    <ButtonText
+                      onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}
+                      color={theme.primary1}
+                      style={{ whiteSpace: 'nowrap', fontSize: 12 }}
+                    >
+                      Claim Rewards
+                    </ButtonText>
+                    {/* <Network>
                       <ETH />
                       <TYPE.small>ETH</TYPE.small>
-                    </Network>
+                    </Network> */}
                   </RowBetween>
                 </OptionCard>
-
                 {/* <APYCard>
                   <RowBetween>
                     <TYPE.smallGray fontSize={14}>APY</TYPE.smallGray>
@@ -231,7 +252,42 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   </RowBetween>
                 </APYCard> */}
               </RowBetween>
+              <div style={{ width: '100%', height: 0, borderBottom: `1px solid ${theme.bg5}` }} />
               <RowBetween style={{ alignItems: 'flex-end' }}>
+                <TYPE.largeHeader
+                  display="flex"
+                  fontSize={58}
+                  fontWeight={400}
+                  style={{ marginTop: 'auto', alignItems: 'flex-end' }}
+                >
+                  <CountUp
+                    key={countUpAmount}
+                    isCounting
+                    decimalPlaces={2}
+                    start={parseFloat(countUpAmountPrevious)}
+                    end={parseFloat(countUpAmount)}
+                    thousandsSeparator={','}
+                    duration={1}
+                  />
+                  %
+                  <TYPE.body
+                    style={{ whiteSpace: 'nowrap', marginLeft: 8, marginBottom: 12 }}
+                    fontSize={16}
+                    fontWeight={400}
+                    fontFamily="Roboto"
+                  >
+                    APY
+                  </TYPE.body>
+                </TYPE.largeHeader>
+                <AutoColumn style={{ marginBottom: 12, textAlign: 'right' }}>
+                  <TYPE.smallGray> Token Earned</TYPE.smallGray>
+                  <TYPE.body>
+                    {stakingInfo?.active ? stakingInfo?.earnedAmount?.toSignificant(6) ?? '-' : '0'}
+                  </TYPE.body>
+                </AutoColumn>
+              </RowBetween>
+
+              {/* <RowBetween style={{ alignItems: 'flex-end' }}>
                 <TYPE.largeHeader
                   display="flex"
                   fontSize={58}
@@ -256,14 +312,7 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                     Token Earned
                   </TYPE.body>
                 </TYPE.largeHeader>
-                <ButtonText
-                  onClick={handleModalClick(STAKING_MODAL_TYPE.CLAIM)}
-                  color={theme.primary1}
-                  style={{ whiteSpace: 'nowrap', marginLeft: 8, marginBottom: 12 }}
-                >
-                  Claim Rewards
-                </ButtonText>
-              </RowBetween>
+              </RowBetween> */}
               <RowBetween>
                 <ButtonPrimary width="48%" onClick={handleModalClick(STAKING_MODAL_TYPE.STAKE)}>
                   Stake LPT
@@ -272,6 +321,26 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   Unstake LPT
                 </ButtonPrimary>
               </RowBetween>
+
+              <AutoColumn gap="10px">
+                {[
+                  {
+                    title: 'Your Stake',
+                    content: stakingInfo ? `${stakingInfo.stakedAmount?.toSignificant(6)} LPT` : '-'
+                  },
+                  {
+                    title: 'Pooled Total',
+                    content: stakingInfo
+                      ? `${stakingInfo.totalStakedAmount.toSignificant(4, { groupSeparator: ',' })} LPT`
+                      : '-'
+                  }
+                ].map(({ title, content }) => (
+                  <RowBetween key={title}>
+                    <TYPE.smallGray>{title}</TYPE.smallGray>
+                    <TYPE.small> {content}</TYPE.small>
+                  </RowBetween>
+                ))}
+              </AutoColumn>
 
               {/* <RowBetween>
                 <TYPE.darkGray fontSize={14} fontWeight={400}>
@@ -298,7 +367,8 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
               </RowBetween> */}
             </AutoColumn>
           </ClaimRewardWrapper>
-          <Accordion
+
+          {/* <Accordion
             title="Statistics"
             data={[
               {
@@ -313,7 +383,7 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
                   : '-'
               }
             ]}
-          />
+          /> */}
           {/* <LPTWrapper>
             <section>
               <AutoColumn gap="19px">
@@ -338,31 +408,31 @@ export default function MatterTokenManageModal({ lptType }: { lptType: LPT_TYPE 
   )
 }
 
-function Accordion({ title, data }: { title: string; data: { title: string; content: string }[] }) {
-  // const [isOpen, setIsOpen] = useState(false)
-  // /const handleOpen = useCallback(() => setIsOpen(open => !open), [setIsOpen])
-  return (
-    <AccordionStyle>
-      {/* <ButtonEmpty onClick={handleOpen}> */}
-      <ButtonEmpty>
-        <span>{title}</span>
-        {/* <ChevronDown
-        style={{
-          transform: isOpen ? 'rotate(180deg)' : 'none',
-          transition: 'none'
-        }}
-        /> */}
-      </ButtonEmpty>
-      {/* {isOpen && ( */}
-      <div>
-        {data.map(({ title, content }) => (
-          <RowBetween key={title}>
-            <TYPE.smallGray>{title}</TYPE.smallGray>
-            <TYPE.small> {content}</TYPE.small>
-          </RowBetween>
-        ))}
-      </div>
-      {/* )} */}
-    </AccordionStyle>
-  )
-}
+// function Accordion({ title, data }: { title: string; data: { title: string; content: string }[] }) {
+//   const [isOpen, setIsOpen] = useState(false)
+//   const handleOpen = useCallback(() => setIsOpen(open => !open), [setIsOpen])
+//   return (
+//     <AccordionStyle>
+//       <ButtonEmpty onClick={handleOpen}>
+//       <ButtonEmpty>
+//         <span>{title}</span>
+//         <ChevronDown
+//         style={{
+//           transform: isOpen ? 'rotate(180deg)' : 'none',
+//           transition: 'none'
+//         }}
+//         />
+//       </ButtonEmpty>
+//       {isOpen && (
+//       <div>
+//         {data.map(({ title, content }) => (
+//           <RowBetween key={title}>
+//             <TYPE.smallGray>{title}</TYPE.smallGray>
+//             <TYPE.small> {content}</TYPE.small>
+//           </RowBetween>
+//         ))}
+//       </div>
+//        )}
+//     </AccordionStyle>
+//   )
+// }

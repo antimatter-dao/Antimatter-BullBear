@@ -1,13 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 import { LPT_TYPE } from 'constants/matterToken/matterTokenTokens'
-import MatterTokenManageModal from './MatterTokenManageModal'
+import MatterTokenManageModal, { cardWidth } from './MatterTokenManageModal'
 
 const Wrapper = styled.div`
   width: 100%;
   padding: 50px;
   grid-template-rows: auto;
-  grid-template-columns: repeat(auto-fill, 420px);
+  grid-template-columns: repeat(auto-fill, ${cardWidth});
   grid-gap: 20px;
   display: grid;
   ${({ theme }) => theme.mediaWidth.upToMedium`

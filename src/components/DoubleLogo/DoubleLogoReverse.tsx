@@ -7,6 +7,7 @@ const Wrapper = styled.div<{ margin: boolean; sizeraw: number }>`
   position: relative;
   display: flex;
   flex-direction: row;
+  width: ${({ sizeraw }) => sizeraw * 1.68 + 'px'};
   margin-right: ${({ sizeraw, margin }) => margin && (sizeraw / 3 + 8).toString() + 'px'};
 `
 
@@ -25,7 +26,7 @@ const CoveredLogo = styled(CurrencyLogo)<{ sizeraw: number }>`
   left: ${({ sizeraw }) => '-' + (sizeraw / 2).toString() + 'px'} !important;
 `
 
-export default function DoubleCurrencyLogo({
+export default function DoubleCurrencyLogoReverse({
   currency0,
   currency1,
   size = 16,
@@ -34,7 +35,14 @@ export default function DoubleCurrencyLogo({
   return (
     <Wrapper sizeraw={size} margin={margin}>
       {currency0 && <HigherLogo currency={currency0} size={size.toString() + 'px'} style={{ zIndex: 2 }} />}
-      {currency1 && <CoveredLogo currency={currency1} size={size.toString() + 'px'} sizeraw={size} />}
+      {currency1 && (
+        <CoveredLogo
+          currency={currency1}
+          size={size.toString() + 'px'}
+          sizeraw={size}
+          style={{ position: 'absolute', left: size * 0.67 + 'px', top: 0 }}
+        />
+      )}
     </Wrapper>
   )
 }

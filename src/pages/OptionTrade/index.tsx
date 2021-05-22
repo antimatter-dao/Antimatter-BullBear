@@ -103,7 +103,6 @@ const WrapperSearch = styled.div`
 const StyledSearch = styled.div`
   margin: auto;
   padding: 23px;
-  padding-left: 50px;
   display: flex;
   justify-content: center;
   flex-wrap: nowrap;
@@ -115,6 +114,7 @@ const StyledSearch = styled.div`
     flex-shrink: 1;
   }
   ${({ theme }) => theme.mediaWidth.upToLarge`
+    padding: 23px 50px;
     flex-wrap: wrap
   `}
 `
