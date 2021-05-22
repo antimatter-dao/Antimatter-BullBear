@@ -269,7 +269,7 @@ export function OptionCard({
   const price = useUSDTPrice(currency ?? undefined)
   return (
     <AppBody style={{ position: 'relative' }}>
-      <OptionId>Option Id&nbsp;:&nbsp;{optionId}</OptionId>
+      <OptionId>Option ID&nbsp;:&nbsp;{optionId}</OptionId>
       <AutoColumn gap="20px">
         <TitleWrapper>
           <Circle>
@@ -386,7 +386,9 @@ export function Search({
           <ButtonSelect onClick={handleOpenAssetSearch}>
             <TYPE.body color={assetTypeQuery ? theme.text1 : theme.text3}>
               <RowFixed>
-                {assetTypeQuery && <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />}
+                {assetTypeQuery && assetTypeQuery.symbol !== ALL.title && (
+                  <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />
+                )}
                 {currencyNameHelper(assetTypeQuery, 'Select asset type')}
               </RowFixed>
             </TYPE.body>
