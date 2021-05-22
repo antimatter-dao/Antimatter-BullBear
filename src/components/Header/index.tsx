@@ -165,7 +165,7 @@ const HeaderElement = styled.div<{
 `
 
 const HeaderRow = styled(RowFixed)`
-  max-width: 1280px;
+  min-width: 1280px;
   margin: auto;
   align-items: flex-start
     ${({ theme }) => theme.mediaWidth.upToMedium`
