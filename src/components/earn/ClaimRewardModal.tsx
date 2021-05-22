@@ -68,7 +68,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo }: Sta
       {isOpen && (
         <AppBody>
           {!attempting && !hash && (
-            <ContentWrapper gap="lg">
+            <ContentWrapper gap="15px">
               <RowBetween style={{ margin: '0 -1rem' }}>
                 <ArrowLeftButton onClick={wrappedOnDismiss} />
                 <TYPE.mediumHeader>Claim</TYPE.mediumHeader>

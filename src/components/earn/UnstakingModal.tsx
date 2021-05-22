@@ -100,7 +100,12 @@ export default function UnstakingModal({ isOpen, onDismiss, stakingInfo }: Staki
                   }
                 ]}
               />
-              <ButtonError disabled={!!error} error={!!error && !!stakingInfo?.stakedAmount} onClick={onWithdraw}>
+              <ButtonError
+                disabled={!!error}
+                error={!!error && !!stakingInfo?.stakedAmount}
+                onClick={onWithdraw}
+                style={{ height: 48 }}
+              >
                 {error ?? 'Unstake LPT'}
               </ButtonError>
             </ContentWrapper>

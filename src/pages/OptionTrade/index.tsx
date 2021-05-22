@@ -103,7 +103,6 @@ const WrapperSearch = styled.div`
 const StyledSearch = styled.div`
   margin: auto;
   padding: 23px;
-  padding-left: 50px;
   display: flex;
   justify-content: center;
   flex-wrap: nowrap;
@@ -115,6 +114,7 @@ const StyledSearch = styled.div`
     flex-shrink: 1;
   }
   ${({ theme }) => theme.mediaWidth.upToLarge`
+    padding: 23px 50px;
     flex-wrap: wrap
   `}
 `
@@ -269,7 +269,7 @@ export function OptionCard({
   const price = useUSDTPrice(currency ?? undefined)
   return (
     <AppBody style={{ position: 'relative' }}>
-      <OptionId>Option Id&nbsp;:&nbsp;{optionId}</OptionId>
+      <OptionId>Option ID&nbsp;:&nbsp;{optionId}</OptionId>
       <AutoColumn gap="20px">
         <TitleWrapper>
           <Circle>
@@ -386,7 +386,9 @@ export function Search({
           <ButtonSelect onClick={handleOpenAssetSearch}>
             <TYPE.body color={assetTypeQuery ? theme.text1 : theme.text3}>
               <RowFixed>
-                {assetTypeQuery && <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />}
+                {assetTypeQuery && assetTypeQuery.symbol !== ALL.title && (
+                  <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />
+                )}
                 {currencyNameHelper(assetTypeQuery, 'Select asset type')}
               </RowFixed>
             </TYPE.body>

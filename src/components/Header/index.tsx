@@ -235,13 +235,13 @@ const NetworkCard = styled.div<{ color?: string }>`
   font-weight: 500;
   position: relative;
   & > svg:first-child {
-    height: 24px;
-    width: 24px;
+    height: 20px;
+    width: 20px;
   }
   .dropdown_wrapper {
     &>div{
       a {
-        padding: 8px 17px;
+        padding: 12px 12px 12px 44px ;
       }
     }
   }
@@ -261,10 +261,9 @@ const NetworkCard = styled.div<{ color?: string }>`
         a{
         position: relative;
           & >svg{
-            height: 24px;
-            width: 24px;
+            height: 20px;
+            width: 20px;
             margin-right: 15px;
-            margin-left: 30px;
           }
         }
       }
