@@ -106,7 +106,7 @@ const StyledSearch = styled.div`
   display: flex;
   justify-content: center;
   flex-wrap: nowrap;
-  max-width: 1280px;
+  width: 1280px;
   & > * {
     margin-bottom: 8px;
   }

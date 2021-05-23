@@ -92,10 +92,9 @@ export const headerHeightDisplacement = '32px'
 
 const HeaderFrame = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-direction: row;
   width: 100%;
-  margin: auto;
   top: 0;
   position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
@@ -165,8 +164,9 @@ const HeaderElement = styled.div<{
 `
 
 const HeaderRow = styled(RowFixed)`
-  min-width: 1280px;
-  margin: auto;
+  width: 100%;
+  min-width: 1100px;
+  padding-left: 2rem;
   align-items: flex-start
     ${({ theme }) => theme.mediaWidth.upToMedium`
    width: 100%;
@@ -176,6 +176,7 @@ const HeaderRow = styled(RowFixed)`
 
 const HeaderLinks = styled(Row)`
   justify-content: center;
+  width: auto;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
@@ -390,8 +391,7 @@ export const StyledMenuButton = styled.button`
 `
 
 const StyledLogo = styled(Logo)`
-  width: 220px;
-  magin-right: 60px;
+  margin-right: 60px;
 `
 
 function FAQButton() {
@@ -475,81 +475,81 @@ export default function Header() {
             )
           })}
         </HeaderLinks>
-        <HeaderControls>
-          <HeaderElement show={!!account}>
-            {/* <HideSmall> */}
-            {chainId && NetworkInfo[chainId] && (
-              <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
-                {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
-                <ChevronDown size={18} style={{ marginLeft: '5px' }} />
-                <div className="dropdown_wrapper">
-                  <Dropdown>
-                    {Object.keys(NetworkInfo).map(key => {
-                      const info = NetworkInfo[parseInt(key) as keyof typeof NetworkInfo]
-                      if (!info) {
-                        return null
-                      }
-                      return info.link ? (
-                        <ExternalLink href={info.link} key={info.link}>
-                          {parseInt(key) === chainId && (
-                            <span style={{ position: 'absolute', left: '15px' }}>
-                              <Check size={18} />
-                            </span>
-                          )}
-                          {info.linkIcon ?? info.icon}
-                          {info.title}
-                        </ExternalLink>
-                      ) : null
-                    })}
-                  </Dropdown>
-                </div>
-              </NetworkCard>
-            )}
-            {/* </HideSmall> */}
-            <div style={{ paddingLeft: 8 }}>
-              {!!account && aggregateBalance && (
-                <UNIWrapper>
-                  <UNIAmount active={!!account} style={{ pointerEvents: 'none' }}>
-                    {account && (
-                      // <HideSmall>
-                      <TYPE.white
-                        style={{
-                          paddingRight: '.4rem'
-                        }}
-                      >
-                        <CountUp
-                          key={countUpValue}
-                          isCounting
-                          start={parseFloat(countUpValuePrevious)}
-                          end={parseFloat(countUpValue)}
-                          thousandsSeparator={','}
-                          duration={1}
-                        />
-                      </TYPE.white>
-                      // </HideSmall>
-                    )}
-                    MATTER
-                  </UNIAmount>
-                  {/* <CardNoise /> */}
-                </UNIWrapper>
+        <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
+          <HeaderControls>
+            <HeaderElement show={!!account}>
+              {/* <HideSmall> */}
+              {chainId && NetworkInfo[chainId] && (
+                <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
+                  {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
+                  <ChevronDown size={18} style={{ marginLeft: '5px' }} />
+                  <div className="dropdown_wrapper">
+                    <Dropdown>
+                      {Object.keys(NetworkInfo).map(key => {
+                        const info = NetworkInfo[parseInt(key) as keyof typeof NetworkInfo]
+                        if (!info) {
+                          return null
+                        }
+                        return info.link ? (
+                          <ExternalLink href={info.link} key={info.link}>
+                            {parseInt(key) === chainId && (
+                              <span style={{ position: 'absolute', left: '15px' }}>
+                                <Check size={18} />
+                              </span>
+                            )}
+                            {info.linkIcon ?? info.icon}
+                            {info.title}
+                          </ExternalLink>
+                        ) : null
+                      })}
+                    </Dropdown>
+                  </div>
+                </NetworkCard>
               )}
-              <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-                {/* {account && userEthBalance ? (
-                <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
-                  {userEthBalance?.toSignificant(4)} ETH
-                </BalanceText>
-              ) : null} */}
-                <Web3Status />
-              </AccountElement>
-            </div>
-          </HeaderElement>
-          {/* <HeaderElementWrap>
+              {/* </HideSmall> */}
+            </HeaderElement>
+            {/* <HeaderElementWrap>
           <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </StyledMenuButton>
           <Menu />
         </HeaderElementWrap> */}
-        </HeaderControls>
+          </HeaderControls>
+          {!!account && aggregateBalance && (
+            <UNIWrapper>
+              <UNIAmount active={!!account} style={{ pointerEvents: 'none' }}>
+                {account && (
+                  // <HideSmall>
+                  <TYPE.white
+                    style={{
+                      paddingRight: '.4rem'
+                    }}
+                  >
+                    <CountUp
+                      key={countUpValue}
+                      isCounting
+                      start={parseFloat(countUpValuePrevious)}
+                      end={parseFloat(countUpValue)}
+                      thousandsSeparator={','}
+                      duration={1}
+                    />
+                  </TYPE.white>
+                  // </HideSmall>
+                )}
+                MATTER
+              </UNIAmount>
+              {/* <CardNoise /> */}
+            </UNIWrapper>
+          )}
+          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+            {/* {account && userEthBalance ? (
+                <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
+                  {userEthBalance?.toSignificant(4)} ETH
+                </BalanceText>
+              ) : null} */}
+            <Web3Status />
+          </AccountElement>
+        </div>
       </HeaderRow>
     </HeaderFrame>
   )

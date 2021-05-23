@@ -85,7 +85,6 @@ const BodyWrapper = styled.div`
 `
 
 export const Marginer = styled.div`
-  margin-top: 5rem;
   ${({ theme }) => theme.desktop}
 `
 
