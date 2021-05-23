@@ -139,6 +139,41 @@ export function getCallOptionList(
     })
 }
 
+export function getDexTradesList(
+  { pendingFunction, pendingCompleteFunction }: HttpHandlingFunctions,
+  setList: (list: OptionInterface[]) => void,
+  tokenAddress: ChainId | undefined
+) {
+  if (!tokenAddress) return
+  const request = new Request(`${domain}/app/getDexTradesList?tokenAddress=${tokenAddress}`, {
+    method: 'GET',
+    body: '',
+    headers
+  })
+  pendingFunction()
+  fetch(request)
+    .then(response => {
+      if (response.status === 200) {
+        return response.json()
+      } else {
+        pendingCompleteFunction()
+        throw new Error('server error')
+      }
+    })
+    .then(response => {
+      console.debug(response)
+      const list = formatCallOption(response.data)
+      console.debug('getCallOptionList', list)
+      setList(list)
+      pendingCompleteFunction()
+    })
+    .catch(error => {
+      pendingCompleteFunction()
+      console.error(error)
+    })
+}
+
+
 export function getSingleOtionList(
   { errorFunction, pendingFunction, pendingCompleteFunction }: HttpHandlingFunctions,
   setList: (list: OptionInterface[]) => void,
