@@ -1,7 +1,8 @@
 import { ChainId, Token } from '@uniswap/sdk'
+import { UTCTimestamp } from 'lightweight-charts'
 import { OptionInterface } from 'pages/OptionTrade'
 import { OptionTypeData } from 'state/market/hooks'
-import { formatCallOption, formatPutOption, formatAndSplitOption, formatOptionType } from './utils'
+import { formatCallOption, formatPutOption, formatAndSplitOption, formatOptionType, formatDexTradeData } from './utils'
 
 export interface Underlying {
   underlying: string
@@ -16,6 +17,11 @@ export interface SearchQuery {
   underlying?: string
 }
 
+export interface DexTradeData {
+  time: UTCTimestamp
+  value: number
+}
+
 export interface HttpHandlingFunctions {
   errorFunction: () => void
   pendingFunction: () => void
@@ -24,6 +30,37 @@ export interface HttpHandlingFunctions {
 
 const domain = 'https://testapi.antimatter.finance'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
+
+export function getDexTradeList(
+  setList: (list: DexTradeData[] | undefined) => void,
+  tokenAddress: string,
+  errorFunction: () => void
+) {
+  const request = new Request(`${domain}/app/getDexTradesList?tokenAddress=${tokenAddress}`, {
+    method: 'GET',
+    headers
+  })
+
+  fetch(request)
+    .then(response => {
+      if (response.status === 200) {
+        return response.json()
+      } else {
+        errorFunction()
+        throw new Error('server Error')
+      }
+    })
+    .then(response => {
+      console.debug(response)
+      if (response.data.list) {
+        setList(formatDexTradeData(response.data.list))
+      }
+    })
+    .catch(error => {
+      errorFunction()
+      console.error(error)
+    })
+}
 
 export function getUnderlyingList(
   setList: (list: Token[] | undefined) => void,
@@ -172,7 +209,6 @@ export function getDexTradesList(
       console.error(error)
     })
 }
-
 
 export function getSingleOtionList(
   { errorFunction, pendingFunction, pendingCompleteFunction }: HttpHandlingFunctions,

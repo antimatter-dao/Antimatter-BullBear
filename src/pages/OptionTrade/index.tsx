@@ -218,7 +218,7 @@ export default function OptionTrade({
       setFilteredList(optionList)
     }
   }, [optionList])
-  console.log(optionTypeQuery, filteredList)
+
   return (
     <>
       {networkErrorModal}

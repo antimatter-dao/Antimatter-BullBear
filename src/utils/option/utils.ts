@@ -3,6 +3,8 @@ import { OptionInterface, Type } from 'pages/OptionTrade'
 import { parseBalance } from 'utils/marketStrategyUtils'
 import { Token } from '@uniswap/sdk'
 import { ZERO_ADDRESS } from 'constants/index'
+import { DexTradeData } from './httpRequests'
+import { UTCTimestamp } from 'lightweight-charts'
 
 export const parsePrice = (price: string, decimals: string) =>
   parseBalance({
@@ -207,4 +209,12 @@ export function formatOptionType(allOptionType: OptionTypeData[]) {
       }
     ]
   }, [] as OptionInterface[])
+}
+
+export const formatDexTradeData = (data: { price: string; time: any }[] | undefined): DexTradeData[] | undefined => {
+  if (!data) return undefined
+  return data.map(({ time, price }) => ({
+    time: +time as UTCTimestamp,
+    value: parseFloat(price)
+  }))
 }
