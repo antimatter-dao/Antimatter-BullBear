@@ -236,7 +236,6 @@ export function getSingleOtionList(
     })
     .then(response => {
       const list = formatAndSplitOption(response.data.list)
-      console.debug('getSingleOtionList', list)
       setList(list)
       pendingCompleteFunction()
     })
