@@ -15,6 +15,7 @@ const Wrapper = styled.div`
     padding:0
   `}
   justify-content: center;
+  margin-bottom: auto;
 `
 export default function MatterToken() {
   return (

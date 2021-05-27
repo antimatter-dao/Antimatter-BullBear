@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Currency } from '@uniswap/sdk'
 import styled from 'styled-components'
-import { createChart, ISeriesApi } from 'lightweight-charts'
+import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts'
 import Swap from '../Swap'
 import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
 import { currencyId } from 'utils/currencyId'
@@ -40,7 +40,7 @@ const ButtonGroup = styled.div`
 `
 const Button = styled(ButtonOutlinedPrimary)<{ isActive: boolean }>`
   flex-grow: 0;
-  padding: 8px;
+  padding: 6px 14px;
   width: auto !important;
   :focus{
     border-color:${({ theme }) => theme.primary1}
@@ -58,8 +58,9 @@ export default function OptionSwap({
   currencyB?: Currency | null
 }) {
   const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
-  const [lineSeries, setLineSeries] = useState<ISeriesApi<'Line'> | undefined>(undefined)
+  const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
   const [isMarketPriceChart, setIsMarketPriceChart] = useState(true)
+  const [chart, setChart] = useState<IChartApi | undefined>(undefined)
   const {
     httpHandlingFunctions: { errorFunction },
     networkErrorModal
@@ -81,14 +82,14 @@ export default function OptionSwap({
     const chart = createChart(document.getElementById('chart') ?? '', {
       width: 556,
       height: 354,
-      watermark: {
-        visible: true,
-        fontSize: 24,
-        horzAlign: 'left',
-        vertAlign: 'top',
-        color: '#FFFFFF',
-        text: '327.4739'
-      },
+      // watermark: {
+      //   visible: true,
+      //   fontSize: 24,
+      //   horzAlign: 'left',
+      //   vertAlign: 'top',
+      //   color: '#FFFFFF',
+      //   text: '327.4739'
+      // },
       layout: {
         backgroundColor: '#000000',
         textColor: '#FFFFFF',
@@ -97,37 +98,56 @@ export default function OptionSwap({
       },
       grid: {
         vertLines: {
-          color: 'rgba(197, 203, 206, 0.5)'
+          style: LineStyle.Dotted,
+          color: 'rgba(255, 255, 255, 0.4)'
         },
         horzLines: {
-          color: 'rgba(197, 203, 206, 0.5)'
+          style: LineStyle.Dotted,
+          color: 'rgba(255, 255, 255, 0.4)'
         }
       }
     })
-    const lineSeries = chart.addLineSeries({
-      color: '#33E74F',
-      lineWidth: 1
+    chart.applyOptions({
+      rightPriceScale: { autoScale: true },
+      timeScale: {
+        timeVisible: true,
+        secondsVisible: true,
+        shiftVisibleRangeOnNewBar: true,
+        tickMarkFormatter: (time: any) => {
+          const date = new Date(time)
+          const year = date.getUTCFullYear()
+          const month = date.getUTCMonth()
+          const day = date.getUTCDate()
+          return year + '/' + month + '/' + day
+        }
+      },
+      crosshair: {
+        vertLine: {
+          labelVisible: false
+        }
+      }
     })
-    setLineSeries(lineSeries)
-    // lineSeries.setData([
-    //   { time: '2019-04-11', value: 80.01 },
-    //   { time: '2019-04-12', value: 96.63 },
-    //   { time: '2019-04-13', value: 76.64 },
-    //   { time: '2019-04-14', value: 81.89 },
-    //   { time: '2019-04-15', value: 74.43 },
-    //   { time: '2019-04-16', value: 80.01 },
-    //   { time: '2019-04-17', value: 96.63 },
-    //   { time: '2019-04-18', value: 76.64 },
-    //   { time: '2019-04-19', value: 81.89 },
-    //   { time: '2019-04-20', value: 74.43 }
-    // ])
+    setChart(chart)
+    const candlestickSeries = chart.addCandlestickSeries({
+      upColor: '#33E74F',
+      downColor: '#FF0000',
+      wickVisible: false,
+      priceFormat: {
+        type: 'price',
+        precision: 2
+      }
+    })
+    setCandlestickSeries(candlestickSeries)
   }, [])
 
   useEffect(() => {
-    if (lineSeries) {
-      priceChartData && lineSeries.setData(priceChartData)
+    if (candlestickSeries) {
+      priceChartData && candlestickSeries.setData(priceChartData)
     }
-  }, [lineSeries, priceChartData])
+    if (chart) {
+      chart.timeScale().fitContent()
+    }
+  }, [candlestickSeries, priceChartData, chart])
 
   const handleMarketPriceChart = useCallback(() => setIsMarketPriceChart(true), [])
   const handleModalChart = useCallback(() => setIsMarketPriceChart(false), [])
