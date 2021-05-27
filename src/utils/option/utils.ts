@@ -211,10 +211,65 @@ export function formatOptionType(allOptionType: OptionTypeData[]) {
   }, [] as OptionInterface[])
 }
 
-export const formatDexTradeData = (data: { price: string; time: any }[] | undefined): DexTradeData[] | undefined => {
-  if (!data) return undefined
-  return data.map(({ time, price }) => ({
-    time: +time as UTCTimestamp,
-    value: parseFloat(price)
-  }))
+interface DexTradeDataInputSingle {
+  time: string
+  close: string
+  high: string
+  low: string
+  open: string
+  price: string
 }
+interface DexTradeDataInput {
+  [key: string]: DexTradeDataInputSingle[]
+}
+
+export const formatDexTradeData = (data: DexTradeDataInput | undefined): DexTradeData[] | undefined => {
+  if (!data) return undefined
+  let prevClose = 0
+  return Object.keys(data).map(
+    (timestamp, index): DexTradeData => {
+      const list = data[timestamp as keyof typeof data]
+      return list.reduce(
+        (acc: DexTradeData, { high, low, open, time, price }, idx): DexTradeData => {
+          const parsedHigh = parseFloat(high)
+          const parsedLow = parseFloat(low)
+          const parsedPrice = parseFloat(price)
+
+          const res = {
+            time: +time as UTCTimestamp,
+            close: parsedPrice,
+            // high: idx === 0 ? parsedHigh : acc.high > parsedPrice ? acc.high : parsedPrice,
+            // low: idx === 0 ? parsedLow : acc.low < parsedPrice ? acc.low : parsedPrice,
+            high: idx === 0 ? parsedHigh : acc.high > parsedHigh ? acc.high : parsedHigh,
+            low: idx === 0 ? parsedLow : acc.low < parsedLow ? acc.low : parsedLow,
+            open: index === 0 ? parseFloat(open) : prevClose
+          }
+          if (idx === list.length - 1) {
+            prevClose = parsedPrice
+          }
+          return res
+        },
+        {
+          time: new Date().getTime(),
+          close: 0,
+          high: 0,
+          low: 0,
+          open: 0
+        } as DexTradeData
+      )
+    }
+  )
+}
+
+// return data.reduce((acc, { time, close, high, low, open }) => {
+//   return [
+//     {
+//       time: +time as UTCTimestamp,
+//       close: parseFloat(close),
+//       open: parseFloat(open),
+//       low: parseFloat(low),
+//       high: parseFloat(high)
+//     },
+//     ...acc
+//   ]
+// }, [] as any[])

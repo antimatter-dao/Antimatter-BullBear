@@ -19,7 +19,10 @@ export interface SearchQuery {
 
 export interface DexTradeData {
   time: UTCTimestamp
-  value: number
+  high: number
+  low: number
+  open: number
+  close: number
 }
 
 export interface HttpHandlingFunctions {
@@ -51,9 +54,8 @@ export function getDexTradeList(
       }
     })
     .then(response => {
-      console.debug(response)
-      if (response.data.list) {
-        setList(formatDexTradeData(response.data.list))
+      if (response.data) {
+        setList(formatDexTradeData(response.data))
       }
     })
     .catch(error => {

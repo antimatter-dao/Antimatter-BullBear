@@ -96,10 +96,11 @@ const HeaderFrame = styled.div`
   flex-direction: row;
   width: 100%;
   top: 0;
+  height: ${({ theme }) => theme.headerHeight}
   position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 27px 0 0;
-  z-index: 2;
+  z-index: 5;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
     padding: 0 1rem;
@@ -192,15 +193,17 @@ const AccountElement = styled.div<{ active: boolean }>`
   white-space: nowrap;
   width: 100%;
   cursor: pointer;
-
-  :focus {
-    border: 1px solid blue;
-  }
+  padding: 7px 12px;
+  border: 1px solid ${({ theme }) => theme.text1};
 `
 
-const UNIAmount = styled(AccountElement)`
+const UNIAmount = styled.div`
   color: white;
   font-weight: 500;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: transparent;
   &:after {
     content: '';
     border-right: 1px solid ${({ theme }) => theme.text1};
@@ -335,6 +338,7 @@ const StyledDropdown = styled.div`
   }
 `
 const Dropdown = styled.div`
+  z-index: 3;
   height: 0;
   position: absolute;
   border-radius: 14px;
@@ -515,33 +519,34 @@ export default function Header() {
           <Menu />
         </HeaderElementWrap> */}
           </HeaderControls>
-          {!!account && aggregateBalance && (
-            <UNIWrapper>
-              <UNIAmount active={!!account} style={{ pointerEvents: 'none' }}>
-                {account && (
-                  // <HideSmall>
-                  <TYPE.white
-                    style={{
-                      paddingRight: '.4rem'
-                    }}
-                  >
-                    <CountUp
-                      key={countUpValue}
-                      isCounting
-                      start={parseFloat(countUpValuePrevious)}
-                      end={parseFloat(countUpValue)}
-                      thousandsSeparator={','}
-                      duration={1}
-                    />
-                  </TYPE.white>
-                  // </HideSmall>
-                )}
-                MATTER
-              </UNIAmount>
-              {/* <CardNoise /> */}
-            </UNIWrapper>
-          )}
+
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+            {!!account && aggregateBalance && (
+              <UNIWrapper>
+                <UNIAmount style={{ pointerEvents: 'none' }}>
+                  {account && (
+                    // <HideSmall>
+                    <TYPE.white
+                      style={{
+                        paddingRight: '.4rem'
+                      }}
+                    >
+                      <CountUp
+                        key={countUpValue}
+                        isCounting
+                        start={parseFloat(countUpValuePrevious)}
+                        end={parseFloat(countUpValue)}
+                        thousandsSeparator={','}
+                        duration={1}
+                      />
+                    </TYPE.white>
+                    // </HideSmall>
+                  )}
+                  MATTER
+                </UNIAmount>
+                {/* <CardNoise /> */}
+              </UNIWrapper>
+            )}
             {/* {account && userEthBalance ? (
                 <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
                   {userEthBalance?.toSignificant(4)} ETH
