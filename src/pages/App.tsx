@@ -79,8 +79,9 @@ const BodyWrapper = styled.div`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  min-height: 100%;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  margin-top: ${({ theme }) => theme.mobileHeaderHeight}
+  margin-bottom: ${({ theme }) => theme.headerHeight}
   `}
 `
 

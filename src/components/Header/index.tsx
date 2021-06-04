@@ -9,7 +9,7 @@ import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
 import { ExternalLink, TYPE } from '../../theme'
-import Row, { RowFixed } from '../Row'
+import Row, { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
 import usePrevious from '../../hooks/usePrevious'
@@ -18,6 +18,7 @@ import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
 import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
 import useTheme from 'hooks/useTheme'
+import ToggleMenu from './ToggleMenu'
 
 interface TabContent {
   title: string
@@ -30,7 +31,7 @@ interface Tab extends TabContent {
   subTab?: TabContent[]
 }
 
-const tabs: Tab[] = [
+export const tabs: Tab[] = [
   { title: 'Option Trading', route: 'option_trading' },
   { title: 'Option Exercise', route: 'option_exercise' },
   { title: 'Option Creation', route: 'option_creation' },
@@ -117,13 +118,12 @@ const HeaderControls = styled.div`
   display: flex;
   flex-direction: row;
   justify-self: flex-end;
+  align-items: center;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    height: ${({ theme }) => theme.headerHeight};
+    height: ${theme.headerHeight};
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
     justify-self: center;
-    width: 100%;
     max-width: 960px;
     padding: 1rem;
     position: fixed;
@@ -131,14 +131,11 @@ const HeaderControls = styled.div`
     left: 0px;
     width: 100%;
     z-index: 99;
-    border-radius: 12px 12px 0 0;
-    background-color: ${({ theme }) => theme.bg1};
+    background-color: ${theme.bg2};
+    justify-content: center;
+    border-top: 1px solid;
+    border-top-color: #303030;
   `};
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  justify-content: center;
-  align-items: center;
-  border-top: 1px solid ${({ theme }) => theme.bg3};
-  `}
 `
 
 const HeaderElement = styled.div<{
@@ -191,15 +188,14 @@ const AccountElement = styled.div<{ active: boolean }>`
   background-color: transparent;
   border-radius: 4px;
   white-space: nowrap;
-  width: 100%;
   cursor: pointer;
-  padding: 7px 12px;
-  border: 1px solid ${({ theme }) => theme.text1};
+  padding: ${({ active }) => (active ? '7px 12px' : 'unset')};
+  border: 1px solid ${({ theme, active }) => (active ? theme.text1 : 'transparent')};
 `
 
 const UNIAmount = styled.div`
   color: white;
-  font-weight: 500;
+  font-size: 13px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -421,6 +417,22 @@ function FAQButton() {
   )
 }
 
+const MobileHeader = styled.header`
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items: center;
+  padding: 0 24px;
+  position:relative;
+  background-color: ${({ theme }) => theme.bg1}
+  ${({ theme }) => theme.mobile}
+  height:${({ theme }) => theme.mobileHeaderHeight}
+  position:fixed;
+  top: 0;
+  left: 0;
+  z-index: 100
+`
+
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
 
@@ -518,44 +530,52 @@ export default function Header() {
           </StyledMenuButton>
           <Menu />
         </HeaderElementWrap> */}
-          </HeaderControls>
 
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {!!account && aggregateBalance && (
-              <UNIWrapper>
-                <UNIAmount style={{ pointerEvents: 'none' }}>
-                  {account && (
-                    // <HideSmall>
-                    <TYPE.white
-                      style={{
-                        paddingRight: '.4rem'
-                      }}
-                    >
-                      <CountUp
-                        key={countUpValue}
-                        isCounting
-                        start={parseFloat(countUpValuePrevious)}
-                        end={parseFloat(countUpValue)}
-                        thousandsSeparator={','}
-                        duration={1}
-                      />
-                    </TYPE.white>
-                    // </HideSmall>
-                  )}
-                  MATTER
-                </UNIAmount>
-                {/* <CardNoise /> */}
-              </UNIWrapper>
-            )}
-            {/* {account && userEthBalance ? (
+            <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+              {!!account && aggregateBalance && (
+                <UNIWrapper>
+                  <UNIAmount style={{ pointerEvents: 'none' }}>
+                    {account && (
+                      // <HideSmall>
+                      <TYPE.white
+                        style={{
+                          paddingRight: '.4rem'
+                        }}
+                      >
+                        <CountUp
+                          key={countUpValue}
+                          isCounting
+                          start={parseFloat(countUpValuePrevious)}
+                          end={parseFloat(countUpValue)}
+                          thousandsSeparator={','}
+                          duration={1}
+                        />
+                      </TYPE.white>
+                      // </HideSmall>
+                    )}
+                    MATTER
+                  </UNIAmount>
+                  {/* <CardNoise /> */}
+                </UNIWrapper>
+              )}
+              {/* {account && userEthBalance ? (
                 <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
                   {userEthBalance?.toSignificant(4)} ETH
                 </BalanceText>
               ) : null} */}
-            <Web3Status />
-          </AccountElement>
+              <Web3Status />
+            </AccountElement>
+          </HeaderControls>
         </div>
       </HeaderRow>
+      <MobileHeader>
+        <RowBetween>
+          <Link to={'/'}>
+            <StyledLogo />
+          </Link>
+          <ToggleMenu />
+        </RowBetween>
+      </MobileHeader>
     </HeaderFrame>
   )
 }
