@@ -116,6 +116,8 @@ const StyledSearch = styled.div`
   ${({ theme }) => theme.mediaWidth.upToLarge`
     padding: 23px 50px;
     flex-wrap: wrap
+    flex-direction: column
+    width: 100%;
   `}
 `
 

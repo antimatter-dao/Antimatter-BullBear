@@ -16,6 +16,7 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     z-index: 2;
     background-color: transparent;
     overflow: hidden;
+    padding-top: ${({ theme }) => theme.headerHeight}
 
     display: flex;
     align-items: center;
@@ -25,6 +26,7 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     ${({ theme }) => theme.mediaWidth.upToSmall`
     height: calc(100% - ${theme.headerHeight});
     justify-content: flex-end;
+    padding-top: 0
     `}
   }
 `

@@ -102,10 +102,11 @@ const HeaderFrame = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 27px 0 0;
   z-index: 5;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  background-color:${({ theme }) => theme.bg1}
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     grid-template-columns: 1fr;
     padding: 0 1rem;
-    width: calc(100%);
+    width: 100%;
     position: relative;
   `};
 
@@ -119,12 +120,11 @@ const HeaderControls = styled.div`
   flex-direction: row;
   justify-self: flex-end;
   align-items: center;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     height: ${theme.headerHeight};
     flex-direction: row;
     align-items: center;
     justify-self: center;
-    max-width: 960px;
     padding: 1rem;
     position: fixed;
     bottom: 0px;
@@ -148,7 +148,7 @@ const HeaderElement = styled.div<{
     margin-left: 8px;
   }
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     align-items: center;
   `};
   & > div {
@@ -166,8 +166,8 @@ const HeaderRow = styled(RowFixed)`
   min-width: 1100px;
   padding-left: 2rem;
   align-items: flex-start
-    ${({ theme }) => theme.mediaWidth.upToMedium`
-   width: 100%;
+    ${({ theme }) => theme.mediaWidth.upToLarge`
+    background: red
    align-items: center
   `};
 `
@@ -175,9 +175,10 @@ const HeaderRow = styled(RowFixed)`
 const HeaderLinks = styled(Row)`
   justify-content: center;
   width: auto;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
+    display: none
 `};
 `
 
@@ -291,6 +292,7 @@ const StyledNavLink = styled(NavLink).attrs({
   margin: 0 20px;
   font-weight: 400;
   padding: 10px 0 27px;
+  white-space: nowrap;
   transition: 0.5s;
   &.${activeClassName} {
     color: ${({ theme }) => theme.primary1};
@@ -425,12 +427,15 @@ const MobileHeader = styled.header`
   padding: 0 24px;
   position:relative;
   background-color: ${({ theme }) => theme.bg1}
-  ${({ theme }) => theme.mobile}
   height:${({ theme }) => theme.mobileHeaderHeight}
   position:fixed;
   top: 0;
   left: 0;
   z-index: 100
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    display: inherit
+`};
 `
 
 export default function Header() {
@@ -570,7 +575,7 @@ export default function Header() {
       </HeaderRow>
       <MobileHeader>
         <RowBetween>
-          <Link to={'/'}>
+          <Link to={'/'} id="aaa">
             <StyledLogo />
           </Link>
           <ToggleMenu />

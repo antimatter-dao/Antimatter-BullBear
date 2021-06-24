@@ -80,7 +80,6 @@ const BodyWrapper = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-  margin-top: ${({ theme }) => theme.mobileHeaderHeight}
   margin-bottom: ${({ theme }) => theme.headerHeight}
   `}
 `
