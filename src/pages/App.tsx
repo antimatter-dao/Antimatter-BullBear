@@ -81,6 +81,7 @@ const BodyWrapper = styled.div`
   overflow-x: hidden;
   ${({ theme }) => theme.mediaWidth.upToMedium`
   margin-bottom: ${({ theme }) => theme.headerHeight}
+  margin-top: ${({ theme }) => theme.mobileHeaderHeight}
   `}
 `
 

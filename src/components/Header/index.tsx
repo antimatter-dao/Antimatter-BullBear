@@ -575,7 +575,7 @@ export default function Header() {
       </HeaderRow>
       <MobileHeader>
         <RowBetween>
-          <Link to={'/'} id="aaa">
+          <Link to={'/'}>
             <StyledLogo />
           </Link>
           <ToggleMenu />

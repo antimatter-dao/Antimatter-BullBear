@@ -120,6 +120,18 @@ const StyledSearch = styled.div`
     width: 100%;
   `}
 `
+const ButtonWrapper = styled(RowFixed)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column
+  width: 100%;
+  button{
+    width: 100%;
+    :first-child{
+      margin-bottom: 8px
+    }
+  }
+`}
+`
 
 const Circle = styled.div`
   flex-shrink: 0;
@@ -418,7 +430,7 @@ export function Search({
             value={optionIdQuery}
             onSetValue={setOptionIdQuery}
           />
-          <RowFixed>
+          <ButtonWrapper>
             <ButtonOutlinedPrimary width="186px" onClick={handleSearch}>
               <SearchIcon style={{ marginRight: 10 }} />
               Search
@@ -427,7 +439,7 @@ export function Search({
             <ButtonPrimary width="186px" onClick={handleClear}>
               Show All
             </ButtonPrimary>
-          </RowFixed>
+          </ButtonWrapper>
         </StyledSearch>
       </WrapperSearch>
     </>

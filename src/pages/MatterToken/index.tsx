@@ -16,6 +16,9 @@ const Wrapper = styled.div`
   `}
   justify-content: center;
   margin-bottom: auto;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+  padding-bottom: 100px
+`}
 `
 export default function MatterToken() {
   return (
