@@ -60,7 +60,7 @@ export const BlueCard = ({ children, ...rest }: CardProps) => {
 }
 
 export const GradientCard = styled(Card)`
-  background: ${({ theme }) => theme.gradient1}
+  background: ${({ theme }) => theme.gradient1};
   color: ${({ theme }) => theme.text1};
   font-weight: 500;
 `

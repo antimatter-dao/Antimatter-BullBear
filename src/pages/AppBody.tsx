@@ -3,12 +3,11 @@ import styled from 'styled-components'
 import { TYPE } from '../theme'
 import { ColumnCenter } from '../components/Column'
 
-export const BodyWrapper = styled.div<{ maxWidth?: string }>`
+export const BodyWrapper = styled.div<{ maxWidth?: string; gradient1?: boolean }>`
   max-width: ${({ maxWidth }) => maxWidth ?? '480px'};
   width: 100%;
-  background: ${({ theme }) => theme.bg1}
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%) ;
-  border: 1px solid ${({ theme }) => theme.text5}
+  background: ${({ theme, gradient1 }) => (gradient1 ? theme.gradient1 : theme.gradient2)};
+  border: 1px solid ${({ theme }) => theme.text5};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 32px;
@@ -28,14 +27,16 @@ export const BodyWrapper = styled.div<{ maxWidth?: string }>`
 export default function AppBody({
   children,
   style,
-  maxWidth
+  maxWidth,
+  gradient1
 }: {
   children: React.ReactNode
   style?: any
   maxWidth?: string
+  gradient1?: boolean
 }) {
   return (
-    <BodyWrapper style={style} maxWidth={maxWidth}>
+    <BodyWrapper style={style} maxWidth={maxWidth} gradient1={gradient1}>
       {children}
     </BodyWrapper>
   )

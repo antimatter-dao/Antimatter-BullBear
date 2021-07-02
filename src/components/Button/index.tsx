@@ -237,7 +237,7 @@ export const ButtonEmpty = styled(Base)<{ color?: string }>`
   align-items: center;
 
   &:focus {
-    text-decoration: underline;
+    text-decoration: none;
   }
   &:hover {
     text-decoration: none;

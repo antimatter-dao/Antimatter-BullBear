@@ -1,11 +1,11 @@
 import React from 'react'
 import { useActiveWeb3React } from '../../hooks'
-
 import { AutoColumn, ColumnCenter } from '../Column'
 import styled from 'styled-components'
 import { RowBetween } from '../Row'
 import { TYPE, CloseIcon, CustomLightSpinner } from '../../theme'
 import { ReactComponent as CheckCircle } from '../../assets/svg/transaction_submitted.svg'
+import { ReactComponent as CrossCircle } from '../../assets/svg/transaction_error.svg'
 import Circle from '../../assets/svg/gray_loader.svg'
 import { getEtherscanLink } from '../../utils'
 import { ExternalLink } from '../../theme/components'
@@ -42,11 +42,15 @@ export function LoadingView({ children, onDismiss }: { children: any; onDismiss:
 export function SubmittedView({
   children,
   onDismiss,
-  hash
+  hash,
+  hideLink,
+  isError
 }: {
   children: any
   onDismiss: () => void
   hash: string | undefined
+  hideLink?: boolean
+  isError?: boolean
 }) {
   const { chainId } = useActiveWeb3React()
   const theme = useTheme()
@@ -58,11 +62,11 @@ export function SubmittedView({
         <CloseIcon onClick={onDismiss} />
       </RowBetween>
       <ConfirmedIcon>
-        <CheckCircle style={{ width: '32px', height: '32px' }} />
+        {isError ? <CrossCircle /> : <CheckCircle style={{ width: '32px', height: '32px' }} />}
       </ConfirmedIcon>
       <AutoColumn gap="32px" justify={'center'}>
         {children}
-        {chainId && hash && (
+        {!hideLink && !isError && chainId && hash && (
           <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')} style={{ color: theme.primary1 }}>
             <TYPE.main fontWeight={400} fontSize={14} color={theme.primary1}>
               View on Etherscan

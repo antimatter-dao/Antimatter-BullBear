@@ -197,7 +197,7 @@ export default function TransactionConfirmationModal({
         <>
           (
           {submittedContent ? (
-            submittedContent
+            submittedContent()
           ) : (
             <TransactionSubmittedContent
               chainId={chainId}
