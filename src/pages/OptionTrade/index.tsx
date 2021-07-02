@@ -282,7 +282,7 @@ export function OptionCard({
   const currency = useCurrency(address)
   const price = useUSDTPrice(currency ?? undefined)
   return (
-    <AppBody style={{ position: 'relative' }}>
+    <AppBody style={{ position: 'relative' }} isCard>
       <OptionId>Option ID&nbsp;:&nbsp;{optionId}</OptionId>
       <AutoColumn gap="20px">
         <TitleWrapper>

@@ -267,7 +267,6 @@ const rotate = keyframes`
   }
 `
 
-
 export const Spinner = styled.img`
   animation: 2s ${rotate} linear infinite;
   width: 16px;
@@ -315,6 +314,13 @@ export const CustomLightSpinner = styled(Spinner)<{ size: string }>`
 export const HideSmall = styled.span`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
+  `};
+`
+
+export const ShowSmall = styled.span`
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: inherit;
   `};
 `
 

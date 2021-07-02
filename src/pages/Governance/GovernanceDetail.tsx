@@ -6,7 +6,7 @@ import { RowBetween } from 'components/Row'
 import useTheme from 'hooks/useTheme'
 import { ButtonEmpty, ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
 import { AutoColumn } from 'components/Column'
-import { TYPE } from 'theme'
+import { HideSmall, ShowSmall, TYPE } from 'theme'
 import { ProgressBar } from './'
 import { GradientCard, OutlineCard } from 'components/Card'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
@@ -31,6 +31,9 @@ const Wrapper = styled.div`
   flex-direction: column;
   jusitfy-content: cetner;
   align-items: center;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding: 0 24px
+  `}
 `
 
 const VoteOptionCard = styled.div<{ selected?: boolean }>`
@@ -52,6 +55,34 @@ const VoteOptionCard = styled.div<{ selected?: boolean }>`
     cursor: pointer;
     border: 1px solid ${({ theme }) => theme.primary1};
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  width: 100%;
+`}
+`
+
+const VoteOptionWrapper = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column;
+  & > * {
+    margin-top: 12px;
+  };
+  & > *:first-child {
+    margin-top: 0;
+  }
+`}
+`
+
+const ModalButtonWrapper = styled(RowBetween)`
+  margin-top: 14px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column;
+  & > *:last-child {
+    margin-top: 12px;
+  };
+  & > *:first-child {
+    margin: 0;
+  }
+`}
 `
 
 export default function GovernanceDetail() {
@@ -102,6 +133,7 @@ export default function GovernanceDetail() {
       setAttemptingTxn(false)
     }, 1000)
   }, [])
+  const handleBackToList = useCallback(() => {}, [])
   return (
     <>
       <Modal isOpen={NeutralSubmitted} onDismiss={handleNeutralDismiss}>
@@ -124,12 +156,21 @@ export default function GovernanceDetail() {
       />
       <Wrapper>
         <RowBetween>
-          <ButtonEmpty width="106px" color={theme.text1} onClick={() => {}}>
-            <ChevronLeft style={{ marginRight: 16 }} />
-            Back
-          </ButtonEmpty>
+          <HideSmall>
+            <ButtonEmpty width="106px" color={theme.text1} onClick={handleBackToList}>
+              <ChevronLeft style={{ marginRight: 16 }} />
+              Back
+            </ButtonEmpty>
+          </HideSmall>
           <Live>Live</Live>
-          <div style={{ width: 106 }} />
+          <ShowSmall>
+            <ButtonEmpty width="auto" padding="0" onClick={handleBackToList}>
+              <X color={theme.text3} size={24} />
+            </ButtonEmpty>
+          </ShowSmall>
+          <HideSmall>
+            <div style={{ width: 106 }} />
+          </HideSmall>
         </RowBetween>
         <AutoColumn style={{ maxWidth: 760 }} justify="center" gap="40px">
           <AutoColumn gap="28px">
@@ -154,11 +195,13 @@ export default function GovernanceDetail() {
                   <span style={{ color: theme.text3, fontWeight: 100, marginLeft: 10 }}>{voteForPercentage}</span>
                 </TYPE.mediumHeader>
               </AutoColumn>
-              <OutlineCard style={{ width: 'auto', padding: '8px 38px' }}>
-                <TYPE.largeHeader color={theme.text1} fontWeight={100}>
-                  {totalVotes}&nbsp;Votes
-                </TYPE.largeHeader>
-              </OutlineCard>
+              <HideSmall>
+                <OutlineCard style={{ width: 'auto', padding: '8px 38px' }}>
+                  <TYPE.largeHeader color={theme.text1} fontWeight={100} textAlign="center">
+                    {totalVotes}&nbsp;Votes
+                  </TYPE.largeHeader>
+                </OutlineCard>
+              </HideSmall>
               <AutoColumn gap="4px">
                 <TYPE.smallGray fontSize={14}>Votes Against:</TYPE.smallGray>
                 <TYPE.mediumHeader>
@@ -168,12 +211,19 @@ export default function GovernanceDetail() {
               </AutoColumn>
             </RowBetween>
             <ProgressBar isLarge leftPercentage={voteForPercentage} />
+            <ShowSmall>
+              <OutlineCard style={{ width: '100%', padding: '8px 38px' }}>
+                <TYPE.largeHeader color={theme.text1} fontWeight={100} textAlign="center">
+                  {totalVotes}&nbsp;Votes
+                </TYPE.largeHeader>
+              </OutlineCard>
+            </ShowSmall>
           </AutoColumn>
           <GradientCard>
             <AutoColumn gap="24px" style={{ maxWidth: 468, margin: '4px auto' }} justify="center">
               <TYPE.mediumHeader textAlign="center">Make Your Decision</TYPE.mediumHeader>
               <TYPE.small textAlign="center">Time left : {timeLeft}</TYPE.small>
-              <RowBetween>
+              <VoteOptionWrapper>
                 <VoteOptionCard selected={selected === VoteOption.FOR} onClick={handleSelect(VoteOption.FOR)}>
                   Vote For
                   <TYPE.small>10 MATTER</TYPE.small>
@@ -186,7 +236,7 @@ export default function GovernanceDetail() {
                   Vote Netural
                   <TYPE.small>0 MATTER</TYPE.small>
                 </VoteOptionCard>
-              </RowBetween>
+              </VoteOptionWrapper>
               <TYPE.smallGray textAlign="center">
                 I vote in favor of Dutch Auction format for future Governance Vault sales.
               </TYPE.smallGray>
@@ -227,38 +277,15 @@ function ConfirmationModalContent({
       <TYPE.body fontSize={14}>
         Are you sure you want to vote {voteOption === VoteOption.FOR ? 'For' : 'Against'}?
       </TYPE.body>
-      <RowBetween style={{ marginTop: 14 }}>
+      <ModalButtonWrapper>
         <ButtonOutlinedPrimary marginRight="15px" onClick={onDismiss}>
           Cancel
         </ButtonOutlinedPrimary>
         <ButtonPrimary onClick={onConfirm}>Confirm</ButtonPrimary>
-      </RowBetween>
+      </ModalButtonWrapper>
     </AutoColumn>
   )
 }
-
-// function SubmittedModalContent({
-//   voteOption,
-//   onDismiss,
-//   onConfirm
-// }: {
-//   voteOption: VoteOption
-//   onDismiss: () => void
-//   onConfirm: () => void
-// }) {
-//   return (
-//     <AutoColumn justify="center" style={{ padding: 24, width: '100%' }} gap="20px">
-//       <TYPE.body fontSize={18}>{voteOption === VoteOption.FOR ? 'Vote For' : 'Vote Against'}</TYPE.body>
-
-//       <RowBetween style={{ marginTop: 14 }}>
-//         <ButtonOutlinedPrimary marginRight="15px" onClick={onDismiss}>
-//           Cancel
-//         </ButtonOutlinedPrimary>
-//         <ButtonPrimary onClick={onConfirm}>Confirm</ButtonPrimary>
-//       </RowBetween>
-//     </AutoColumn>
-//   )
-// }
 
 function SubmittedModalContent({
   onDismiss,

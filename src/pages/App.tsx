@@ -81,10 +81,13 @@ const BodyWrapper = styled.div`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  position: relative;
   ${({ theme }) => theme.mediaWidth.upToMedium`
   margin-bottom: ${({ theme }) => theme.headerHeight}
-  margin-top: ${({ theme }) => theme.mobileHeaderHeight}
   `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  margin-top: ${({ theme }) => theme.mobileHeaderHeight}
+  `};
 `
 
 export const Marginer = styled.div`

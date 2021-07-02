@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { TYPE } from '../theme'
 import { ColumnCenter } from '../components/Column'
 
-export const BodyWrapper = styled.div<{ maxWidth?: string; gradient1?: boolean }>`
+export const BodyWrapper = styled.div<{ maxWidth?: string; gradient1?: boolean; isCard?: boolean }>`
   max-width: ${({ maxWidth }) => maxWidth ?? '480px'};
   width: 100%;
   background: ${({ theme, gradient1 }) => (gradient1 ? theme.gradient1 : theme.gradient2)};
@@ -12,12 +12,12 @@ export const BodyWrapper = styled.div<{ maxWidth?: string; gradient1?: boolean }
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 32px;
   padding: 1.5rem;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme, isCard }) => theme.mediaWidth.upToSmall`
     min-height:100%;
     padding: 16px 24px;
-    border-bottom-left-radius: unset;
-    border-bottom-right-radius: unset;
-    flex-grow: 1
+    flex-grow: 1;
+    ${isCard ? '' : 'border-bottom-left-radius: unset;border-bottom-right-radius: unset;'}
+
   `}
 `
 
@@ -28,15 +28,17 @@ export default function AppBody({
   children,
   style,
   maxWidth,
-  gradient1
+  gradient1,
+  isCard
 }: {
   children: React.ReactNode
   style?: any
   maxWidth?: string
   gradient1?: boolean
+  isCard?: boolean
 }) {
   return (
-    <BodyWrapper style={style} maxWidth={maxWidth} gradient1={gradient1}>
+    <BodyWrapper style={style} maxWidth={maxWidth} gradient1={gradient1} isCard={isCard}>
       {children}
     </BodyWrapper>
   )

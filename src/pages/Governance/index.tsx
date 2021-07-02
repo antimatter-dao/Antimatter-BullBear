@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { RowBetween, RowFixed } from 'components/Row'
 import { AutoColumn } from 'components/Column'
-import { TYPE } from 'theme'
+import { HideSmall, TYPE } from 'theme'
 import { ButtonOutlinedPrimary } from 'components/Button'
 import AppBody from 'pages/AppBody'
 
@@ -50,7 +50,9 @@ export const ContentWrapper = styled.div`
   padding: 52px 0;
   justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
-  ${({ theme }) => theme.mediaWidth.upToSmall`padding: 10px`}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding: 0 24px 0 82px
+  `}
 `
 export const Live = styled.div`
   color: ${({ theme }) => theme.green1};
@@ -90,6 +92,21 @@ const Synopsis = styled.div`
   overflow: hidden;
 `
 
+const MobileCreate = styled.div`
+  display: none;
+  position: fixed;
+  left: 0;
+  bottom: ${({ theme }) => theme.headerHeight};
+  height: 72px;
+  width: 100%;
+  background-color: ${({ theme }) => theme.bg2};
+  align-items: center;
+  padding: 0 24px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+display: flex
+`};
+`
+
 export default function Governance() {
   const handleCreateProposal = useCallback(() => {}, [])
   const governanceData = useMemo(
@@ -120,37 +137,44 @@ export default function Governance() {
     []
   )
   return (
-    <Wrapper id="governance">
-      <RowBetween style={{ padding: '45px 0' }}>
-        <RowFixed>
+    <>
+      <Wrapper id="governance">
+        <RowBetween style={{ padding: '45px 25px' }}>
           <RowFixed>
-            <TYPE.smallGray fontSize={14} style={{ marginRight: '12px' }}>
-              Your Voting Power:
-            </TYPE.smallGray>
-            <TYPE.smallHeader fontSize={20} fontWeight={500}>
-              0,3 Votes
-            </TYPE.smallHeader>
+            <RowFixed>
+              <TYPE.smallGray fontSize={14} style={{ marginRight: '12px' }}>
+                Your Voting Power:
+              </TYPE.smallGray>
+              <TYPE.smallHeader fontSize={20} fontWeight={500}>
+                0,3 Votes
+              </TYPE.smallHeader>
+            </RowFixed>
+            <VerticalDivider />
+            <RowFixed>
+              <TYPE.smallGray fontSize={14} style={{ marginRight: '12px' }}>
+                Your Governance Earning:
+              </TYPE.smallGray>
+              <TYPE.body fontSize={20} fontWeight={500}>
+                100 MATTER
+              </TYPE.body>
+            </RowFixed>
           </RowFixed>
-          <VerticalDivider />
-          <RowFixed>
-            <TYPE.smallGray fontSize={14} style={{ marginRight: '12px' }}>
-              Your Governance Earning:
-            </TYPE.smallGray>
-            <TYPE.body fontSize={20} fontWeight={500}>
-              100 MATTER
-            </TYPE.body>
-          </RowFixed>
-        </RowFixed>
-        <ButtonOutlinedPrimary onClick={handleCreateProposal} width="180px">
-          + Create Proposal
-        </ButtonOutlinedPrimary>
-      </RowBetween>
-      <ContentWrapper>
-        {governanceData.map(data => (
-          <GovernanceCard data={data} key={data.id} />
-        ))}
-      </ContentWrapper>
-    </Wrapper>
+          <HideSmall>
+            <ButtonOutlinedPrimary onClick={handleCreateProposal} width="180px">
+              + Create Proposal
+            </ButtonOutlinedPrimary>
+          </HideSmall>
+        </RowBetween>
+        <ContentWrapper>
+          {governanceData.map(data => (
+            <GovernanceCard data={data} key={data.id} />
+          ))}
+        </ContentWrapper>
+      </Wrapper>
+      <MobileCreate>
+        <ButtonOutlinedPrimary onClick={handleCreateProposal}>+ Create Proposal</ButtonOutlinedPrimary>
+      </MobileCreate>
+    </>
   )
 }
 
@@ -160,7 +184,7 @@ function GovernanceCard({
   data: GovernanceData
 }) {
   return (
-    <AppBody maxWidth="340px" gradient1={true}>
+    <AppBody maxWidth="340px" gradient1={true} isCard>
       <AutoColumn gap="16px">
         <RowBetween>
           {isLive ? <Live>Live</Live> : <div />}
