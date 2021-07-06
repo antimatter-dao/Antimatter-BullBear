@@ -1,4 +1,4 @@
-import { TokenAmount, JSBI } from '@uniswap/sdk'
+import { TokenAmount, JSBI, Token } from '@uniswap/sdk'
 import React, { useCallback, useState } from 'react'
 import { TransactionResponse } from '@ethersproject/providers'
 import { X } from 'react-feather'
@@ -15,7 +15,7 @@ import { AutoColumn } from 'components/Column'
 import { TYPE } from 'theme'
 import { useTransition } from 'react-spring'
 import TextInput from 'components/TextInput'
-import { useAggregateUniBalance } from 'state/wallet/hooks'
+import { useTokenBalance } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { useAntiMatterGovernanceContract } from 'hooks/useContract'
 import { calculateGasMargin } from 'utils'
@@ -23,7 +23,6 @@ import TransactionConfirmationModal from 'components/TransactionConfirmationModa
 import { SubmittedView } from 'components/ModalViews'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useApproveCallback } from 'hooks/useApproveCallback'
-import { Matter, ANTIMATTER_ADDRESS } from 'constants/index'
 import { tryParseAmount } from 'state/swap/hooks'
 
 const Wrapper = styled.div`
@@ -82,6 +81,7 @@ export default function GovernanceProposalCreation({
   const [showConfirm, setShowConfirm] = useState(false)
   const [input, setInput] = useState<any>({ title: '', summary: '', agreeFor: '', againstFor: '' })
   const [error, setError] = useState('')
+  const [submitError, setSubmitError] = useState('')
   const theme = useTheme()
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
@@ -95,12 +95,18 @@ export default function GovernanceProposalCreation({
   const [txHash, setTxHash] = useState<string>('')
 
   const { account, chainId, library } = useActiveWeb3React()
-  const balance: TokenAmount | undefined = useAggregateUniBalance()
+  const balance: TokenAmount | undefined = useTokenBalance(
+    account ?? undefined,
+    chainId ? new Token(chainId, '0x6669ee1e6612e1b43eac84d4cb9a94af0a98e740', 18) : undefined
+  )
   const notEnoughBalance = !balance?.greaterThan(JSBI.BigInt(stakeAmount))
   const governanceContract = useAntiMatterGovernanceContract()
   const [approval, approveCallback] = useApproveCallback(
-    tryParseAmount(JSBI.BigInt(stakeAmount).toString(), Matter),
-    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
+    tryParseAmount(
+      JSBI.BigInt(stakeAmount).toString(),
+      chainId ? new Token(chainId, '0x6669ee1e6612e1b43eac84d4cb9a94af0a98e740', 18) : undefined
+    ),
+    chainId ? '0x6669ee1e6612e1b43eac84d4cb9a94af0a98e740' : undefined
   )
 
   const handleApprove = useCallback(
@@ -121,18 +127,17 @@ export default function GovernanceProposalCreation({
   }, [])
 
   const handleSubmit = useCallback(e => {
-    console.log(9)
     e.preventDefault()
     const formData = new FormData(e.target).entries()
     const input: { [key: string]: any } = {}
     let error = ''
     for (const pair of formData) {
       if (!pair[1]) {
-        error += ',' + pair[0]
+        error += ', ' + pair[0]
       }
       input[pair[0]] = pair[1]
     }
-    setError(error ? 'Following fields are incomplete: ' + error.slice(1) : '')
+    setError(error ? 'Following fields are incomplete:' + error.slice(1) : '')
 
     if (!error) {
       setShowConfirm(true)
@@ -176,7 +181,9 @@ export default function GovernanceProposalCreation({
         )
         .catch(error => {
           setAttemptingTxn(false)
+          setTxHash('error')
           if (error?.code !== 4001) {
+            setSubmitError(error)
             console.error('---->', error)
           }
         })
@@ -192,7 +199,9 @@ export default function GovernanceProposalCreation({
         hash={txHash}
         content={() => <ConfirmationModalContent onDismiss={handleDismissConfirmation} onConfirm={onCreate} />}
         pendingText={'Waiting For Confirmation...'}
-        submittedContent={() => <SubmittedModalContent onDismiss={handleDismissConfirmation} hash={txHash} />}
+        submittedContent={() => (
+          <SubmittedModalContent onDismiss={handleDismissConfirmation} hash={txHash} isError={!!submitError} />
+        )}
       />
       {fadeTransition.map(
         ({ item, key, props }) =>
@@ -259,7 +268,7 @@ export default function GovernanceProposalCreation({
                   </AutoColumn>
                 </form>
                 {notEnoughBalance && (
-                  <Warning>You must have {stakeAmount + 100000} MATTER to create a proposal</Warning>
+                  <Warning>You must have {stakeAmount + 100000} MAT Token to create a proposal</Warning>
                 )}
               </Wrapper>
             </StyledDialogOverlay>
@@ -305,18 +314,17 @@ function GovernanceTimeline({
             fill: theme.bg5
           },
           '& .MuiStepLabel-label': {
-            color: theme.text4
+            color: theme.text4,
+            fontSize: 16
           },
-          '& .MuiStepIcon-active': {
-            '&  circle': {
-              fill: theme.primary1,
-              stroke: theme.primary4,
-              strokeWidth: 4
-            },
-            '& .MuiStepLabel-label': {
-              color: theme.text1,
-              fontWeight: 500
-            }
+          '& .MuiStepIcon-active circle': {
+            fill: theme.primary1,
+            stroke: theme.primary4,
+            strokeWidth: 4
+          },
+          '& .MuiStepLabel-active': {
+            color: theme.text1,
+            fontWeight: 500
           },
           '& .MuiStepConnector-root': {
             left: 'calc(-50% + 10px)',
@@ -359,7 +367,7 @@ function ConfirmationModalContent({ onDismiss, onConfirm }: { onDismiss: () => v
       </RowBetween>
 
       <TYPE.body fontSize={24}>
-        You will stack 200 MATTER
+        You will stack 200 MAT Token
         <br /> to submit this proposal
       </TYPE.body>
       <ModalButtonWrapper>
