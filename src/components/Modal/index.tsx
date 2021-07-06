@@ -11,10 +11,9 @@ import { Marginer } from '../../pages/App'
 
 const AnimatedDialogOverlay = animated(DialogOverlay)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
+export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{ backgroundColor?: string }>`
   &[data-reach-dialog-overlay] {
     z-index: 2;
-    background-color: transparent;
     overflow: hidden;
     padding-top: ${({ theme }) => theme.headerHeight}
 
@@ -22,7 +21,7 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     align-items: center;
     justify-content: center;
 
-    background-color: ${({ theme }) => theme.modalBG};
+    background-color: ${({ theme, backgroundColor }) => backgroundColor ?? theme.modalBG};
     ${({ theme }) => theme.mediaWidth.upToSmall`
     height: calc(100% - ${theme.headerHeight});
     justify-content: flex-end;
