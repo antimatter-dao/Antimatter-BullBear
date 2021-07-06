@@ -129,7 +129,8 @@ export default function GovernanceDetail({
   const handleDismissConfirmation = useCallback(() => {
     setShowConfirm(false)
     setTxHash('')
-  }, [])
+    onDismiss()
+  }, [onDismiss])
 
   const handleConfirmConfirmation = useCallback(() => {
     setAttemptingTxn(true)
@@ -154,9 +155,10 @@ export default function GovernanceDetail({
             <StyledDialogOverlay
               key={key}
               style={props}
-              onDismiss={onDismiss}
-              backgroundColor={theme.bg1}
+              color={theme.bg1}
               unstable_lockFocusAcrossFrames={false}
+              overflow="auto"
+              alignItems="flex-start"
             >
               <Modal isOpen={NeutralSubmitted} onDismiss={handleNeutralDismiss}>
                 <SubmittedModalContent onDismiss={handleNeutralDismiss} hash={txHash} />
