@@ -23,15 +23,15 @@ import MatterToken from './MatterToken'
 // import MigrateV1Exchange from './MigrateV1/MigrateV1Exchange'
 // import RemoveV1Exchange from './MigrateV1/RemoveV1Exchange'
 // import Pool from './Pool'
-import PoolFinder from './PoolFinder'
+// import PoolFinder from './PoolFinder'
 // import RemoveLiquidity from './RemoveLiquidity'
 // import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 // import Swap from './Swap'
 import { /*OpenClaimAddressModalAndRedirectToSwap,*/ RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import Generate from './Generate'
 import Redeem from './Redeem'
-import Exercise from './Exercise'
-import ComingSoon from './ComingSoon'
+// import Exercise from './Exercise'
+// import ComingSoon from './ComingSoon'
 import Info from './Info'
 // import MatterRedemption from './MatterToken/MatterRedemption'
 import WelcomeSlider from 'components/WelcomeSlider'
@@ -39,6 +39,8 @@ import FAQ from './FAQ'
 import OptionTrade from './OptionTrade'
 import OptionCreation from './OptionCreation'
 import OptionExercise from './OptionExercise'
+import Governance from './Governance'
+import GovernanceDetail from './Governance/GovernanceDetail'
 // import WarningModal from 'components/Modal/WarningModal'
 
 const AppWrapper = styled.div`
@@ -79,9 +81,13 @@ const BodyWrapper = styled.div`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  min-height: 100%;
+  position: relative;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  margin-bottom: ${({ theme }) => theme.headerHeight}
   `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  margin-top: ${({ theme }) => theme.mobileHeaderHeight}
+  `};
 `
 
 export const Marginer = styled.div`
@@ -123,13 +129,14 @@ export default function App() {
                 <Route exact strict path="/generate/:optionTypeIndex" component={Generate} />
                 {/* <Route exact strict path="/redeem" component={Redeem} /> */}
                 <Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />
-                <Route exact strict path="/governance" component={ComingSoon} />
+                <Route exact strict path="/governance" component={Governance} />
+                <Route exact strict path="/governance/detail" component={GovernanceDetail} />
                 <Route exact strict path="/info" component={Info} />
-                <Route exact strict path="/exercise" component={Exercise} />
+                {/* <Route exact strict path="/exercise" component={Exercise} /> */}
                 {/* <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} /> */}
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
-                <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
-                <Route exact strict path="/find" component={PoolFinder} />
+                {/* <Route exact strict path="/send" component={RedirectPathToSwapOnly} /> */}
+                {/* <Route exact strict path="/find" component={PoolFinder} /> */}
                 {/* <Route exact strict path="/liquidity" component={Pool} /> */}
                 <Route exact strict path="/farm" component={MatterToken} />
                 {/* <Route exact strict path="/matter_redemption" component={MatterRedemption} /> */}

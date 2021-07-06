@@ -9,7 +9,7 @@ import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
 import { ExternalLink, TYPE } from '../../theme'
-import Row, { RowFixed } from '../Row'
+import Row, { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
 import usePrevious from '../../hooks/usePrevious'
@@ -18,6 +18,7 @@ import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
 import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
 import useTheme from 'hooks/useTheme'
+import ToggleMenu from './ToggleMenu'
 
 interface TabContent {
   title: string
@@ -30,7 +31,7 @@ interface Tab extends TabContent {
   subTab?: TabContent[]
 }
 
-const tabs: Tab[] = [
+export const tabs: Tab[] = [
   { title: 'Option Trading', route: 'option_trading' },
   { title: 'Option Exercise', route: 'option_exercise' },
   { title: 'Option Creation', route: 'option_creation' },
@@ -101,10 +102,11 @@ const HeaderFrame = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 27px 0 0;
   z-index: 5;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  background-color:${({ theme }) => theme.bg1}
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     grid-template-columns: 1fr;
     padding: 0 1rem;
-    width: calc(100%);
+    width: 100%;
     position: relative;
   `};
 
@@ -117,28 +119,23 @@ const HeaderControls = styled.div`
   display: flex;
   flex-direction: row;
   justify-self: flex-end;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    height: ${({ theme }) => theme.headerHeight};
+  align-items: center;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    height: ${theme.headerHeight};
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
     justify-self: center;
-    width: 100%;
-    max-width: 960px;
     padding: 1rem;
     position: fixed;
     bottom: 0px;
     left: 0px;
     width: 100%;
     z-index: 99;
-    border-radius: 12px 12px 0 0;
-    background-color: ${({ theme }) => theme.bg1};
+    background-color: ${theme.bg2};
+    justify-content: center;
+    border-top: 1px solid;
+    border-top-color: #303030;
   `};
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  justify-content: center;
-  align-items: center;
-  border-top: 1px solid ${({ theme }) => theme.bg3};
-  `}
 `
 
 const HeaderElement = styled.div<{
@@ -151,7 +148,7 @@ const HeaderElement = styled.div<{
     margin-left: 8px;
   }
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     align-items: center;
   `};
   & > div {
@@ -169,8 +166,8 @@ const HeaderRow = styled(RowFixed)`
   min-width: 1100px;
   padding-left: 2rem;
   align-items: flex-start
-    ${({ theme }) => theme.mediaWidth.upToMedium`
-   width: 100%;
+    ${({ theme }) => theme.mediaWidth.upToLarge`
+    background: red
    align-items: center
   `};
 `
@@ -178,9 +175,10 @@ const HeaderRow = styled(RowFixed)`
 const HeaderLinks = styled(Row)`
   justify-content: center;
   width: auto;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
+    display: none
 `};
 `
 
@@ -191,15 +189,14 @@ const AccountElement = styled.div<{ active: boolean }>`
   background-color: transparent;
   border-radius: 4px;
   white-space: nowrap;
-  width: 100%;
   cursor: pointer;
-  padding: 7px 12px;
-  border: 1px solid ${({ theme }) => theme.text1};
+  padding: ${({ active }) => (active ? '7px 12px' : 'unset')};
+  border: 1px solid ${({ theme, active }) => (active ? theme.text1 : 'transparent')};
 `
 
 const UNIAmount = styled.div`
   color: white;
-  font-weight: 500;
+  font-size: 13px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -295,6 +292,7 @@ const StyledNavLink = styled(NavLink).attrs({
   margin: 0 20px;
   font-weight: 400;
   padding: 10px 0 27px;
+  white-space: nowrap;
   transition: 0.5s;
   &.${activeClassName} {
     color: ${({ theme }) => theme.primary1};
@@ -421,6 +419,25 @@ function FAQButton() {
   )
 }
 
+const MobileHeader = styled.header`
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items: center;
+  padding: 0 24px;
+  position:relative;
+  background-color: ${({ theme }) => theme.bg1}
+  height:${({ theme }) => theme.mobileHeaderHeight}
+  position:fixed;
+  top: 0;
+  left: 0;
+  z-index: 100
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    display: inherit
+`};
+`
+
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
 
@@ -518,44 +535,52 @@ export default function Header() {
           </StyledMenuButton>
           <Menu />
         </HeaderElementWrap> */}
-          </HeaderControls>
 
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {!!account && aggregateBalance && (
-              <UNIWrapper>
-                <UNIAmount style={{ pointerEvents: 'none' }}>
-                  {account && (
-                    // <HideSmall>
-                    <TYPE.white
-                      style={{
-                        paddingRight: '.4rem'
-                      }}
-                    >
-                      <CountUp
-                        key={countUpValue}
-                        isCounting
-                        start={parseFloat(countUpValuePrevious)}
-                        end={parseFloat(countUpValue)}
-                        thousandsSeparator={','}
-                        duration={1}
-                      />
-                    </TYPE.white>
-                    // </HideSmall>
-                  )}
-                  MATTER
-                </UNIAmount>
-                {/* <CardNoise /> */}
-              </UNIWrapper>
-            )}
-            {/* {account && userEthBalance ? (
+            <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+              {!!account && aggregateBalance && (
+                <UNIWrapper>
+                  <UNIAmount style={{ pointerEvents: 'none' }}>
+                    {account && (
+                      // <HideSmall>
+                      <TYPE.white
+                        style={{
+                          paddingRight: '.4rem'
+                        }}
+                      >
+                        <CountUp
+                          key={countUpValue}
+                          isCounting
+                          start={parseFloat(countUpValuePrevious)}
+                          end={parseFloat(countUpValue)}
+                          thousandsSeparator={','}
+                          duration={1}
+                        />
+                      </TYPE.white>
+                      // </HideSmall>
+                    )}
+                    MATTER
+                  </UNIAmount>
+                  {/* <CardNoise /> */}
+                </UNIWrapper>
+              )}
+              {/* {account && userEthBalance ? (
                 <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
                   {userEthBalance?.toSignificant(4)} ETH
                 </BalanceText>
               ) : null} */}
-            <Web3Status />
-          </AccountElement>
+              <Web3Status />
+            </AccountElement>
+          </HeaderControls>
         </div>
       </HeaderRow>
+      <MobileHeader>
+        <RowBetween>
+          <Link to={'/'}>
+            <StyledLogo />
+          </Link>
+          <ToggleMenu />
+        </RowBetween>
+      </MobileHeader>
     </HeaderFrame>
   )
 }
