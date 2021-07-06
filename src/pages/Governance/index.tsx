@@ -111,7 +111,7 @@ display: flex
 
 export default function Governance() {
   const [isCardOpen, setIsCardOpen] = useState(false)
-  const [isCreationOpen, setIsCreationOpen] = useState(true)
+  const [isCreationOpen, setIsCreationOpen] = useState(false)
   const [cardDetail, setCardDetail] = useState<undefined | GovernanceData>(undefined)
   const handleCardClick = useCallback(
     (data: GovernanceData) => () => {
