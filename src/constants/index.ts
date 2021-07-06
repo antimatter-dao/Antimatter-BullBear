@@ -14,6 +14,8 @@ export const ANTIMATTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.GÖRLI]: ''
 }
 
+export const ANTIMATTER_GOVERNANCE_ADDRESS = '0x78fC5460737EB07Ce9e7d954B294ecA7E6203D19'
+
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 export { PRELOADED_PROPOSALS } from './proposals'
