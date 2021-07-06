@@ -3,7 +3,7 @@ import { X } from 'react-feather'
 import styled from 'styled-components'
 import { StyledDialogOverlay } from 'components/Modal'
 import useTheme from 'hooks/useTheme'
-import { RowBetween, RowFlat } from 'components/Row'
+import { RowBetween } from 'components/Row'
 import { ButtonEmpty, ButtonPrimary } from 'components/Button'
 import { AutoColumn } from 'components/Column'
 import { TYPE } from 'theme'
@@ -76,8 +76,4 @@ export default function GovernanceProposalCreation({
       )}
     </>
   )
-}
-
-function TimeOptions() {
-  return <RowFlat></RowFlat>
 }
