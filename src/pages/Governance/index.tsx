@@ -1,12 +1,13 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { RowBetween, RowFixed } from 'components/Row'
 import { AutoColumn } from 'components/Column'
 import { HideSmall, TYPE } from 'theme'
 import { ButtonOutlinedPrimary } from 'components/Button'
 import AppBody from 'pages/AppBody'
-
-interface GovernanceData {
+import GovernanceDetail from './GovernanceDetail'
+import GovernanceProposalCreation from './GovernanceProposalCreation'
+export interface GovernanceData {
   title: string
   address: string
   id: string
@@ -15,6 +16,7 @@ interface GovernanceData {
   voteFor: number
   voteAgainst: number
   isLive: boolean
+  totalVotes: number
 }
 
 const Wrapper = styled.div`
@@ -108,7 +110,28 @@ display: flex
 `
 
 export default function Governance() {
-  const handleCreateProposal = useCallback(() => {}, [])
+  const [isCardOpen, setIsCardOpen] = useState(false)
+  const [isCreationOpen, setIsCreationOpen] = useState(true)
+  const [cardDetail, setCardDetail] = useState<undefined | GovernanceData>(undefined)
+  const handleCardClick = useCallback(
+    (data: GovernanceData) => () => {
+      setIsCardOpen(true)
+      setCardDetail(data)
+    },
+    []
+  )
+  const handleCloseCard = useCallback(() => {
+    setIsCardOpen(false)
+    setCardDetail(undefined)
+  }, [])
+  const handleOpenCreation = useCallback(() => {
+    setIsCreationOpen(true)
+  }, [])
+  const handleCreation = useCallback(() => {}, [])
+  const handleCloseCreation = useCallback(() => {
+    setIsCreationOpen(false)
+  }, [])
+
   const governanceData = useMemo(
     (): GovernanceData[] => [
       {
@@ -120,7 +143,8 @@ export default function Governance() {
         timeLeft: '2d : 2h : 20m',
         voteFor: 10,
         voteAgainst: 8,
-        isLive: true
+        isLive: true,
+        totalVotes: 200
       },
       {
         title: 'Transaction fees',
@@ -131,13 +155,16 @@ export default function Governance() {
         timeLeft: '2d : 2h : 20m',
         voteFor: 10,
         voteAgainst: 8,
-        isLive: true
+        isLive: true,
+        totalVotes: 200
       }
     ],
     []
   )
   return (
     <>
+      <GovernanceProposalCreation isOpen={isCreationOpen} onDismiss={handleCloseCreation} onCreate={handleCreation} />
+      <GovernanceDetail isOpen={isCardOpen} onDismiss={handleCloseCard} data={cardDetail} />
       <Wrapper id="governance">
         <RowBetween style={{ padding: '45px 25px' }}>
           <RowFixed>
@@ -160,32 +187,34 @@ export default function Governance() {
             </RowFixed>
           </RowFixed>
           <HideSmall>
-            <ButtonOutlinedPrimary onClick={handleCreateProposal} width="180px">
+            <ButtonOutlinedPrimary onClick={handleOpenCreation} width="180px">
               + Create Proposal
             </ButtonOutlinedPrimary>
           </HideSmall>
         </RowBetween>
         <ContentWrapper>
           {governanceData.map(data => (
-            <GovernanceCard data={data} key={data.id} />
+            <GovernanceCard data={data} key={data.id} onClick={handleCardClick(data)} />
           ))}
         </ContentWrapper>
       </Wrapper>
       <MobileCreate>
-        <ButtonOutlinedPrimary onClick={handleCreateProposal}>+ Create Proposal</ButtonOutlinedPrimary>
+        <ButtonOutlinedPrimary onClick={handleOpenCreation}>+ Create Proposal</ButtonOutlinedPrimary>
       </MobileCreate>
     </>
   )
 }
 
 function GovernanceCard({
-  data: { title, address, id, synopsis, timeLeft, voteFor, voteAgainst, isLive }
+  data: { title, address, id, synopsis, timeLeft, voteFor, voteAgainst, isLive },
+  onClick
 }: {
   data: GovernanceData
+  onClick: () => void
 }) {
   return (
-    <AppBody maxWidth="340px" gradient1={true} isCard>
-      <AutoColumn gap="16px">
+    <AppBody maxWidth="340px" gradient1={true} isCard style={{ cursor: 'pointer' }}>
+      <AutoColumn gap="16px" onClick={onClick}>
         <RowBetween>
           {isLive ? <Live>Live</Live> : <div />}
           <TYPE.smallGray>#{id}</TYPE.smallGray>

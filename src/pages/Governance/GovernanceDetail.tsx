@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react'
 import { ChevronLeft, X } from 'react-feather'
+import { useTransition } from 'react-spring'
 import styled from 'styled-components'
-import { Live } from '.'
+import { GovernanceData, Live } from '.'
 import { RowBetween } from 'components/Row'
 import useTheme from 'hooks/useTheme'
 import { ButtonEmpty, ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
@@ -11,7 +12,7 @@ import { ProgressBar } from './'
 import { GradientCard, OutlineCard } from 'components/Card'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import { SubmittedView } from 'components/ModalViews'
-import Modal from 'components/Modal'
+import Modal, { StyledDialogOverlay } from 'components/Modal'
 
 enum VoteOption {
   FOR = 'for',
@@ -85,24 +86,28 @@ const ModalButtonWrapper = styled(RowBetween)`
 `}
 `
 
-export default function GovernanceDetail() {
+export default function GovernanceDetail({
+  isOpen,
+  data,
+  onDismiss
+}: {
+  isOpen: boolean
+  data: GovernanceData | undefined
+  onDismiss: () => void
+}) {
   const [selected, setSelected] = useState<VoteOption>(VoteOption.FOR)
   const [showConfirm, setShowConfirm] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string>('')
   const [NeutralSubmitted, setNeutralSubmitted] = useState(false)
   const theme = useTheme()
-  const address = '0xEdFBd6c48c3dDfF5612Ade14B45bb19F916809ba'
-  const title = 'Option Trading'
-  const synopsis =
-    'The daily inflation of BOT tokens should be further reduced to 16 BOTs per day. Since most of the bounce traction is on ethereum network and the barrier to entry (namely transaction fees) on BSC is low.'
-  const voteFor = 15
-  const voteAgainst = 10
-  const totalVotes = 200
-  const voteForPercentage = `${(voteFor * 100) / (voteFor + voteAgainst)}%`
-  const voteAgainstPercentage = `${(voteAgainst * 100) / (voteFor + voteAgainst)}%`
-  const timeLeft = '2d : 2h : 20m'
 
+  const fadeTransition = useTransition(isOpen, null, {
+    config: { duration: 200 },
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 }
+  })
   const handleSelect = useCallback(
     (option: VoteOption) => () => {
       setSelected(option)
@@ -133,120 +138,150 @@ export default function GovernanceDetail() {
       setAttemptingTxn(false)
     }, 1000)
   }, [])
-  const handleBackToList = useCallback(() => {}, [])
+
+  if (!data) {
+    return null
+  }
+  const { address, title, synopsis, voteFor, voteAgainst, totalVotes, timeLeft } = data
+  const voteForPercentage = `${((voteFor * 100) / (voteFor + voteAgainst)).toFixed(2)}%`
+  const voteAgainstPercentage = `${((voteAgainst * 100) / (voteFor + voteAgainst)).toFixed(2)}%`
+
   return (
     <>
-      <Modal isOpen={NeutralSubmitted} onDismiss={handleNeutralDismiss}>
-        <SubmittedModalContent onDismiss={handleNeutralDismiss} hash={txHash} />
-      </Modal>
-      <TransactionConfirmationModal
-        isOpen={showConfirm}
-        onDismiss={handleDismissConfirmation}
-        attemptingTxn={attemptingTxn}
-        hash={txHash}
-        content={() => (
-          <ConfirmationModalContent
-            voteOption={selected}
-            onDismiss={handleDismissConfirmation}
-            onConfirm={handleConfirmConfirmation}
-          />
-        )}
-        pendingText={'Waiting For Confirmation...'}
-        submittedContent={() => <SubmittedModalContent onDismiss={handleDismissConfirmation} hash={txHash} />}
-      />
-      <Wrapper>
-        <RowBetween>
-          <HideSmall>
-            <ButtonEmpty width="106px" color={theme.text1} onClick={handleBackToList}>
-              <ChevronLeft style={{ marginRight: 16 }} />
-              Back
-            </ButtonEmpty>
-          </HideSmall>
-          <Live>Live</Live>
-          <ShowSmall>
-            <ButtonEmpty width="auto" padding="0" onClick={handleBackToList}>
-              <X color={theme.text3} size={24} />
-            </ButtonEmpty>
-          </ShowSmall>
-          <HideSmall>
-            <div style={{ width: 106 }} />
-          </HideSmall>
-        </RowBetween>
-        <AutoColumn style={{ maxWidth: 760 }} justify="center" gap="40px">
-          <AutoColumn gap="28px">
-            <div>
-              <TYPE.largeHeader fontSize={36} textAlign="center" fontWeight={300}>
-                {title}
-              </TYPE.largeHeader>
-              <TYPE.smallGray textAlign="center" marginTop="4px">
-                {address}
-              </TYPE.smallGray>
-            </div>
-            <TYPE.body lineHeight="25px" textAlign="center">
-              {synopsis}
-            </TYPE.body>
-          </AutoColumn>
-          <AutoColumn style={{ width: '100%' }} gap="16px">
-            <RowBetween>
-              <AutoColumn gap="4px">
-                <TYPE.smallGray fontSize={14}>Votes For:</TYPE.smallGray>
-                <TYPE.mediumHeader>
-                  {voteFor} &nbsp;MATTER
-                  <span style={{ color: theme.text3, fontWeight: 100, marginLeft: 10 }}>{voteForPercentage}</span>
-                </TYPE.mediumHeader>
-              </AutoColumn>
-              <HideSmall>
-                <OutlineCard style={{ width: 'auto', padding: '8px 38px' }}>
-                  <TYPE.largeHeader color={theme.text1} fontWeight={100} textAlign="center">
-                    {totalVotes}&nbsp;Votes
-                  </TYPE.largeHeader>
-                </OutlineCard>
-              </HideSmall>
-              <AutoColumn gap="4px">
-                <TYPE.smallGray fontSize={14}>Votes Against:</TYPE.smallGray>
-                <TYPE.mediumHeader>
-                  {voteAgainst} &nbsp;MATTER
-                  <span style={{ color: theme.text3, fontWeight: 100, marginLeft: 10 }}>{voteAgainstPercentage}</span>
-                </TYPE.mediumHeader>
-              </AutoColumn>
-            </RowBetween>
-            <ProgressBar isLarge leftPercentage={voteForPercentage} />
-            <ShowSmall>
-              <OutlineCard style={{ width: '100%', padding: '8px 38px' }}>
-                <TYPE.largeHeader color={theme.text1} fontWeight={100} textAlign="center">
-                  {totalVotes}&nbsp;Votes
-                </TYPE.largeHeader>
-              </OutlineCard>
-            </ShowSmall>
-          </AutoColumn>
-          <GradientCard>
-            <AutoColumn gap="24px" style={{ maxWidth: 468, margin: '4px auto' }} justify="center">
-              <TYPE.mediumHeader textAlign="center">Make Your Decision</TYPE.mediumHeader>
-              <TYPE.small textAlign="center">Time left : {timeLeft}</TYPE.small>
-              <VoteOptionWrapper>
-                <VoteOptionCard selected={selected === VoteOption.FOR} onClick={handleSelect(VoteOption.FOR)}>
-                  Vote For
-                  <TYPE.small>10 MATTER</TYPE.small>
-                </VoteOptionCard>
-                <VoteOptionCard selected={selected === VoteOption.AGAINST} onClick={handleSelect(VoteOption.AGAINST)}>
-                  Vote Against
-                  <TYPE.small>10 MATTER</TYPE.small>
-                </VoteOptionCard>
-                <VoteOptionCard selected={selected === VoteOption.NEUTRAL} onClick={handleSelect(VoteOption.NEUTRAL)}>
-                  Vote Netural
-                  <TYPE.small>0 MATTER</TYPE.small>
-                </VoteOptionCard>
-              </VoteOptionWrapper>
-              <TYPE.smallGray textAlign="center">
-                I vote in favor of Dutch Auction format for future Governance Vault sales.
-              </TYPE.smallGray>
-              <ButtonPrimary width="200px" onClick={handleSubmit}>
-                Submit
-              </ButtonPrimary>
-            </AutoColumn>
-          </GradientCard>
-        </AutoColumn>
-      </Wrapper>
+      {fadeTransition.map(
+        ({ item, key, props }) =>
+          item && (
+            <StyledDialogOverlay
+              key={key}
+              style={props}
+              onDismiss={onDismiss}
+              backgroundColor={theme.bg1}
+              unstable_lockFocusAcrossFrames={false}
+            >
+              <Modal isOpen={NeutralSubmitted} onDismiss={handleNeutralDismiss}>
+                <SubmittedModalContent onDismiss={handleNeutralDismiss} hash={txHash} />
+              </Modal>
+              <TransactionConfirmationModal
+                isOpen={showConfirm}
+                onDismiss={handleDismissConfirmation}
+                attemptingTxn={attemptingTxn}
+                hash={txHash}
+                content={() => (
+                  <ConfirmationModalContent
+                    voteOption={selected}
+                    onDismiss={handleDismissConfirmation}
+                    onConfirm={handleConfirmConfirmation}
+                  />
+                )}
+                pendingText={'Waiting For Confirmation...'}
+                submittedContent={() => <SubmittedModalContent onDismiss={handleDismissConfirmation} hash={txHash} />}
+              />
+              <Wrapper>
+                <RowBetween>
+                  <HideSmall>
+                    <ButtonEmpty width="106px" color={theme.text1} onClick={onDismiss}>
+                      <ChevronLeft style={{ marginRight: 16 }} />
+                      Back
+                    </ButtonEmpty>
+                  </HideSmall>
+                  <Live>Live</Live>
+                  <ShowSmall>
+                    <ButtonEmpty width="auto" padding="0" onClick={onDismiss}>
+                      <X color={theme.text3} size={24} />
+                    </ButtonEmpty>
+                  </ShowSmall>
+                  <HideSmall>
+                    <div style={{ width: 106 }} />
+                  </HideSmall>
+                </RowBetween>
+                <AutoColumn style={{ maxWidth: 760 }} justify="center" gap="40px">
+                  <AutoColumn gap="28px">
+                    <div>
+                      <TYPE.largeHeader fontSize={36} textAlign="center" fontWeight={300}>
+                        {title}
+                      </TYPE.largeHeader>
+                      <TYPE.smallGray textAlign="center" marginTop="4px">
+                        {address}
+                      </TYPE.smallGray>
+                    </div>
+                    <TYPE.body lineHeight="25px" textAlign="center">
+                      {synopsis}
+                    </TYPE.body>
+                  </AutoColumn>
+                  <AutoColumn style={{ width: '100%' }} gap="16px">
+                    <RowBetween>
+                      <AutoColumn gap="4px">
+                        <TYPE.smallGray fontSize={14}>Votes For:</TYPE.smallGray>
+                        <TYPE.mediumHeader>
+                          {voteFor} &nbsp;MATTER
+                          <span style={{ color: theme.text3, fontWeight: 100, marginLeft: 10 }}>
+                            {voteForPercentage}
+                          </span>
+                        </TYPE.mediumHeader>
+                      </AutoColumn>
+                      <HideSmall>
+                        <OutlineCard style={{ width: 'auto', padding: '8px 38px' }}>
+                          <TYPE.largeHeader color={theme.text1} fontWeight={100} textAlign="center">
+                            {totalVotes}&nbsp;Votes
+                          </TYPE.largeHeader>
+                        </OutlineCard>
+                      </HideSmall>
+                      <AutoColumn gap="4px">
+                        <TYPE.smallGray fontSize={14}>Votes Against:</TYPE.smallGray>
+                        <TYPE.mediumHeader>
+                          {voteAgainst} &nbsp;MATTER
+                          <span style={{ color: theme.text3, fontWeight: 100, marginLeft: 10 }}>
+                            {voteAgainstPercentage}
+                          </span>
+                        </TYPE.mediumHeader>
+                      </AutoColumn>
+                    </RowBetween>
+                    <ProgressBar isLarge leftPercentage={voteForPercentage} />
+                    <ShowSmall>
+                      <OutlineCard style={{ width: '100%', padding: '8px 38px' }}>
+                        <TYPE.largeHeader color={theme.text1} fontWeight={100} textAlign="center">
+                          {totalVotes}&nbsp;Votes
+                        </TYPE.largeHeader>
+                      </OutlineCard>
+                    </ShowSmall>
+                  </AutoColumn>
+                  <GradientCard>
+                    <AutoColumn gap="24px" style={{ maxWidth: 468, margin: '4px auto' }} justify="center">
+                      <TYPE.mediumHeader textAlign="center">Make Your Decision</TYPE.mediumHeader>
+                      <TYPE.small textAlign="center">Time left : {timeLeft}</TYPE.small>
+                      <VoteOptionWrapper>
+                        <VoteOptionCard selected={selected === VoteOption.FOR} onClick={handleSelect(VoteOption.FOR)}>
+                          Vote For
+                          <TYPE.small>10 MATTER</TYPE.small>
+                        </VoteOptionCard>
+                        <VoteOptionCard
+                          selected={selected === VoteOption.AGAINST}
+                          onClick={handleSelect(VoteOption.AGAINST)}
+                        >
+                          Vote Against
+                          <TYPE.small>10 MATTER</TYPE.small>
+                        </VoteOptionCard>
+                        <VoteOptionCard
+                          selected={selected === VoteOption.NEUTRAL}
+                          onClick={handleSelect(VoteOption.NEUTRAL)}
+                        >
+                          Vote Netural
+                          <TYPE.small>0 MATTER</TYPE.small>
+                        </VoteOptionCard>
+                      </VoteOptionWrapper>
+                      <TYPE.smallGray textAlign="center">
+                        I vote in favor of Dutch Auction format for future Governance Vault sales.
+                      </TYPE.smallGray>
+                      <ButtonPrimary width="200px" onClick={handleSubmit}>
+                        Submit
+                      </ButtonPrimary>
+                    </AutoColumn>
+                  </GradientCard>
+                </AutoColumn>
+              </Wrapper>
+            </StyledDialogOverlay>
+          )
+      )}
     </>
   )
 }
