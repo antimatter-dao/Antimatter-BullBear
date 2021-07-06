@@ -158,7 +158,7 @@ export default function GovernanceDetail({
               color={theme.bg1}
               unstable_lockFocusAcrossFrames={false}
               overflow="auto"
-              alignItems="flex-start"
+              alignitems="flex-start"
             >
               <Modal isOpen={NeutralSubmitted} onDismiss={handleNeutralDismiss}>
                 <SubmittedModalContent onDismiss={handleNeutralDismiss} hash={txHash} />

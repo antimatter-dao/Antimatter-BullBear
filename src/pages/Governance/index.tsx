@@ -111,7 +111,7 @@ display: flex
 
 export default function Governance() {
   const [isCardOpen, setIsCardOpen] = useState(false)
-  const [isCreationOpen, setIsCreationOpen] = useState(true)
+  const [isCreationOpen, setIsCreationOpen] = useState(false)
   const [cardDetail, setCardDetail] = useState<undefined | GovernanceData>(undefined)
   const handleCardClick = useCallback(
     (data: GovernanceData) => () => {
@@ -127,8 +127,9 @@ export default function Governance() {
   const handleOpenCreation = useCallback(() => {
     setIsCreationOpen(true)
   }, [])
-  const handleCreation = useCallback(() => {}, [])
-  const handleCloseCreation = useCallback(() => {
+  const handleCloseCreation = useCallback((e: React.SyntheticEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     setIsCreationOpen(false)
   }, [])
 
@@ -163,7 +164,7 @@ export default function Governance() {
   )
   return (
     <>
-      <GovernanceProposalCreation isOpen={isCreationOpen} onDismiss={handleCloseCreation} onCreate={handleCreation} />
+      <GovernanceProposalCreation isOpen={isCreationOpen} onDismiss={handleCloseCreation} />
       <GovernanceDetail isOpen={isCardOpen} onDismiss={handleCloseCard} data={cardDetail} />
       <Wrapper id="governance">
         <RowBetween style={{ padding: '45px 25px' }}>

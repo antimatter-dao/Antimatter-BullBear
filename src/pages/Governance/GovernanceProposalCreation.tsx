@@ -1,4 +1,6 @@
+import { TokenAmount, JSBI } from '@uniswap/sdk'
 import React, { useCallback, useState } from 'react'
+import { TransactionResponse } from '@ethersproject/providers'
 import { X } from 'react-feather'
 import styled from 'styled-components'
 import { makeStyles } from '@material-ui/core/styles'
@@ -8,18 +10,28 @@ import StepButton from '@material-ui/core/StepButton'
 import { StyledDialogOverlay } from 'components/Modal'
 import useTheme from 'hooks/useTheme'
 import { RowBetween } from 'components/Row'
-import { ButtonEmpty, ButtonPrimary } from 'components/Button'
+import { ButtonEmpty, ButtonPrimary, ButtonOutlinedPrimary } from 'components/Button'
 import { AutoColumn } from 'components/Column'
 import { TYPE } from 'theme'
 import { useTransition } from 'react-spring'
 import TextInput from 'components/TextInput'
+import { useAggregateUniBalance } from 'state/wallet/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { useAntiMatterGovernanceContract } from 'hooks/useContract'
+import { calculateGasMargin } from 'utils'
+import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
+import { SubmittedView } from 'components/ModalViews'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import { useApproveCallback } from 'hooks/useApproveCallback'
+import { Matter, ANTIMATTER_ADDRESS } from 'constants/index'
+import { tryParseAmount } from 'state/swap/hooks'
 
 const Wrapper = styled.div`
   width: 920px;
   border:1px solid ${({ theme }) => theme.bg3}
   margin-bottom: auto;
   max-width: 1280px;
-  border-radius: 32px;
+  border-radius: 32px; 
   padding: 29px 52px;
   display: flex;
   flex-direction: column;
@@ -33,31 +45,155 @@ const Wrapper = styled.div`
     padding: 0 24px;
     width: 100%;
   `};
-
 `
+
+const Warning = styled.div`
+  background-color: ${({ theme }) => theme.red1};
+  border-radius: 14px;
+  padding: 16px;
+  width: 100%;
+  margin: 30px 0;
+  text-align: center;
+`
+
+const ModalButtonWrapper = styled(RowBetween)`
+  margin-top: 14px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column;
+  & > *:last-child {
+    margin-top: 12px;
+  };
+  & > *:first-child {
+    margin: 0;
+  }
+`}
+`
+
+const stakeAmount = 220
 
 export default function GovernanceProposalCreation({
   onDismiss,
-  isOpen,
-  onCreate
+  isOpen
 }: {
-  onDismiss: () => void
+  onDismiss: (e: React.SyntheticEvent) => void
   isOpen: boolean
-  onCreate: () => void
 }) {
-  const theme = useTheme()
   const [activeStep, setActiveStep] = useState(0)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [input, setInput] = useState<any>({ title: '', summary: '', agreeFor: '', againstFor: '' })
+  const [error, setError] = useState('')
+  const theme = useTheme()
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 }
   })
+
+  const addTransaction = useTransactionAdder()
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [txHash, setTxHash] = useState<string>('')
+
+  const { account, chainId, library } = useActiveWeb3React()
+  const balance: TokenAmount | undefined = useAggregateUniBalance()
+  const notEnoughBalance = !balance?.greaterThan(JSBI.BigInt(stakeAmount))
+  const governanceContract = useAntiMatterGovernanceContract()
+  const [approval, approveCallback] = useApproveCallback(
+    tryParseAmount(JSBI.BigInt(stakeAmount).toString(), Matter),
+    chainId ? ANTIMATTER_ADDRESS[chainId] : undefined
+  )
+
+  const handleApprove = useCallback(
+    async (callback: () => void) => {
+      await approveCallback()
+      callback()
+    },
+    [approveCallback]
+  )
+
   const handleStep = (step: number) => () => {
     setActiveStep(step)
   }
+
+  const handleDismissConfirmation = useCallback(() => {
+    setShowConfirm(false)
+    setTxHash('')
+  }, [])
+
+  const handleSubmit = useCallback(e => {
+    console.log(9)
+    e.preventDefault()
+    const formData = new FormData(e.target).entries()
+    const input: { [key: string]: any } = {}
+    let error = ''
+    for (const pair of formData) {
+      if (!pair[1]) {
+        error += ',' + pair[0]
+      }
+      input[pair[0]] = pair[1]
+    }
+    setError(error ? 'Following fields are incomplete: ' + error.slice(1) : '')
+
+    if (!error) {
+      setShowConfirm(true)
+      setInput(input)
+    }
+  }, [])
+
+  const onCreate = useCallback(async () => {
+    if (!chainId || !library || !account) return
+    if (!approval) {
+      handleApprove(onCreate)
+      return
+    }
+
+    const estimate = governanceContract?.estimateGas.propose
+
+    const method: (...args: any) => Promise<TransactionResponse> = governanceContract?.propose
+
+    const args = [
+      input.title,
+      `{"summary":"${input.summary}","details":"${input.details}","agreeFor":"${input.agreeFor}","againstFor":"${input.againstFor}"}`,
+      JSBI.BigInt(activeStep + 3).toString(),
+      JSBI.BigInt(stakeAmount).toString()
+    ]
+
+    setAttemptingTxn(true)
+
+    if (estimate) {
+      await estimate(...args, {})
+        .then(estimatedGasLimit =>
+          method(...args, {
+            gasLimit: calculateGasMargin(estimatedGasLimit)
+          }).then(response => {
+            setAttemptingTxn(false)
+            setInput({ title: '', summary: '', agreeFor: '', againstFor: '' })
+            addTransaction(response, {
+              summary: 'Create proposal "' + input.title + '"'
+            })
+            setTxHash(response.hash)
+          })
+        )
+        .catch(error => {
+          setAttemptingTxn(false)
+          if (error?.code !== 4001) {
+            console.error('---->', error)
+          }
+        })
+    }
+  }, [account, activeStep, addTransaction, approval, chainId, governanceContract, handleApprove, input, library])
+
   return (
     <>
+      <TransactionConfirmationModal
+        isOpen={showConfirm}
+        onDismiss={handleDismissConfirmation}
+        attemptingTxn={attemptingTxn}
+        hash={txHash}
+        content={() => <ConfirmationModalContent onDismiss={handleDismissConfirmation} onConfirm={onCreate} />}
+        pendingText={'Waiting For Confirmation...'}
+        submittedContent={() => <SubmittedModalContent onDismiss={handleDismissConfirmation} hash={txHash} />}
+      />
       {fadeTransition.map(
         ({ item, key, props }) =>
           item && (
@@ -67,10 +203,10 @@ export default function GovernanceProposalCreation({
               color={theme.bg1}
               unstable_lockFocusAcrossFrames={false}
               overflow="auto"
-              alignItems="flex-start"
+              alignitems="flex-start"
             >
               <Wrapper>
-                <form name="GovernanceCreationForm">
+                <form name="GovernanceCreationForm" id="GovernanceCreationForm" onSubmit={handleSubmit}>
                   <AutoColumn gap="36px">
                     <RowBetween>
                       <TYPE.largeHeader>Create a New Proposal</TYPE.largeHeader>
@@ -79,27 +215,52 @@ export default function GovernanceProposalCreation({
                       </ButtonEmpty>
                     </RowBetween>
                     <TYPE.smallHeader fontSize={22}>Proposal Description</TYPE.smallHeader>
-                    <TextInput label="Title" placeholder="Enter your project name (Keep it Below 10 words)"></TextInput>
+                    <TextInput
+                      label="Title"
+                      placeholder="Enter your project name (Keep it Below 10 words)"
+                      disabled={notEnoughBalance}
+                      name="title"
+                    ></TextInput>
                     <TextInput
                       label="Summary"
                       placeholder="What will be done if the proposal is implement (Keep it below 200 words)"
                       textarea
+                      name="summary"
+                      disabled={notEnoughBalance}
                     ></TextInput>
                     <TextInput
                       label="Details"
                       placeholder="Write a Longer motivation with links and references if necessary"
+                      disabled={notEnoughBalance}
+                      name="details"
                     ></TextInput>
                     <TYPE.smallHeader fontSize={22}>Proposal Settings</TYPE.smallHeader>
-                    <TextInput label="For" placeholder="Formulate clear for position"></TextInput>
-                    <TextInput label="Against" placeholder="Formulate clear Against position"></TextInput>
+                    <TextInput
+                      label="For"
+                      placeholder="Formulate clear for position"
+                      disabled={notEnoughBalance}
+                      name="agreeFor"
+                    ></TextInput>
+                    <TextInput
+                      label="Against"
+                      placeholder="Formulate clear Against position"
+                      disabled={notEnoughBalance}
+                      name="againstFor"
+                    ></TextInput>
                     <TYPE.smallHeader fontSize={22}>Proposal Timing</TYPE.smallHeader>
                     <TYPE.darkGray>
                       Please set a time frame for the proposal. Select the number of days below
                     </TYPE.darkGray>
-                    <GovernanceTimeline activeStep={activeStep} onStep={handleStep} />
-                    <ButtonPrimary onClick={onCreate}>Determine</ButtonPrimary>
+                    <GovernanceTimeline activeStep={activeStep} onStep={handleStep} disabled={notEnoughBalance} />
+                    {error && <TYPE.body color={theme.red1}>{error}</TYPE.body>}
+                    <ButtonPrimary type="submit" disabled={notEnoughBalance}>
+                      Determine
+                    </ButtonPrimary>
                   </AutoColumn>
                 </form>
+                {notEnoughBalance && (
+                  <Warning>You must have {stakeAmount + 100000} MATTER to create a proposal</Warning>
+                )}
               </Wrapper>
             </StyledDialogOverlay>
           )
@@ -108,7 +269,15 @@ export default function GovernanceProposalCreation({
   )
 }
 
-function GovernanceTimeline({ activeStep, onStep }: { activeStep: number; onStep: (step: number) => () => void }) {
+function GovernanceTimeline({
+  activeStep,
+  onStep,
+  disabled
+}: {
+  activeStep: number
+  onStep: (step: number) => () => void
+  disabled: boolean
+}) {
   const theme = useTheme()
 
   const useStyles = useCallback(
@@ -136,7 +305,7 @@ function GovernanceTimeline({ activeStep, onStep }: { activeStep: number; onStep
             fill: theme.bg5
           },
           '& .MuiStepLabel-label': {
-            color: theme.text2
+            color: theme.text4
           },
           '& .MuiStepIcon-active': {
             '&  circle': {
@@ -145,7 +314,8 @@ function GovernanceTimeline({ activeStep, onStep }: { activeStep: number; onStep
               strokeWidth: 4
             },
             '& .MuiStepLabel-label': {
-              color: theme.text1
+              color: theme.text1,
+              fontWeight: 500
             }
           },
           '& .MuiStepConnector-root': {
@@ -166,7 +336,7 @@ function GovernanceTimeline({ activeStep, onStep }: { activeStep: number; onStep
       <Stepper alternativeLabel nonLinear activeStep={activeStep}>
         {[3, 4, 5, 6, 7].map((label, index) => {
           return (
-            <Step key={label} active={activeStep === index} className={classes.step}>
+            <Step key={label} active={activeStep === index} className={classes.step} disabled={disabled}>
               <StepButton onClick={onStep(index)}>{label}days</StepButton>
             </Step>
           )
@@ -174,5 +344,59 @@ function GovernanceTimeline({ activeStep, onStep }: { activeStep: number; onStep
       </Stepper>
       <div></div>
     </div>
+  )
+}
+
+function ConfirmationModalContent({ onDismiss, onConfirm }: { onDismiss: () => void; onConfirm: () => any }) {
+  const theme = useTheme()
+  return (
+    <AutoColumn justify="center" style={{ padding: 24, width: '100%' }} gap="20px">
+      <RowBetween>
+        <div style={{ width: 24 }} />
+        <ButtonEmpty width="auto" padding="0" onClick={onDismiss}>
+          <X color={theme.text3} size={24} />
+        </ButtonEmpty>
+      </RowBetween>
+
+      <TYPE.body fontSize={24}>
+        You will stack 200 MATTER
+        <br /> to submit this proposal
+      </TYPE.body>
+      <ModalButtonWrapper>
+        <ButtonOutlinedPrimary marginRight="15px" onClick={onDismiss}>
+          Cancel
+        </ButtonOutlinedPrimary>
+        <ButtonPrimary onClick={onConfirm}>Confirm</ButtonPrimary>
+      </ModalButtonWrapper>
+    </AutoColumn>
+  )
+}
+
+function SubmittedModalContent({
+  onDismiss,
+  hash,
+  isError
+}: {
+  onDismiss: () => void
+  hash: string | undefined
+  isError?: boolean
+}) {
+  return (
+    <>
+      <SubmittedView onDismiss={onDismiss} hash={hash} hideLink isError={isError}>
+        <TYPE.body fontWeight={400} fontSize={18} textAlign="center">
+          {isError ? (
+            <>
+              There is a unexpected error, <br /> please try again
+            </>
+          ) : (
+            <>
+              You have successfully
+              <br /> created an proposal
+            </>
+          )}
+        </TYPE.body>
+      </SubmittedView>
+    </>
   )
 }

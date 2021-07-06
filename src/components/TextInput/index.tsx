@@ -12,7 +12,7 @@ const CustomInput = styled(StyledInput)<{ disabled?: boolean }>`
   align-items: center;
   padding: 0 0.5rem 0 1rem;
   width: 100%;
-  background-color: ${({ theme, disabled }) => (disabled ? theme.bg1 : theme.bg2)};
+  background-color: ${({ theme, disabled }) => (disabled ? 'rgba(255, 255, 255, 0.08)' : theme.bg2)};
   border-radius: 14px;
   height: 3rem;
 `
@@ -26,7 +26,7 @@ export const CustomTextArea = styled.textarea<{ error?: boolean; fontSize?: stri
   border: none;
   padding: .5rem 1rem;
   border-radius: 14px;
-  background-color: ${({ theme, disabled }) => (disabled ? theme.bg1 : theme.bg2)};
+  background-color: ${({ theme, disabled }) => (disabled ? 'rgba(255, 255, 255, 0.08)' : theme.bg2)};
   text-align: ${({ align }) => align && align};
   ::-webkit-search-decoration {
     -webkit-appearance: none;
@@ -56,6 +56,8 @@ export const TextInput = React.memo(function InnerInput({
   placeholder,
   label,
   textarea,
+  disabled,
+  name,
   ...rest
 }: {
   label?: string
@@ -84,9 +86,18 @@ export const TextInput = React.memo(function InnerInput({
           maxLength={200}
           rows={4}
           cols={50}
+          disabled={disabled}
+          name={name}
         />
       ) : (
-        <CustomInput {...rest} type="text" placeholder={placeholder || 'text input'} spellCheck="true" />
+        <CustomInput
+          {...rest}
+          name={name}
+          type="text"
+          placeholder={placeholder || 'text input'}
+          spellCheck="true"
+          disabled={disabled}
+        />
       )}
     </Container>
   )

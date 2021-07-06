@@ -14,7 +14,7 @@ const AnimatedDialogOverlay = animated(DialogOverlay)
 export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{
   color?: string
   overflow?: string
-  alignItems?: string
+  alignitems?: string
 }>`
   &[data-reach-dialog-overlay] {
     z-index: 2;
@@ -22,7 +22,7 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{
     padding-top: ${({ theme }) => theme.headerHeight}
 
     display: flex;
-    align-items: ${({ alignItems }) => alignItems ?? 'center'};
+    align-items: ${({ alignitems }) => alignitems ?? 'center'};
     justify-content: center;
 
     background-color: ${({ theme, color }) => color ?? theme.modalBG};
