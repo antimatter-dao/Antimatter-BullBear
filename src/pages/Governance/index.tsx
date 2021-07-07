@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { RowBetween, RowFixed } from 'components/Row'
 import { AutoColumn } from 'components/Column'
@@ -7,17 +7,8 @@ import { ButtonOutlinedPrimary } from 'components/Button'
 import AppBody from 'pages/AppBody'
 import GovernanceDetail from './GovernanceDetail'
 import GovernanceProposalCreation from './GovernanceProposalCreation'
-export interface GovernanceData {
-  title: string
-  address: string
-  id: string
-  synopsis: string
-  timeLeft: string
-  voteFor: number
-  voteAgainst: number
-  isLive: boolean
-  totalVotes: number
-}
+import { GovernanceData, useGovernanceList } from '../../hooks/useGovernanceDetail'
+import { CurrencyAmount } from '@uniswap/sdk'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -110,8 +101,10 @@ display: flex
 `
 
 export default function Governance() {
+  const governanceList = useGovernanceList()
+  console.log('governanceList', governanceList)
   const [isCardOpen, setIsCardOpen] = useState(false)
-  const [isCreationOpen, setIsCreationOpen] = useState(true)
+  const [isCreationOpen, setIsCreationOpen] = useState(false)
   const [cardDetail, setCardDetail] = useState<undefined | GovernanceData>(undefined)
   const handleCardClick = useCallback(
     (data: GovernanceData) => () => {
@@ -127,43 +120,15 @@ export default function Governance() {
   const handleOpenCreation = useCallback(() => {
     setIsCreationOpen(true)
   }, [])
-  const handleCreation = useCallback(() => {}, [])
-  const handleCloseCreation = useCallback(() => {
+  const handleCloseCreation = useCallback((e: React.SyntheticEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     setIsCreationOpen(false)
   }, [])
 
-  const governanceData = useMemo(
-    (): GovernanceData[] => [
-      {
-        title: 'Reduce Daily Rewards To Co...',
-        address: '0xdb028zsd4g6...06x7b',
-        id: '000123',
-        synopsis:
-          'The proposal is to use Dutch Auction format instead of the current Sealed Bid Auctions for all future Governance Vault...',
-        timeLeft: '2d : 2h : 20m',
-        voteFor: 10,
-        voteAgainst: 8,
-        isLive: true,
-        totalVotes: 200
-      },
-      {
-        title: 'Transaction fees',
-        address: '0xdb028zsd4g6...06x7b',
-        id: '000124',
-        synopsis:
-          'The proposal is to use Dutch Auction format instead of the current Sealed Bid Auctions for all future Governance Vault...',
-        timeLeft: '2d : 2h : 20m',
-        voteFor: 10,
-        voteAgainst: 8,
-        isLive: true,
-        totalVotes: 200
-      }
-    ],
-    []
-  )
   return (
     <>
-      <GovernanceProposalCreation isOpen={isCreationOpen} onDismiss={handleCloseCreation} onCreate={handleCreation} />
+      <GovernanceProposalCreation isOpen={isCreationOpen} onDismiss={handleCloseCreation} />
       <GovernanceDetail isOpen={isCardOpen} onDismiss={handleCloseCard} data={cardDetail} />
       <Wrapper id="governance">
         <RowBetween style={{ padding: '45px 25px' }}>
@@ -177,14 +142,6 @@ export default function Governance() {
               </TYPE.smallHeader>
             </RowFixed>
             <VerticalDivider />
-            <RowFixed>
-              <TYPE.smallGray fontSize={14} style={{ marginRight: '12px' }}>
-                Your Governance Earning:
-              </TYPE.smallGray>
-              <TYPE.body fontSize={20} fontWeight={500}>
-                100 MATTER
-              </TYPE.body>
-            </RowFixed>
           </RowFixed>
           <HideSmall>
             <ButtonOutlinedPrimary onClick={handleOpenCreation} width="180px">
@@ -193,9 +150,8 @@ export default function Governance() {
           </HideSmall>
         </RowBetween>
         <ContentWrapper>
-          {governanceData.map(data => (
-            <GovernanceCard data={data} key={data.id} onClick={handleCardClick(data)} />
-          ))}
+          {governanceList &&
+            governanceList.map(data => <GovernanceCard data={data} key={data.id} onClick={handleCardClick(data)} />)}
         </ContentWrapper>
       </Wrapper>
       <MobileCreate>
@@ -206,7 +162,7 @@ export default function Governance() {
 }
 
 function GovernanceCard({
-  data: { title, address, id, synopsis, timeLeft, voteFor, voteAgainst, isLive },
+  data: { title, id, creator, timeLeft, voteFor, voteAgainst, contents },
   onClick
 }: {
   data: GovernanceData
@@ -216,25 +172,29 @@ function GovernanceCard({
     <AppBody maxWidth="340px" gradient1={true} isCard style={{ cursor: 'pointer' }}>
       <AutoColumn gap="16px" onClick={onClick}>
         <RowBetween>
-          {isLive ? <Live>Live</Live> : <div />}
+          {true ? <Live>Live</Live> : <div />}
           <TYPE.smallGray>#{id}</TYPE.smallGray>
         </RowBetween>
         <AutoColumn gap="4px">
           <TYPE.mediumHeader>{title}</TYPE.mediumHeader>
-          <TYPE.smallGray>{address}</TYPE.smallGray>
+          <TYPE.smallGray>{creator}</TYPE.smallGray>
         </AutoColumn>
         <Divider />
-        <Synopsis>{synopsis}</Synopsis>
+        <Synopsis>{contents?.summary}</Synopsis>
         <AutoColumn gap="8px" style={{ margin: '10px 0' }}>
           <RowBetween>
             <TYPE.smallGray>Votes For:</TYPE.smallGray>
             <TYPE.smallGray>Votes Against:</TYPE.smallGray>
           </RowBetween>
           <RowBetween>
-            <TYPE.smallHeader fontSize={14}>{voteFor}&nbsp;MATTER</TYPE.smallHeader>
-            <TYPE.smallHeader fontSize={14}>{voteAgainst}&nbsp;MATTER</TYPE.smallHeader>
+            <TYPE.smallHeader fontSize={14}>
+              {voteFor ? CurrencyAmount.ether(voteFor).toSignificant(2, { groupSeparator: ',' }) : '--'}&nbsp;MATTER
+            </TYPE.smallHeader>
+            <TYPE.smallHeader fontSize={14}>
+              {voteFor ? CurrencyAmount.ether(voteAgainst).toSignificant(2, { groupSeparator: ',' }) : '--'}&nbsp;MATTER
+            </TYPE.smallHeader>
           </RowBetween>
-          <ProgressBar leftPercentage={`${(voteFor * 100) / (voteFor + voteAgainst)}%`} />
+          <ProgressBar leftPercentage={`${(parseInt(voteFor) * 100) / (parseInt(voteFor) + parseInt(voteAgainst))}%`} />
         </AutoColumn>
         <DividerThin />
         <TYPE.small fontWeight={500} style={{ textAlign: 'center', margin: '-4px 0 -10px' }}>

@@ -11,17 +11,21 @@ import { Marginer } from '../../pages/App'
 
 const AnimatedDialogOverlay = animated(DialogOverlay)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{ backgroundColor?: string }>`
+export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{
+  color?: string
+  overflow?: string
+  alignitems?: string
+}>`
   &[data-reach-dialog-overlay] {
     z-index: 2;
-    overflow: hidden;
+    overflow: ${({ overflow }) => overflow ?? 'hidden'};
     padding-top: ${({ theme }) => theme.headerHeight}
 
     display: flex;
-    align-items: center;
+    align-items: ${({ alignitems }) => alignitems ?? 'center'};
     justify-content: center;
 
-    background-color: ${({ theme, backgroundColor }) => backgroundColor ?? theme.modalBG};
+    background-color: ${({ theme, color }) => color ?? theme.modalBG};
     ${({ theme }) => theme.mediaWidth.upToSmall`
     height: calc(100% - ${theme.headerHeight});
     justify-content: flex-end;
@@ -47,7 +51,7 @@ export const Wrapper = styled.div`
 //   ${({ theme }) => theme.desktop}
 // `
 
-const AnimatedDialogContent = animated(DialogContent)
+export const AnimatedDialogContent = animated(DialogContent)
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, maxWidth, minWidth, ...rest }) => (
@@ -95,7 +99,7 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
       width: 65vw;
       margin: 0;
     `}
-    ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
+    ${({ theme }) => theme.mediaWidth.upToSmall`
       width: 100vw;
       max-width:unset;
       border-radius: 20px;

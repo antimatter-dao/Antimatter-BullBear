@@ -2,17 +2,17 @@ import React, { useState, useCallback } from 'react'
 import { ChevronLeft, X } from 'react-feather'
 import { useTransition } from 'react-spring'
 import styled from 'styled-components'
-import { GovernanceData, Live } from '.'
 import { RowBetween } from 'components/Row'
 import useTheme from 'hooks/useTheme'
 import { ButtonEmpty, ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
 import { AutoColumn } from 'components/Column'
 import { HideSmall, ShowSmall, TYPE } from 'theme'
-import { ProgressBar } from './'
+import { Live, ProgressBar } from './'
 import { GradientCard, OutlineCard } from 'components/Card'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import { SubmittedView } from 'components/ModalViews'
 import Modal, { StyledDialogOverlay } from 'components/Modal'
+import { GovernanceData } from '../../hooks/useGovernanceDetail'
 
 enum VoteOption {
   FOR = 'for',
@@ -129,7 +129,8 @@ export default function GovernanceDetail({
   const handleDismissConfirmation = useCallback(() => {
     setShowConfirm(false)
     setTxHash('')
-  }, [])
+    onDismiss()
+  }, [onDismiss])
 
   const handleConfirmConfirmation = useCallback(() => {
     setAttemptingTxn(true)
@@ -142,9 +143,12 @@ export default function GovernanceDetail({
   if (!data) {
     return null
   }
-  const { address, title, synopsis, voteFor, voteAgainst, totalVotes, timeLeft } = data
-  const voteForPercentage = `${((voteFor * 100) / (voteFor + voteAgainst)).toFixed(2)}%`
-  const voteAgainstPercentage = `${((voteAgainst * 100) / (voteFor + voteAgainst)).toFixed(2)}%`
+  const { title, contents, creator, voteFor, voteAgainst, totalVotes, timeLeft } = data
+  const voteForPercentage = `${((parseInt(voteFor) * 100) / (parseInt(voteFor) + parseInt(voteAgainst))).toFixed(2)}%`
+  const voteAgainstPercentage = `${(
+    (parseInt(voteAgainst) * 100) /
+    (parseInt(voteFor) + parseInt(voteAgainst))
+  ).toFixed(2)}%`
 
   return (
     <>
@@ -154,9 +158,10 @@ export default function GovernanceDetail({
             <StyledDialogOverlay
               key={key}
               style={props}
-              onDismiss={onDismiss}
-              backgroundColor={theme.bg1}
+              color={theme.bg1}
               unstable_lockFocusAcrossFrames={false}
+              overflow="auto"
+              alignitems="flex-start"
             >
               <Modal isOpen={NeutralSubmitted} onDismiss={handleNeutralDismiss}>
                 <SubmittedModalContent onDismiss={handleNeutralDismiss} hash={txHash} />
@@ -201,11 +206,11 @@ export default function GovernanceDetail({
                         {title}
                       </TYPE.largeHeader>
                       <TYPE.smallGray textAlign="center" marginTop="4px">
-                        {address}
+                        {creator}
                       </TYPE.smallGray>
                     </div>
                     <TYPE.body lineHeight="25px" textAlign="center">
-                      {synopsis}
+                      {contents}
                     </TYPE.body>
                   </AutoColumn>
                   <AutoColumn style={{ width: '100%' }} gap="16px">
