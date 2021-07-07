@@ -35,6 +35,7 @@ export default function WarningModal() {
               any person found on the OFAC specially designated nationals, blocked persons list, any other consolidated
               prohibited persons list as determined by any applicable governmental authority.
             </TYPE.body>
+            <TYPE.body>The project is in beta, use at your own risk.</TYPE.body>
             <ButtonPrimary onClick={handleClose}>Understand</ButtonPrimary>
           </AutoColumn>
         </Modal>

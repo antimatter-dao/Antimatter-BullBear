@@ -39,8 +39,8 @@ import FAQ from './FAQ'
 import OptionTrade from './OptionTrade'
 import OptionCreation from './OptionCreation'
 import OptionExercise from './OptionExercise'
-import Governance from './Governance'
-import GovernancePageDetail from './Governance/GovernancePageDetail'
+import WarningModal from '../components/Modal/WarningModal'
+import ComingSoon from './ComingSoon'
 // import WarningModal from 'components/Modal/WarningModal'
 
 const AppWrapper = styled.div`
@@ -116,7 +116,7 @@ export default function App() {
             <Popups />
             <Polling />
             <WelcomeSlider />
-            {/* <WarningModal /> */}
+            <WarningModal />
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>
@@ -129,8 +129,7 @@ export default function App() {
                 <Route exact strict path="/generate/:optionTypeIndex" component={Generate} />
                 {/* <Route exact strict path="/redeem" component={Redeem} /> */}
                 <Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />
-                <Route exact strict path="/governance" component={Governance} />
-                <Route exact strict path="/governance/detail/:governanceIndex" component={GovernancePageDetail} />
+                <Route exact strict path="/governance" component={ComingSoon} />
                 <Route exact strict path="/info" component={Info} />
                 {/* <Route exact strict path="/exercise" component={Exercise} /> */}
                 {/* <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} /> */}
