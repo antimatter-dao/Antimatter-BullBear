@@ -8,7 +8,7 @@ import { darken } from 'polished'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
-import { ExternalLink, TYPE } from '../../theme'
+import { ExternalHeaderLink, ExternalLink, TYPE } from '../../theme'
 import Row, { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -36,7 +36,7 @@ export const tabs: Tab[] = [
   { title: 'Option Exercise', route: 'option_exercise' },
   { title: 'Option Creation', route: 'option_creation' },
   { title: 'Farm', route: 'farm' },
-  { title: 'Governance', route: 'governance' },
+  { title: 'Governance', link: 'https://governance.antimatter.finance' },
   {
     title: 'About',
     subTab: [
@@ -431,7 +431,7 @@ const MobileHeader = styled.header`
   position:fixed;
   top: 0;
   left: 0;
-  z-index: 100
+  z-index: 100;
   display: none;
   ${({ theme }) => theme.mediaWidth.upToLarge`
     display: inherit
@@ -454,7 +454,7 @@ export default function Header() {
           <StyledLogo />
         </Link>
         <HeaderLinks>
-          {tabs.map(({ title, route, subTab }) => {
+          {tabs.map(({ title, route, link, subTab }) => {
             if (subTab) {
               return (
                 <StyledDropdown key={title}>
@@ -490,9 +490,17 @@ export default function Header() {
               )
             }
             return (
-              <StyledNavLink id={`stake-nav-link`} to={'/' + route} key={route}>
-                {title}
-              </StyledNavLink>
+              <>
+                {link ? (
+                  <ExternalHeaderLink href={link} key={title}>
+                    {title}
+                  </ExternalHeaderLink>
+                ) : (
+                  <StyledNavLink id={`stake-nav-link`} to={'/' + route} key={route}>
+                    {title}
+                  </StyledNavLink>
+                )}
+              </>
             )
           })}
         </HeaderLinks>
