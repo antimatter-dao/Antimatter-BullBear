@@ -31,9 +31,9 @@ export default function WarningModal() {
               <br />
               The dapp is not and will not be offered or sold, directly or indirectly, to any person who is a resident,
               organized, or located in any country or territory subject to OFAC comprehensive sanctions programs from
-              time to time, including Cuba, Crimea region of Ukrain, Democratic people’s Republic of Korea, Iran, Syria,
-              any person found on the OFAC specially designated nationals, blocked persons list, any other consolidated
-              prohibited persons list as determined by any applicable governmental authority.
+              time to time, including Cuba, Crimea region of Ukraine, Democratic people’s Republic of Korea, Iran,
+              Syria, any person found on the OFAC specially designated nationals, blocked persons list, any other
+              consolidated prohibited persons list as determined by any applicable governmental authority.
             </TYPE.body>
             <TYPE.body>The project is in beta, use at your own risk.</TYPE.body>
             <ButtonPrimary onClick={handleClose}>Understand</ButtonPrimary>
