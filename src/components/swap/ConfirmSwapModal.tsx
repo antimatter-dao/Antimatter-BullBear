@@ -1,4 +1,4 @@
-import { currencyEquals, Trade } from '@uniswap/sdk'
+import { CurrencyAmount, currencyEquals, Trade } from '@uniswap/sdk'
 import React, { useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
@@ -6,6 +6,7 @@ import TransactionConfirmationModal, {
 } from '../TransactionConfirmationModal'
 import SwapModalFooter from './SwapModalFooter'
 import SwapModalHeader from './SwapModalHeader'
+import { Auction } from '../../state/swap/actions'
 
 /**
  * Returns true if the trade requires a confirmation of details before we can submit it
@@ -23,24 +24,28 @@ function tradeMeaningfullyDiffers(tradeA: Trade, tradeB: Trade): boolean {
 }
 
 export default function ConfirmSwapModal({
+  auction,
+  optionCurrencyAmount,
+  payCurrencyAmount,
   trade,
   originalTrade,
   onAcceptChanges,
   allowedSlippage,
   onConfirm,
   onDismiss,
-  recipient,
   swapErrorMessage,
   isOpen,
   attemptingTxn,
   txHash
 }: {
+  auction: Auction
+  optionCurrencyAmount: CurrencyAmount | undefined
+  payCurrencyAmount: CurrencyAmount | undefined
   isOpen: boolean
   trade: Trade | undefined
   originalTrade: Trade | undefined
   attemptingTxn: boolean
   txHash: string | undefined
-  recipient: string | null
   allowedSlippage: number
   onAcceptChanges: () => void
   onConfirm: () => void
@@ -53,28 +58,27 @@ export default function ConfirmSwapModal({
   )
 
   const modalHeader = useCallback(() => {
-    return trade ? (
+    return auction && optionCurrencyAmount && payCurrencyAmount ? (
       <SwapModalHeader
-        trade={trade}
-        allowedSlippage={allowedSlippage}
-        recipient={recipient}
+        auction={auction}
+        optionCurrencyAmount={optionCurrencyAmount}
+        payCurrencyAmount={payCurrencyAmount}
         showAcceptChanges={showAcceptChanges}
         onAcceptChanges={onAcceptChanges}
       />
     ) : null
-  }, [allowedSlippage, onAcceptChanges, recipient, showAcceptChanges, trade])
+  }, [auction, onAcceptChanges, optionCurrencyAmount, payCurrencyAmount, showAcceptChanges])
 
   const modalBottom = useCallback(() => {
-    return trade ? (
+    return (
       <SwapModalFooter
         onConfirm={onConfirm}
-        trade={trade}
         disabledConfirm={showAcceptChanges}
         swapErrorMessage={swapErrorMessage}
         allowedSlippage={allowedSlippage}
       />
-    ) : null
-  }, [allowedSlippage, onConfirm, showAcceptChanges, swapErrorMessage, trade])
+    )
+  }, [allowedSlippage, onConfirm, showAcceptChanges, swapErrorMessage])
 
   // text to show while loading
   const pendingText = `Swapping ${trade?.inputAmount?.toSignificant(6)} ${
@@ -104,7 +108,7 @@ export default function ConfirmSwapModal({
       hash={txHash}
       content={confirmationContent}
       pendingText={pendingText}
-      currencyToAdd={trade?.outputAmount.currency}
+      currencyToAdd={optionCurrencyAmount?.currency}
     />
   )
 }

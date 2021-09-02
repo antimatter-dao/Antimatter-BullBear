@@ -6,14 +6,17 @@ import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build
 import { ChainId, WETH } from '@uniswap/sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import ANTIMATTER_ABI from '../constants/abis/antimatter.json'
+import ANTIMATTER_ROUTER_ABI from '../constants/abis/antimatter_router.json'
 import ANTIMATTER_GOVERNANCE_ABI from '../constants/abis/governance.json'
+import OPTION_ABI from '../constants/abis/callOrPut.json'
+
 import { useMemo } from 'react'
 import {
   ANTIMATTER_ADDRESS,
   GOVERNANCE_ADDRESS,
   MERKLE_DISTRIBUTOR_ADDRESS,
   UNI,
-  ANTIMATTER_GOVERNANCE_ADDRESS
+  ANTIMATTER_GOVERNANCE_ADDRESS, ANTIMATTER_ROUTER_ADDRESS
 } from '../constants'
 import {
   ARGENT_WALLET_DETECTOR_ABI,
@@ -105,6 +108,10 @@ export function usePairContract(pairAddress?: string, withSignerIfPossible?: boo
   return useContract(pairAddress, IUniswapV2PairABI, withSignerIfPossible)
 }
 
+export function useAttributesContract(optionAddress?: string, withSignerIfPossible?: boolean): Contract | null {
+  return useContract(optionAddress, OPTION_ABI, withSignerIfPossible)
+}
+
 export function useMulticallContract(): Contract | null {
   const { chainId } = useActiveWeb3React()
   return useContract(chainId && MULTICALL_NETWORKS[chainId], MULTICALL_ABI, false)
@@ -124,9 +131,12 @@ export function useUniContract(): Contract | null {
   return useContract(chainId ? UNI[chainId].address : undefined, UNI_ABI, true)
 }
 
-export function useAntimatterContract(): Contract | null {
-  const { chainId } = useActiveWeb3React()
-  return useContract(chainId ? ANTIMATTER_ADDRESS[chainId] : undefined, ANTIMATTER_ABI, true)
+export function useAntimatterContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(ANTIMATTER_ADDRESS, ANTIMATTER_ABI, withSignerIfPossible)
+}
+
+export function useAntimatterRouterContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(ANTIMATTER_ROUTER_ADDRESS, ANTIMATTER_ROUTER_ABI, withSignerIfPossible)
 }
 
 export function useCallOrPutContract(address: string): Contract | null {

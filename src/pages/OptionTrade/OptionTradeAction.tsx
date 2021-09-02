@@ -13,10 +13,10 @@ import { AutoColumn } from 'components/Column'
 import { USDT } from '../../constants'
 import { useCurrency } from 'hooks/Tokens'
 import { currencyId } from 'utils/currencyId'
-import { OptionIcon } from 'components/Icons'
+//import { OptionIcon } from 'components/Icons'
 import { OptionInterface } from './'
 import Loader from 'assets/svg/gray_loader.svg'
-import CurrencyLogo from 'components/CurrencyLogo'
+//import CurrencyLogo from 'components/CurrencyLogo'
 import { getEtherscanLink } from 'utils'
 import { useActiveWeb3React } from 'hooks'
 import { ChainId, WETH } from '@uniswap/sdk'
@@ -45,20 +45,20 @@ const SwitchTabWrapper = styled.div`
   justify-content: flex-end;
 `
 
-const Circle = styled.div`
-  margin-right: 16px;
-  border-radius: 50%;
-  border: 1px solid ${({ theme }) => theme.bg5};
-  background-color: ${({ theme }) => theme.bg4};
-  height: 32px;
-  width: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
+// const Circle = styled.div`
+//   margin-right: 16px;
+//   border-radius: 50%;
+//   border: 1px solid ${({ theme }) => theme.bg5};
+//   background-color: ${({ theme }) => theme.bg4};
+//   height: 32px;
+//   width: 32px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// `
 
 const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
-  outline: none
+  outline: none;
   border:none;
   background: none;
   position: relative;
@@ -79,7 +79,7 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
     z-index: 2;
     position: absolute;
     line-height: 41px;
-    text-align: center
+    text-align: center;
     top: 0;
     left:${({ isFirstChild }) => (isFirstChild ? '50px' : '90px')};
     color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
@@ -110,14 +110,14 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
 
   const currencyA = chainId === ChainId.MAINNET ? USDT : chainId && WETH[chainId]
   const currencyB = useCurrency(addressA)
-  const underlyingCurrency = useCurrency(option?.underlyingAddress ?? undefined)
+  //const underlyingCurrency = useCurrency(option?.underlyingAddress ?? undefined)
   const { pair } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
 
   const handleSetTab = useCallback((tab: TABS) => setTab(tab), [setTab])
   const handleBack = useCallback(() => history.push('/option_trading'), [history])
   return (
     <>
-      {option ? (
+      {!option ? (
         <Wrapper>
           <RowBetween style={{ padding: '27px 0' }}>
             <ButtonEmpty width="auto" color={theme.text1} onClick={handleBack}>
@@ -127,16 +127,16 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
 
             <AutoColumn justify="center" gap="8px">
               <RowFixed>
-                <Circle>
-                  <OptionIcon
-                    tokenIcon={<CurrencyLogo currency={underlyingCurrency ?? undefined} size="20px" />}
-                    type={option.type}
-                    size="20px"
-                  />
-                </Circle>
-                <TYPE.subHeader fontSize={24} fontWeight={500}>
-                  {option.title}
-                </TYPE.subHeader>
+                {/*<Circle>*/}
+                {/*  <OptionIcon*/}
+                {/*    tokenIcon={<CurrencyLogo currency={underlyingCurrency ?? undefined} size="20px" />}*/}
+                {/*    type={option.type}*/}
+                {/*    size="20px"*/}
+                {/*  />*/}
+                {/*</Circle>*/}
+                {/*<TYPE.subHeader fontSize={24} fontWeight={500}>*/}
+                {/*  {option.title}*/}
+                {/*</TYPE.subHeader>*/}
               </RowFixed>
               {currencyB && chainId && (
                 <StyledExternalLink href={getEtherscanLink(chainId, currencyId(currencyB), 'token')}>
@@ -174,16 +174,16 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
 
 function SwitchTab({ tab, setTab }: { tab: TABS; setTab: (tab: TABS) => void }) {
   const swapClick = useCallback(() => setTab(TABS.SWAP), [setTab])
-  const liquidityClick = useCallback(() => setTab(TABS.LIQUIDITY), [setTab])
+  //const liquidityClick = useCallback(() => setTab(TABS.LIQUIDITY), [setTab])
   const infoClick = useCallback(() => setTab(TABS.INFO), [setTab])
   return (
     <SwitchTabWrapper>
       <Tab onClick={infoClick} selected={tab === TABS.INFO}>
         Info
       </Tab>
-      <Tab onClick={liquidityClick} selected={tab === TABS.LIQUIDITY}>
-        Liquidity
-      </Tab>
+      {/*<Tab onClick={liquidityClick} selected={tab === TABS.LIQUIDITY}>*/}
+      {/*  Liquidity*/}
+      {/*</Tab>*/}
       <Tab isFirstChild={true} onClick={swapClick} selected={tab === TABS.SWAP}>
         Swap
       </Tab>

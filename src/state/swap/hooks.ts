@@ -1,6 +1,6 @@
 import useENS from '../../hooks/useENS'
 import { Version } from '../../hooks/useToggledVersion'
-import { parseUnits } from '@ethersproject/units'
+import { formatUnits, parseUnits } from '@ethersproject/units'
 import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@uniswap/sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
@@ -18,6 +18,18 @@ import { SwapState } from './reducer'
 import useToggledVersion from '../../hooks/useToggledVersion'
 import { useUserSlippageTolerance } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
+import { BigNumber } from 'ethers'
+import { Option, parseAbsolute } from '../market/hooks'
+import { useSingleCallResult } from '../multicall/hooks'
+import { useAntimatterRouterContract } from '../../hooks/useContract'
+import { useTotalSupply } from '../../data/TotalSupply'
+
+export interface RouteDelta {
+  undMax: string
+  curMax: string
+  totalUnd: string
+  totalCur: string
+}
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -80,6 +92,22 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
         ? new TokenAmount(currency, JSBI.BigInt(typedValueParsed))
         : CurrencyAmount.ether(JSBI.BigInt(typedValueParsed))
     }
+  } catch (error) {
+    // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
+    console.debug(`Failed to parse input amount: "${value}"`, error)
+  }
+  // necessary for all paths to return a value
+  return undefined
+}
+
+export function tryFormatAmount(value?: string, currency?: Currency): CurrencyAmount | undefined {
+  if (!value || value === '0' || !currency) {
+    return undefined
+  }
+  try {
+    return currency instanceof Token
+      ? new TokenAmount(currency, JSBI.BigInt(value))
+      : CurrencyAmount.ether(JSBI.BigInt(value))
   } catch (error) {
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
     console.debug(`Failed to parse input amount: "${value}"`, error)
@@ -214,6 +242,89 @@ export function useDerivedSwapInfo(): {
     v2Trade: v2Trade ?? undefined,
     inputError,
     v1Trade
+  }
+}
+
+// from the current swap inputs, compute the best trade and return it.
+export function useOptionSwapInfo(
+  undAmount?: string,
+  curAmount?: string,
+  undFromCurrency?: Currency | undefined | null,
+  undToCurrency?: Currency | undefined | null,
+  curFromCurrency?: Currency | undefined | null,
+  curToCurrency?: Currency | undefined | null
+): {
+  undTrade: Trade | undefined
+  curTrade: Trade | undefined
+  inputError?: string
+} {
+  const { account } = useActiveWeb3React()
+
+  const undParsedAmount = undAmount
+    ? tryParseAmount(
+        formatUnits(BigNumber.from(undAmount ?? '0'), undFromCurrency?.decimals).toString(),
+        undFromCurrency ?? undefined
+      )
+    : undefined
+  const undBestTradeExactIn = useTradeExactIn(undParsedAmount, undToCurrency ?? undefined)
+
+  const curParsedAmount = curAmount
+    ? tryParseAmount(
+        formatUnits(BigNumber.from(curAmount ?? '0'), curFromCurrency?.decimals).toString(),
+        curFromCurrency ?? undefined
+      )
+    : undefined
+  const curBestTradeExactIn = useTradeExactIn(curParsedAmount, curToCurrency ?? undefined)
+
+  let inputError: string | undefined
+  if (!account) {
+    inputError = 'Connect Wallet'
+  }
+
+  return {
+    undTrade: undBestTradeExactIn ?? undefined,
+    curTrade: curBestTradeExactIn ?? undefined,
+    inputError
+  }
+}
+
+export function useRouteDelta(
+  option: Option | undefined,
+  undTrade: string[] | undefined,
+  curTrade: string[] | undefined,
+  callAmount: string,
+  callToken: Token | undefined,
+  putAmount: string,
+  putToken: Token | undefined
+): RouteDelta | undefined {
+  const [allowedSlippage] = useUserSlippageTolerance()
+  const contract = useAntimatterRouterContract()
+  const totalCall = useTotalSupply(option?.call?.token)
+  const totalPut = useTotalSupply(option?.put?.token)
+  const args =
+    option && callToken && putToken && undTrade && curTrade && callAmount && putAmount
+      ? [
+          undTrade,
+          curTrade,
+          option?.priceFloor,
+          option?.priceCap,
+          totalCall?.raw.toString(),
+          totalPut?.raw.toString(),
+          parseAbsolute(callAmount, callToken),
+          parseAbsolute(putAmount, putToken),
+          allowedSlippage
+        ]
+      : [undefined]
+  console.log('args', undTrade, curTrade, callToken?parseAbsolute(callAmount, callToken):'null1', putToken?parseAbsolute(putAmount, putToken):'null2')
+
+  const deltaRes = useSingleCallResult(contract, 'calcDeltaRoute', args)
+  if (!deltaRes || !deltaRes.result) return undefined
+  const delta = deltaRes.result
+  return {
+    undMax: delta.undMax.toString(),
+    curMax: delta.curMax.toString(),
+    totalCur: delta.totalCur.toString(),
+    totalUnd: delta.totalUnd.toString()
   }
 }
 

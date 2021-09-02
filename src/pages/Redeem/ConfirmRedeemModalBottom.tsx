@@ -5,11 +5,10 @@ import { DeltaData } from '../../state/market/hooks'
 import { Currency, Token } from '@uniswap/sdk'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { parseBalance } from '../../utils/marketStrategyUtils'
-import { TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
 import { ZERO_ADDRESS } from '../../constants'
 
 export function ConfirmRedeemModalBottom({
-  tokenType = TOKEN_TYPES.callPut,
+  tokenType = '',
   delta,
   callTyped,
   putTyped,

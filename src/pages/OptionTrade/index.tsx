@@ -236,7 +236,7 @@ export default function OptionTrade({
   return (
     <>
       {networkErrorModal}
-      {addressA ? (
+      {!addressA ? (
         <OptionTradeAction addressA={addressA} option={option} />
       ) : (
         <Wrapper id="optionTrade">

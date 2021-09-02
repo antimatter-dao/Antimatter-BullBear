@@ -9,7 +9,6 @@ import { AutoColumn } from '../Column'
 import styled from 'styled-components'
 import CurrencyLogo from '../CurrencyLogo'
 import { currencyNameHelper, isNegative } from 'utils/marketStrategyUtils'
-import { TOKEN_TYPES } from '../MarketStrategy/TypeRadioButton'
 
 const TokenPanel = styled.div`
   flex: 1;
@@ -23,7 +22,7 @@ const TokenPanel = styled.div`
 `
 
 export function GenerateBar({
-  tokenType = TOKEN_TYPES.callPut,
+  tokenType = '',
   cardTitle,
   callTitle,
   putTitle,
@@ -56,7 +55,7 @@ export function GenerateBar({
       )}
       <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)', padding: '16px 20px' }}>
         <RowBetween>
-          {(tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.call) && (
+          {(tokenType === '' || tokenType === '') && (
             <AutoColumn style={{ flex: 1, maxWidth: '45%' }} gap={'8px'}>
               <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
                 {(!subTitle || callTitle) && callTitle}
@@ -74,11 +73,9 @@ export function GenerateBar({
             </AutoColumn>
           )}
 
-          {tokenType === TOKEN_TYPES.callPut && (
-            <Plus size="24" color={theme.text2} style={{ margin: '24px 10px 0' }} />
-          )}
+          {tokenType === '' && <Plus size="24" color={theme.text2} style={{ margin: '24px 10px 0' }} />}
 
-          {(tokenType === TOKEN_TYPES.callPut || tokenType === TOKEN_TYPES.put) && (
+          {(tokenType === '' || tokenType === '') && (
             <AutoColumn style={{ flex: 1, maxWidth: '45%' }} gap={'8px'}>
               <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
                 {(!subTitle || putTitle) && putTitle}

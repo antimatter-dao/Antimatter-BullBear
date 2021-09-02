@@ -5,10 +5,9 @@ import { DeltaData } from '../../state/market/hooks'
 import { Currency, Token } from '@uniswap/sdk'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { parseBalance } from '../../utils/marketStrategyUtils'
-import { TOKEN_TYPES } from '../../components/MarketStrategy/TypeRadioButton'
 
 export function ConfirmGenerationModalBottom({
-  tokenType = TOKEN_TYPES.callPut,
+  tokenType = '',
   delta,
   callTyped,
   putTyped,

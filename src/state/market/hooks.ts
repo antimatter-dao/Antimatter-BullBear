@@ -1,4 +1,4 @@
-import { useAntimatterContract } from '../../hooks/useContract'
+import { useAntimatterContract, useAttributesContract } from '../../hooks/useContract'
 import {
   NEVER_RELOAD,
   useMultipleContractSingleData,
@@ -10,12 +10,12 @@ import CALL_OR_PUT_ABI from '../../constants/abis/callOrPut.json'
 import { useMemo } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useActiveWeb3React } from '../../hooks'
-import { useUserGenerationSlippageTolerance, useUserRedeemSlippageTolerance } from '../user/hooks'
-import { ETHER, JSBI } from '@uniswap/sdk'
+import { useUserSlippageTolerance } from '../user/hooks'
+import { JSBI, Token, TokenAmount } from '@uniswap/sdk'
 import { tryParseAmount } from '../swap/hooks'
-import { TOKEN_TYPES } from 'components/MarketStrategy/TypeRadioButton'
-import { useETHBalances } from '../wallet/hooks'
 import { MATTER_OPTION } from '../../constants'
+import { useToken } from '../../hooks/Tokens'
+import { useTotalSupply } from '../../data/TotalSupply'
 const CALL_OR_PUT_INTERFACE = new Interface(CALL_OR_PUT_ABI)
 
 export interface OptionTypeData {
@@ -41,14 +41,10 @@ export interface DeltaData {
   dCur: string
   totalUnd: string
   totalCur: string
-  callBalance: string
-  putBalance: string
-  underlyingBalance: number | undefined
-  currencyBalance: number | undefined
-}
-interface Balances {
-  callBalance: string
-  putBalance: string
+  callBalance?: string
+  putBalance?: string
+  underlyingBalance?: number | undefined
+  currencyBalance?: number | undefined
 }
 
 interface Value {
@@ -56,13 +52,22 @@ interface Value {
   valueReserve: string
 }
 
-export function useOptionTypeCount(): number | undefined {
+export interface Option {
+  call: TokenAmount | undefined | null
+  put: TokenAmount | undefined | null
+  underlying: Token | undefined | null
+  currency: Token | undefined | null
+  priceFloor: string | undefined
+  priceCap: string | undefined
+}
+
+export function useOptionTypeCount(): number {
   const antimatterContract = useAntimatterContract()
   const res = useSingleCallResult(antimatterContract, 'length')
   if (res.result && !res.loading) {
     return parseInt(res.result[0])
   }
-  return undefined
+  return 0
 }
 
 export function useValues(): Value[] | undefined {
@@ -101,14 +106,10 @@ export function useValues(): Value[] | undefined {
 export function useAllOptionTypes() {
   const { account } = useActiveWeb3React()
   const antimatterContract = useAntimatterContract()
-  //const optionTypeCount = useOptionTypeCount()
+  const optionTypeCount = useOptionTypeCount()
   const optionTypeIndexes = useMemo(() => {
-    const indexes = []
-    for (let i = 1; i < 2; i++) {
-      indexes.push([i])
-    }
-    return indexes
-  }, [])
+    return Array.from({ length: optionTypeCount }, (v, i) => [i])
+  }, [optionTypeCount])
 
   const callAddressesRes = useSingleContractMultipleData(antimatterContract, 'allCalls', optionTypeIndexes)
   const putAddressesRes = useSingleContractMultipleData(antimatterContract, 'allPuts', optionTypeIndexes)
@@ -256,6 +257,51 @@ export function useAllOptionTypes() {
   return list
 }
 
+export function useOption(id: string): Option | undefined {
+  const { account } = useActiveWeb3React()
+  const factoryContract = useAntimatterContract()
+
+  const callAddressRes = useSingleCallResult(factoryContract, 'allCalls', [id])
+  const putAddressRes = useSingleCallResult(factoryContract, 'allPuts', [id])
+
+  const attributesContract = useAttributesContract(callAddressRes?.result?.[0])
+
+  const attributesRes = useSingleCallResult(attributesContract, 'attributes', undefined)
+
+  const balancesRes = useMultipleContractSingleData(
+    [callAddressRes?.result?.[0], putAddressRes?.result?.[0]],
+    CALL_OR_PUT_INTERFACE,
+    'balanceOf',
+    [account ?? undefined]
+  )
+
+  const underlyingAddress = useMemo(() => {
+    return attributesRes?.result?.[0]
+  }, [attributesRes])
+
+  const currencyAddress = useMemo(() => {
+    return attributesRes?.result?.[1]
+  }, [attributesRes])
+  const call = useToken(callAddressRes?.result?.[0])
+  const put = useToken(putAddressRes?.result?.[0])
+
+  const underlying = useToken(underlyingAddress)
+  const currency = useToken(currencyAddress)
+  if (!call || !put || !underlying || !currency || !attributesRes?.result?.[2] || !attributesRes?.result?.[3])
+    return undefined
+  const callTokenAmount = new TokenAmount(call, balancesRes?.[0]?.result?.[0] ?? '0')
+  const putTokenAmount = new TokenAmount(put, balancesRes?.[1]?.result?.[0] ?? '0')
+
+  return {
+    priceFloor: attributesRes?.result?.[2].toString(),
+    priceCap: attributesRes?.result?.[3].toString(),
+    call: callTokenAmount,
+    put: putTokenAmount,
+    underlying,
+    currency
+  }
+}
+
 export function useMatterOption() {
   const { chainId, account } = useActiveWeb3React()
   const matterOption = chainId ? MATTER_OPTION[chainId] : undefined
@@ -302,11 +348,11 @@ export const absolute = (val: string) => {
   }
   return val
 }
-const parseAbsolute = (val: string) => {
+export const parseAbsolute = (val: string, token: Token) => {
   if (val === '0') {
     return '0'
   }
-  const value = tryParseAmount(absolute(val), ETHER)?.raw.toString()
+  const value = tryParseAmount(absolute(val), token)?.raw.toString()
   if (value && val[0] === '-') {
     return '-' + value
   }
@@ -314,133 +360,105 @@ const parseAbsolute = (val: string) => {
 }
 
 export function useDerivedStrategyInfo(
-  isGeneration: boolean,
-  optionType: OptionTypeData | undefined,
-  callTyped: string | undefined,
-  putTyped: string | undefined,
-  tokenType: string
+  option: Option | undefined,
+  callAmount: string | undefined,
+  putAmount: string | undefined
 ): {
   delta?: DeltaData
-  error?: string
-  balances?: Balances
 } {
-  const { account } = useActiveWeb3React()
   const antimatterContract = useAntimatterContract()
-  const [userGenerationSlippageTolerance] = useUserGenerationSlippageTolerance() // custom from users
-  const [userRedeemSlippageTolerance] = useUserRedeemSlippageTolerance() // custom from users
+  const [userSlippageTolerance] = useUserSlippageTolerance() // custom from users
+  const totalCall = useTotalSupply(option?.call?.token)
+  const totalPut = useTotalSupply(option?.put?.token)
 
   const queryData = useMemo(() => {
-    let callAmount = callTyped
-    let putAmount = putTyped
-
-    if (tokenType === TOKEN_TYPES.call) {
-      putAmount = '0'
-    }
-    if (tokenType === TOKEN_TYPES.put) {
-      callAmount = '0'
-    }
-
     if (
-      !optionType ||
-      !optionType.priceFloor ||
-      !optionType.priceCap ||
-      !optionType.callTotal ||
-      !optionType.putTotal ||
+      !option ||
+      !option.call?.token ||
+      !option.put?.token ||
+      !totalCall ||
+      !totalPut ||
+      !option.priceFloor ||
+      !option.priceCap ||
       !callAmount ||
       !putAmount
     )
       return undefined
-
-    const callVal = parseAbsolute(callAmount)
-    const putVal = parseAbsolute(putAmount)
+    const callVal = parseAbsolute(callAmount, option.call?.token)
+    const putVal = parseAbsolute(putAmount, option.put?.token)
 
     return [
-      optionType?.priceFloor.toString(),
-      optionType?.priceCap.toString(),
-      optionType?.callTotal.toString(),
-      optionType?.putTotal.toString(),
+      option.priceFloor,
+      option.priceCap,
+      totalCall?.raw.toString(),
+      totalPut?.raw.toString(),
       callVal,
       putVal,
       JSBI.multiply(
-        JSBI.BigInt(isGeneration ? userGenerationSlippageTolerance ?? 50 : userRedeemSlippageTolerance ?? 50),
+        JSBI.BigInt(userSlippageTolerance ?? 50),
         JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(15))
       ).toString()
     ]
-  }, [
-    optionType,
-    callTyped,
-    putTyped,
-    isGeneration,
-    tokenType,
-    userGenerationSlippageTolerance,
-    userRedeemSlippageTolerance
-  ])
-  const ETHBalance = useETHBalances(account ? [account] : [])
+  }, [option, callAmount, putAmount, userSlippageTolerance, totalCall, totalPut])
+
+  //const ETHBalance = useETHBalances(account ? [account] : [])
   const delta = useSingleCallResult(antimatterContract, 'calcDeltaWithFeeAndSlippage', queryData ?? [undefined])
-  const balancesRes = useMultipleContractSingleData(
-    [optionType?.callAddress, optionType?.putAddress, optionType?.underlying, optionType?.currency],
-    ERC20_INTERFACE,
-    'balanceOf',
-    [account ?? undefined]
-  )
+  // const balancesRes = useMultipleContractSingleData(
+  //   [optionType?.callAddress, optionType?.putAddress, optionType?.underlying, optionType?.currency],
+  //   ERC20_INTERFACE,
+  //   'balanceOf',
+  //   [account ?? undefined]
+  // )
 
   const deltaResult = delta?.result?.undMax
     ? {
         dUnd: delta.result?.undMax,
         dCur: delta.result?.curMax,
         totalUnd: delta.result?.totalUnd,
-        totalCur: delta.result?.totalCur,
-        callBalance: balancesRes?.[0]?.result?.[0],
-        putBalance: balancesRes?.[1]?.result?.[0],
-        underlyingBalance: balancesRes?.[2]?.result?.[0],
-        currencyBalance: balancesRes?.[3]?.result?.[0]
+        totalCur: delta.result?.totalCur
       }
     : undefined
-  const balances = balancesRes
-    ? {
-        callBalance: balancesRes?.[0]?.result?.[0],
-        putBalance: balancesRes?.[1]?.result?.[0]
-      }
-    : undefined
+  // const balances = balancesRes
+  //   ? {
+  //       callBalance: balancesRes?.[0]?.result?.[0],
+  //       putBalance: balancesRes?.[1]?.result?.[0]
+  //     }
+  //   : undefined
 
-  let error: string | undefined
-  if (!account) {
-    error = 'Connect Wallet'
-  } else if (!optionType) {
-    error = 'Select a OptionCard Type'
-  } else if (!callTyped && tokenType !== TOKEN_TYPES.put) {
-    error = 'Enter call amount'
-  } else if (!putTyped && tokenType !== TOKEN_TYPES.call) {
-    error = 'Enter put amount'
-  }
+  // let error: string | undefined
+  // if (!account) {
+  //   error = 'Connect Wallet'
+  // } else if (!option) {
+  //   error = 'No Currency Option'
+  // } else if (!callAmount || !putAmount) {
+  //   error = 'Enter amount'
+  // }
 
-  const underlyingBalance =
-    optionType?.underlyingSymbol === 'ETH' && account
-      ? ETHBalance?.[account]?.raw.toString()
-      : deltaResult?.underlyingBalance
-  const currencyBalance =
-    optionType?.currencySymbol === 'ETH' && account
-      ? ETHBalance?.[account]?.raw.toString()
-      : deltaResult?.currencyBalance
-  if (
-    deltaResult?.underlyingBalance &&
-    deltaResult?.dUnd &&
-    JSBI.greaterThan(JSBI.BigInt(deltaResult.dUnd), JSBI.BigInt(underlyingBalance))
-  ) {
-    error = `Insufficient ${optionType?.underlyingSymbol} Balance`
-  }
+  // const underlyingBalance =
+  //   optionType?.underlyingSymbol === 'ETH' && account
+  //     ? ETHBalance?.[account]?.raw.toString()
+  //     : deltaResult?.underlyingBalance
+  // const currencyBalance =
+  //   optionType?.currencySymbol === 'ETH' && account
+  //     ? ETHBalance?.[account]?.raw.toString()
+  //     : deltaResult?.currencyBalance
+  // if (
+  //   deltaResult?.underlyingBalance &&
+  //   deltaResult?.dUnd &&
+  //   JSBI.greaterThan(JSBI.BigInt(deltaResult.dUnd), JSBI.BigInt(underlyingBalance))
+  // ) {
+  //   error = `Insufficient ${optionType?.underlyingSymbol} Balance`
+  // }
 
-  if (
-    deltaResult?.currencyBalance &&
-    deltaResult?.dCur &&
-    JSBI.greaterThan(JSBI.BigInt(deltaResult.dCur), JSBI.BigInt(currencyBalance))
-  ) {
-    error = `Insufficient ${optionType?.currencySymbol} Balance`
-  }
+  // if (
+  //   deltaResult?.currencyBalance &&
+  //   deltaResult?.dCur &&
+  //   JSBI.greaterThan(JSBI.BigInt(deltaResult.dCur), JSBI.BigInt(currencyBalance))
+  // ) {
+  //   error = `Insufficient ${optionType?.currencySymbol} Balance`
+  // }
 
   return {
-    delta: deltaResult,
-    balances,
-    error
+    delta: deltaResult
   }
 }

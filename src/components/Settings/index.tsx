@@ -93,24 +93,24 @@ const Overlay = styled.div`
   position: absolute;
   width: 100vw;
   height: 100vh;
-  top: 0
-  left: 0
+  top: 0;
+  left: 0;
   background-color: ${({ theme }) => theme.modalBG};
 `
 // ${({ theme }) => theme.mediaWidth.upToMedium`
 
 // `}
 const OverlayWrapper = styled.div`
-width: 100%;
-display: flex;
-align-items: center;
-justify-content: center;
-position: absolute;
-width: 100vw;
-height: 100vh;
-top: 0
-left: 0
-z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.7);
 `
 
 const MenuFlyout = styled.span`

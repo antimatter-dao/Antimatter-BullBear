@@ -5,6 +5,16 @@ export enum Field {
   OUTPUT = 'OUTPUT'
 }
 
+export enum OptionType {
+  CALL = 'CALL',
+  PUT = 'PUT'
+}
+
+export enum Auction {
+  BUY = 'BUY',
+  SELL = 'SELL'
+}
+
 export const selectCurrency = createAction<{ field: Field; currencyId: string }>('swap/selectCurrency')
 export const switchCurrencies = createAction<void>('swap/switchCurrencies')
 export const typeInput = createAction<{ field: Field; typedValue: string }>('swap/typeInput')

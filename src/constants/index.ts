@@ -6,13 +6,9 @@ import { OptionTypeData } from '../state/market/hooks'
 
 export const ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 
-export const ANTIMATTER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.MAINNET]: '0x60d0769c4940cA58648C0AA34ecdf390a10F272e',
-  [ChainId.ROPSTEN]: '0x60d0769c4940cA58648C0AA34ecdf390a10F272e',
-  [ChainId.RINKEBY]: '0xe774A104715ba1B99dEAB30ab33e1C99B0695270',
-  [ChainId.KOVAN]: '',
-  [ChainId.GÖRLI]: ''
-}
+export const ANTIMATTER_ADDRESS = '0x90183C741CC13195884B6E332Aa0ac1F7c1E67Fa'
+
+export const ANTIMATTER_ROUTER_ADDRESS = '0xf80975Be2840C1422d3D9E5B198c49781E7fe299'
 
 export const ANTIMATTER_GOVERNANCE_ADDRESS = '0x78fC5460737EB07Ce9e7d954B294ecA7E6203D19'
 
@@ -104,7 +100,13 @@ export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320
 export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LENGTH_IN_BLOCKS
 
 export const GOVERNANCE_ADDRESS = '0x78fC5460737EB07Ce9e7d954B294ecA7E6203D19'
-export const GOVERNANCE_TOKEN = new Token(ChainId.ROPSTEN, '0x6669Ee1e6612E1B43eAC84d4CB9a94Af0A98E740', 18, 'MAT', 'Mat')
+export const GOVERNANCE_TOKEN = new Token(
+  ChainId.ROPSTEN,
+  '0x6669Ee1e6612E1B43eAC84d4CB9a94Af0A98E740',
+  18,
+  'MAT',
+  'Mat'
+)
 
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
@@ -253,7 +255,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
 export const NetworkContextName = 'NETWORK'
 
 // default allowed slippage, in bips
-export const INITIAL_ALLOWED_SLIPPAGE = 50
+export const INITIAL_ALLOWED_SLIPPAGE = 200
 // 20 minutes, denominated in seconds
 export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20
 
