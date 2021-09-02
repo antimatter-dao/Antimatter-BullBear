@@ -67,7 +67,7 @@ export default function OptionExercise() {
             {networkPendingSpinner}
             {filteredList.map(option => (
               <OptionCard
-                option={option}
+                optionId={'1'}
                 key={option.title}
                 buttons={
                   <>

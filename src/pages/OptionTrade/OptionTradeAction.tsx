@@ -5,22 +5,22 @@ import styled from 'styled-components'
 import OptionSwap from './OptionSwap'
 import AppBody from 'pages/AppBody'
 import { CustomLightSpinner, ExternalLink, TYPE } from 'theme'
-import Liquidity from './Liquidity'
+//import Liquidity from './Liquidity'
 import useTheme from 'hooks/useTheme'
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import { ButtonEmpty } from 'components/Button'
 import { AutoColumn } from 'components/Column'
-import { USDT } from '../../constants'
-import { useCurrency } from 'hooks/Tokens'
-import { currencyId } from 'utils/currencyId'
+//import { USDT } from '../../constants'
+//import { useCurrency } from 'hooks/Tokens'
+//import { currencyId } from 'utils/currencyId'
 //import { OptionIcon } from 'components/Icons'
-import { OptionInterface } from './'
+//import { OptionInterface } from './'
 import Loader from 'assets/svg/gray_loader.svg'
 //import CurrencyLogo from 'components/CurrencyLogo'
-import { getEtherscanLink } from 'utils'
-import { useActiveWeb3React } from 'hooks'
-import { ChainId, WETH } from '@uniswap/sdk'
-import { useDerivedMintInfo } from 'state/mint/hooks'
+//import { getEtherscanLink } from 'utils'
+//import { useActiveWeb3React } from 'hooks'
+//import { ChainId, WETH } from '@uniswap/sdk'
+//import { useDerivedMintInfo } from 'state/mint/hooks'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -101,23 +101,23 @@ enum TABS {
   INFO = 'info'
 }
 
-export default function OptionTradeAction({ addressA, option }: { addressA?: string; option?: OptionInterface }) {
-  const { chainId } = useActiveWeb3React()
+export default function OptionTradeAction({ optionId }: { optionId?: string }) {
+  //const { chainId } = useActiveWeb3React()
   const [tab, setTab] = useState(TABS.SWAP)
 
   const theme = useTheme()
   const history = useHistory()
 
-  const currencyA = chainId === ChainId.MAINNET ? USDT : chainId && WETH[chainId]
-  const currencyB = useCurrency(addressA)
+  //const currencyA = chainId === ChainId.MAINNET ? USDT : chainId && WETH[chainId]
+  //const currencyB = useCurrency(addressA)
   //const underlyingCurrency = useCurrency(option?.underlyingAddress ?? undefined)
-  const { pair } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
+  //const { pair } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
 
   const handleSetTab = useCallback((tab: TABS) => setTab(tab), [setTab])
   const handleBack = useCallback(() => history.push('/option_trading'), [history])
   return (
     <>
-      {!option ? (
+      {optionId ? (
         <Wrapper>
           <RowBetween style={{ padding: '27px 0' }}>
             <ButtonEmpty width="auto" color={theme.text1} onClick={handleBack}>
@@ -138,11 +138,11 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
                 {/*  {option.title}*/}
                 {/*</TYPE.subHeader>*/}
               </RowFixed>
-              {currencyB && chainId && (
-                <StyledExternalLink href={getEtherscanLink(chainId, currencyId(currencyB), 'token')}>
-                  {currencyId(currencyB)}
-                </StyledExternalLink>
-              )}
+              {/*{currencyB && chainId && (*/}
+              {/*  <StyledExternalLink href={getEtherscanLink(chainId, currencyId(currencyB), 'token')}>*/}
+              {/*    {currencyId(currencyB)}*/}
+              {/*  </StyledExternalLink>*/}
+              {/*)}*/}
             </AutoColumn>
 
             <div />
@@ -155,9 +155,9 @@ export default function OptionTradeAction({ addressA, option }: { addressA?: str
                 style={{ padding: 0, background: 'black', borderColor: theme.text5, width: 1114, overflow: 'hidden' }}
               >
                 <Elevate>
-                  {tab === TABS.SWAP && <OptionSwap currencyA={currencyA} currencyB={currencyB} />}
-                  {tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}
-                  {tab === TABS.INFO && <Info option={option} />}
+                  {tab === TABS.SWAP && <OptionSwap optionId={optionId} />}
+                  {/*{tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}*/}
+                  {/*{tab === TABS.INFO && <Info option={option} />}*/}
                 </Elevate>
               </AppBody>
             </ActionWrapper>
@@ -225,36 +225,36 @@ function Tab({
   )
 }
 
-function Info({ option }: { option?: OptionInterface }) {
-  const theme = useTheme()
-  return (
-    <AppBody
-      maxWidth="1116px"
-      style={{
-        width: 1116,
-        minHeight: '402px',
-        margin: '-1px',
-        borderColor: theme.text4,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-    >
-      <div>
-        <TYPE.smallHeader style={{ marginBottom: 20 }}>Option Information</TYPE.smallHeader>
-        <AppBody style={{ minWidth: 550, width: '50%' }}>
-          <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
-            {option &&
-              option.details &&
-              Object.keys(option.details).map(key => (
-                <RowBetween key={key}>
-                  <TYPE.darkGray>{key}</TYPE.darkGray>
-                  <TYPE.body>{option.details[key as keyof typeof option.details]}</TYPE.body>
-                </RowBetween>
-              ))}
-          </AutoColumn>
-        </AppBody>
-      </div>
-    </AppBody>
-  )
-}
+// function Info({ option }: { option?: OptionInterface }) {
+//   const theme = useTheme()
+//   return (
+//     <AppBody
+//       maxWidth="1116px"
+//       style={{
+//         width: 1116,
+//         minHeight: '402px',
+//         margin: '-1px',
+//         borderColor: theme.text4,
+//         display: 'flex',
+//         justifyContent: 'center',
+//         alignItems: 'center'
+//       }}
+//     >
+//       <div>
+//         <TYPE.smallHeader style={{ marginBottom: 20 }}>Option Information</TYPE.smallHeader>
+//         <AppBody style={{ minWidth: 550, width: '50%' }}>
+//           <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
+//             {option &&
+//               option.details &&
+//               Object.keys(option.details).map(key => (
+//                 <RowBetween key={key}>
+//                   <TYPE.darkGray>{key}</TYPE.darkGray>
+//                   <TYPE.body>{option.details[key as keyof typeof option.details]}</TYPE.body>
+//                 </RowBetween>
+//               ))}
+//           </AutoColumn>
+//         </AppBody>
+//       </div>
+//     </AppBody>
+//   )
+// }

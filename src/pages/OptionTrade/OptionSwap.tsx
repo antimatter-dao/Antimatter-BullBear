@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react'
-import { Currency } from '@uniswap/sdk'
+import React from 'react'
+//import { Currency } from '@uniswap/sdk'
 import styled from 'styled-components'
 import Swap from '../Swap'
-import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
-import { currencyId } from 'utils/currencyId'
-import { useNetwork } from 'hooks/useNetwork'
+//import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
+//import { currencyId } from 'utils/currencyId'
+//import { useNetwork } from 'hooks/useNetwork'
 
 const Wrapper = styled.div`
   display: flex;
@@ -48,34 +48,28 @@ const Wrapper = styled.div`
 //
 // `
 
-export default function OptionSwap({
-  currencyA,
-  currencyB
-}: {
-  currencyA?: Currency | null
-  currencyB?: Currency | null
-}) {
+export default function OptionSwap({ optionId }: { optionId?: string }) {
   //const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
   //const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
   //const [isMarketPriceChart, setIsMarketPriceChart] = useState(true)
   //const [chart, setChart] = useState<IChartApi | undefined>(undefined)
-  const {
-    httpHandlingFunctions: { errorFunction },
-    networkErrorModal
-  } = useNetwork()
+  // const {
+  //   httpHandlingFunctions: { errorFunction },
+  //   networkErrorModal
+  // } = useNetwork()
 
-  useEffect(() => {
-    const id = currencyB ? currencyId(currencyB) : undefined
-    if (id) {
-      getDexTradeList(
-        (list: DexTradeData[] | undefined) => {
-          //setPriceChartData(list)
-        },
-        id,
-        errorFunction
-      )
-    }
-  }, [currencyB, errorFunction])
+  // useEffect(() => {
+  //   const id = currencyB ? currencyId(currencyB) : undefined
+  //   if (id) {
+  //     getDexTradeList(
+  //       (list: DexTradeData[] | undefined) => {
+  //         //setPriceChartData(list)
+  //       },
+  //       id,
+  //       errorFunction
+  //     )
+  //   }
+  // }, [currencyB, errorFunction])
 
   // useEffect(() => {
   //   const chart = createChart(document.getElementById('chart') ?? '', {
@@ -153,9 +147,9 @@ export default function OptionSwap({
 
   return (
     <>
-      {networkErrorModal}
+      {/*{networkErrorModal}*/}
       <Wrapper>
-        <Swap currencyA={currencyA} currencyB={currencyB} />
+        <Swap optionId={optionId} />
         {/*<ChartWrapper>*/}
         {/*  <ButtonGroup>*/}
         {/*    <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>*/}

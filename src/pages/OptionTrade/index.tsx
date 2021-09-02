@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { useHistory, RouteComponentProps } from 'react-router'
+import React, { useState, useCallback, useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router'
 import styled from 'styled-components'
 import { Currency, Token, JSBI } from '@uniswap/sdk'
 import ButtonSelect from 'components/Button/ButtonSelect'
@@ -7,32 +8,29 @@ import AppBody from 'pages/AppBody'
 import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
 import { AnimatedImg, AnimatedWrapper, ExternalLink, TYPE } from 'theme'
 import { RowBetween, RowFixed } from 'components/Row'
-import { OptionIcon } from 'components/Icons'
+//import { OptionIcon } from 'components/Icons'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import { AutoColumn } from 'components/Column'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import { currencyNameHelper } from 'utils/marketStrategyUtils'
-import { USDT, ZERO_ADDRESS } from '../../constants'
+//import { USDT, ZERO_ADDRESS } from '../../constants'
 import { ButtonSelectRange } from 'components/Button/ButtonSelectRange'
 import { ButtonSelectNumericalInput } from 'components/Button/ButtonSelectNumericalInput'
 import OptionTradeAction from './OptionTradeAction'
-import { useCurrency } from 'hooks/Tokens'
+//import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { currencyId } from 'utils/currencyId'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
-import { useUSDTPrice } from 'utils/useUSDCPrice'
+//import { useUSDTPrice } from 'utils/useUSDCPrice'
 import { useActiveWeb3React } from 'hooks'
 import { XCircle } from 'react-feather'
 import useTheme from 'hooks/useTheme'
-import {
-  getUnderlyingList,
-  getPutOptionList,
-  getCallOptionList,
-  getSingleOtionList,
-  SearchQuery
-} from 'utils/option/httpRequests'
-import { useNetwork } from 'hooks/useNetwork'
+import { SearchQuery } from 'utils/option/httpRequests'
+//import { useNetwork } from 'hooks/useNetwork'
+import { useOption, useOptionTypeCount } from '../../state/market/hooks'
+import { useCurrencyBalances } from '../../state/wallet/hooks'
+import { tryFormatAmount } from '../../state/swap/hooks'
 
 export interface OptionInterface {
   optionId: string | undefined
@@ -174,128 +172,140 @@ export const StyledExternalLink = styled(ExternalLink)`
 
 export default function OptionTrade({
   match: {
-    params: { addressA }
+    params: { optionId }
   }
-}: RouteComponentProps<{ addressA?: string }>) {
-  const { chainId } = useActiveWeb3React()
-  const [tokenList, setTokenList] = useState<Token[] | undefined>(undefined)
-  const [optionList, setOptionList] = useState<OptionInterface[] | undefined>(undefined)
-  const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
-  const [optionTypeQuery, setOptionTypeQuery] = useState('')
+}: RouteComponentProps<{ optionId?: string }>) {
+  //const { chainId } = useActiveWeb3React()
+  const optionCount = useOptionTypeCount()
+  const optionTypeIndexes = useMemo(() => {
+    return Array.from({ length: optionCount }, (v, i) => i.toString())
+  }, [optionCount])
+  //const [tokenList, setTokenList] = useState<Token[] | undefined>(undefined)
+  //const [optionList, setOptionList] = useState<OptionInterface[] | undefined>(undefined)
+  //const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
+  //const [optionTypeQuery, setOptionTypeQuery] = useState('')
   const history = useHistory()
-  const { httpHandlingFunctions, networkErrorModal, networkPendingSpinner, wrapperId } = useNetwork()
+  //const { httpHandlingFunctions, networkErrorModal, networkPendingSpinner, wrapperId } = useNetwork()
 
-  const handleSelectOptionType = useCallback((id: string) => setOptionTypeQuery(id), [])
-  const handleSetTokenList = useCallback((list: Token[] | undefined) => setTokenList(list), [])
-  const handleSetOptionList = useCallback((list: OptionInterface[] | undefined) => setOptionList(list), [])
-  const handleClearSearch = useCallback(() => {
-    setOptionTypeQuery('')
-    setFilteredList(optionList)
-  }, [optionList])
-  const handleSearch = useCallback(
-    body => {
-      const query = Object.keys(body).reduce((acc, key, idx) => {
-        if (key === 'underlying' && body.underlying === ZERO_ADDRESS) {
-          return acc
-        }
-        return `${acc}${idx === 0 ? '' : '&'}${key}=${body[key]}`
-      }, '')
-      const handleFilteredList = (list: OptionInterface[]) => setFilteredList(list)
+  //const handleSelectOptionType = useCallback((id: string) => setOptionTypeQuery(id), [])
+  //const handleSetTokenList = useCallback((list: Token[] | undefined) => setTokenList(list), [])
+  //const handleSetOptionList = useCallback((list: OptionInterface[] | undefined) => setOptionList(list), [])
+  // const handleClearSearch = useCallback(() => {
+  //   setOptionTypeQuery('')
+  //   setFilteredList(optionList)
+  // }, [optionList])
+  // const handleSearch = useCallback(
+  //   body => {
+  //     const query = Object.keys(body).reduce((acc, key, idx) => {
+  //       if (key === 'underlying' && body.underlying === ZERO_ADDRESS) {
+  //         return acc
+  //       }
+  //       return `${acc}${idx === 0 ? '' : '&'}${key}=${body[key]}`
+  //     }, '')
+  //     const handleFilteredList = (list: OptionInterface[]) => setFilteredList(list)
+  //
+  //     if (optionTypeQuery === Type.CALL) {
+  //       getCallOptionList(httpHandlingFunctions, handleFilteredList, chainId, query)
+  //       return
+  //     }
+  //     if (optionTypeQuery === Type.PUT) {
+  //       getPutOptionList(httpHandlingFunctions, handleFilteredList, chainId, query)
+  //       return
+  //     }
+  //     getSingleOtionList(httpHandlingFunctions, handleFilteredList, chainId, query)
+  //   },
+  //   [chainId, httpHandlingFunctions, optionTypeQuery]
+  // )
 
-      if (optionTypeQuery === Type.CALL) {
-        getCallOptionList(httpHandlingFunctions, handleFilteredList, chainId, query)
-        return
-      }
-      if (optionTypeQuery === Type.PUT) {
-        getPutOptionList(httpHandlingFunctions, handleFilteredList, chainId, query)
-        return
-      }
-      getSingleOtionList(httpHandlingFunctions, handleFilteredList, chainId, query)
-    },
-    [chainId, httpHandlingFunctions, optionTypeQuery]
-  )
+  // const option = useMemo(() => {
+  //   if (!optionList || optionList.length === 0) {
+  //     return undefined
+  //   }
+  //   return optionList.find(({ address }) => address === addressA)
+  // }, [addressA, optionList])
 
-  const option = useMemo(() => {
-    if (!optionList || optionList.length === 0) {
-      return undefined
-    }
-    return optionList.find(({ address }) => address === addressA)
-  }, [addressA, optionList])
+  // useEffect(() => {
+  //   getUnderlyingList(handleSetTokenList, chainId, httpHandlingFunctions.errorFunction)
+  //   getSingleOtionList(httpHandlingFunctions, handleSetOptionList, chainId)
+  // }, [chainId, handleSetTokenList, handleSetOptionList, httpHandlingFunctions.errorFunction, httpHandlingFunctions])
 
-  useEffect(() => {
-    getUnderlyingList(handleSetTokenList, chainId, httpHandlingFunctions.errorFunction)
-    getSingleOtionList(httpHandlingFunctions, handleSetOptionList, chainId)
-  }, [chainId, handleSetTokenList, handleSetOptionList, httpHandlingFunctions.errorFunction, httpHandlingFunctions])
-
-  useEffect(() => {
-    if (optionList) {
-      setFilteredList(optionList)
-    }
-  }, [optionList])
+  // useEffect(() => {
+  //   if (optionList) {
+  //     setFilteredList(optionList)
+  //   }
+  // }, [optionList])
 
   return (
     <>
-      {networkErrorModal}
-      {!addressA ? (
-        <OptionTradeAction addressA={addressA} option={option} />
+      {/*{networkErrorModal}*/}
+      {optionId ? (
+        <OptionTradeAction optionId={optionId} />
       ) : (
         <Wrapper id="optionTrade">
-          <Search
-            optionTypeQuery={optionTypeQuery}
-            onOptionType={handleSelectOptionType}
-            onClear={handleClearSearch}
-            onSearch={handleSearch}
-            tokenList={tokenList}
-          />
-          {filteredList && (
-            <ContentWrapper id={wrapperId}>
-              {networkPendingSpinner}
-              {filteredList.map((option, idx) => (
+          {/*<Search*/}
+          {/*  optionTypeQuery={optionTypeQuery}*/}
+          {/*  onOptionType={handleSelectOptionType}*/}
+          {/*  onClear={handleClearSearch}*/}
+          {/*  onSearch={handleSearch}*/}
+          {/*  tokenList={tokenList}*/}
+          {/*/>*/}
+          {optionTypeIndexes && (
+            <ContentWrapper id={''}>
+              {/*{networkPendingSpinner}*/}
+              {optionTypeIndexes.map((optionId, idx) => (
                 <OptionCard
-                  option={option}
-                  key={option.title + idx}
+                  optionId={optionId}
+                  key={optionId}
                   buttons={
-                    <ButtonPrimary onClick={() => history.push(`/option_trading/${option.address}/${USDT.address}`)}>
-                      Trade
-                    </ButtonPrimary>
+                    <ButtonPrimary onClick={() => history.push(`/option_trading/${optionId}`)}>Trade</ButtonPrimary>
                   }
                 />
               ))}
             </ContentWrapper>
           )}
-          <AlternativeDisplay optionList={optionList} filteredList={filteredList} />
+          {/*<AlternativeDisplay optionList={optionList} filteredList={filteredList} />*/}
         </Wrapper>
       )}
     </>
   )
 }
 
-export function OptionCard({
-  option: { title, type, address, details, underlyingAddress, optionId },
-  buttons
-}: {
-  option: OptionInterface
-  buttons: JSX.Element
-}) {
-  const { chainId } = useActiveWeb3React()
-  const underlyingCurrency = useCurrency(underlyingAddress)
-  const currency = useCurrency(address)
-  const price = useUSDTPrice(currency ?? undefined)
+export function OptionCard({ optionId, buttons }: { optionId: string; buttons: JSX.Element }) {
+  const option = useOption(optionId)
+  const { account, chainId } = useActiveWeb3React()
+  const balances = useCurrencyBalances(
+    account ?? undefined,
+    option ? [option.call?.currency, option.put?.currency] : []
+  )
+  const range = {
+    cap: tryFormatAmount(option?.priceCap, option?.currency ?? undefined),
+    floor: tryFormatAmount(option?.priceFloor, option?.currency ?? undefined)
+  }
+  const details = {
+    'Option Price Range': option ? `$${range.cap?.toExact().toString()} ~ $${range.floor?.toExact().toString()}` : '',
+    'Underlying Asset': option ? option.underlying?.symbol : '-',
+    'Your Call Position': balances[0]?.toExact(),
+    'Your Put Position': balances[1]?.toExact()
+  }
+  //const underlyingCurrency = useCurrency(underlyingAddress)
+  //const currency = useCurrency(address)
+  //const price = useUSDTPrice(currency ?? undefined)
   return (
     <AppBody style={{ position: 'relative' }} isCard>
       <OptionId>Option ID&nbsp;:&nbsp;{optionId}</OptionId>
       <AutoColumn gap="20px">
         <TitleWrapper>
           <Circle>
-            {type ? (
-              <OptionIcon
-                tokenIcon={<CurrencyLogo currency={underlyingCurrency ?? undefined} size="28px" />}
-                type={type}
-                size="26px"
-              />
-            ) : (
-              <CurrencyLogo currency={underlyingCurrency ?? undefined} size="28px" />
-            )}
+            {/*{type ? (*/}
+            {/*  <OptionIcon*/}
+            {/*    tokenIcon={<CurrencyLogo currency={underlyingCurrency ?? undefined} size="28px" />}*/}
+            {/*    type={type}*/}
+            {/*    size="26px"*/}
+            {/*  />*/}
+            {/*) : (*/}
+            {/*  <CurrencyLogo currency={underlyingCurrency ?? undefined} size="28px" />*/}
+            {/*)}*/}
+            <CurrencyLogo currency={option?.underlying ?? undefined} size="28px" />
           </Circle>
           <AutoColumn gap="5px" style={{ width: '100%', position: 'relative' }}>
             <div style={{ height: 8 }} />
@@ -303,11 +313,11 @@ export function OptionCard({
               fontSize={20}
               style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
             >
-              {title}
+              {`${option?.underlying?.symbol} Option`}
             </TYPE.mediumHeader>
-            {address && (
-              <StyledExternalLink href={chainId ? getEtherscanLink(chainId, address, 'token') : ''}>
-                {shortenAddress(address, 7)}
+            {option?.underlying && (
+              <StyledExternalLink href={chainId ? getEtherscanLink(chainId, option.underlying?.address, 'token') : ''}>
+                {shortenAddress(option.underlying?.address, 7)}
               </StyledExternalLink>
             )}
           </AutoColumn>
@@ -320,7 +330,7 @@ export function OptionCard({
               <TYPE.subHeader
                 style={{ textAlign: 'right', overflow: 'hidden', whiteSpace: 'pre-wrap', textOverflow: 'ellipsis' }}
               >
-                {key === 'Market Price' ? (price ? `$${price.toFixed()}` : '-') : details[key as keyof typeof details]}
+                {details[key as keyof typeof details]}
               </TYPE.subHeader>
             </RowBetween>
           ))}

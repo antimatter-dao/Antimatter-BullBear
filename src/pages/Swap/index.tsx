@@ -57,13 +57,13 @@ enum OptionField {
   PUT = 'PUT'
 }
 
-export default function Swap({ currencyA, currencyB }: { currencyA?: Currency | null; currencyB?: Currency | null }) {
+export default function Swap({ optionId }: { optionId?: string | null }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
   // const history = useHistory()
   const { chainId, account } = useActiveWeb3React()
 
   const theme = useTheme()
-  const option = useOption('0')
+  const option = useOption(optionId ?? '0')
 
   // for expert mode
   const toggleSettings = useToggleSettingsMenu()
