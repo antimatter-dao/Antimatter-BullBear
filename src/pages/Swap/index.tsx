@@ -425,6 +425,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
           <ConfirmSwapModal
             auction={auction as Auction}
             optionCurrencyAmount={parsedAmounts[Field.OPTION]}
+            payTitle={payFormattedAmount?.[0] === '-' ? 'You will receive' : 'You will pay'}
             payCurrencyAmount={payCurrencyAmount}
             isOpen={showConfirm}
             trade={underlyingTrade}

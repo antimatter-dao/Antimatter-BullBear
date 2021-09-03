@@ -26,6 +26,7 @@ function tradeMeaningfullyDiffers(tradeA: Trade, tradeB: Trade): boolean {
 export default function ConfirmSwapModal({
   auction,
   optionCurrencyAmount,
+  payTitle,
   payCurrencyAmount,
   trade,
   originalTrade,
@@ -40,6 +41,7 @@ export default function ConfirmSwapModal({
 }: {
   auction: Auction
   optionCurrencyAmount: CurrencyAmount | undefined
+  payTitle: string
   payCurrencyAmount: CurrencyAmount | undefined
   isOpen: boolean
   trade: Trade | undefined
@@ -62,12 +64,13 @@ export default function ConfirmSwapModal({
       <SwapModalHeader
         auction={auction}
         optionCurrencyAmount={optionCurrencyAmount}
+        payTitle={payTitle}
         payCurrencyAmount={payCurrencyAmount}
         showAcceptChanges={showAcceptChanges}
         onAcceptChanges={onAcceptChanges}
       />
     ) : null
-  }, [auction, onAcceptChanges, optionCurrencyAmount, payCurrencyAmount, showAcceptChanges])
+  }, [auction, onAcceptChanges, optionCurrencyAmount, payCurrencyAmount, payTitle, showAcceptChanges])
 
   const modalBottom = useCallback(() => {
     return (

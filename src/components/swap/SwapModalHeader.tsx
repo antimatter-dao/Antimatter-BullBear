@@ -28,12 +28,14 @@ const TokenPanel = styled.div`
 export default function SwapModalHeader({
   auction,
   optionCurrencyAmount,
+  payTitle,
   payCurrencyAmount,
   showAcceptChanges,
   onAcceptChanges
 }: {
   auction: Auction
   optionCurrencyAmount: CurrencyAmount | undefined
+  payTitle: string
   payCurrencyAmount: CurrencyAmount | undefined
   showAcceptChanges: boolean
   onAcceptChanges: () => void
@@ -71,7 +73,7 @@ export default function SwapModalHeader({
       <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)', padding: '16px 20px' }}>
         <AutoColumn style={{ flex: 1 }} gap={'8px'}>
           <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
-            {auction === Auction.BUY ? 'You will receive' : 'You will Pay'}
+            {payTitle}
           </TYPE.subHeader>
           <TokenPanel>
             {payCurrencyAmount && <CurrencyLogo currency={payCurrencyAmount?.currency} size={'20px'} />}
