@@ -383,7 +383,11 @@ export default function Swap({ option }: { option: Option | undefined }) {
       return { ...defaultContent, disabled: true, text: 'Insufficient balance' }
     }
     if (!payCurrency) {
-      return { ...defaultContent, disabled: true, text: 'Select a pay token' }
+      return {
+        ...defaultContent,
+        disabled: true,
+        text: `Select a ${auction === Auction.BUY ? 'payment' : 'receipt'} token`
+      }
     }
     if (!payCurrency || !payFormattedAmount || !payBalance) {
       return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
