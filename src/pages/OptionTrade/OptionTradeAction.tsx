@@ -13,10 +13,12 @@ import { AutoColumn } from 'components/Column'
 //import { USDT } from '../../constants'
 //import { useCurrency } from 'hooks/Tokens'
 //import { currencyId } from 'utils/currencyId'
-//import { OptionIcon } from 'components/Icons'
+import { OptionIcon } from 'components/Icons'
 //import { OptionInterface } from './'
 import Loader from 'assets/svg/gray_loader.svg'
-//import CurrencyLogo from 'components/CurrencyLogo'
+import { Option, useOption } from '../../state/market/hooks'
+import CurrencyLogo from 'components/CurrencyLogo'
+import { tryFormatAmount } from '../../state/swap/hooks'
 //import { getEtherscanLink } from 'utils'
 //import { useActiveWeb3React } from 'hooks'
 //import { ChainId, WETH } from '@uniswap/sdk'
@@ -45,17 +47,17 @@ const SwitchTabWrapper = styled.div`
   justify-content: flex-end;
 `
 
-// const Circle = styled.div`
-//   margin-right: 16px;
-//   border-radius: 50%;
-//   border: 1px solid ${({ theme }) => theme.bg5};
-//   background-color: ${({ theme }) => theme.bg4};
-//   height: 32px;
-//   width: 32px;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-// `
+const Circle = styled.div`
+  margin-right: 16px;
+  border-radius: 50%;
+  border: 1px solid ${({ theme }) => theme.bg5};
+  background-color: ${({ theme }) => theme.bg4};
+  height: 32px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
 const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
   outline: none;
@@ -104,7 +106,7 @@ enum TABS {
 export default function OptionTradeAction({ optionId }: { optionId?: string }) {
   //const { chainId } = useActiveWeb3React()
   const [tab, setTab] = useState(TABS.SWAP)
-
+  const option = useOption(optionId)
   const theme = useTheme()
   const history = useHistory()
 
@@ -126,18 +128,27 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
             </ButtonEmpty>
 
             <AutoColumn justify="center" gap="8px">
-              <RowFixed>
-                {/*<Circle>*/}
-                {/*  <OptionIcon*/}
-                {/*    tokenIcon={<CurrencyLogo currency={underlyingCurrency ?? undefined} size="20px" />}*/}
-                {/*    type={option.type}*/}
-                {/*    size="20px"*/}
-                {/*  />*/}
-                {/*</Circle>*/}
-                {/*<TYPE.subHeader fontSize={24} fontWeight={500}>*/}
-                {/*  {option.title}*/}
-                {/*</TYPE.subHeader>*/}
-              </RowFixed>
+              {option && (
+                <RowFixed>
+                  <Circle>
+                    <OptionIcon
+                      tokenIcon={<CurrencyLogo currency={option?.underlying ?? undefined} size="20px" />}
+                      size="20px"
+                    />
+                  </Circle>
+                  <TYPE.subHeader fontSize={24} fontWeight={500}>
+                    {`${option?.underlying?.symbol} (${tryFormatAmount(
+                      option?.priceCap,
+                      option?.underlying ?? undefined
+                    )
+                      ?.toExact()
+                      .toString()}$${tryFormatAmount(option?.priceFloor, option?.underlying ?? undefined)
+                      ?.toExact()
+                      .toString()})`}
+                  </TYPE.subHeader>
+                </RowFixed>
+              )}
+
               {/*{currencyB && chainId && (*/}
               {/*  <StyledExternalLink href={getEtherscanLink(chainId, currencyId(currencyB), 'token')}>*/}
               {/*    {currencyId(currencyB)}*/}
@@ -155,9 +166,9 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                 style={{ padding: 0, background: 'black', borderColor: theme.text5, width: 1114, overflow: 'hidden' }}
               >
                 <Elevate>
-                  {tab === TABS.SWAP && <OptionSwap optionId={optionId} />}
+                  {tab === TABS.SWAP && <OptionSwap option={option} />}
                   {/*{tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}*/}
-                  {/*{tab === TABS.INFO && <Info option={option} />}*/}
+                  {tab === TABS.INFO && <Info option={option} />}
                 </Elevate>
               </AppBody>
             </ActionWrapper>
@@ -225,36 +236,48 @@ function Tab({
   )
 }
 
-// function Info({ option }: { option?: OptionInterface }) {
-//   const theme = useTheme()
-//   return (
-//     <AppBody
-//       maxWidth="1116px"
-//       style={{
-//         width: 1116,
-//         minHeight: '402px',
-//         margin: '-1px',
-//         borderColor: theme.text4,
-//         display: 'flex',
-//         justifyContent: 'center',
-//         alignItems: 'center'
-//       }}
-//     >
-//       <div>
-//         <TYPE.smallHeader style={{ marginBottom: 20 }}>Option Information</TYPE.smallHeader>
-//         <AppBody style={{ minWidth: 550, width: '50%' }}>
-//           <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
-//             {option &&
-//               option.details &&
-//               Object.keys(option.details).map(key => (
-//                 <RowBetween key={key}>
-//                   <TYPE.darkGray>{key}</TYPE.darkGray>
-//                   <TYPE.body>{option.details[key as keyof typeof option.details]}</TYPE.body>
-//                 </RowBetween>
-//               ))}
-//           </AutoColumn>
-//         </AppBody>
-//       </div>
-//     </AppBody>
-//   )
-// }
+function Info({ option }: { option?: Option }) {
+  const theme = useTheme()
+  return (
+    <AppBody
+      maxWidth="1116px"
+      style={{
+        width: 1116,
+        minHeight: '402px',
+        margin: '-1px',
+        borderColor: theme.text4,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
+      <div>
+        <TYPE.smallHeader style={{ marginBottom: 20 }}>Option Information</TYPE.smallHeader>
+        <AppBody style={{ minWidth: 550, width: '50%' }}>
+          <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
+            {option && (
+              <>
+                <RowBetween>
+                  <TYPE.darkGray>{'Option Price Range'}</TYPE.darkGray>
+                  <TYPE.body>{`$${tryFormatAmount(option?.priceCap, option?.underlying ?? undefined)
+                    ?.toExact()
+                    .toString()}$${tryFormatAmount(option?.priceFloor, option?.underlying ?? undefined)
+                    ?.toExact()
+                    .toString()}`}</TYPE.body>
+                </RowBetween>
+                <RowBetween>
+                  <TYPE.darkGray>{'Underlying Asset'}</TYPE.darkGray>
+                  <TYPE.body>{option.underlying?.symbol}</TYPE.body>
+                </RowBetween>
+                <RowBetween>
+                  <TYPE.darkGray>{'Total Current Issuance'}</TYPE.darkGray>
+                  <TYPE.body>{''}</TYPE.body>
+                </RowBetween>
+              </>
+            )}
+          </AutoColumn>
+        </AppBody>
+      </div>
+    </AppBody>
+  )
+}

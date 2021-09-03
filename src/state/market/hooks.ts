@@ -257,12 +257,12 @@ export function useAllOptionTypes() {
   return list
 }
 
-export function useOption(id: string): Option | undefined {
+export function useOption(id: string | undefined): Option | undefined {
   const { account } = useActiveWeb3React()
   const factoryContract = useAntimatterContract()
 
-  const callAddressRes = useSingleCallResult(factoryContract, 'allCalls', [id])
-  const putAddressRes = useSingleCallResult(factoryContract, 'allPuts', [id])
+  const callAddressRes = useSingleCallResult(factoryContract, 'allCalls', id ? [id] : undefined)
+  const putAddressRes = useSingleCallResult(factoryContract, 'allPuts', id ? [id] : undefined)
 
   const attributesContract = useAttributesContract(callAddressRes?.result?.[0])
 

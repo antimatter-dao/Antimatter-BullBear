@@ -2,6 +2,7 @@ import React from 'react'
 //import { Currency } from '@uniswap/sdk'
 import styled from 'styled-components'
 import Swap from '../Swap'
+import { Option } from '../../state/market/hooks'
 //import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
 //import { currencyId } from 'utils/currencyId'
 //import { useNetwork } from 'hooks/useNetwork'
@@ -48,7 +49,7 @@ const Wrapper = styled.div`
 //
 // `
 
-export default function OptionSwap({ optionId }: { optionId?: string }) {
+export default function OptionSwap({ option }: { option?: Option }) {
   //const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
   //const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
   //const [isMarketPriceChart, setIsMarketPriceChart] = useState(true)
@@ -149,7 +150,7 @@ export default function OptionSwap({ optionId }: { optionId?: string }) {
     <>
       {/*{networkErrorModal}*/}
       <Wrapper>
-        <Swap optionId={optionId} />
+        <Swap option={option} />
         {/*<ChartWrapper>*/}
         {/*  <ButtonGroup>*/}
         {/*    <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>*/}

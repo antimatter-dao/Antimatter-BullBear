@@ -39,7 +39,7 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody'
 import Loader from '../../components/Loader'
 //import { isTradeBetter } from 'utils/trades'
-import { absolute, useDerivedStrategyInfo, useOption } from '../../state/market/hooks'
+import { absolute, Option, useDerivedStrategyInfo } from '../../state/market/hooks'
 import { TypeRadioButton } from '../../components/MarketStrategy/TypeRadioButton'
 import { ANTIMATTER_ROUTER_ADDRESS, INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
@@ -57,13 +57,12 @@ enum OptionField {
   PUT = 'PUT'
 }
 
-export default function Swap({ optionId }: { optionId?: string | null }) {
+export default function Swap({ option }: { option: Option | undefined }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
   // const history = useHistory()
   const { chainId, account } = useActiveWeb3React()
 
   const theme = useTheme()
-  const option = useOption(optionId ?? '0')
 
   // for expert mode
   const toggleSettings = useToggleSettingsMenu()
@@ -313,8 +312,10 @@ export default function Swap({ optionId }: { optionId?: string | null }) {
   }, [routerDelta])
 
   const payCurrencyAmount = tryFormatAmount(payFormattedAmount, payCurrency)
+  console.log('payCurrencyAmount', payCurrencyAmount)
 
   const [approval, approveCallback] = useApproveCallback(payCurrencyAmount, ANTIMATTER_ROUTER_ADDRESS)
+  console.log('approval', approval)
 
   // mark when a user has submitted an approval, reset onTokenSelection for input field
   useEffect(() => {
@@ -326,13 +327,12 @@ export default function Swap({ optionId }: { optionId?: string | null }) {
   // show approve flow when: no error on inputs, not approved or pending, or approved in current session
   // never show if price impact is above threshold in non expert mode
   const showApproveFlow =
-    (approval === ApprovalState.NOT_APPROVED ||
-      approval === ApprovalState.PENDING ||
-      (approvalSubmitted && approval === ApprovalState.APPROVED)) &&
-    !((undPriceImpactSeverity > 3 || curPriceImpactSeverity > 3) && !isExpertMode)
+    approval === ApprovalState.NOT_APPROVED ||
+    approval === ApprovalState.PENDING ||
+    (approvalSubmitted && approval === ApprovalState.APPROVED)
 
   const noRoute = !undTradeAddresses || !curTradeAddresses
-  console.log('trade', !undTradeAddresses, !curTradeAddresses)
+  console.log('showApproveFlow', showApproveFlow)
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
@@ -393,12 +393,12 @@ export default function Swap({ optionId }: { optionId?: string | null }) {
       return { ...defaultContent, disabled: true, text: 'Select a pay token' }
     }
     if (!payCurrency || !payFormattedAmount || !payBalance) {
-      return { ...defaultContent, disabled: true, text: 'Trade' }
+      return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
     }
     if (payFormattedAmount[0] !== '-' && payCurrencyAmount?.greaterThan(payBalance)) {
       return { ...defaultContent, disabled: true, text: `Insufficient ${payCurrency.symbol} balance` }
     }
-    if (noRoute) {
+    if (noRoute || undPriceImpactSeverity > 3 || curPriceImpactSeverity > 3) {
       return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
     }
     return defaultContent
@@ -411,7 +411,9 @@ export default function Swap({ optionId }: { optionId?: string | null }) {
     payFormattedAmount,
     payBalance,
     payCurrencyAmount,
-    noRoute
+    noRoute,
+    undPriceImpactSeverity,
+    curPriceImpactSeverity
   ])
 
   return (
@@ -591,6 +593,7 @@ export default function Swap({ optionId }: { optionId?: string | null }) {
                     txHash: undefined
                   })
                 }}
+                disabled={undPriceImpactSeverity > 5 || curPriceImpactSeverity > 5}
                 id="swap-button"
                 outlined={!!swapCallbackError}
               >

@@ -33,9 +33,8 @@ interface Tab extends TabContent {
 
 export const tabs: Tab[] = [
   { title: 'Option Trading', route: 'option_trading' },
-  { title: 'Option Exercise', route: 'option_exercise' },
   { title: 'Option Creation', route: 'option_creation' },
-  { title: 'Farm', route: 'farm' },
+  // { title: 'Farm', route: 'farm' },
   { title: 'Governance', link: 'https://governance.antimatter.finance' },
   {
     title: 'About',
