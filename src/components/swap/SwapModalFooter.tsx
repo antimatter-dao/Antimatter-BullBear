@@ -32,7 +32,7 @@ export default function SwapModalFooter({
 
   return (
     <>
-      <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)' }}>
+      <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)', display: 'none' }}>
         <AutoColumn gap="0px">
           <RowBetween align="center">
             <Text fontWeight={400} fontSize={12} color={theme.text2}>
