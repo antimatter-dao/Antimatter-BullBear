@@ -308,7 +308,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
     return JSBI.add(JSBI.BigInt(routerDelta.undMax), JSBI.BigInt(routerDelta.curMax)).toString()
   }, [routerDelta])
 
-  const payCurrencyAmount = tryFormatAmount(payFormattedAmount, payCurrency)
+  const payCurrencyAmount = tryFormatAmount(absolute(payFormattedAmount ?? ''), payCurrency)
 
   const [approval, approveCallback] = useApproveCallback(payCurrencyAmount, ANTIMATTER_ROUTER_ADDRESS)
 
@@ -495,7 +495,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
                 <AutoColumn gap="8px">
                   <RowBetween align="center">
                     <Text fontWeight={500} fontSize={14} color={'rgba(178, 243, 85, 1)'}>
-                      You will pay
+                      {payFormattedAmount?.[0] === '-' ? 'You will receive' : 'You will pay'}
                     </Text>
                     <TradePrice currencyAmount={payCurrencyAmount} />
                   </RowBetween>
