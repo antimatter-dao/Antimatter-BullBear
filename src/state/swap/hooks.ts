@@ -22,7 +22,7 @@ import { BigNumber } from 'ethers'
 import { Option, parseAbsolute } from '../market/hooks'
 import { useSingleCallResult } from '../multicall/hooks'
 import { useAntimatterRouterContract } from '../../hooks/useContract'
-import { useTotalSupply } from '../../data/TotalSupply'
+//import { useTotalSupply } from '../../data/TotalSupply'
 
 export interface RouteDelta {
   undMax: string
@@ -299,8 +299,6 @@ export function useRouteDelta(
 ): RouteDelta | undefined {
   const [allowedSlippage] = useUserSlippageTolerance()
   const contract = useAntimatterRouterContract()
-  const totalCall = useTotalSupply(option?.call?.token)
-  const totalPut = useTotalSupply(option?.put?.token)
   const args =
     option && callToken && putToken && undTrade && curTrade && callAmount && putAmount
       ? [
@@ -308,16 +306,18 @@ export function useRouteDelta(
           curTrade,
           option?.priceFloor,
           option?.priceCap,
-          totalCall?.raw.toString(),
-          totalPut?.raw.toString(),
           parseAbsolute(callAmount, callToken),
           parseAbsolute(putAmount, putToken),
-          allowedSlippage
+          JSBI.multiply(
+            JSBI.BigInt(allowedSlippage ?? 50),
+            JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(15))
+          ).toString()
         ]
       : [undefined]
-  console.log('args', undTrade, curTrade, callToken?parseAbsolute(callAmount, callToken):'null1', putToken?parseAbsolute(putAmount, putToken):'null2')
+  console.log('args', args)
 
   const deltaRes = useSingleCallResult(contract, 'calcDeltaRoute', args)
+  console.log('deltaRes', deltaRes)
   if (!deltaRes || !deltaRes.result) return undefined
   const delta = deltaRes.result
   return {

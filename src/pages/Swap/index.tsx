@@ -207,7 +207,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
   }, [maxAmountInput, setOptionTyped])
 
   const handleOutputSelect = useCallback(outputCurrency => setPayCurrency(outputCurrency), [setPayCurrency])
-  console.log('handleOutputSelect', payCurrency)
+
   const { delta } = useDerivedStrategyInfo(
     option,
     optionType === OptionField.CALL ? formattedAmounts[Field.OPTION] : '0',
@@ -248,8 +248,6 @@ export default function Swap({ option }: { option: Option | undefined }) {
 
   const undPriceImpactSeverity = warningSeverity(undPriceImpact)
 
-  console.log('curPriceImpactSeverity', curPriceImpactSeverity, undPriceImpactSeverity, currencyTrade, underlyingTrade)
-
   const underlying = option?.underlying
   const currency = option?.currency
 
@@ -257,7 +255,6 @@ export default function Swap({ option }: { option: Option | undefined }) {
   const dCur = delta?.dCur
 
   const undTradeAddresses: string[] | undefined = useMemo(() => {
-    console.log('payCurrency', payCurrency, underlying?.symbol)
     if (payCurrency?.symbol?.toUpperCase() === 'ETH' && underlying?.symbol?.toUpperCase() === 'WETH') {
       return [WETH[chainId ?? 3].address]
     }
@@ -312,10 +309,8 @@ export default function Swap({ option }: { option: Option | undefined }) {
   }, [routerDelta])
 
   const payCurrencyAmount = tryFormatAmount(payFormattedAmount, payCurrency)
-  console.log('payCurrencyAmount', payCurrencyAmount)
 
   const [approval, approveCallback] = useApproveCallback(payCurrencyAmount, ANTIMATTER_ROUTER_ADDRESS)
-  console.log('approval', approval)
 
   // mark when a user has submitted an approval, reset onTokenSelection for input field
   useEffect(() => {
@@ -332,7 +327,6 @@ export default function Swap({ option }: { option: Option | undefined }) {
     (approvalSubmitted && approval === ApprovalState.APPROVED)
 
   const noRoute = !undTradeAddresses || !curTradeAddresses
-  console.log('showApproveFlow', showApproveFlow)
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
@@ -577,7 +571,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
                   <Text fontSize={16} fontWeight={500}>
                     {(undPriceImpactSeverity > 3 || curPriceImpactSeverity > 3) && !isExpertMode
                       ? `Price Impact High`
-                      : `Swap1${undPriceImpactSeverity > 2 || curPriceImpactSeverity > 2 ? ' Anyway' : ''}`}
+                      : `Trade${undPriceImpactSeverity > 2 || curPriceImpactSeverity > 2 ? ' Anyway' : ''}`}
                   </Text>
                 </ButtonError>
               </RowBetween>
@@ -600,7 +594,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
                 <Text fontSize={16} fontWeight={500}>
                   {(undPriceImpactSeverity > 5 || curPriceImpactSeverity > 5) && !isExpertMode
                     ? `Price Impact Too High`
-                    : `Swap${undPriceImpactSeverity > 3 || curPriceImpactSeverity > 3 ? ' Anyway' : ''}`}
+                    : `Trade${undPriceImpactSeverity > 3 || curPriceImpactSeverity > 3 ? ' Anyway' : ''}`}
                 </Text>
               </ButtonError>
             )}

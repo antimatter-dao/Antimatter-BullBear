@@ -132,16 +132,6 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "totalCall",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "totalPut",
-        "type": "uint256"
-      },
-      {
         "internalType": "int256",
         "name": "dCall",
         "type": "int256"

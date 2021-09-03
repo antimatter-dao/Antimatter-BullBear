@@ -144,7 +144,6 @@ export function useSwapCallback(
     const { undMax, curMax } = routeDelta
 
     const args = [undPath, curPath, priceFloor, priceCap, callAmount, putAmount, undMax, curMax]
-    console.log('args___>',args)
     const payParsedAmount = JSBI.ADD(JSBI.BigInt(undMax), JSBI.BigInt(curMax)).toString()
     return {
       state: SwapCallbackState.VALID,
@@ -156,7 +155,7 @@ export function useSwapCallback(
           })
           .then((response: any) => {
             addTransaction(response, {
-              summary: ''
+              summary: `${callAmount[0] === '-' || putAmount[0] === '-' ? 'Sell' : 'Buy'} option`
             })
 
             return response.hash
