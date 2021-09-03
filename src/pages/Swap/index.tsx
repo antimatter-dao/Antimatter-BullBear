@@ -301,7 +301,6 @@ export default function Swap({ option }: { option: Option | undefined }) {
       : '0',
     option?.put?.token
   )
-  console.log('routerDelta', routerDelta)
 
   const payFormattedAmount = useMemo(() => {
     if (!routerDelta?.undMax || !routerDelta.curMax) return undefined
@@ -419,7 +418,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
         onDismiss={handleDismissTokenWarning}
       />
       <SwapPoolTabs active={'option_trading'} />
-      <AppBody style={{ margin: '-1px', borderColor: theme.text4, minHeight: '100%' }}>
+      <AppBody style={{ borderColor: theme.text4, minHeight: '100%' }}>
         {/* <SwapHeader /> */}
         <Wrapper id="swap-page" style={{ padding: '1rem 0' }}>
           <ConfirmSwapModal

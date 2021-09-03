@@ -163,7 +163,13 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
               <SwitchTab tab={tab} setTab={handleSetTab} />
               <AppBody
                 maxWidth="1114px"
-                style={{ padding: 0, background: 'black', borderColor: theme.text5, width: 1114, overflow: 'hidden' }}
+                style={{
+                  padding: 0,
+                  background: 'black',
+                  borderColor: tab === TABS.SWAP ? theme.text5 : 'rgb(114, 114, 114)',
+                  width: 1114,
+                  overflow: 'hidden'
+                }}
               >
                 <Elevate>
                   {tab === TABS.SWAP && <OptionSwap option={option} />}

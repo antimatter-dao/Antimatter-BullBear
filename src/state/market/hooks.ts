@@ -401,14 +401,7 @@ export function useDerivedStrategyInfo(
     ]
   }, [option, callAmount, putAmount, userSlippageTolerance, totalCall, totalPut])
 
-  //const ETHBalance = useETHBalances(account ? [account] : [])
   const delta = useSingleCallResult(antimatterContract, 'calcDeltaWithFeeAndSlippage', queryData ?? [undefined])
-  // const balancesRes = useMultipleContractSingleData(
-  //   [optionType?.callAddress, optionType?.putAddress, optionType?.underlying, optionType?.currency],
-  //   ERC20_INTERFACE,
-  //   'balanceOf',
-  //   [account ?? undefined]
-  // )
 
   const deltaResult = delta?.result?.undMax
     ? {
