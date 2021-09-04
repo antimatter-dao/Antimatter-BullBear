@@ -39,7 +39,7 @@ import FAQ from './FAQ'
 import OptionTrade from './OptionTrade'
 import OptionCreation from './OptionCreation'
 import OptionExercise from './OptionExercise'
-import WarningModal from '../components/Modal/WarningModal'
+// import WarningModal from '../components/Modal/WarningModal'
 import ComingSoon from './ComingSoon'
 // import WarningModal from 'components/Modal/WarningModal'
 
@@ -116,7 +116,7 @@ export default function App() {
             <Popups />
             <Polling />
             <WelcomeSlider />
-            <WarningModal />
+            {/* <WarningModal /> */}
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>

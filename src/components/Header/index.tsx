@@ -9,7 +9,7 @@ import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
 import { ExternalHeaderLink, ExternalLink, TYPE } from '../../theme'
-import Row, { RowFixed, RowBetween } from '../Row'
+import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
 import usePrevious from '../../hooks/usePrevious'
@@ -17,6 +17,7 @@ import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
 import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
+import { ReactComponent as Plus } from '../../assets/svg/plus.svg'
 import useTheme from 'hooks/useTheme'
 import ToggleMenu from './ToggleMenu'
 
@@ -324,8 +325,14 @@ const StyledDropdown = styled.div`
   :hover,
   :focus {
     color: ${({ theme }) => darken(0.1, theme.primary1)};
-    svg {
+    > svg {
       transform: rotate(180deg);
+    }
+    #plus {
+      transform: unset;
+      #hover {
+        fill: url(#Gradient1);
+      }
     }
     & > div {
       top: 40px;
@@ -334,7 +341,7 @@ const StyledDropdown = styled.div`
     }
   }
 `
-const Dropdown = styled.div`
+const Dropdown = styled.div<{ width?: string }>`
   z-index: 3;
   height: 0;
   position: absolute;
@@ -342,7 +349,7 @@ const Dropdown = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  width: 172px;
+  width: ${({ width }) => width ?? '172px'};
   a {
     color: #ffffff;
     background-color: ${({ theme }) => theme.bg2};
@@ -392,7 +399,7 @@ export const StyledMenuButton = styled.button`
 `
 
 const StyledLogo = styled(Logo)`
-  margin-right: 60px;
+  margin-top: 5px;
 `
 
 function FAQButton() {
@@ -449,9 +456,7 @@ export default function Header() {
     <HeaderFrame>
       <ClaimModal />
       <HeaderRow>
-        <Link to={'/'}>
-          <StyledLogo />
-        </Link>
+        <LogoButton />
         <HeaderLinks>
           {tabs.map(({ title, route, link, subTab }) => {
             if (subTab) {
@@ -582,12 +587,29 @@ export default function Header() {
       </HeaderRow>
       <MobileHeader>
         <RowBetween>
-          <Link to={'/'}>
-            <StyledLogo />
-          </Link>
+          <LogoButton />
           <ToggleMenu />
         </RowBetween>
       </MobileHeader>
     </HeaderFrame>
+  )
+}
+
+function LogoButton() {
+  return (
+    <RowFlat style={{ marginRight: 60, alignItems: 'flex-start' }}>
+      <Link to={'/'}>
+        <StyledLogo />
+      </Link>
+      <StyledDropdown style={{ color: '#ffffff', padding: '6px 25px 18px 20px', marginLeft: 0 }}>
+        <Plus style={{ margin: 'auto auto' }} />
+        <Dropdown>
+          <ExternalLink href={'https://test.antimatter.finance/#/option_trading'}>Antimatter V1</ExternalLink>
+          <ExternalLink href={'https://nonfungible.finance/#/'}>
+            <span style={{ whiteSpace: 'nowrap' }}>Antimatter NFT</span>
+          </ExternalLink>
+        </Dropdown>
+      </StyledDropdown>
+    </RowFlat>
   )
 }

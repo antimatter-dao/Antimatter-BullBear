@@ -252,7 +252,7 @@ export default function OptionTrade({
           {optionTypeIndexes && (
             <ContentWrapper id={''}>
               {/*{networkPendingSpinner}*/}
-              {optionTypeIndexes.map((optionId, idx) => (
+              {optionTypeIndexes.map(optionId => (
                 <OptionCard
                   optionId={optionId}
                   key={optionId}
