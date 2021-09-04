@@ -1,6 +1,6 @@
 import { CurrencyAmount } from '@uniswap/sdk'
 import React, { useContext } from 'react'
-import { AlertTriangle, ArrowDown } from 'react-feather'
+import { AlertTriangle } from 'react-feather'
 //import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { Auction } from '../../state/swap/actions'
@@ -67,9 +67,7 @@ export default function SwapModalHeader({
           </TokenPanel>
         </AutoColumn>
       </OutlineCard>
-      <RowFixed>
-        <ArrowDown size="30" color={theme.text1} style={{ marginLeft: '4px', minWidth: '14px' }} />
-      </RowFixed>
+      <RowFixed />
       <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)', padding: '16px 20px' }}>
         <AutoColumn style={{ flex: 1 }} gap={'8px'}>
           <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>

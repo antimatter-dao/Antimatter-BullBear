@@ -202,7 +202,7 @@ function SwitchTab({ tab, setTab }: { tab: TABS; setTab: (tab: TABS) => void }) 
       {/*  Liquidity*/}
       {/*</Tab>*/}
       <Tab isFirstChild={true} onClick={swapClick} selected={tab === TABS.SWAP}>
-        Swap
+        Trade
       </Tab>
     </SwitchTabWrapper>
   )

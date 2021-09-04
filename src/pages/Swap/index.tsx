@@ -380,13 +380,13 @@ export default function Swap({ option }: { option: Option | undefined }) {
       optionBalance &&
       parsedAmounts[Field.OPTION]?.greaterThan(optionBalance)
     ) {
-      return { ...defaultContent, disabled: true, text: 'Insufficient balance' }
+      return { ...defaultContent, disabled: true, text: 'nsufficient balance' }
     }
     if (!payCurrency) {
       return {
         ...defaultContent,
         disabled: true,
-        text: `Select a ${auction === Auction.BUY ? 'payment' : 'receipt'} token`
+        text: `Select a token`
       }
     }
     if (!payCurrency || !payFormattedAmount || !payBalance) {
