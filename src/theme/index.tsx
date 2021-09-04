@@ -169,7 +169,7 @@ export const TYPE = {
     return <TextWrapper fontWeight={500} fontSize={16} {...props} fontFamily="Futura PT" />
   },
   subHeader(props: TextProps) {
-    return <TextWrapper fontWeight={500} fontSize={14} {...props} />
+    return <TextWrapper fontWeight={500} fontSize={14} fontFamily="Futura PT" {...props} />
   },
   small(props: TextProps) {
     return <TextWrapper fontWeight={400} fontSize={12} {...props} />
@@ -184,7 +184,7 @@ export const TYPE = {
     return <TextWrapper fontWeight={500} color={'yellow1'} {...props} />
   },
   darkGray(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'text3'} {...props} />
+    return <TextWrapper fontWeight={400} color={'text3'} {...props} />
   },
   gray(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'bg3'} {...props} />

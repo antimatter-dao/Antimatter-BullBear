@@ -1,10 +1,11 @@
 import { Currency, CurrencyAmount, JSBI, Token, Trade, WETH } from '@uniswap/sdk'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 // import { useHistory } from 'react-router-dom'
+import styled from 'styled-components'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import { ButtonError, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
-import Card, { GreyCard } from '../../components/Card'
+import Card, { OutlineCard } from '../../components/Card'
 import Column, { AutoColumn } from '../../components/Column'
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
@@ -56,6 +57,13 @@ enum OptionField {
   CALL = 'CALL',
   PUT = 'PUT'
 }
+
+const RadioButtonWrapper = styled(AutoColumn)`
+  > fieldset {
+    display: grid !important;
+    grid-template-columns: 50% 50%;
+  }
+`
 
 export default function Swap({ option }: { option: Option | undefined }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -446,26 +454,27 @@ export default function Swap({ option }: { option: Option | undefined }) {
             <div style={{ position: 'absolute', top: -5, right: 0 }}>
               <SettingsTab onlySlippage />
             </div>
-            <TypeRadioButton
-              name={'auction_type'}
-              options={[
-                { label: 'Buy', option: Auction.BUY },
-                { label: 'Sell', option: Auction.SELL }
-              ]}
-              selected={auction}
-              onCheck={(option: string) => setAuction(option)}
-            />
+            <RadioButtonWrapper gap="20px">
+              <TypeRadioButton
+                name={'auction_type'}
+                options={[
+                  { label: 'Buy', option: Auction.BUY },
+                  { label: 'Sell', option: Auction.SELL }
+                ]}
+                selected={auction}
+                onCheck={(option: string) => setAuction(option)}
+              />
 
-            <TypeRadioButton
-              name={'option_type'}
-              options={[
-                { label: '+ Call Token', option: OptionField.CALL },
-                { label: '− Put Token', option: OptionField.PUT }
-              ]}
-              selected={optionType}
-              onCheck={(option: string) => setOptionType(option)}
-            />
-
+              <TypeRadioButton
+                name={'option_type'}
+                options={[
+                  { label: '+ Call Token', option: OptionField.CALL },
+                  { label: '− Put Token', option: OptionField.PUT }
+                ]}
+                selected={optionType}
+                onCheck={(option: string) => setOptionType(option)}
+              />
+            </RadioButtonWrapper>
             <CurrencyInputPanel
               hideSelect
               disableCurrencySelect={false}
@@ -523,19 +532,19 @@ export default function Swap({ option }: { option: Option | undefined }) {
                 Connect Wallet
               </ButtonPrimary>
             ) : statusButton.disabled ? (
-              <GreyCard
+              <OutlineCard
                 style={{
                   textAlign: 'center',
                   borderRadius: '49px',
                   padding: '14px',
-                  borderColor: theme.text3,
+                  borderColor: theme.primary1,
                   fontSize: '1rem'
                 }}
               >
-                <TYPE.main color={theme.text3} mb="4px">
+                <TYPE.main color={theme.primary1} mb="4px">
                   {statusButton.text}
                 </TYPE.main>
-              </GreyCard>
+              </OutlineCard>
             ) : showApproveFlow ? (
               <RowBetween>
                 <ButtonConfirmed

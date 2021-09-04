@@ -145,9 +145,9 @@ const Circle = styled.div`
 `
 
 const Divider = styled.div`
-  border: 1px solid ${({ theme }) => theme.bg4};
-  width: calc(100% + 48px);
-  margin: 0 -24px;
+  border-bottom: 1px solid ${({ theme }) => theme.bg4};
+  width: calc(100% + 40px);
+  margin: 0 -20px;
 `
 
 const TitleWrapper = styled(RowFixed)`
@@ -155,10 +155,10 @@ const TitleWrapper = styled(RowFixed)`
   width: 100%;
 `
 const OptionId = styled(TYPE.smallGray)`
-  text-align: right;
-  top: 12px;
-  right: 20px;
-  position: absolute;
+  border-radius: 20px;
+  background-color: ${({ theme }) => theme.bg4};
+  padding: 3px 6px;
+  margin-right: 10px !important;
 `
 
 export const StyledExternalLink = styled(ExternalLink)`
@@ -291,8 +291,7 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
   //const currency = useCurrency(address)
   //const price = useUSDTPrice(currency ?? undefined)
   return (
-    <AppBody style={{ position: 'relative' }} isCard>
-      <OptionId>Option ID&nbsp;:&nbsp;{optionId}</OptionId>
+    <AppBody style={{ position: 'relative', padding: '24px 20px' }} isCard>
       <AutoColumn gap="20px">
         <TitleWrapper>
           <Circle>
@@ -308,7 +307,6 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
             <CurrencyLogo currency={option?.underlying ?? undefined} size="28px" />
           </Circle>
           <AutoColumn gap="5px" style={{ width: '100%', position: 'relative' }}>
-            <div style={{ height: 8 }} />
             <TYPE.mediumHeader
               fontSize={20}
               style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
@@ -316,9 +314,14 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
               {`${option?.underlying?.symbol} Option`}
             </TYPE.mediumHeader>
             {option?.underlying && (
-              <StyledExternalLink href={chainId ? getEtherscanLink(chainId, option.underlying?.address, 'token') : ''}>
-                {shortenAddress(option.underlying?.address, 7)}
-              </StyledExternalLink>
+              <RowFixed>
+                <OptionId>ID:&nbsp;{optionId}</OptionId>
+                <StyledExternalLink
+                  href={chainId ? getEtherscanLink(chainId, option.underlying?.address, 'token') : ''}
+                >
+                  {shortenAddress(option.underlying?.address, 5)}
+                </StyledExternalLink>
+              </RowFixed>
             )}
           </AutoColumn>
         </TitleWrapper>
@@ -327,11 +330,11 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
           {Object.keys(details).map(key => (
             <RowBetween key={key}>
               <TYPE.smallGray>{key}:</TYPE.smallGray>
-              <TYPE.subHeader
+              <TYPE.main
                 style={{ textAlign: 'right', overflow: 'hidden', whiteSpace: 'pre-wrap', textOverflow: 'ellipsis' }}
               >
                 {details[key as keyof typeof details]}
-              </TYPE.subHeader>
+              </TYPE.main>
             </RowBetween>
           ))}
         </AutoColumn>

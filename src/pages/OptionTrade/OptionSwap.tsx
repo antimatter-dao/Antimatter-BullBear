@@ -3,6 +3,8 @@ import React from 'react'
 import styled from 'styled-components'
 import Swap from '../Swap'
 import { Option } from '../../state/market/hooks'
+import { Dots } from 'components/swap/styleds'
+import { OutlineCard } from 'components/Card'
 //import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
 //import { currencyId } from 'utils/currencyId'
 //import { useNetwork } from 'hooks/useNetwork'
@@ -151,6 +153,20 @@ export default function OptionSwap({ option }: { option?: Option }) {
       {/*{networkErrorModal}*/}
       <Wrapper>
         <Swap option={option} />
+        <div style={{ margin: 'auto 0', width: '100%' }}>
+          <OutlineCard
+            style={{
+              width: 'max-content',
+              borderRadius: 49,
+              padding: '14px 100px',
+              margin: '0 auto',
+              color: '#ffffff',
+              borderColor: '#ffffff'
+            }}
+          >
+            Price Chart Coming Soon <Dots />
+          </OutlineCard>
+        </div>
         {/*<ChartWrapper>*/}
         {/*  <ButtonGroup>*/}
         {/*    <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>*/}
