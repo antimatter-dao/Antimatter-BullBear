@@ -260,7 +260,7 @@ function Info({ option, placeholder = '-' }: { option?: Option; placeholder?: st
         <TYPE.smallHeader style={{ marginBottom: 20 }} fontSize={18}>
           Option Information
         </TYPE.smallHeader>
-        <AppBody style={{ minWidth: 550, width: '50%' }}>
+        <AppBody style={{ minWidth: 550, width: '50%', background: 'transparent' }}>
           <AutoColumn style={{ width: '100%' }} justify="center" gap="32px">
             <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
               <RowBetween>
