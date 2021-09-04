@@ -13,13 +13,12 @@ import { AutoColumn } from 'components/Column'
 //import { USDT } from '../../constants'
 //import { useCurrency } from 'hooks/Tokens'
 //import { currencyId } from 'utils/currencyId'
-import { OptionIcon } from 'components/Icons'
 //import { OptionInterface } from './'
 import Loader from 'assets/svg/gray_loader.svg'
 import { Option, useOption } from '../../state/market/hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { tryFormatAmount } from '../../state/swap/hooks'
-//import { getEtherscanLink } from 'utils'
+import { getEtherscanLink, shortenAddress } from 'utils'
 //import { useActiveWeb3React } from 'hooks'
 //import { ChainId, WETH } from '@uniswap/sdk'
 //import { useDerivedMintInfo } from 'state/mint/hooks'
@@ -83,7 +82,9 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
     line-height: 41px;
     text-align: center;
     top: 0;
-    left:${({ isFirstChild }) => (isFirstChild ? '50px' : '90px')};
+    left:${({ isFirstChild }) => (isFirstChild ? '50px' : '50%')};
+    transform:${({ isFirstChild }) => (isFirstChild ? 'translateX(0)' : 'translateX(-50%)')};
+    margin-left:${({ isFirstChild }) => (isFirstChild ? '0' : '8px')};
     color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   };
 `
@@ -131,10 +132,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
               {option && (
                 <RowFixed>
                   <Circle>
-                    <OptionIcon
-                      tokenIcon={<CurrencyLogo currency={option?.underlying ?? undefined} size="20px" />}
-                      size="20px"
-                    />
+                    <CurrencyLogo currency={option?.underlying ?? undefined} size="20px" />
                   </Circle>
                   <TYPE.subHeader fontSize={24} fontWeight={500}>
                     {`${option?.underlying?.symbol} (${tryFormatAmount(
@@ -149,11 +147,11 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                 </RowFixed>
               )}
 
-              {/*{currencyB && chainId && (*/}
-              {/*  <StyledExternalLink href={getEtherscanLink(chainId, currencyId(currencyB), 'token')}>*/}
-              {/*    {currencyId(currencyB)}*/}
-              {/*  </StyledExternalLink>*/}
-              {/*)}*/}
+              {option?.currency && (
+                <StyledExternalLink href={getEtherscanLink(option.currency.chainId, option.currency.address, 'token')}>
+                  {option.currency.address}
+                </StyledExternalLink>
+              )}
             </AutoColumn>
 
             <div />
@@ -242,7 +240,7 @@ function Tab({
   )
 }
 
-function Info({ option }: { option?: Option }) {
+function Info({ option, placeholder = '-' }: { option?: Option; placeholder?: string }) {
   const theme = useTheme()
   return (
     <AppBody
@@ -254,33 +252,68 @@ function Info({ option }: { option?: Option }) {
         borderColor: theme.text4,
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        padding: 48
       }}
     >
       <div>
-        <TYPE.smallHeader style={{ marginBottom: 20 }}>Option Information</TYPE.smallHeader>
-        <AppBody style={{ minWidth: 550, width: '50%' }}>
-          <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
-            {option && (
-              <>
-                <RowBetween>
-                  <TYPE.darkGray>{'Option Price Range'}</TYPE.darkGray>
-                  <TYPE.body>{`$${tryFormatAmount(option?.priceCap, option?.underlying ?? undefined)
-                    ?.toExact()
-                    .toString()}$${tryFormatAmount(option?.priceFloor, option?.underlying ?? undefined)
-                    ?.toExact()
-                    .toString()}`}</TYPE.body>
-                </RowBetween>
-                <RowBetween>
-                  <TYPE.darkGray>{'Underlying Asset'}</TYPE.darkGray>
-                  <TYPE.body>{option.underlying?.symbol}</TYPE.body>
-                </RowBetween>
-                <RowBetween>
-                  <TYPE.darkGray>{'Total Current Issuance'}</TYPE.darkGray>
-                  <TYPE.body>{''}</TYPE.body>
-                </RowBetween>
-              </>
-            )}
+        <TYPE.smallHeader style={{ marginBottom: 20 }} fontSize={18}>
+          Option Information
+        </TYPE.smallHeader>
+        <AppBody style={{ minWidth: 550, width: '50%', background: 'transparent' }}>
+          <AutoColumn style={{ width: '100%' }} justify="center" gap="32px">
+            <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
+              <RowBetween>
+                <TYPE.darkGray>{'Option Price Range:'}</TYPE.darkGray>
+                <TYPE.main>
+                  {option &&
+                    `$${tryFormatAmount(option?.priceCap, option?.underlying ?? undefined)
+                      ?.toExact()
+                      .toString() ?? placeholder} ~ $${tryFormatAmount(
+                      option?.priceFloor,
+                      option?.underlying ?? undefined
+                    )
+                      ?.toExact()
+                      .toString() ?? placeholder}`}
+                </TYPE.main>
+              </RowBetween>
+              <RowBetween>
+                <TYPE.darkGray>{'Underlying Asset:'}</TYPE.darkGray>
+                <TYPE.main>{(option && option?.underlying?.symbol) ?? placeholder}</TYPE.main>
+              </RowBetween>
+            </AutoColumn>
+            <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
+              <RowBetween>
+                <TYPE.darkGray>{'Call Token Contact Address:'}</TYPE.darkGray>
+                <TYPE.main>
+                  {option && option?.call?.token.address ? shortenAddress(option.call?.token.address) : placeholder}
+                </TYPE.main>
+              </RowBetween>
+              <RowBetween>
+                <TYPE.darkGray>{'Call Token Issuance:'}</TYPE.darkGray>
+                <TYPE.main>{placeholder}</TYPE.main>
+              </RowBetween>
+              <RowBetween>
+                <TYPE.darkGray>{'Call Token Market Price:'}</TYPE.darkGray>
+                <TYPE.main>{placeholder}</TYPE.main>
+              </RowBetween>
+            </AutoColumn>
+            <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
+              <RowBetween>
+                <TYPE.darkGray>{'Put Token Contact Address:'}</TYPE.darkGray>
+                <TYPE.main>
+                  {option && option?.put?.token.address ? shortenAddress(option.put.token.address) : placeholder}
+                </TYPE.main>
+              </RowBetween>
+              <RowBetween>
+                <TYPE.darkGray>{'Put Token Issuance:'}</TYPE.darkGray>
+                <TYPE.main>{placeholder}</TYPE.main>
+              </RowBetween>
+              <RowBetween>
+                <TYPE.darkGray>{'Put Token Market Price:'}</TYPE.darkGray>
+                <TYPE.main>{placeholder}</TYPE.main>
+              </RowBetween>
+            </AutoColumn>
           </AutoColumn>
         </AppBody>
       </div>

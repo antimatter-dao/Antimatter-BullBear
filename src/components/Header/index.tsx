@@ -489,7 +489,7 @@ export default function Header() {
               )
             }
             return (
-              <>
+              <React.Fragment key={title}>
                 {link ? (
                   <ExternalHeaderLink href={link} key={title}>
                     {title}
@@ -499,7 +499,7 @@ export default function Header() {
                     {title}
                   </StyledNavLink>
                 )}
-              </>
+              </React.Fragment>
             )
           })}
         </HeaderLinks>
