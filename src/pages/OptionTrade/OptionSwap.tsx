@@ -5,6 +5,8 @@ import Swap from '../Swap'
 import { Option } from '../../state/market/hooks'
 import { Dots } from 'components/swap/styleds'
 import { OutlineCard } from 'components/Card'
+import { RowFixed } from 'components/Row'
+import { ButtonOutlinedPrimary } from 'components/Button'
 //import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
 //import { currencyId } from 'utils/currencyId'
 //import { useNetwork } from 'hooks/useNetwork'
@@ -153,15 +155,23 @@ export default function OptionSwap({ option }: { option?: Option }) {
       {/*{networkErrorModal}*/}
       <Wrapper>
         <Swap option={option} />
-        <div style={{ margin: 'auto 0', width: '100%' }}>
+        <div style={{ margin: '40px', width: '100%', height: '100%' }}>
+          <RowFixed style={{ width: '100%' }}>
+            <ButtonOutlinedPrimary disabled width="150px">
+              Call Token
+            </ButtonOutlinedPrimary>
+            <ButtonOutlinedPrimary disabled width="150px" marginLeft="15px">
+              Put Token
+            </ButtonOutlinedPrimary>
+          </RowFixed>
           <OutlineCard
             style={{
               width: 'max-content',
               borderRadius: 49,
               padding: '14px 100px',
-              margin: '0 auto',
               color: '#ffffff',
-              borderColor: '#ffffff'
+              borderColor: '#ffffff',
+              marginTop: 100
             }}
           >
             Price Chart Coming Soon <Dots />
