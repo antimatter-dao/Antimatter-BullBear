@@ -217,7 +217,7 @@ function Web3StatusInner() {
             </>
           )}
         </Web3StatusConnected>
-        <HideSmall> {account && <Copy toCopy={account}></Copy>}</HideSmall>
+        <HideSmall> {account && <Copy toCopy={account} />}</HideSmall>
       </>
     )
   } else if (error) {

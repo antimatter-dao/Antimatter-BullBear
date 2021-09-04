@@ -280,7 +280,6 @@ const activeClassName = 'ACTIVE'
 const StyledNavLink = styled(NavLink).attrs({
   activeClassName
 })`
-  ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
   outline: none;
   cursor: pointer;
@@ -293,6 +292,7 @@ const StyledNavLink = styled(NavLink).attrs({
   padding: 10px 0 27px;
   white-space: nowrap;
   transition: 0.5s;
+  ${({ theme }) => theme.flexRowNoWrap}
   &.${activeClassName} {
     color: ${({ theme }) => theme.primary1};
     border-bottom: 1px solid ${({ theme }) => theme.primary1};
