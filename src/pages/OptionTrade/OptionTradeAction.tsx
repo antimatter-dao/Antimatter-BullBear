@@ -71,7 +71,7 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
     z-index:${({ selected }) => (selected ? '2' : '0')}
     position: absolute;
     top: ${({ selected }) => (selected ? '0' : '-1px')};
-    left: 0;
+    left: 1.49px;
     stroke: ${({ theme, selected }) => (selected ? theme.text4 : theme.text5)};
     fill:${({ selected, theme, isFirstChild }) => (selected ? '#141414' : isFirstChild ? 'transparent' : theme.bg1)}
     stroke-width: 1px;

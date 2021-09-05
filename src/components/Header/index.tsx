@@ -62,7 +62,7 @@ const NetworkInfo: {
   1: {
     color: '#FFFFFF',
     icon: <ETH />,
-    link: 'https://app.antimatter.finance',
+    link: 'https://antimatter-v2.netlify.app/#/',
     title: 'ETH'
   },
   [ChainId.ROPSTEN]: {
@@ -79,7 +79,6 @@ const NetworkInfo: {
     color: '#059BDC',
     icon: <HECOInvert />,
     linkIcon: <HECO />,
-    link: 'https://heco.antimatter.finance',
     title: 'HECO'
   }
   // 56: {
@@ -282,8 +281,7 @@ const activeClassName = 'ACTIVE'
 const StyledNavLink = styled(NavLink).attrs({
   activeClassName
 })`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
+  align-items: flex-start;
   outline: none;
   cursor: pointer;
   text-decoration: none;
@@ -295,6 +293,7 @@ const StyledNavLink = styled(NavLink).attrs({
   padding: 10px 0 27px;
   white-space: nowrap;
   transition: 0.5s;
+  ${({ theme }) => theme.flexRowNoWrap}
   &.${activeClassName} {
     color: ${({ theme }) => theme.primary1};
     border-bottom: 1px solid ${({ theme }) => theme.primary1};
@@ -307,8 +306,7 @@ const StyledNavLink = styled(NavLink).attrs({
 `
 
 const StyledDropdown = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
+  align-items: flex-start;
   outline: none;
   cursor: pointer;
   text-decoration: none;
@@ -320,6 +318,8 @@ const StyledDropdown = styled.div`
   padding: 10px 0 27px;
   transition: 0.5s;
   position: relative;
+  ${({ theme }) => theme.flexRowNoWrap}
+
   svg {
     margin-left: 5px;
   }
