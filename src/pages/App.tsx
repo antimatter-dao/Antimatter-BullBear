@@ -39,9 +39,9 @@ import FAQ from './FAQ'
 import OptionTrade from './OptionTrade'
 import OptionCreation from './OptionCreation'
 import OptionExercise from './OptionExercise'
-// import WarningModal from '../components/Modal/WarningModal'
 import ComingSoon from './ComingSoon'
-// import WarningModal from 'components/Modal/WarningModal'
+import Calculator from './Calculator'
+import WarningModal from 'components/Modal/WarningModal'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -82,10 +82,13 @@ const BodyWrapper = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-  margin-bottom: ${({ theme }) => theme.headerHeight}
+  padding-bottom: 100px;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+  margin-bottom: ${theme.headerHeight};
+  min-height: calc(100vh - ${theme.headerHeight + ' - ' + theme.mobileHeaderHeight}); 
   `}
   ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding-bottom: 0;
   margin-top: ${({ theme }) => theme.mobileHeaderHeight}
   `};
 `
@@ -116,13 +119,14 @@ export default function App() {
             <Popups />
             <Polling />
             <WelcomeSlider />
-            {/* <WarningModal /> */}
+            <WarningModal />
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>
                 {/* <Route exact strict path="/option_trading" component={Swap} /> */}
                 <Route exact strict path="/option_creation" component={OptionCreation} />
                 <Route exact strict path="/option_trading" component={OptionTrade} />
+                <Route exact strict path="/calculator" component={Calculator} />
                 <Route exact strict path="/option_trading/:optionId" component={OptionTrade} />
                 <Route exact strict path="/option_exercise" component={OptionExercise} />
                 {/* <Route exact strict path="/generate" component={Generate} /> */}

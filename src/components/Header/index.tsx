@@ -37,6 +37,7 @@ export const tabs: Tab[] = [
   { title: 'Option Creation', route: 'option_creation' },
   // { title: 'Farm', route: 'farm' },
   { title: 'Governance', link: 'https://governance.antimatter.finance' },
+  { title: 'Calculator', route: 'calculator' },
   {
     title: 'About',
     subTab: [

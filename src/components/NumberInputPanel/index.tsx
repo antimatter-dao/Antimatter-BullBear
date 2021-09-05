@@ -12,7 +12,7 @@ const InputRow = styled.div<{ disabled?: boolean }>`
   align-items: center;
   padding: 0 0.5rem 0 1rem;
   width: 100%;
-  background-color: ${({ theme, disabled }) => (disabled ? darken(0.2, theme.black) : theme.bg2)};
+  background-color: ${({ theme }) => theme.bg2};
   border-radius: 14px;
   height: 3rem;
   ${({ theme }) => theme.flexRowNoWrap}
@@ -68,6 +68,12 @@ const StyledBalanceMax = styled.button`
   `};
 `
 
+const StyledUnit = styled.div`
+  font-size: 16px;
+  font-weight: 400;
+  margin-right: 6px;
+`
+
 const Container = styled.div``
 
 interface NumberInputPanelProps {
@@ -84,6 +90,7 @@ interface NumberInputPanelProps {
   customBalanceText?: string
   negativeMarginTop?: string
   intOnly?: boolean
+  unit?: string
 }
 
 export default function NumberInputPanel({
@@ -98,7 +105,8 @@ export default function NumberInputPanel({
   customBalanceText,
   negativeMarginTop,
   onUserInput,
-  intOnly
+  intOnly,
+  unit
 }: NumberInputPanelProps) {
   const { account } = useActiveWeb3React()
   const theme = useTheme()
@@ -136,6 +144,7 @@ export default function NumberInputPanel({
               onUserInput(val)
             }}
           />
+          {unit && <StyledUnit>{unit}</StyledUnit>}
           {account && showMaxButton && <StyledBalanceMax onClick={onMax}>Max</StyledBalanceMax>}
         </InputRow>
       </Container>

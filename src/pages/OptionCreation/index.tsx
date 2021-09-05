@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { Currency } from '@uniswap/sdk'
 import { Plus } from 'react-feather'
 import styled from 'styled-components'
-import AppBody from 'pages/AppBody'
+import AppBody, { BodyHeader } from 'pages/AppBody'
 import { RowBetween, RowFixed } from 'components/Row'
 import { TYPE } from 'theme'
 import { AutoColumn } from 'components/Column'
@@ -129,9 +129,7 @@ export default function OptionCreation() {
       />
       <AppBody maxWidth="560px">
         <AutoColumn gap="30px">
-          <RowFixed>
-            <TYPE.largeHeader>Option Creation</TYPE.largeHeader>
-          </RowFixed>
+          <BodyHeader title="Option Creation" />
           <AutoColumn gap="15px">
             <TYPE.body>1. Option underlying asset pair:</TYPE.body>
             <RowBetween>

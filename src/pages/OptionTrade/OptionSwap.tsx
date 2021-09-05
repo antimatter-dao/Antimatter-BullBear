@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 //import { Currency } from '@uniswap/sdk'
 import styled from 'styled-components'
 import Swap from '../Swap'
 import { Option } from '../../state/market/hooks'
 import { Dots } from 'components/swap/styleds'
 import { OutlineCard } from 'components/Card'
-import { RowFixed } from 'components/Row'
-import { ButtonOutlinedPrimary } from 'components/Button'
+import SwitchTab from 'components/SwitchTab'
+import { TYPE } from 'theme'
 //import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
 //import { currencyId } from 'utils/currencyId'
 //import { useNetwork } from 'hooks/useNetwork'
@@ -52,8 +52,13 @@ const Wrapper = styled.div`
 //   ${({ isActive, theme }) => (!isActive ? `border-color:${theme.text3}; color:${theme.text3};` : '')}
 //
 // `
+const Tabs = {
+  call: 'Call Token',
+  put: 'Put Token'
+}
 
 export default function OptionSwap({ option }: { option?: Option }) {
+  const [currentTab, setCurrentTab] = useState('call')
   //const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
   //const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
   //const [isMarketPriceChart, setIsMarketPriceChart] = useState(true)
@@ -150,20 +155,23 @@ export default function OptionSwap({ option }: { option?: Option }) {
   //const handleMarketPriceChart = useCallback(() => setIsMarketPriceChart(true), [])
   //const handleModalChart = useCallback(() => setIsMarketPriceChart(false), [])
 
+  const handleTabClick = useCallback(
+    (tab: string) => () => {
+      setCurrentTab(tab)
+    },
+    []
+  )
+
   return (
     <>
       {/*{networkErrorModal}*/}
       <Wrapper>
         <Swap option={option} />
-        <div style={{ margin: '40px', width: '100%', height: '100%' }}>
-          <RowFixed style={{ width: '100%' }}>
-            <ButtonOutlinedPrimary disabled width="150px">
-              Call Token
-            </ButtonOutlinedPrimary>
-            <ButtonOutlinedPrimary disabled width="150px" marginLeft="15px">
-              Put Token
-            </ButtonOutlinedPrimary>
-          </RowFixed>
+        <div style={{ margin: '20px 40px', width: '100%', height: '100%', position: 'relative' }}>
+          <TYPE.subHeader style={{ position: 'absolute', right: 0, top: 7 }} fontSize={18} color={'#666666'}>
+            Сurrent price: $-
+          </TYPE.subHeader>
+          <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} tabs={Tabs} />
           <OutlineCard
             style={{
               width: 'max-content',
@@ -171,7 +179,7 @@ export default function OptionSwap({ option }: { option?: Option }) {
               padding: '14px 100px',
               color: '#ffffff',
               borderColor: '#ffffff',
-              marginTop: 100
+              margin: '100px auto 0'
             }}
           >
             Price Chart Coming Soon <Dots />
