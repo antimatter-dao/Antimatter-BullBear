@@ -39,6 +39,7 @@ import FAQ from './FAQ'
 import OptionTrade from './OptionTrade'
 import OptionCreation from './OptionCreation'
 import OptionExercise from './OptionExercise'
+import Stats from './Stats'
 import ComingSoon from './ComingSoon'
 import Calculator from './Calculator'
 import WarningModal from 'components/Modal/WarningModal'
@@ -134,6 +135,7 @@ export default function App() {
                 {/*<Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />*/}
                 <Route exact strict path="/governance" component={ComingSoon} />
                 <Route exact strict path="/info" component={Info} />
+                <Route exact strict path="/stats" component={Stats} />
                 {/* <Route exact strict path="/exercise" component={Exercise} /> */}
                 {/* <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} /> */}
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
