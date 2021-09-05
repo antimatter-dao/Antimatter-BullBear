@@ -135,7 +135,7 @@ export default function App() {
                 {/*<Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />*/}
                 <Route exact strict path="/governance" component={ComingSoon} />
                 <Route exact strict path="/info" component={Info} />
-                <Route exact strict path="/stats" component={Stats} />
+                <Route exact strict path="/statistics" component={Stats} />
                 {/* <Route exact strict path="/exercise" component={Exercise} /> */}
                 {/* <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} /> */}
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />

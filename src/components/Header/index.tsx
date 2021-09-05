@@ -38,6 +38,7 @@ export const tabs: Tab[] = [
   // { title: 'Farm', route: 'farm' },
   { title: 'Governance', link: 'https://governance.antimatter.finance' },
   { title: 'Calculator', route: 'calculator' },
+  { title: 'statistics', route: 'statistics' },
   {
     title: 'About',
     subTab: [
