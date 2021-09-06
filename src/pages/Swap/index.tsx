@@ -279,6 +279,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
     }
     return undefined
   }, [chainId, dUnd, payCurrency, underlying, underlyingTrade])
+
   const curTradeAddresses: string[] | undefined = useMemo(() => {
     if (dCur?.toString() === '0') {
       return currency?.address ? [currency.address] : undefined
@@ -296,7 +297,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
     }
     return
   }, [payCurrency, currency, currencyTrade, chainId, dCur])
-
+  console.log('address--->', currencyTrade)
   const routerDelta = useRouteDelta(
     option,
     undTradeAddresses,

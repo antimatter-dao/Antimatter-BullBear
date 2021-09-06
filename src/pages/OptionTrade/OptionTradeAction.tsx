@@ -267,12 +267,9 @@ function Info({ option, placeholder = '-' }: { option?: Option; placeholder?: st
                 <TYPE.darkGray>{'Option Price Range:'}</TYPE.darkGray>
                 <TYPE.main>
                   {option &&
-                    `$${tryFormatAmount(option?.priceFloor, option?.underlying ?? undefined)
+                    `$${tryFormatAmount(option?.priceFloor, option?.currency ?? undefined)
                       ?.toExact()
-                      .toString() ?? placeholder} ~ $${tryFormatAmount(
-                      option?.priceCap,
-                      option?.underlying ?? undefined
-                    )
+                      .toString() ?? placeholder} ~ $${tryFormatAmount(option?.priceCap, option?.currency ?? undefined)
                       ?.toExact()
                       .toString() ?? placeholder}`}
                 </TYPE.main>
