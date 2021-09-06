@@ -283,8 +283,8 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
   const details = {
     'Option Price Range': option ? `$${range.floor?.toExact().toString()}~$${range.cap?.toExact().toString()}` : '',
     'Underlying Asset': option ? `${option.underlying?.symbol}, ${option.currency?.symbol}` : '-',
-    'Your Call Position': balances[0]?.toExact(),
-    'Your Put Position': balances[1]?.toExact()
+    'Your Call Position': balances[0]?.toExact().toString() ?? '-',
+    'Your Put Position': balances[1]?.toExact().toString() ?? '-',
   }
   //const underlyingCurrency = useCurrency(underlyingAddress)
   //const currency = useCurrency(address)
