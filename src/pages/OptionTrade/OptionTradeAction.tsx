@@ -136,10 +136,10 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                   <TYPE.subHeader fontSize={24} fontWeight={500}>
                     {`${option?.underlying?.symbol} ($${tryFormatAmount(
                       option?.priceFloor,
-                      option?.underlying ?? undefined
+                      option?.currency ?? undefined
                     )
                       ?.toExact()
-                      .toString()}~$${tryFormatAmount(option?.priceCap, option?.underlying ?? undefined)
+                      .toString()}~$${tryFormatAmount(option?.priceCap, option?.currency ?? undefined)
                       ?.toExact()
                       .toString()})`}
                   </TYPE.subHeader>

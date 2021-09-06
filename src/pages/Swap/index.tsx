@@ -291,6 +291,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
     }
     return
   }, [payCurrency, currency, currencyTrade, chainId, dCur])
+  console.log('currencyTrade', currencyFrom, currencyTo)
 
   const routerDelta = useRouteDelta(
     option,
