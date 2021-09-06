@@ -11,7 +11,6 @@ import { RowBetween, RowFixed } from 'components/Row'
 //import { OptionIcon } from 'components/Icons'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import { AutoColumn } from 'components/Column'
-import { getEtherscanLink, shortenAddress } from 'utils'
 import { currencyNameHelper } from 'utils/marketStrategyUtils'
 //import { USDT, ZERO_ADDRESS } from '../../constants'
 import { ButtonSelectRange } from 'components/Button/ButtonSelectRange'
@@ -272,7 +271,7 @@ export default function OptionTrade({
 
 export function OptionCard({ optionId, buttons }: { optionId: string; buttons: JSX.Element }) {
   const option = useOption(optionId)
-  const { account, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   const balances = useCurrencyBalances(
     account ?? undefined,
     option ? [option.call?.currency, option.put?.currency] : []
@@ -283,7 +282,7 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
   }
   const details = {
     'Option Price Range': option ? `$${range.floor?.toExact().toString()}~$${range.cap?.toExact().toString()}` : '',
-    'Underlying Asset': option ? `${option.underlying?.symbol}/${option.currency?.symbol}` : '-',
+    'Underlying Asset': option ? `${option.underlying?.symbol}, ${option.currency?.symbol}` : '-',
     'Your Call Position': balances[0]?.toExact(),
     'Your Put Position': balances[1]?.toExact()
   }
@@ -316,11 +315,11 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
             {option?.underlying && (
               <RowFixed>
                 <OptionId>ID:&nbsp;{optionId}</OptionId>
-                <StyledExternalLink
-                  href={chainId ? getEtherscanLink(chainId, option.underlying?.address, 'token') : ''}
-                >
-                  {shortenAddress(option.underlying?.address, 5)}
-                </StyledExternalLink>
+                {/*<StyledExternalLink*/}
+                {/*  href={chainId ? getEtherscanLink(chainId, option.underlying?.address, 'token') : ''}*/}
+                {/*>*/}
+                {/*  {shortenAddress(option.underlying?.address, 5)}*/}
+                {/*</StyledExternalLink>*/}
               </RowFixed>
             )}
           </AutoColumn>

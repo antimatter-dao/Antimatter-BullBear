@@ -1,5 +1,5 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Check, ChevronDown } from 'react-feather'
 import { Link, NavLink } from 'react-router-dom'
 import styled from 'styled-components'
@@ -20,6 +20,7 @@ import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
 import { ReactComponent as Plus } from '../../assets/svg/plus.svg'
 import useTheme from 'hooks/useTheme'
 import ToggleMenu from './ToggleMenu'
+import { useWalletModalToggle } from '../../state/application/hooks'
 
 interface TabContent {
   title: string
@@ -37,7 +38,7 @@ export const tabs: Tab[] = [
   { title: 'Option Creation', route: 'option_creation' },
   // { title: 'Farm', route: 'farm' },
   { title: 'Calculator', route: 'calculator' },
-  { title: 'statistics', route: 'statistics' },
+  { title: 'Statistics', route: 'statistics' },
   { title: 'Governance', link: 'https://governance.antimatter.finance' },
   {
     title: 'About',
@@ -46,7 +47,7 @@ export const tabs: Tab[] = [
       { title: 'Github', link: 'https://github.com/antimatter-finance' },
       {
         title: 'Auditing Report',
-        link: 'https://github.com/antimatter-finance/antimatter-finance.github.io/blob/main/audit_en.pdf'
+        link: 'https://github.com/antimatter-fainance/antimatter-finance.github.io/blob/main/audit_en.pdf'
       },
       {
         title: 'faq',
@@ -453,6 +454,11 @@ export default function Header() {
 
   const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
+
+  const toggleWalletModal = useWalletModalToggle()
+  useEffect(() => {
+    if (!account) toggleWalletModal()
+  }, [])
 
   return (
     <HeaderFrame>

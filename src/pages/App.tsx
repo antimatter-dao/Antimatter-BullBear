@@ -101,7 +101,7 @@ const Feedback = styled.img`
   width: 48px;
   height: 48px;
   right: 100px;
-  bottom: 100px;
+  bottom: 50px;
 `
 
 export const Marginer = styled.div`

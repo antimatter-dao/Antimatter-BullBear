@@ -110,7 +110,6 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
   const option = useOption(optionId)
   const theme = useTheme()
   const history = useHistory()
-
   //const currencyA = chainId === ChainId.MAINNET ? USDT : chainId && WETH[chainId]
   //const currencyB = useCurrency(addressA)
   //const underlyingCurrency = useCurrency(option?.underlyingAddress ?? undefined)
@@ -268,12 +267,12 @@ function Info({ option, placeholder = '-' }: { option?: Option; placeholder?: st
                 <TYPE.darkGray>{'Option Price Range:'}</TYPE.darkGray>
                 <TYPE.main>
                   {option &&
-                    `$${tryFormatAmount(
-                      option?.priceFloor,
+                    `$${tryFormatAmount(option?.priceFloor, option?.underlying ?? undefined)
+                      ?.toExact()
+                      .toString() ?? placeholder} ~ $${tryFormatAmount(
+                      option?.priceCap,
                       option?.underlying ?? undefined
                     )
-                      ?.toExact()
-                      .toString() ?? placeholder} ~ $${tryFormatAmount(option?.priceCap, option?.underlying ?? undefined)
                       ?.toExact()
                       .toString() ?? placeholder}`}
                 </TYPE.main>
@@ -306,7 +305,9 @@ function Info({ option, placeholder = '-' }: { option?: Option; placeholder?: st
             <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
               <RowBetween>
                 <TYPE.darkGray>{'Put Token Contact Address:'}</TYPE.darkGray>
-                <ExternalLink href={option?.put && chainId ? getEtherscanLink(chainId, option?.put?.token.address, 'token') : ''}>
+                <ExternalLink
+                  href={option?.put && chainId ? getEtherscanLink(chainId, option?.put?.token.address, 'token') : ''}
+                >
                   <TYPE.main>
                     {option && option?.put?.token.address ? shortenAddress(option.put.token.address) : placeholder}
                   </TYPE.main>
