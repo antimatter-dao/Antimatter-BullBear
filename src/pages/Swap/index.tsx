@@ -494,7 +494,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
               disableCurrencySelect={false}
               value={formattedAmounts[Field.PAY]}
               onUserInput={handleTypeOutput}
-              label={'Token to pay'}
+              label={auction === Auction.BUY? 'Payment currency': 'Receipt currency'}
               showMaxButton={false}
               currency={payCurrency}
               onCurrencySelect={handleOutputSelect}

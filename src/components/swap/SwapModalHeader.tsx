@@ -51,6 +51,7 @@ export default function SwapModalHeader({
 
   return (
     <AutoColumn gap={'md'} style={{ marginTop: '20px', padding: '0 1rem' }} justify="center">
+      <TYPE.main width={'100%'} color={theme.primary1}> Current unit price of {optionCurrencyAmount?.currency.symbol}: ~</TYPE.main>
       <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)', padding: '16px 20px' }}>
         <AutoColumn style={{ flex: 1 }} gap={'8px'}>
           <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
