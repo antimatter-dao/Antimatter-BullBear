@@ -1,5 +1,5 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Check, ChevronDown } from 'react-feather'
 import { Link, NavLink } from 'react-router-dom'
 import styled from 'styled-components'
@@ -20,7 +20,6 @@ import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
 import { ReactComponent as Plus } from '../../assets/svg/plus.svg'
 import useTheme from 'hooks/useTheme'
 import ToggleMenu from './ToggleMenu'
-import { useWalletModalToggle } from '../../state/application/hooks'
 
 interface TabContent {
   title: string
@@ -454,11 +453,6 @@ export default function Header() {
 
   const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
-
-  const toggleWalletModal = useWalletModalToggle()
-  useEffect(() => {
-    if (!account) toggleWalletModal()
-  }, [])
 
   return (
     <HeaderFrame>
