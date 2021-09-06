@@ -263,7 +263,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
   const dCur = delta?.dCur
 
   const undTradeAddresses: string[] | undefined = useMemo(() => {
-    if (payCurrency?.symbol?.toUpperCase() === 'ETH' || underlying?.symbol?.toUpperCase() === 'WETH') {
+    if (payCurrency?.symbol?.toUpperCase() === 'ETH' && underlying?.symbol?.toUpperCase() === 'WETH') {
       return [WETH[chainId ?? 3].address]
     }
     if (underlying?.symbol === payCurrency?.symbol) {
@@ -278,7 +278,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
   }, [chainId, dUnd, payCurrency, underlying, underlyingTrade])
 
   const curTradeAddresses: string[] | undefined = useMemo(() => {
-    if (payCurrency?.symbol?.toUpperCase() === 'ETH' || currency?.symbol?.toUpperCase() === 'WETH') {
+    if (payCurrency?.symbol?.toUpperCase() === 'ETH' && currency?.symbol?.toUpperCase() === 'WETH') {
       return [WETH[chainId ?? 3].address]
     }
     if (currency?.symbol === payCurrency?.symbol) {
@@ -494,7 +494,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
               disableCurrencySelect={false}
               value={formattedAmounts[Field.PAY]}
               onUserInput={handleTypeOutput}
-              label={auction === Auction.BUY? 'Payment currency': 'Receipt currency'}
+              label={auction === Auction.BUY ? 'Payment currency' : 'Receipt currency'}
               showMaxButton={false}
               currency={payCurrency}
               onCurrencySelect={handleOutputSelect}
