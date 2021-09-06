@@ -411,45 +411,6 @@ export function useDerivedStrategyInfo(
         totalCur: delta.result?.totalCur
       }
     : undefined
-  // const balances = balancesRes
-  //   ? {
-  //       callBalance: balancesRes?.[0]?.result?.[0],
-  //       putBalance: balancesRes?.[1]?.result?.[0]
-  //     }
-  //   : undefined
-
-  // let error: string | undefined
-  // if (!account) {
-  //   error = 'Connect Wallet'
-  // } else if (!option) {
-  //   error = 'No Currency Option'
-  // } else if (!callAmount || !putAmount) {
-  //   error = 'Enter amount'
-  // }
-
-  // const underlyingBalance =
-  //   optionType?.underlyingSymbol === 'ETH' && account
-  //     ? ETHBalance?.[account]?.raw.toString()
-  //     : deltaResult?.underlyingBalance
-  // const currencyBalance =
-  //   optionType?.currencySymbol === 'ETH' && account
-  //     ? ETHBalance?.[account]?.raw.toString()
-  //     : deltaResult?.currencyBalance
-  // if (
-  //   deltaResult?.underlyingBalance &&
-  //   deltaResult?.dUnd &&
-  //   JSBI.greaterThan(JSBI.BigInt(deltaResult.dUnd), JSBI.BigInt(underlyingBalance))
-  // ) {
-  //   error = `Insufficient ${optionType?.underlyingSymbol} Balance`
-  // }
-
-  // if (
-  //   deltaResult?.currencyBalance &&
-  //   deltaResult?.dCur &&
-  //   JSBI.greaterThan(JSBI.BigInt(deltaResult.dCur), JSBI.BigInt(currencyBalance))
-  // ) {
-  //   error = `Insufficient ${optionType?.currencySymbol} Balance`
-  // }
 
   return {
     delta: deltaResult

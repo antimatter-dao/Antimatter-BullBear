@@ -263,6 +263,9 @@ export default function Swap({ option }: { option: Option | undefined }) {
   const dCur = delta?.dCur
 
   const undTradeAddresses: string[] | undefined = useMemo(() => {
+    if (dUnd?.toString() === '0') {
+      return underlying?.address ? [underlying.address] : undefined
+    }
     if (payCurrency?.symbol?.toUpperCase() === 'ETH' && underlying?.symbol?.toUpperCase() === 'WETH') {
       return [WETH[chainId ?? 3].address]
     }
@@ -276,8 +279,10 @@ export default function Swap({ option }: { option: Option | undefined }) {
     }
     return undefined
   }, [chainId, dUnd, payCurrency, underlying, underlyingTrade])
-
   const curTradeAddresses: string[] | undefined = useMemo(() => {
+    if (dCur?.toString() === '0') {
+      return currency?.address ? [currency.address] : undefined
+    }
     if (payCurrency?.symbol?.toUpperCase() === 'ETH' && currency?.symbol?.toUpperCase() === 'WETH') {
       return [WETH[chainId ?? 3].address]
     }
@@ -291,7 +296,6 @@ export default function Swap({ option }: { option: Option | undefined }) {
     }
     return
   }, [payCurrency, currency, currencyTrade, chainId, dCur])
-  console.log('currencyTrade', currencyFrom, currencyTo)
 
   const routerDelta = useRouteDelta(
     option,

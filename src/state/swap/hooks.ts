@@ -275,7 +275,6 @@ export function useOptionSwapInfo(
       )
     : undefined
   const curBestTradeExactIn = useTradeExactIn(curParsedAmount, curToCurrency ?? undefined)
-
   let inputError: string | undefined
   if (!account) {
     inputError = 'Connect Wallet'
