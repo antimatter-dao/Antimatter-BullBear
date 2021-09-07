@@ -43,7 +43,8 @@ import Stats from './Stats'
 import ComingSoon from './ComingSoon'
 import Calculator from './Calculator'
 import WarningModal from 'components/Modal/WarningModal'
-
+import Helper from '../assets/svg/helper.svg'
+import { ExternalLink } from '../theme'
 const AppWrapper = styled.div`
   display: flex;
   align-items: flex-start;
@@ -94,6 +95,15 @@ const BodyWrapper = styled.div`
   `};
 `
 
+const Feedback = styled.img`
+  z-index: 9;
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  right: 100px;
+  bottom: 50px;
+`
+
 export const Marginer = styled.div`
   ${({ theme }) => theme.desktop}
 `
@@ -107,6 +117,13 @@ export const Marginer = styled.div`
 export default function App() {
   return (
     <Suspense fallback={null}>
+      <ExternalLink
+        href={
+          'https://docs.google.com/forms/d/e/1FAIpQLSfyWq7xlI_ro72-n9rM-disc7extCoVw5oUiOQND7fnh1c80g/viewform?usp=pp_url'
+        }
+      >
+        <Feedback src={Helper} />
+      </ExternalLink>
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper id="app">

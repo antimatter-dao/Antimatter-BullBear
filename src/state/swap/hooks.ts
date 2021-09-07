@@ -19,9 +19,10 @@ import useToggledVersion from '../../hooks/useToggledVersion'
 import { useUserSlippageTolerance } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
 import { BigNumber } from 'ethers'
-import { Option, parseAbsolute } from '../market/hooks'
+import { absolute, Option, parseAbsolute } from '../market/hooks'
 import { useSingleCallResult } from '../multicall/hooks'
 import { useAntimatterRouterContract } from '../../hooks/useContract'
+import { isNegative } from '../../utils/marketStrategyUtils'
 //import { useTotalSupply } from '../../data/TotalSupply'
 
 export interface RouteDelta {
@@ -249,41 +250,46 @@ export function useDerivedSwapInfo(): {
 export function useOptionSwapInfo(
   undAmount?: string,
   curAmount?: string,
-  undFromCurrency?: Currency | undefined | null,
-  undToCurrency?: Currency | undefined | null,
-  curFromCurrency?: Currency | undefined | null,
-  curToCurrency?: Currency | undefined | null
+  undCurrency?: Currency | undefined | null,
+  curCurrency?: Currency | undefined | null,
+  payCurrency?: Currency | undefined | null
 ): {
-  undTrade: Trade | undefined
-  curTrade: Trade | undefined
+  undTrade: Trade | undefined | null
+  curTrade: Trade | undefined | null
   inputError?: string
 } {
   const { account } = useActiveWeb3React()
+  const absUndAmount = undAmount ? absolute(undAmount) : undefined
+  const absCurAmount = curAmount ? absolute(curAmount) : undefined
+  const isUndNegative = isNegative(undAmount)
+  const isCurNegative = isNegative(curAmount)
 
   const undParsedAmount = undAmount
     ? tryParseAmount(
-        formatUnits(BigNumber.from(undAmount ?? '0'), undFromCurrency?.decimals).toString(),
-        undFromCurrency ?? undefined
+        formatUnits(BigNumber.from(absUndAmount ?? '0'), undCurrency?.decimals).toString(),
+        undCurrency ?? undefined
       )
     : undefined
-  const undBestTradeExactIn = useTradeExactIn(undParsedAmount, undToCurrency ?? undefined)
+  const undBestTradeExactIn = useTradeExactIn(undParsedAmount, payCurrency ?? undefined)
+  const undBestTradeExactOut = useTradeExactOut(payCurrency ?? undefined, undParsedAmount)
 
   const curParsedAmount = curAmount
     ? tryParseAmount(
-        formatUnits(BigNumber.from(curAmount ?? '0'), curFromCurrency?.decimals).toString(),
-        curFromCurrency ?? undefined
+        formatUnits(BigNumber.from(absCurAmount ?? '0'), curCurrency?.decimals).toString(),
+        curCurrency ?? undefined
       )
     : undefined
-  const curBestTradeExactIn = useTradeExactIn(curParsedAmount, curToCurrency ?? undefined)
+  const curBestTradeExactIn = useTradeExactIn(curParsedAmount, payCurrency ?? undefined)
+  const curBestTradeExactOut = useTradeExactOut(payCurrency ?? undefined, curParsedAmount)
 
   let inputError: string | undefined
   if (!account) {
     inputError = 'Connect Wallet'
   }
-
+  //console.log('tag--->',isUndNegative, curBestTradeExactIn, curBestTradeExactOut)
   return {
-    undTrade: undBestTradeExactIn ?? undefined,
-    curTrade: curBestTradeExactIn ?? undefined,
+    undTrade: isUndNegative ? undBestTradeExactIn : undBestTradeExactOut,
+    curTrade: isCurNegative ? curBestTradeExactIn : curBestTradeExactOut,
     inputError
   }
 }
@@ -314,10 +320,8 @@ export function useRouteDelta(
           ).toString()
         ]
       : [undefined]
-  console.log('args', args)
 
   const deltaRes = useSingleCallResult(contract, 'calcDeltaRoute', args)
-  console.log('deltaRes', deltaRes)
   if (!deltaRes || !deltaRes.result) return undefined
   const delta = deltaRes.result
   return {

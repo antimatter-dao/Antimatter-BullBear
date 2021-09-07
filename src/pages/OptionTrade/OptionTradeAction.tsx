@@ -19,7 +19,7 @@ import { Option, useOption } from '../../state/market/hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { tryFormatAmount } from '../../state/swap/hooks'
 import { getEtherscanLink, shortenAddress } from 'utils'
-//import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React } from 'hooks'
 //import { ChainId, WETH } from '@uniswap/sdk'
 //import { useDerivedMintInfo } from 'state/mint/hooks'
 
@@ -136,7 +136,6 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
   const option = useOption(optionId)
   const theme = useTheme()
   const history = useHistory()
-
   //const currencyA = chainId === ChainId.MAINNET ? USDT : chainId && WETH[chainId]
   //const currencyB = useCurrency(addressA)
   //const underlyingCurrency = useCurrency(option?.underlyingAddress ?? undefined)
@@ -161,12 +160,12 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                     <CurrencyLogo currency={option?.underlying ?? undefined} size="20px" />
                   </Circle>
                   <TYPE.subHeader fontSize={24} fontWeight={500}>
-                    {`${option?.underlying?.symbol} (${tryFormatAmount(
-                      option?.priceCap,
-                      option?.underlying ?? undefined
+                    {`${option?.underlying?.symbol} ($${tryFormatAmount(
+                      option?.priceFloor,
+                      option?.currency ?? undefined
                     )
                       ?.toExact()
-                      .toString()}$${tryFormatAmount(option?.priceFloor, option?.underlying ?? undefined)
+                      .toString()}~$${tryFormatAmount(option?.priceCap, option?.currency ?? undefined)
                       ?.toExact()
                       .toString()})`}
                   </TYPE.subHeader>
@@ -259,6 +258,7 @@ function Tab({
 
 function Info({ option, placeholder = '-' }: { option?: Option; placeholder?: string }) {
   const theme = useTheme()
+  const { chainId } = useActiveWeb3React()
   return (
     <AppBody
       maxWidth="1116px"
@@ -284,12 +284,9 @@ function Info({ option, placeholder = '-' }: { option?: Option; placeholder?: st
                 <TYPE.darkGray>{'Option Price Range:'}</TYPE.darkGray>
                 <TYPE.main>
                   {option &&
-                    `$${tryFormatAmount(option?.priceCap, option?.underlying ?? undefined)
+                    `$${tryFormatAmount(option?.priceFloor, option?.currency ?? undefined)
                       ?.toExact()
-                      .toString() ?? placeholder} ~ $${tryFormatAmount(
-                      option?.priceFloor,
-                      option?.underlying ?? undefined
-                    )
+                      .toString() ?? placeholder} ~ $${tryFormatAmount(option?.priceCap, option?.currency ?? undefined)
                       ?.toExact()
                       .toString() ?? placeholder}`}
                 </TYPE.main>
@@ -302,9 +299,13 @@ function Info({ option, placeholder = '-' }: { option?: Option; placeholder?: st
             <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
               <RowBetween>
                 <TYPE.darkGray>{'Call Token Contact Address:'}</TYPE.darkGray>
-                <TYPE.main>
-                  {option && option?.call?.token.address ? shortenAddress(option.call?.token.address) : placeholder}
-                </TYPE.main>
+                <ExternalLink
+                  href={option?.call && chainId ? getEtherscanLink(chainId, option?.call?.token.address, 'token') : ''}
+                >
+                  <TYPE.main>
+                    {option && option?.call?.token.address ? shortenAddress(option.call?.token.address) : placeholder}
+                  </TYPE.main>
+                </ExternalLink>
               </RowBetween>
               <RowBetween>
                 <TYPE.darkGray>{'Call Token Issuance:'}</TYPE.darkGray>
@@ -318,9 +319,13 @@ function Info({ option, placeholder = '-' }: { option?: Option; placeholder?: st
             <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
               <RowBetween>
                 <TYPE.darkGray>{'Put Token Contact Address:'}</TYPE.darkGray>
-                <TYPE.main>
-                  {option && option?.put?.token.address ? shortenAddress(option.put.token.address) : placeholder}
-                </TYPE.main>
+                <ExternalLink
+                  href={option?.put && chainId ? getEtherscanLink(chainId, option?.put?.token.address, 'token') : ''}
+                >
+                  <TYPE.main>
+                    {option && option?.put?.token.address ? shortenAddress(option.put.token.address) : placeholder}
+                  </TYPE.main>
+                </ExternalLink>
               </RowBetween>
               <RowBetween>
                 <TYPE.darkGray>{'Put Token Issuance:'}</TYPE.darkGray>

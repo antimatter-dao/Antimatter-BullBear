@@ -39,7 +39,7 @@ export default function Stats() {
               Total Value Locked
             </TYPE.gray>
             <TYPE.largeHeader fontSize="48px" fontFamily="Roboto" letterSpacing="0.02em" lineHeight="71px">
-              $ 31 444 239, 17
+              $ -
             </TYPE.largeHeader>
           </StyledTotal>
           <RowBetween>
@@ -49,7 +49,7 @@ export default function Stats() {
               </TYPE.gray>
               <RowFixed style={{ alignItems: 'baseline' }}>
                 <TYPE.mediumHeader fontFamily="Roboto" color="white" fontSize="40px" lineHeight="59px">
-                  40
+                  -
                 </TYPE.mediumHeader>
                 <TYPE.white fontSize="20px" lineHeight="30px" style={{ marginLeft: 5 }}>
                   Nodes
@@ -62,7 +62,7 @@ export default function Stats() {
               </TYPE.gray>
               <RowFixed style={{ alignItems: 'baseline' }}>
                 <TYPE.mediumHeader fontFamily="Roboto" color="white" fontSize="40px" lineHeight="59px">
-                  7
+                  -
                 </TYPE.mediumHeader>
                 <TYPE.white fontSize="20px" lineHeight="30px" style={{ marginLeft: 5 }}>
                   Chains
@@ -75,7 +75,7 @@ export default function Stats() {
               </TYPE.gray>
               <RowFixed style={{ alignItems: 'baseline' }}>
                 <TYPE.mediumHeader fontFamily="Roboto" color="white" fontSize="40px" lineHeight="59px">
-                  120
+                  -
                 </TYPE.mediumHeader>
                 <TYPE.white fontSize="20px" lineHeight="30px" style={{ marginLeft: 5 }}>
                   Tokens

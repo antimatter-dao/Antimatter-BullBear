@@ -11,7 +11,6 @@ import { RowBetween, RowFixed } from 'components/Row'
 //import { OptionIcon } from 'components/Icons'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import { AutoColumn } from 'components/Column'
-import { getEtherscanLink, shortenAddress } from 'utils'
 import { currencyNameHelper } from 'utils/marketStrategyUtils'
 //import { USDT, ZERO_ADDRESS } from '../../constants'
 import { ButtonSelectRange } from 'components/Button/ButtonSelectRange'
@@ -23,14 +22,13 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { currencyId } from 'utils/currencyId'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
 //import { useUSDTPrice } from 'utils/useUSDCPrice'
-import { useActiveWeb3React } from 'hooks'
 import { XCircle } from 'react-feather'
 import useTheme from 'hooks/useTheme'
 import { SearchQuery } from 'utils/option/httpRequests'
 //import { useNetwork } from 'hooks/useNetwork'
 import { useOption, useOptionTypeCount } from '../../state/market/hooks'
-import { useCurrencyBalances } from '../../state/wallet/hooks'
 import { tryFormatAmount } from '../../state/swap/hooks'
+import { useTotalSupply } from '../../data/TotalSupply'
 
 export interface OptionInterface {
   optionId: string | undefined
@@ -272,20 +270,18 @@ export default function OptionTrade({
 
 export function OptionCard({ optionId, buttons }: { optionId: string; buttons: JSX.Element }) {
   const option = useOption(optionId)
-  const { account, chainId } = useActiveWeb3React()
-  const balances = useCurrencyBalances(
-    account ?? undefined,
-    option ? [option.call?.currency, option.put?.currency] : []
-  )
+  const callTotalSupply = useTotalSupply(option?.call?.token)
+  const putTotalSupply = useTotalSupply(option?.put?.token)
+
   const range = {
     cap: tryFormatAmount(option?.priceCap, option?.currency ?? undefined),
     floor: tryFormatAmount(option?.priceFloor, option?.currency ?? undefined)
   }
   const details = {
     'Option Price Range': option ? `$${range.floor?.toExact().toString()}~$${range.cap?.toExact().toString()}` : '',
-    'Underlying Asset': option ? `${option.underlying?.symbol}/${option.currency?.symbol}` : '-',
-    'Your Call Position': balances[0]?.toExact(),
-    'Your Put Position': balances[1]?.toExact()
+    'Underlying Asset': option ? `${option.underlying?.symbol}, ${option.currency?.symbol}` : '-',
+    'Current Call Issuance': option ? callTotalSupply?.toFixed(0).toString() : '-',
+    'Current Put Issuance': option ? putTotalSupply?.toFixed(0).toString() : '-'
   }
   //const underlyingCurrency = useCurrency(underlyingAddress)
   //const currency = useCurrency(address)
@@ -316,11 +312,11 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
             {option?.underlying && (
               <RowFixed>
                 <OptionId>ID:&nbsp;{optionId}</OptionId>
-                <StyledExternalLink
-                  href={chainId ? getEtherscanLink(chainId, option.underlying?.address, 'token') : ''}
-                >
-                  {shortenAddress(option.underlying?.address, 5)}
-                </StyledExternalLink>
+                {/*<StyledExternalLink*/}
+                {/*  href={chainId ? getEtherscanLink(chainId, option.underlying?.address, 'token') : ''}*/}
+                {/*>*/}
+                {/*  {shortenAddress(option.underlying?.address, 5)}*/}
+                {/*</StyledExternalLink>*/}
               </RowFixed>
             )}
           </AutoColumn>

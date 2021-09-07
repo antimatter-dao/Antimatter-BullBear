@@ -36,9 +36,9 @@ export const tabs: Tab[] = [
   { title: 'Option Trading', route: 'option_trading' },
   { title: 'Option Creation', route: 'option_creation' },
   // { title: 'Farm', route: 'farm' },
-  { title: 'Governance', link: 'https://governance.antimatter.finance' },
   { title: 'Calculator', route: 'calculator' },
-  { title: 'statistics', route: 'statistics' },
+  { title: 'Statistics', route: 'statistics' },
+  { title: 'Governance', link: 'https://governance.antimatter.finance' },
   {
     title: 'About',
     subTab: [
@@ -46,7 +46,7 @@ export const tabs: Tab[] = [
       { title: 'Github', link: 'https://github.com/antimatter-finance' },
       {
         title: 'Auditing Report',
-        link: 'https://github.com/antimatter-finance/antimatter-finance.github.io/blob/main/audit_en.pdf'
+        link: 'https://github.com/antimatter-fainance/antimatter-finance.github.io/blob/main/audit_en.pdf'
       },
       {
         title: 'faq',
@@ -606,7 +606,7 @@ function LogoButton() {
       <StyledDropdown style={{ color: '#ffffff', padding: '6px 25px 18px 20px', marginLeft: 0 }}>
         <Plus style={{ margin: 'auto auto' }} />
         <Dropdown>
-          <ExternalLink href={'https://test.antimatter.finance/#/option_trading'}>Antimatter V1</ExternalLink>
+          <ExternalLink href={'https://v1.antimatter.finance'}>Antimatter V1</ExternalLink>
           <ExternalLink href={'https://nonfungible.finance/#/'}>
             <span style={{ whiteSpace: 'nowrap' }}>Antimatter NFT</span>
           </ExternalLink>
