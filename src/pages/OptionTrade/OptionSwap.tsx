@@ -13,6 +13,19 @@ import { TYPE } from 'theme'
 
 const Wrapper = styled.div`
   display: flex;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  flex-direction: column;
+  `}
+`
+
+const GraphWrapper = styled.div`
+  margin: 20px 40px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  width: auto
+  `}
 `
 
 // const Chart = styled.div`
@@ -167,7 +180,7 @@ export default function OptionSwap({ option }: { option?: Option }) {
       {/*{networkErrorModal}*/}
       <Wrapper>
         <Swap option={option} />
-        <div style={{ margin: '20px 40px', width: '100%', height: '100%', position: 'relative' }}>
+        <GraphWrapper>
           <TYPE.subHeader style={{ position: 'absolute', right: 0, top: 7 }} fontSize={18} color={'#666666'}>
             Сurrent price: $-
           </TYPE.subHeader>
@@ -184,7 +197,7 @@ export default function OptionSwap({ option }: { option?: Option }) {
           >
             Price Chart Coming Soon <Dots />
           </OutlineCard>
-        </div>
+        </GraphWrapper>
         {/*<ChartWrapper>*/}
         {/*  <ButtonGroup>*/}
         {/*    <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>*/}

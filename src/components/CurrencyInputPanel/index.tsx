@@ -28,7 +28,7 @@ const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean; hideSelect
 `};
 `
 
-const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>`
+const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean; hideInput?: boolean }>`
   align-items: center;
   height: 3rem;
   font-weight: 500;
@@ -49,16 +49,16 @@ const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.bg5))};
   }
   width: ${({ halfWidth }) => (halfWidth ? '48%' : '100%')}};
-  ${({ theme, selected }) => theme.mediaWidth.upToSmall`
-  position: absolute;
+  ${({ theme, selected, hideInput }) => theme.mediaWidth.upToSmall`
+${!hideInput &&
+  `position: absolute;
   right: 0;
   width: 50%;
   z-index: 2;
   color:${selected ? theme.text1 : theme.primary1}
   border: 1px solid ${selected ? theme.text4 : theme.primary1}
   :hover,:focus,:active {
-    border: 1px solid ${selected ? theme.text4 : theme.primary1}
-  }
+    border: 1px solid ${selected ? theme.text4 : theme.primary1}`}}
   `}
 `
 
@@ -78,7 +78,6 @@ const LabelRow = styled.div`
   }
   margin-bottom: 4px;
   ${({ theme }) => theme.flexRowNoWrap}
-
 `
 
 const Aligner = styled.span`
@@ -220,6 +219,7 @@ export default function CurrencyInputPanel({
         <Aligner>
           {!hideSelect && (
             <CurrencySelect
+              hideInput={hideInput}
               selected={!!currency}
               className="open-currency-select-button"
               onClick={() => {

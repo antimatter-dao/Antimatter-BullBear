@@ -3,7 +3,7 @@ import { ChevronLeft } from 'react-feather'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import OptionSwap from './OptionSwap'
-import AppBody from 'pages/AppBody'
+import AppBody, { BodyWrapper } from 'pages/AppBody'
 import { CustomLightSpinner, ExternalLink, TYPE } from 'theme'
 //import Liquidity from './Liquidity'
 import useTheme from 'hooks/useTheme'
@@ -23,14 +23,26 @@ import { getEtherscanLink, shortenAddress } from 'utils'
 //import { ChainId, WETH } from '@uniswap/sdk'
 //import { useDerivedMintInfo } from 'state/mint/hooks'
 
+enum TABS {
+  SWAP = 'swap',
+  LIQUIDITY = 'liquidity',
+  INFO = 'info'
+}
+
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
   width: 100%;
   padding: 0 160px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  padding: 0 24px;
+  `}
 `
 
 const ActionWrapper = styled.div`
   margin-top: 10px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  width: 100%
+  `}
 `
 
 const Elevate = styled.div`
@@ -89,6 +101,26 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
   };
 `
 
+const StyledAppBody = styled(BodyWrapper)<{ tab: TABS }>`
+  max-width: 1114px;
+  padding: 0;
+  background: black;
+  border-color: ${({ tab }) => (tab === TABS.SWAP ? '#727272' : 'rgb(114, 114, 114)')};
+  width: 1114px;
+  overflow: hidden;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  max-width: 100%;
+  width: 100%;
+  max-height: unset;
+`}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  min-height:100%;
+  padding: 0;
+  flex-grow: 1;
+`}
+`
+
 export const StyledExternalLink = styled(ExternalLink)`
   text-decoration: none;
   font-size: 12px;
@@ -97,12 +129,6 @@ export const StyledExternalLink = styled(ExternalLink)`
     color: ${({ theme }) => theme.text4};
   }
 `
-
-enum TABS {
-  SWAP = 'swap',
-  LIQUIDITY = 'liquidity',
-  INFO = 'info'
-}
 
 export default function OptionTradeAction({ optionId }: { optionId?: string }) {
   //const { chainId } = useActiveWeb3React()
@@ -159,22 +185,13 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
           <AutoRow justify="center">
             <ActionWrapper>
               <SwitchTab tab={tab} setTab={handleSetTab} />
-              <AppBody
-                maxWidth="1114px"
-                style={{
-                  padding: 0,
-                  background: 'black',
-                  borderColor: tab === TABS.SWAP ? theme.text5 : 'rgb(114, 114, 114)',
-                  width: 1114,
-                  overflow: 'hidden'
-                }}
-              >
+              <StyledAppBody tab={tab}>
                 <Elevate>
                   {tab === TABS.SWAP && <OptionSwap option={option} />}
                   {/*{tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}*/}
                   {tab === TABS.INFO && <Info option={option} />}
                 </Elevate>
-              </AppBody>
+              </StyledAppBody>
             </ActionWrapper>
           </AutoRow>
         </Wrapper>

@@ -37,7 +37,7 @@ import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } 
 import { TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
-import AppBody from '../AppBody'
+import { BodyWrapper } from '../AppBody'
 import Loader from '../../components/Loader'
 //import { isTradeBetter } from 'utils/trades'
 import { absolute, Option, useDerivedStrategyInfo } from '../../state/market/hooks'
@@ -63,6 +63,16 @@ const RadioButtonWrapper = styled(AutoColumn)`
     display: grid !important;
     grid-template-columns: 50% 50%;
   }
+`
+
+const SwapAppBody = styled(BodyWrapper)`
+  border-color: ${({ theme }) => theme.text4};
+  min-height: 100%;
+  margin: -1px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  max-width: unset
+  width: calc(100% + 2px)
+  `}
 `
 
 export default function Swap({ option }: { option: Option | undefined }) {
@@ -430,7 +440,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
         onDismiss={handleDismissTokenWarning}
       />
       <SwapPoolTabs active={'option_trading'} />
-      <AppBody style={{ borderColor: theme.text4, minHeight: '100%' }}>
+      <SwapAppBody isCard>
         {/* <SwapHeader /> */}
         <Wrapper id="swap-page" style={{ padding: '1rem 0' }}>
           <ConfirmSwapModal
@@ -626,7 +636,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
         </Wrapper>
 
         {/*<AdvancedSwapDetailsDropdown undTrade={underlyingTrade} curTrade={currencyTrade} />*/}
-      </AppBody>
+      </SwapAppBody>
     </>
   )
 }
