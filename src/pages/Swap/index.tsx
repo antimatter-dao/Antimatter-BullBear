@@ -484,7 +484,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
               disableCurrencySelect={false}
               label={'Amount'}
               value={optionTyped}
-              showMaxButton={!atMaxAmountInput}
+              showMaxButton={!atMaxAmountInput && auction === Auction.SELL}
               currency={optionCurrency}
               onUserInput={handleTypeInput}
               onMax={handleMaxInput}

@@ -98,8 +98,8 @@ const BodyWrapper = styled.div`
 const Feedback = styled.img`
   z-index: 9;
   position: fixed;
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   right: 100px;
   bottom: 50px;
 `
