@@ -222,27 +222,28 @@ export default function Swap({ option }: { option: Option | undefined }) {
     optionType === OptionField.PUT ? formattedAmounts[Field.OPTION] : '0'
   )
 
-  const [underlyingFrom, underlyingTo] = delta?.dUnd
-    ? delta?.dUnd.toString()[0] === '-'
-      ? [option?.underlying, payCurrency]
-      : [payCurrency, option?.underlying]
-    : [undefined, undefined]
+  // const [underlyingFrom, underlyingTo] = delta?.dUnd
+  //   ? delta?.dUnd.toString()[0] === '-'
+  //     ? [option?.underlying, payCurrency]
+  //     : [payCurrency, option?.underlying]
+  //   : [undefined, undefined]
+  //
+  // const [currencyFrom, currencyTo] = delta?.dCur
+  //   ? delta?.dCur.toString()[0] === '-'
+  //     ? [option?.currency, payCurrency]
+  //     : [payCurrency, option?.currency]
+  //   : [undefined, undefined]
 
-  const [currencyFrom, currencyTo] = delta?.dCur
-    ? delta?.dCur.toString()[0] === '-'
-      ? [option?.currency, payCurrency]
-      : [payCurrency, option?.currency]
-    : [undefined, undefined]
+  const underlying = option?.underlying
+  const currency = option?.currency
 
-  const { undTrade: underlyingTrade, curTrade: currencyTrade, inputError: optionError } = useOptionSwapInfo(
-    delta?.dUnd ? absolute(delta?.dUnd.toString()) : undefined,
-    delta?.dCur ? absolute(delta?.dCur.toString()) : undefined,
-    underlyingFrom,
-    underlyingTo,
-    currencyFrom,
-    currencyTo
+  const { undTrade: underlyingTrade, curTrade: currencyTrade } = useOptionSwapInfo(
+    delta?.dUnd.toString(),
+    delta?.dCur.toString(),
+    underlying,
+    currency,
+    payCurrency
   )
-  console.log('optionError', optionError)
 
   useEffect(() => {
     setOptionCurrency(optionType === OptionField.CALL ? option?.call?.currency : option?.put?.currency)
@@ -255,9 +256,6 @@ export default function Swap({ option }: { option: Option | undefined }) {
   const curPriceImpactSeverity = warningSeverity(curPriceImpact)
 
   const undPriceImpactSeverity = warningSeverity(undPriceImpact)
-
-  const underlying = option?.underlying
-  const currency = option?.currency
 
   const dUnd = delta?.dUnd
   const dCur = delta?.dCur
@@ -297,7 +295,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
     }
     return
   }, [payCurrency, currency, currencyTrade, chainId, dCur])
-  console.log('address--->', currencyTrade)
+  console.log('address--->', underlyingTrade, currencyTrade)
   const routerDelta = useRouteDelta(
     option,
     undTradeAddresses,
@@ -445,7 +443,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
             payTitle={payFormattedAmount?.[0] === '-' ? 'You will receive' : 'You will pay'}
             payCurrencyAmount={payCurrencyAmount}
             isOpen={showConfirm}
-            trade={underlyingTrade}
+            trade={underlyingTrade ?? undefined}
             originalTrade={tradeToConfirm}
             onAcceptChanges={() => {}}
             attemptingTxn={attemptingTxn}
@@ -576,7 +574,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
                   disabled={approval !== ApprovalState.APPROVED}
                   onClick={() => {
                     setSwapState({
-                      tradeToConfirm: underlyingTrade,
+                      tradeToConfirm: underlyingTrade ?? undefined,
                       attemptingTxn: false,
                       swapErrorMessage: undefined,
                       showConfirm: true,
@@ -599,7 +597,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
                 borderRadius="49px"
                 onClick={() => {
                   setSwapState({
-                    tradeToConfirm: underlyingTrade,
+                    tradeToConfirm: underlyingTrade ?? undefined,
                     attemptingTxn: false,
                     swapErrorMessage: undefined,
                     showConfirm: true,
