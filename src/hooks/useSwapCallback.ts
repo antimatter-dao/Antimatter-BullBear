@@ -12,8 +12,8 @@ import { useAntimatterRouterContract } from './useContract'
 //import useTransactionDeadline from './useTransactionDeadline'
 //import useENS from './useENS'
 //import { Version } from './useToggledVersion'
-import { RouteDelta } from '../state/swap/hooks'
-import { Option } from '../state/market/hooks'
+import { RouteDelta, tryFormatAmount } from '../state/swap/hooks'
+import { absolute, Option } from '../state/market/hooks'
 import { Currency, JSBI } from '@uniswap/sdk'
 
 export enum SwapCallbackState {
@@ -117,8 +117,6 @@ export function useSwapCallback(
   option: Option | undefined,
   callAmount: string | undefined,
   putAmount: string | undefined,
-  undPath: string[] | undefined,
-  curPath: string[] | undefined,
   routeDelta: RouteDelta | undefined
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
@@ -130,8 +128,6 @@ export function useSwapCallback(
       !callAmount ||
       !putAmount ||
       !contract ||
-      !undPath ||
-      !curPath ||
       !routeDelta ||
       !library ||
       !account ||
@@ -142,7 +138,8 @@ export function useSwapCallback(
     }
     const { priceFloor, priceCap } = option
     const { undMax, curMax } = routeDelta
-
+    const undPath = routeDelta.undPathAddresses
+    const curPath = routeDelta.curPathAddresses
     const args = [undPath, curPath, priceFloor, priceCap, callAmount, putAmount, undMax, curMax]
     const payParsedAmount = JSBI.ADD(JSBI.BigInt(undMax), JSBI.BigInt(curMax)).toString()
     return {
@@ -155,36 +152,33 @@ export function useSwapCallback(
           })
           .then((response: any) => {
             addTransaction(response, {
-              summary: `${callAmount[0] === '-' || putAmount[0] === '-' ? 'Sell' : 'Buy'} option`
+              summary: `${callAmount[0] === '-' || putAmount[0] === '-' ? 'Sell' : 'Buy'} ${
+                callAmount !== '0'
+                  ? (tryFormatAmount(absolute(callAmount), option.call?.token)
+                      ?.toExact()
+                      .toString() ?? '') + option.call?.token.symbol
+                  : ''
+              } ${
+                putAmount !== '0'
+                  ? tryFormatAmount(absolute(putAmount), option.put?.token)?.toExact() ?? '' + option.put?.token.symbol
+                  : ''
+              }`
             })
-
             return response.hash
           })
           .catch((error: any) => {
+            console.log('Swap failed')
             // if the user rejected the tx, pass this along
             if (error?.code === 4001) {
               throw new Error('Transaction rejected.')
             } else {
               // otherwise, the error was unexpected and we need to convey that
-              console.error(`Swap failed`, error, args)
+              //console.error(`Swap failed`, error, args)
               throw new Error(`Swap failed: ${error.message}`)
             }
           })
       },
       error: null
     }
-  }, [
-    option,
-    callAmount,
-    putAmount,
-    contract,
-    undPath,
-    curPath,
-    routeDelta,
-    library,
-    account,
-    chainId,
-    payCurrency,
-    addTransaction
-  ])
+  }, [option, callAmount, putAmount, contract, routeDelta, library, account, chainId, payCurrency, addTransaction])
 }

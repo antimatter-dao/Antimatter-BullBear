@@ -11,9 +11,8 @@ import { useMemo } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useActiveWeb3React } from '../../hooks'
 import { useUserSlippageTolerance } from '../user/hooks'
-import { JSBI, Token, TokenAmount } from '@uniswap/sdk'
-import { tryParseAmount } from '../swap/hooks'
-import { MATTER_OPTION } from '../../constants'
+import { Currency, CurrencyAmount, JSBI, Token, TokenAmount, WETH } from '@uniswap/sdk'
+import { RouteDelta, tryFormatAmount, tryParseAmount, useOptionSwapInfo, useRouteDelta } from '../swap/hooks'
 import { useToken } from '../../hooks/Tokens'
 import { useTotalSupply } from '../../data/TotalSupply'
 const CALL_OR_PUT_INTERFACE = new Interface(CALL_OR_PUT_ABI)
@@ -47,11 +46,6 @@ export interface DeltaData {
   currencyBalance?: number | undefined
 }
 
-interface Value {
-  priceUnderlying: string
-  valueReserve: string
-}
-
 export interface Option {
   call: TokenAmount | undefined | null
   put: TokenAmount | undefined | null
@@ -68,39 +62,6 @@ export function useOptionTypeCount(): number {
     return parseInt(res.result[0])
   }
   return 0
-}
-
-export function useValues(): Value[] | undefined {
-  const antimatterContract = useAntimatterContract()
-  //const optionTypeCount = useOptionTypeCount()
-  const optionTypeIndexes = []
-  for (let i = 1; i < 2; i++) {
-    optionTypeIndexes.push([i])
-  }
-  const callAddressesRes = useSingleContractMultipleData(antimatterContract, 'allCalls', optionTypeIndexes)
-  //const putAddressesRes = useSingleContractMultipleData(antimatterContract, 'allPuts', optionTypeIndexes)
-  const callAddresses = useMemo(() => {
-    return callAddressesRes
-      .filter(item => {
-        return item.result
-      })
-      .map(item => {
-        return [item?.result?.[0]]
-      })
-  }, [callAddressesRes])
-
-  const valuesRes = useSingleContractMultipleData(antimatterContract, 'priceValue1', callAddresses)
-
-  return valuesRes
-    .filter(item => {
-      return item.result
-    })
-    .map(item => {
-      return {
-        priceUnderlying: item?.result?.priceUnderlying,
-        valueReserve: item?.result?.valueReserve
-      }
-    })
 }
 
 export function useAllOptionTypes() {
@@ -302,46 +263,6 @@ export function useOption(id: string | undefined): Option | undefined {
   }
 }
 
-export function useMatterOption() {
-  const { chainId, account } = useActiveWeb3React()
-  const matterOption = chainId ? MATTER_OPTION[chainId] : undefined
-
-  const balanceRes = useMultipleContractSingleData(
-    [matterOption?.callAddress, matterOption?.putAddress],
-    CALL_OR_PUT_INTERFACE,
-    'balanceOf',
-    [account ?? undefined]
-  )
-
-  const totalsRes = useMultipleContractSingleData(
-    [matterOption?.callAddress, matterOption?.putAddress],
-    CALL_OR_PUT_INTERFACE,
-    'totalSupply',
-    undefined,
-    NEVER_RELOAD
-  )
-
-  const optionTypeData: OptionTypeData = {
-    id: '',
-    callAddress: matterOption?.callAddress ?? '',
-    putAddress: matterOption?.putAddress ?? '',
-    callBalance: balanceRes[0]?.result?.[0],
-    putBalance: balanceRes[1]?.result?.[0],
-    callTotal: totalsRes[0]?.result?.[0],
-    putTotal: totalsRes[1]?.result?.[0],
-    underlying: matterOption?.underlying ?? '',
-    currency: matterOption?.currency ?? '',
-    priceFloor: matterOption?.priceFloor ?? '',
-    priceCap: matterOption?.priceCap ?? '',
-    underlyingSymbol: matterOption?.underlyingSymbol,
-    underlyingDecimals: matterOption?.underlyingDecimals ?? '',
-    currencySymbol: matterOption?.currencySymbol,
-    currencyDecimals: matterOption?.currencyDecimals ?? ''
-  }
-
-  return optionTypeData
-}
-
 export const absolute = (val: string) => {
   if (val && val[0] === '-') {
     return val.slice(1)
@@ -415,4 +336,79 @@ export function useDerivedStrategyInfo(
   return {
     delta: deltaResult
   }
+}
+
+export function useSwapInfo(
+  option: Option | undefined,
+  callAmount: string | undefined,
+  putAmount: string | undefined,
+  undCurrency?: Currency | undefined | null,
+  curCurrency?: Currency | undefined | null,
+  payCurrency?: Currency | undefined | null
+): RouteDelta | undefined {
+  const { chainId } = useActiveWeb3React()
+  const { delta } = useDerivedStrategyInfo(option, callAmount, putAmount)
+  const dUnd = delta?.dUnd.toString()
+  const dCur = delta?.dCur.toString()
+  const { undTrade, curTrade } = useOptionSwapInfo(dUnd, dCur, undCurrency, curCurrency, payCurrency)
+  const underlying = option?.underlying
+  const currency = option?.currency
+
+  const undTradeAddresses: string[] | undefined = useMemo(() => {
+    if (dUnd?.toString() === '0') {
+      return underlying?.address ? [underlying.address] : undefined
+    }
+    if (payCurrency?.symbol?.toUpperCase() === 'ETH' && underlying?.symbol?.toUpperCase() === 'WETH') {
+      return [WETH[chainId ?? 3].address]
+    }
+    if (underlying?.symbol === payCurrency?.symbol) {
+      return underlying?.address ? [underlying.address] : undefined
+    }
+    if (undTrade) {
+      return dUnd?.toString()[0] === '-'
+        ? undTrade.route.path.map(({ address }) => address)
+        : undTrade.route.path.reverse().map(({ address }) => address)
+    }
+    return undefined
+  }, [chainId, dUnd, payCurrency, undTrade, underlying])
+
+  const curTradeAddresses: string[] | undefined = useMemo(() => {
+    if (dCur?.toString() === '0') {
+      return currency?.address ? [currency.address] : undefined
+    }
+    if (payCurrency?.symbol?.toUpperCase() === 'ETH' && currency?.symbol?.toUpperCase() === 'WETH') {
+      return [WETH[chainId ?? 3].address]
+    }
+    if (currency?.symbol === payCurrency?.symbol) {
+      return currency?.address ? [currency?.address] : undefined
+    }
+    if (curTrade) {
+      return dCur?.toString()[0] === '-'
+        ? curTrade.route.path.map(({ address }) => address)
+        : curTrade.route.path.reverse().map(({ address }) => address)
+    }
+    return
+  }, [payCurrency, currency, curTrade, chainId, dCur])
+
+  return useRouteDelta(
+    option,
+    undTradeAddresses,
+    curTradeAddresses,
+    callAmount ?? '0',
+    option?.call?.token,
+    putAmount ?? '0',
+    option?.put?.token
+  )
+}
+
+export function usePayCurrencyAmount(
+  routeDelta: RouteDelta | undefined,
+  payCurrency: Currency | undefined
+): CurrencyAmount | undefined {
+  const payFormattedAmount = useMemo(() => {
+    if (!routeDelta?.undMax || !routeDelta.curMax) return undefined
+    return JSBI.add(JSBI.BigInt(routeDelta.undMax), JSBI.BigInt(routeDelta.curMax)).toString()
+  }, [routeDelta])
+
+  return tryFormatAmount(absolute(payFormattedAmount ?? ''), payCurrency)
 }
