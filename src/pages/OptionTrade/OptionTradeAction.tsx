@@ -23,6 +23,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { CurrencyAmount } from '@uniswap/sdk'
 import { OptionField } from '../Swap'
+import { useCurrencyBalance } from '../../state/wallet/hooks'
 //import { ChainId, WETH } from '@uniswap/sdk'
 //import { useDerivedMintInfo } from 'state/mint/hooks'
 
@@ -275,6 +276,8 @@ function Info({
   const { chainId } = useActiveWeb3React()
   const callTotal = useTotalSupply(option?.call?.token)
   const putTotal = useTotalSupply(option?.put?.token)
+  const undTotal = useCurrencyBalance(option?.call?.token.address, option?.underlying ?? undefined)
+  const curTotal = useCurrencyBalance(option?.put?.token.address, option?.currency ?? undefined)
 
   return (
     <AppBody
@@ -311,6 +314,13 @@ function Info({
               <RowBetween>
                 <TYPE.darkGray>{'Underlying Asset:'}</TYPE.darkGray>
                 <TYPE.main>{(option && option?.underlying?.symbol) ?? placeholder}</TYPE.main>
+              </RowBetween>
+              <RowBetween>
+                <TYPE.darkGray>{'Underlying Ratio:'}</TYPE.darkGray>
+                <TYPE.main>
+                  {undTotal ? undTotal.toSignificant(2).toString() : '-'} :{' '}
+                  {curTotal ? curTotal.toSignificant(2).toString() : '-'}
+                </TYPE.main>
               </RowBetween>
             </AutoColumn>
             <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
