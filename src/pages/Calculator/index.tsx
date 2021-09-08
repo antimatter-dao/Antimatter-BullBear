@@ -38,7 +38,6 @@ export default function Calculator() {
     debounce(() => {
       const res = calculateCallback(price, priceFloor, priceCap, totalCall, totalPut)
       res.then(res => {
-        console.log(999, res)
         res.priceCall && setPriceCall(tryFormatAmount(res.priceCall, ETHER)?.toFixed(6) ?? '')
         res.pricePut && setPricePut(tryFormatAmount(res.pricePut, ETHER)?.toFixed(6) ?? '')
       })
