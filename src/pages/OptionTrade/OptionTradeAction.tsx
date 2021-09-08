@@ -313,13 +313,15 @@ function Info({
               </RowBetween>
               <RowBetween>
                 <TYPE.darkGray>{'Underlying Asset:'}</TYPE.darkGray>
-                <TYPE.main>{(option && option?.underlying?.symbol) ?? placeholder}</TYPE.main>
+                <TYPE.main>
+                  {(option && option?.underlying?.symbol) ?? placeholder}, {option && option?.currency?.symbol}
+                </TYPE.main>
               </RowBetween>
               <RowBetween>
-                <TYPE.darkGray>{'Underlying Ratio:'}</TYPE.darkGray>
+                <TYPE.darkGray>{'Underlying Asset Ratio:'}</TYPE.darkGray>
                 <TYPE.main>
-                  {undTotal ? undTotal.toSignificant(2).toString() : '-'} :{' '}
-                  {curTotal ? curTotal.toSignificant(2).toString() : '-'}
+                  {undTotal ? undTotal.toSignificant(2).toString() + option?.underlying?.symbol : '-'} :{' '}
+                  {curTotal ? curTotal.toSignificant(2).toString() + option?.currency?.symbol : '-'}
                 </TYPE.main>
               </RowBetween>
             </AutoColumn>
