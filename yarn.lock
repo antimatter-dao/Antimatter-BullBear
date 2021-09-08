@@ -2221,6 +2221,13 @@
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.5.tgz#dcce4430e64b443ba8945f0290fb564ad5bac6dd"
 
+"@types/lodash.debounce@^4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@types/lodash.debounce/-/lodash.debounce-4.0.6.tgz#c5a2326cd3efc46566c47e4c0aa248dc0ee57d60"
+  integrity sha512-4WTmnnhCfDvvuLMaF3KV4Qfki93KebocUF45msxhYyjMttZDQYzHkO639ohhk8+oco2cluAFL3t5+Jn4mleylQ==
+  dependencies:
+    "@types/lodash" "*"
+
 "@types/lodash.flatmap@^4.5.6":
   version "4.5.6"
   resolved "https://registry.yarnpkg.com/@types/lodash.flatmap/-/lodash.flatmap-4.5.6.tgz#5f1ea80cebe403f0fbfcc1b5ad75cd09dd8b5785"
@@ -8999,6 +9006,11 @@ lodash._reinterpolate@^3.0.0:
 lodash.camelcase@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
+
+lodash.debounce@^4.0.8:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
+  integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
 
 lodash.flatmap@^4.5.0:
   version "4.5.0"
