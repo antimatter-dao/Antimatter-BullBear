@@ -30,6 +30,8 @@ export interface RouteDelta {
   curMax: string
   totalUnd: string
   totalCur: string
+  undPathAddresses: string[] | undefined
+  curPathAddresses: string[] | undefined
 }
 
 export function useSwapState(): AppState['swap'] {
@@ -328,7 +330,9 @@ export function useRouteDelta(
     undMax: delta.undMax.toString(),
     curMax: delta.curMax.toString(),
     totalCur: delta.totalCur.toString(),
-    totalUnd: delta.totalUnd.toString()
+    totalUnd: delta.totalUnd.toString(),
+    undPathAddresses: undTrade,
+    curPathAddresses: curTrade
   }
 }
 

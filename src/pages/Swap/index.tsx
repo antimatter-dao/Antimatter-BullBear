@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, JSBI, Token, Trade, WETH } from '@uniswap/sdk'
+import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 // import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -26,13 +26,7 @@ import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallbac
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import { useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks'
 import { Auction } from '../../state/swap/actions'
-import {
-  tryFormatAmount,
-  tryParseAmount,
-  useDefaultsFromURLSearch,
-  useOptionSwapInfo,
-  useRouteDelta
-} from '../../state/swap/hooks'
+import { tryParseAmount, useDefaultsFromURLSearch, useOptionSwapInfo } from '../../state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
@@ -40,7 +34,7 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import { BodyWrapper } from '../AppBody'
 import Loader from '../../components/Loader'
 //import { isTradeBetter } from 'utils/trades'
-import { absolute, Option, useDerivedStrategyInfo } from '../../state/market/hooks'
+import { Option, useDerivedStrategyInfo, usePayCurrencyAmount, useSwapInfo } from '../../state/market/hooks'
 import { TypeRadioButton } from '../../components/MarketStrategy/TypeRadioButton'
 import { ANTIMATTER_ROUTER_ADDRESS, INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
@@ -53,7 +47,7 @@ enum Field {
   PAY = 'PAY'
 }
 
-enum OptionField {
+export enum OptionField {
   CALL = 'CALL',
   PUT = 'PUT'
 }
@@ -64,7 +58,6 @@ const RadioButtonWrapper = styled(AutoColumn)`
     grid-template-columns: 50% 50%;
   }
 `
-
 const SwapAppBody = styled(BodyWrapper)`
   border-color: ${({ theme }) => theme.text4};
   min-height: 100%;
@@ -75,10 +68,16 @@ const SwapAppBody = styled(BodyWrapper)`
   `}
 `
 
-export default function Swap({ option }: { option: Option | undefined }) {
+export default function Swap({
+  option,
+  handleOptionType
+}: {
+  option: Option | undefined
+  handleOptionType: (option: string) => void
+}) {
   const loadedUrlParams = useDefaultsFromURLSearch()
   // const history = useHistory()
-  const { chainId, account } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
 
   const theme = useTheme()
 
@@ -267,61 +266,60 @@ export default function Swap({ option }: { option: Option | undefined }) {
 
   const undPriceImpactSeverity = warningSeverity(undPriceImpact)
 
-  const dUnd = delta?.dUnd
-  const dCur = delta?.dCur
+  // const dUnd = delta?.dUnd
+  // const dCur = delta?.dCur
 
-  const undTradeAddresses: string[] | undefined = useMemo(() => {
-    if (dUnd?.toString() === '0') {
-      return underlying?.address ? [underlying.address] : undefined
-    }
-    if (payCurrency?.symbol?.toUpperCase() === 'ETH' && underlying?.symbol?.toUpperCase() === 'WETH') {
-      return [WETH[chainId ?? 3].address]
-    }
-    if (underlying?.symbol === payCurrency?.symbol) {
-      return underlying?.address ? [underlying.address] : undefined
-    }
-    if (underlyingTrade) {
-      return dUnd?.toString()[0] === '-'
-        ? underlyingTrade.route.path.map(({ address }) => address)
-        : underlyingTrade.route.path.reverse().map(({ address }) => address)
-    }
-    return undefined
-  }, [chainId, dUnd, payCurrency, underlying, underlyingTrade])
+  // const undTradeAddresses: string[] | undefined = useMemo(() => {
+  //   if (dUnd?.toString() === '0') {
+  //     return underlying?.address ? [underlying.address] : undefined
+  //   }
+  //   if (payCurrency?.symbol?.toUpperCase() === 'ETH' && underlying?.symbol?.toUpperCase() === 'WETH') {
+  //     return [WETH[chainId ?? 3].address]
+  //   }
+  //   if (underlying?.symbol === payCurrency?.symbol) {
+  //     return underlying?.address ? [underlying.address] : undefined
+  //   }
+  //   if (underlyingTrade) {
+  //     return dUnd?.toString()[0] === '-'
+  //       ? underlyingTrade.route.path.map(({ address }) => address)
+  //       : underlyingTrade.route.path.reverse().map(({ address }) => address)
+  //   }
+  //   return undefined
+  // }, [chainId, dUnd, payCurrency, underlying, underlyingTrade])
 
-  const curTradeAddresses: string[] | undefined = useMemo(() => {
-    if (dCur?.toString() === '0') {
-      return currency?.address ? [currency.address] : undefined
-    }
-    if (payCurrency?.symbol?.toUpperCase() === 'ETH' && currency?.symbol?.toUpperCase() === 'WETH') {
-      return [WETH[chainId ?? 3].address]
-    }
-    if (currency?.symbol === payCurrency?.symbol) {
-      return currency?.address ? [currency?.address] : undefined
-    }
-    if (currencyTrade) {
-      return dCur?.toString()[0] === '-'
-        ? currencyTrade.route.path.map(({ address }) => address)
-        : currencyTrade.route.path.reverse().map(({ address }) => address)
-    }
-    return
-  }, [payCurrency, currency, currencyTrade, chainId, dCur])
-  console.log('address--->', underlyingTrade, currencyTrade)
-  const routerDelta = useRouteDelta(
+  // const curTradeAddresses: string[] | undefined = useMemo(() => {
+  //   if (dCur?.toString() === '0') {
+  //     return currency?.address ? [currency.address] : undefined
+  //   }
+  //   if (payCurrency?.symbol?.toUpperCase() === 'ETH' && currency?.symbol?.toUpperCase() === 'WETH') {
+  //     return [WETH[chainId ?? 3].address]
+  //   }
+  //   if (currency?.symbol === payCurrency?.symbol) {
+  //     return currency?.address ? [currency?.address] : undefined
+  //   }
+  //   if (currencyTrade) {
+  //     return dCur?.toString()[0] === '-'
+  //       ? currencyTrade.route.path.map(({ address }) => address)
+  //       : currencyTrade.route.path.reverse().map(({ address }) => address)
+  //   }
+  //   return
+  // }, [payCurrency, currency, currencyTrade, chainId, dCur])
+
+  const routerDelta = useSwapInfo(
     option,
-    undTradeAddresses,
-    curTradeAddresses,
     optionType === OptionField.CALL
       ? auction === Auction.BUY
         ? formattedAmounts[Field.OPTION]
         : '-' + formattedAmounts[Field.OPTION]
       : '0',
-    option?.call?.token,
     optionType === OptionField.PUT
       ? auction === Auction.BUY
         ? formattedAmounts[Field.OPTION]
         : '-' + formattedAmounts[Field.OPTION]
       : '0',
-    option?.put?.token
+    underlying,
+    currency,
+    payCurrency
   )
 
   const payFormattedAmount = useMemo(() => {
@@ -329,7 +327,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
     return JSBI.add(JSBI.BigInt(routerDelta.undMax), JSBI.BigInt(routerDelta.curMax)).toString()
   }, [routerDelta])
 
-  const payCurrencyAmount = tryFormatAmount(absolute(payFormattedAmount ?? ''), payCurrency)
+  const payCurrencyAmount = usePayCurrencyAmount(routerDelta, payCurrency)
 
   const [approval, approveCallback] = useApproveCallback(payCurrencyAmount, ANTIMATTER_ROUTER_ADDRESS)
 
@@ -347,7 +345,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
     approval === ApprovalState.PENDING ||
     (approvalSubmitted && approval === ApprovalState.APPROVED)
 
-  const noRoute = !undTradeAddresses || !curTradeAddresses
+  const noRoute = !routerDelta?.undPathAddresses || !routerDelta.curPathAddresses
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
@@ -355,8 +353,6 @@ export default function Swap({ option }: { option: Option | undefined }) {
     option,
     callAmount,
     putAmount,
-    undTradeAddresses,
-    curTradeAddresses,
     routerDelta
   )
 
@@ -445,7 +441,7 @@ export default function Swap({ option }: { option: Option | undefined }) {
       />
       <SwapPoolTabs active={'option_trading'} />
       <SwapAppBody isCard>
-        {/* <SwapHeader /> */}
+        {/*<SwapHeader /> */}
         <Wrapper id="swap-page" style={{ padding: '1rem 0' }}>
           <ConfirmSwapModal
             auction={auction as Auction}
@@ -486,7 +482,10 @@ export default function Swap({ option }: { option: Option | undefined }) {
                   { label: '− Put Token', option: OptionField.PUT }
                 ]}
                 selected={optionType}
-                onCheck={(option: string) => setOptionType(option)}
+                onCheck={(option: string) => {
+                  handleOptionType(option)
+                  setOptionType(option)
+                }}
               />
             </RadioButtonWrapper>
             <CurrencyInputPanel

@@ -93,7 +93,7 @@ export default function SwapModalFooter({
       <AutoRow>
         <ButtonError
           onClick={onConfirm}
-          disabled={disabledConfirm}
+          disabled={true || disabledConfirm}
           style={{ margin: '10px 0 0 0' }}
           id="confirm-swap-or-send"
         >

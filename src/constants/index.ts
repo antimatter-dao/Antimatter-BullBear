@@ -2,7 +2,6 @@ import { ChainId, JSBI, Percent, Token, WETH } from '@uniswap/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
-import { OptionTypeData } from '../state/market/hooks'
 
 export const ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 
@@ -54,59 +53,12 @@ export const MATTER_CALL = new Token(
   'AntiMatter.Finance MATTER Perpetual Call Option Floor $1 Cap $100'
 )
 
-export const MATTER_OPTION: { [chainId in ChainId]: OptionTypeData | null } = {
-  [ChainId.MAINNET]: {
-    id: '0',
-    callAddress: '0xD5eE7F431fFB7F03a19CFAE69A1E75a450Ec2021',
-    putAddress: '0xc72813b0BC5125A419C6CC1b4e4Cf3030E60657e',
-    callBalance: '',
-    putBalance: '',
-    callTotal: '',
-    putTotal: '',
-    underlying: '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F',
-    currency: USDT.address,
-    priceFloor: '1000000',
-    priceCap: '100000000',
-    underlyingSymbol: 'MATTER',
-    underlyingDecimals: '18',
-    currencySymbol: 'USDT',
-    currencyDecimals: '6'
-  },
-  [ChainId.ROPSTEN]: {
-    id: '0',
-    callAddress: '0xF87aC9826e7CBceAE26E5Febaedc1e70e864F9A6',
-    putAddress: '0xD8760634Ee64139637010Ca9efb9810BF3Fc90AD',
-    callBalance: '',
-    putBalance: '',
-    callTotal: '',
-    putTotal: '',
-    underlying: '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F',
-    currency: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    priceFloor: '1000000',
-    priceCap: '100000000',
-    underlyingSymbol: 'MATTER',
-    underlyingDecimals: '18',
-    currencySymbol: 'DAI',
-    currencyDecimals: '18'
-  },
-  [ChainId.RINKEBY]: null,
-  [ChainId.KOVAN]: null,
-  [ChainId.GÖRLI]: null
-}
-
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 13
 export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320
 export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LENGTH_IN_BLOCKS
 
 export const GOVERNANCE_ADDRESS = '0x78fC5460737EB07Ce9e7d954B294ecA7E6203D19'
-export const GOVERNANCE_TOKEN = new Token(
-  ChainId.ROPSTEN,
-  '0x6669Ee1e6612E1B43eAC84d4CB9a94Af0A98E740',
-  18,
-  'MAT',
-  'Mat'
-)
 
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
