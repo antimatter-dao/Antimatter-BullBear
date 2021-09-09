@@ -3,11 +3,11 @@ import { ChevronLeft } from 'react-feather'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import OptionSwap from './OptionSwap'
-import AppBody from 'pages/AppBody'
-import { CustomLightSpinner, ExternalLink, TYPE } from 'theme'
+import AppBody, { BodyWrapper } from 'pages/AppBody'
+import { CustomLightSpinner, ExternalLink, TYPE, HideSmall, ShowSmall } from 'theme'
 //import Liquidity from './Liquidity'
 import useTheme from 'hooks/useTheme'
-import { AutoRow, RowBetween, RowFixed } from 'components/Row'
+import { RowBetween, RowFixed } from 'components/Row'
 import { ButtonEmpty } from 'components/Button'
 import { AutoColumn } from 'components/Column'
 //import { USDT } from '../../constants'
@@ -27,14 +27,30 @@ import { useCurrencyBalance } from '../../state/wallet/hooks'
 //import { ChainId, WETH } from '@uniswap/sdk'
 //import { useDerivedMintInfo } from 'state/mint/hooks'
 
+enum TABS {
+  SWAP = 'swap',
+  LIQUIDITY = 'liquidity',
+  INFO = 'info'
+}
+
 const Wrapper = styled.div`
-  min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
+  min-height: calc(100vh - ${({ theme }) => theme.headerHeight + ' - 100px'});
   width: 100%;
   padding: 0 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+  min-height: calc(100vh - ${({ theme }) => theme.headerHeight + ' - ' + theme.mobileHeaderHeight});
+  padding: 0 24px;
+  `}
 `
 
 const ActionWrapper = styled.div`
   margin-top: 10px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  width: 100%;
+  `}
 `
 
 const Elevate = styled.div`
@@ -93,6 +109,26 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
   };
 `
 
+const StyledAppBody = styled(BodyWrapper)<{ tab: TABS }>`
+  max-width: 1114px;
+  padding: 0;
+  background: black;
+  border-color: ${({ tab }) => (tab === TABS.SWAP ? '#727272' : 'rgb(114, 114, 114)')};
+  width: 1114px;
+  overflow: hidden;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  max-width: 100%;
+  width: 100%;
+  max-height: unset;
+`}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  min-height:100%;
+  padding: 0;
+  flex-grow: 1;
+`}
+`
+
 export const StyledExternalLink = styled(ExternalLink)`
   text-decoration: none;
   font-size: 12px;
@@ -102,11 +138,37 @@ export const StyledExternalLink = styled(ExternalLink)`
   }
 `
 
-enum TABS {
-  SWAP = 'swap',
-  LIQUIDITY = 'liquidity',
-  INFO = 'info'
-}
+const InfoAppBody = styled(BodyWrapper)`
+  max-width: 1116px;
+
+  min-height: 402px;
+  margin: -1px;
+  border-color: transparent
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 48px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+    padding:20px;
+  `}
+`
+
+const InfoAppBodyInner = styled(BodyWrapper)`
+  min-width: 550px;
+  width: 50%;
+  background: transparent
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+  min-width: unset;
+  width: 100%;
+
+  `};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  border: none;
+  background: transparent;
+  `};
+`
 
 export default function OptionTradeAction({ optionId }: { optionId?: string }) {
   //const { chainId } = useActiveWeb3React()
@@ -135,10 +197,10 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
     <>
       {optionId ? (
         <Wrapper>
-          <RowBetween style={{ padding: '27px 0' }}>
+          <RowBetween style={{ padding: '27px 0', maxWidth: 1116 }}>
             <ButtonEmpty width="auto" color={theme.text1} onClick={handleBack}>
               <ChevronLeft />
-              Go Back
+              <HideSmall>Go Back</HideSmall>
             </ButtonEmpty>
 
             <AutoColumn justify="center" gap="8px">
@@ -166,38 +228,31 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                 </StyledExternalLink>
               )}
             </AutoColumn>
-
-            <div />
+            <HideSmall>
+              <div style={{ width: 113 }} />
+            </HideSmall>
+            <ShowSmall>
+              <div style={{ width: 54 }} />
+            </ShowSmall>
           </RowBetween>
-          <AutoRow justify="center">
-            <ActionWrapper>
-              <SwitchTab tab={tab} setTab={handleSetTab} />
-              <AppBody
-                maxWidth="1114px"
-                style={{
-                  padding: 0,
-                  background: 'black',
-                  borderColor: tab === TABS.SWAP ? theme.text5 : 'rgb(114, 114, 114)',
-                  width: 1114,
-                  overflow: 'hidden'
-                }}
-              >
-                <Elevate>
-                  {tab === TABS.SWAP && (
-                    <OptionSwap
-                      optionType={optionType}
-                      handleOptionType={setOptionType}
-                      callPrice={callPrice}
-                      putPrice={putPrice}
-                      option={option}
-                    />
-                  )}
-                  {/*{tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}*/}
-                  {tab === TABS.INFO && <Info callPrice={callPrice} putPrice={putPrice} option={option} />}
-                </Elevate>
-              </AppBody>
-            </ActionWrapper>
-          </AutoRow>
+          <ActionWrapper>
+            <SwitchTab tab={tab} setTab={handleSetTab} />
+            <StyledAppBody tab={tab}>
+              <Elevate>
+                {tab === TABS.SWAP && (
+                  <OptionSwap
+                    optionType={optionType}
+                    handleOptionType={setOptionType}
+                    callPrice={callPrice}
+                    putPrice={putPrice}
+                    option={option}
+                  />
+                )}
+                {/*{tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}*/}
+                {tab === TABS.INFO && <Info callPrice={callPrice} putPrice={putPrice} option={option} />}
+              </Elevate>
+            </StyledAppBody>
+          </ActionWrapper>
         </Wrapper>
       ) : (
         <AppBody style={{ minHeight: '402px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -253,7 +308,7 @@ function Tab({
         </svg>
       ) : (
         <svg width="229" height="43" viewBox="0 0 229 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 42H12.8469C25.0603 42 36.2086 35.0479 41.5827 24.0804L44.1114 18.9196C49.4854 7.95208 60.6338 1 72.8472 1H161.754C169.37 1 176.325 5.32574 179.693 12.157L188.904 30.843C192.272 37.6742 199.227 42 206.843 42H228.5" />
+          <path d="M12.8469 42C25.0603 42 36.2086 35.0479 41.5827 24.0804L44.1114 18.9196C49.4854 7.95208 60.6338 1 72.8472 1H161.754C169.37 1 176.325 5.32574 179.693 12.157L188.904 30.843C192.272 37.6742 199.227 42 206.843 42" />
         </svg>
       )}
       <TYPE.smallHeader fontSize={18}>{children}</TYPE.smallHeader>
@@ -272,7 +327,7 @@ function Info({
   putPrice: CurrencyAmount | undefined
   placeholder?: string
 }) {
-  const theme = useTheme()
+  // const theme = useTheme()
   const { chainId } = useActiveWeb3React()
   const callTotal = useTotalSupply(option?.call?.token)
   const putTotal = useTotalSupply(option?.put?.token)
@@ -280,94 +335,80 @@ function Info({
   const curTotal = useCurrencyBalance(option?.put?.token.address, option?.currency ?? undefined)
 
   return (
-    <AppBody
-      maxWidth="1116px"
-      style={{
-        width: 1116,
-        minHeight: '402px',
-        margin: '-1px',
-        borderColor: theme.text4,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 48
-      }}
-    >
-      <div>
-        <TYPE.smallHeader style={{ marginBottom: 20 }} fontSize={18}>
-          Option Information
-        </TYPE.smallHeader>
-        <AppBody style={{ minWidth: 550, width: '50%', background: 'transparent' }}>
-          <AutoColumn style={{ width: '100%' }} justify="center" gap="32px">
-            <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
-              <RowBetween>
-                <TYPE.darkGray>{'Option Price Range:'}</TYPE.darkGray>
-                <TYPE.main>
-                  {option &&
-                    `$${tryFormatAmount(option?.priceFloor, option?.currency ?? undefined)
-                      ?.toExact()
-                      .toString() ?? placeholder} ~ $${tryFormatAmount(option?.priceCap, option?.currency ?? undefined)
-                      ?.toExact()
-                      .toString() ?? placeholder}`}
-                </TYPE.main>
-              </RowBetween>
-              <RowBetween>
-                <TYPE.darkGray>{'Underlying Asset:'}</TYPE.darkGray>
-                <TYPE.main>
-                  {(option && option?.underlying?.symbol) ?? placeholder}, {option && option?.currency?.symbol}
-                </TYPE.main>
-              </RowBetween>
-              <RowBetween>
-                <TYPE.darkGray>{'Underlying Asset Ratio:'}</TYPE.darkGray>
-                <TYPE.main>
-                  {undTotal ? undTotal.toSignificant(2).toString() + option?.underlying?.symbol : '-'} :{' '}
-                  {curTotal ? curTotal.toSignificant(2).toString() + option?.currency?.symbol : '-'}
-                </TYPE.main>
-              </RowBetween>
-            </AutoColumn>
-            <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
-              <RowBetween>
-                <TYPE.darkGray>{'Call Token Contact Address:'}</TYPE.darkGray>
-                <ExternalLink
-                  href={option?.call && chainId ? getEtherscanLink(chainId, option?.call?.token.address, 'token') : ''}
-                >
-                  <TYPE.main>
-                    {option && option?.call?.token.address ? shortenAddress(option.call?.token.address) : placeholder}
-                  </TYPE.main>
-                </ExternalLink>
-              </RowBetween>
-              <RowBetween>
-                <TYPE.darkGray>{'Call Token Issuance:'}</TYPE.darkGray>
-                <TYPE.main>{callTotal?.toFixed(2).toString() ?? placeholder}</TYPE.main>
-              </RowBetween>
-              <RowBetween>
-                <TYPE.darkGray>{'Call Token Market Price:'}</TYPE.darkGray>
-                <TYPE.main>{`$${callPrice ? callPrice.toSignificant(6) : placeholder}`}</TYPE.main>
-              </RowBetween>
-            </AutoColumn>
-            <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
-              <RowBetween>
-                <TYPE.darkGray>{'Put Token Contact Address:'}</TYPE.darkGray>
-                <ExternalLink
-                  href={option?.put && chainId ? getEtherscanLink(chainId, option?.put?.token.address, 'token') : ''}
-                >
-                  <TYPE.main>
-                    {option && option?.put?.token.address ? shortenAddress(option.put.token.address) : placeholder}
-                  </TYPE.main>
-                </ExternalLink>
-              </RowBetween>
-              <RowBetween>
-                <TYPE.darkGray>{'Put Token Issuance:'}</TYPE.darkGray>
-                <TYPE.main>{putTotal?.toFixed(2).toString() ?? placeholder}</TYPE.main>
-              </RowBetween>
-              <RowBetween>
-                <TYPE.darkGray>{'Put Token Market Price:'}</TYPE.darkGray>
-                <TYPE.main>{`$${putPrice ? putPrice.toSignificant(6) : placeholder}`}</TYPE.main>
-              </RowBetween>
-            </AutoColumn>
+    <InfoAppBody>
+      <TYPE.smallHeader style={{ marginBottom: 20 }} fontSize={18}>
+        Option Information
+      </TYPE.smallHeader>
+      <InfoAppBodyInner>
+        <AutoColumn style={{ width: '100%' }} justify="center" gap="32px">
+          <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
+            <RowBetween>
+              <TYPE.darkGray>{'Option Price Range:'}</TYPE.darkGray>
+              <TYPE.main>
+                {option &&
+                  `$${tryFormatAmount(option?.priceFloor, option?.currency ?? undefined)
+                    ?.toExact()
+                    .toString() ?? placeholder} ~ $${tryFormatAmount(option?.priceCap, option?.currency ?? undefined)
+                    ?.toExact()
+                    .toString() ?? placeholder}`}
+              </TYPE.main>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.darkGray>{'Underlying Asset:'}</TYPE.darkGray>
+              <TYPE.main>
+                {(option && option?.underlying?.symbol) ?? placeholder}, {option && option?.currency?.symbol}
+              </TYPE.main>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.darkGray>{'Underlying Asset Ratio:'}</TYPE.darkGray>
+              <TYPE.main>
+                {undTotal ? undTotal.toSignificant(2).toString() + option?.underlying?.symbol : '-'} :{' '}
+                {curTotal ? curTotal.toSignificant(2).toString() + option?.currency?.symbol : '-'}
+              </TYPE.main>
+            </RowBetween>
           </AutoColumn>
-        </AppBody>
-      </div>
-    </AppBody>
+          <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
+            <RowBetween>
+              <TYPE.darkGray>{'Call Token Contact Address:'}</TYPE.darkGray>
+              <ExternalLink
+                href={option?.call && chainId ? getEtherscanLink(chainId, option?.call?.token.address, 'token') : ''}
+              >
+                <TYPE.main>
+                  {option && option?.call?.token.address ? shortenAddress(option.call?.token.address) : placeholder}
+                </TYPE.main>
+              </ExternalLink>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.darkGray>{'Call Token Issuance:'}</TYPE.darkGray>
+              <TYPE.main>{callTotal?.toFixed(2).toString() ?? placeholder}</TYPE.main>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.darkGray>{'Call Token Market Price:'}</TYPE.darkGray>
+              <TYPE.main>{`$${callPrice ? callPrice.toSignificant(6) : placeholder}`}</TYPE.main>
+            </RowBetween>
+          </AutoColumn>
+          <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
+            <RowBetween>
+              <TYPE.darkGray>{'Put Token Contact Address:'}</TYPE.darkGray>
+              <ExternalLink
+                href={option?.put && chainId ? getEtherscanLink(chainId, option?.put?.token.address, 'token') : ''}
+              >
+                <TYPE.main>
+                  {option && option?.put?.token.address ? shortenAddress(option.put.token.address) : placeholder}
+                </TYPE.main>
+              </ExternalLink>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.darkGray>{'Put Token Issuance:'}</TYPE.darkGray>
+              <TYPE.main>{putTotal?.toFixed(2).toString() ?? placeholder}</TYPE.main>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.darkGray>{'Put Token Market Price:'}</TYPE.darkGray>
+              <TYPE.main>{`$${putPrice ? putPrice.toSignificant(6) : placeholder}`}</TYPE.main>
+            </RowBetween>
+          </AutoColumn>
+        </AutoColumn>
+      </InfoAppBodyInner>
+    </InfoAppBody>
   )
 }

@@ -15,6 +15,19 @@ import useTheme from '../../hooks/useTheme'
 
 const Wrapper = styled.div`
   display: flex;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  flex-direction: column;
+  `}
+`
+
+const GraphWrapper = styled.div`
+  margin: 20px 40px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  width: auto
+  `}
 `
 
 // const Chart = styled.div`
@@ -183,7 +196,7 @@ export default function OptionSwap({
       {/*{networkErrorModal}*/}
       <Wrapper>
         <Swap handleOptionType={handleOptionType} option={option} />
-        <div style={{ margin: '20px 40px', width: '100%', height: '100%', position: 'relative' }}>
+        <GraphWrapper>
           <TYPE.subHeader style={{ position: 'absolute', right: 0, top: 7 }} fontSize={18} color={theme.primary1}>
             Current price: ${' '}
             {optionType === OptionField.CALL
@@ -207,7 +220,7 @@ export default function OptionSwap({
           >
             Price Chart Coming Soon <Dots />
           </OutlineCard>
-        </div>
+        </GraphWrapper>
         {/*<ChartWrapper>*/}
         {/*  <ButtonGroup>*/}
         {/*    <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>*/}

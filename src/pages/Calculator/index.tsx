@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { ETHER } from '@uniswap/sdk'
 import styled from 'styled-components'
-
+import debounce from 'lodash.debounce'
 import AppBody, { BodyHeader } from 'pages/AppBody'
 import { AutoColumn } from 'components/Column'
 import { TYPE } from 'theme'
 import { RowBetween } from 'components/Row'
 import NumberInputPanel from 'components/NumberInputPanel'
+import { useCalculatorCallback } from 'hooks/useCalculatorCallback'
+import { tryFormatAmount } from 'state/swap/hooks'
 
 const InputWrapper = styled(RowBetween)`
   & > div {
@@ -21,6 +24,26 @@ export const Divider = styled.div`
 `
 
 export default function Calculator() {
+  const [price, setPrice] = useState('1')
+  const [priceFloor, setPriceFloor] = useState('1')
+  const [priceCap, setPriceCap] = useState('1')
+  const [totalCall, setTotalCall] = useState('1')
+  const [totalPut, setTotalPut] = useState('1')
+  const [priceCall, setPriceCall] = useState('')
+  const [pricePut, setPricePut] = useState('')
+  const { callback: calculateCallback } = useCalculatorCallback()
+
+  useEffect(() => {
+    if (!calculateCallback) return
+    debounce(() => {
+      const res = calculateCallback(price, priceFloor, priceCap, totalCall, totalPut)
+      res.then(res => {
+        res.priceCall && setPriceCall(tryFormatAmount(res.priceCall, ETHER)?.toFixed(6) ?? '')
+        res.pricePut && setPricePut(tryFormatAmount(res.pricePut, ETHER)?.toFixed(6) ?? '')
+      })
+    }, 500)()
+  }, [calculateCallback, price, priceCap, priceFloor, totalCall, totalPut])
+
   return (
     <AppBody maxWidth="560px">
       <AutoColumn gap="20px">
@@ -34,48 +57,53 @@ export default function Calculator() {
         <Divider />
         <AutoColumn gap="14px">
           <TYPE.smallHeader>Input</TYPE.smallHeader>
+          <NumberInputPanel
+            label="Underlying Currency Price"
+            onUserInput={price => setPrice(price)}
+            value={price}
+            showMaxButton={false}
+            id="price"
+            unit="USDT"
+            hideBalance
+          />
           <InputWrapper>
             <NumberInputPanel
               label="Price Ceiling"
-              onUserInput={() => {}}
-              value={''}
+              onUserInput={priceCap => setPriceCap(priceCap)}
+              value={priceCap}
               showMaxButton={false}
               id="priceCeiling"
               unit="USDT"
               hideBalance
-              disabled
             />
             <NumberInputPanel
               label="Price Floor"
-              onUserInput={() => {}}
-              value={''}
+              onUserInput={priceFloor => setPriceFloor(priceFloor)}
+              value={priceFloor}
               showMaxButton={false}
               id="pricefloor"
               unit="USDT"
               hideBalance
-              disabled
             />
           </InputWrapper>
           <InputWrapper>
             <NumberInputPanel
               label="Call Issuance"
-              onUserInput={() => {}}
-              value={''}
+              onUserInput={totalCall => setTotalCall(totalCall)}
+              value={totalCall}
               showMaxButton={false}
               id="callIssuance"
               unit="Shares"
               hideBalance
-              disabled
             />
             <NumberInputPanel
-              label="Price Issuance"
-              onUserInput={() => {}}
-              value={''}
+              label="Put Issuance"
+              onUserInput={totalPut => setTotalPut(totalPut)}
+              value={totalPut}
               showMaxButton={false}
-              id="priceIssuance"
+              id="putIssuance"
               unit="Shares"
               hideBalance
-              disabled
             />
           </InputWrapper>
         </AutoColumn>
@@ -86,7 +114,7 @@ export default function Calculator() {
             <NumberInputPanel
               label="Price of Call token"
               onUserInput={() => {}}
-              value={''}
+              value={priceCall}
               showMaxButton={false}
               id="callPrice"
               unit="USDT"
@@ -96,7 +124,7 @@ export default function Calculator() {
             <NumberInputPanel
               label="Price of Put token"
               onUserInput={() => {}}
-              value={''}
+              value={pricePut}
               showMaxButton={false}
               id="putPrice"
               unit="USDT"
