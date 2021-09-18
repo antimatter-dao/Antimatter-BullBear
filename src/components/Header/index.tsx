@@ -46,7 +46,7 @@ export const tabs: Tab[] = [
       { title: 'Github', link: 'https://github.com/antimatter-finance' },
       {
         title: 'Auditing Report',
-        link: 'https://github.com/antimatter-fainance/antimatter-finance.github.io/blob/main/audit_en.pdf'
+        link: 'https://github.com/antimatter-finance/antimatter-assets/blob/main/PeckShield-Audit-Report-AntimatterFinance-v1.0.pdf'
       },
       {
         title: 'faq',
