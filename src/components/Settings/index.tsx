@@ -111,6 +111,11 @@ const OverlayWrapper = styled.div`
   left: 0;
   z-index: 2;
   background-color: rgba(0, 0, 0, 0.7);
+
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+   height:calc(100vh - ${theme.mobileHeaderHeight + ' - ' + theme.headerHeight});
+   top: ${theme.mobileHeaderHeight}
+   `}
 `
 
 const MenuFlyout = styled.span`
@@ -126,6 +131,9 @@ const MenuFlyout = styled.span`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: 18.125rem;
+    border-radius: 42px 42px 0 0;
+    width: 100%;
+    padding-bottom: 50px;
   `};
 `
 
