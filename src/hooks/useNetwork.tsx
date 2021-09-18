@@ -4,11 +4,15 @@ import Modal from 'components/Modal'
 import { TransactionErrorContent } from 'components/TransactionConfirmationModal'
 import { AnimatedImg, AnimatedWrapper } from 'theme'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
-import { HttpHandlingFunctions } from 'utils/option/httpRequests'
+export interface HttpHandlingFunctions {
+  errorFunction: () => void
+  pendingFunction: () => void
+  pendingCompleteFunction: () => void
+}
 
-const Overlay = styled.div<{ height?: string }>`
+const Overlay = styled.div<{ height?: string; paddingTop?: string }>`
   position: absolute;
-  padding-top: 100px;
+  padding-top: ${({ paddingTop }) => paddingTop ?? '100px'};
   width: 100%;
   height: ${({ height }) => height ?? '300px'};
   background-color:${({ theme }) => theme.bg1}
@@ -25,7 +29,7 @@ const getHeight = () => {
 export function useNetwork(): {
   httpHandlingFunctions: HttpHandlingFunctions
   NetworkErrorModal: React.FC
-  NetworkPendingSpinner: React.FC
+  NetworkPendingSpinner: React.FC<{ paddingTop?: string }>
   wrapperId: string
 } {
   const [isOpen, setIsOpen] = useState(false)
@@ -43,10 +47,10 @@ export function useNetwork(): {
     [handleDismiss, isOpen]
   )
   const NetworkPendingSpinner = useCallback(
-    () => (
+    ({ paddingTop }: { paddingTop?: string }) => (
       <>
         {isSpinnerOpen && (
-          <Overlay height={getHeight()}>
+          <Overlay height={getHeight()} paddingTop={paddingTop}>
             <AnimatedWrapper>
               <AnimatedImg>
                 <img src={Loader} alt="loading-icon" />

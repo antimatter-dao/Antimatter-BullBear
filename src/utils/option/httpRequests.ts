@@ -3,6 +3,7 @@ import { UTCTimestamp } from 'lightweight-charts'
 import { OptionInterface } from 'pages/OptionTrade'
 import { OptionTypeData } from 'state/market/hooks'
 import { formatCallOption, formatPutOption, formatAndSplitOption, formatOptionType, formatDexTradeData } from './utils'
+import { HttpHandlingFunctions } from 'hooks/useNetwork'
 
 export interface Underlying {
   underlying: string
@@ -23,12 +24,6 @@ export interface DexTradeData {
   low: number
   open: number
   close: number
-}
-
-export interface HttpHandlingFunctions {
-  errorFunction: () => void
-  pendingFunction: () => void
-  pendingCompleteFunction: () => void
 }
 
 const domain = 'https://testapi.antimatter.finance'

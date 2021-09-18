@@ -53,6 +53,8 @@ export interface Option {
   currency: Token | undefined | null
   priceFloor: string | undefined
   priceCap: string | undefined
+  callToken: Token | undefined | null
+  putToken: Token | undefined | null
 }
 
 export function useOptionTypeCount(): number {
@@ -260,7 +262,9 @@ export function useOption(id: string | undefined): Option | undefined {
       call: callTokenAmount,
       put: putTokenAmount,
       underlying,
-      currency
+      currency,
+      callToken: call,
+      putToken: put
     }
   }, [attributesRes?.result, balancesRes, call, currency, put, underlying])
 }

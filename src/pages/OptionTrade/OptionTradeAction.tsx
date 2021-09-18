@@ -44,11 +44,16 @@ const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight + ' - ' + theme.mobileHeaderHeight});
   padding: 0 24px;
   `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding:0;
+  width: calc(100% + 2px);
+  margin: 0 -1px
+  `}
 `
 
 const ActionWrapper = styled.div`
   margin-top: 10px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
   width: 100%;
   `}
 `
@@ -71,8 +76,8 @@ const Circle = styled.div`
   border-radius: 50%;
   border: 1px solid ${({ theme }) => theme.bg5};
   background-color: ${({ theme }) => theme.bg4};
-  height: 32px;
-  width: 32px;
+  min-height: 32px;
+  min-width: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,7 +96,7 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
     z-index:${({ selected }) => (selected ? '2' : '0')}
     position: absolute;
     top: ${({ selected }) => (selected ? '0' : '-1px')};
-    left: 1.49px;
+    left: 0;
     stroke: ${({ theme, selected }) => (selected ? theme.text4 : theme.text5)};
     fill:${({ selected, theme, isFirstChild }) => (selected ? '#141414' : isFirstChild ? 'transparent' : theme.bg1)}
     stroke-width: 1px;
@@ -110,23 +115,24 @@ const TabStyle = styled.button<{ selected?: boolean; isFirstChild?: boolean }>`
 `
 
 const StyledAppBody = styled(BodyWrapper)<{ tab: TABS }>`
-  max-width: 1114px;
+  max-width: 1116px;
   padding: 0;
   background: black;
   border-color: ${({ tab }) => (tab === TABS.SWAP ? '#727272' : 'rgb(114, 114, 114)')};
-  width: 1114px;
+  width: 1116px;
   overflow: hidden;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
   max-width: 100%;
   width: 100%;
   max-height: unset;
+  margin-bottom: 50px
 `}
   ${({ theme }) => theme.mediaWidth.upToSmall`
   min-height:100%;
   padding: 0;
   flex-grow: 1;
-`}
+  border-bottom: 0;
+  `}
 `
 
 export const StyledExternalLink = styled(ExternalLink)`
@@ -136,6 +142,9 @@ export const StyledExternalLink = styled(ExternalLink)`
   :hover {
     color: ${({ theme }) => theme.text4};
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding-right:14px
+  `}
 `
 
 const InfoAppBody = styled(BodyWrapper)`
@@ -170,6 +179,23 @@ const InfoAppBodyInner = styled(BodyWrapper)`
   `};
 `
 
+const Title = styled(TYPE.subHeader)`
+  white-space: nowrap;
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    white-space: pre-wrap;
+    padding-right: 14px;
+    text-align: right
+  `};
+`
+
+const TitleWrapper = styled(AutoColumn)`
+  justify-items: center;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    justify-items: end;
+    padding-right: 14px
+  `};
+`
+
 export default function OptionTradeAction({ optionId }: { optionId?: string }) {
   //const { chainId } = useActiveWeb3React()
   const [tab, setTab] = useState(TABS.SWAP)
@@ -199,18 +225,20 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
         <Wrapper>
           <RowBetween style={{ padding: '27px 0', maxWidth: 1116 }}>
             <ButtonEmpty width="auto" color={theme.text1} onClick={handleBack}>
-              <ChevronLeft />
+              <ChevronLeft style={{ flexShrink: 0 }} />
               <HideSmall>Go Back</HideSmall>
             </ButtonEmpty>
 
-            <AutoColumn justify="center" gap="8px">
+            <TitleWrapper gap="8px">
               {option && (
                 <RowFixed>
-                  <Circle>
-                    <CurrencyLogo currency={option?.underlying ?? undefined} size="20px" />
-                  </Circle>
-                  <TYPE.subHeader fontSize={24} fontWeight={500}>
-                    {`${option?.underlying?.symbol} ($${tryFormatAmount(
+                  <HideSmall>
+                    <Circle>
+                      <CurrencyLogo currency={option?.underlying ?? undefined} size="20px" />
+                    </Circle>
+                  </HideSmall>
+                  <Title fontSize={24} fontWeight={500}>
+                    {`${option?.underlying?.symbol} ${'\n'}($${tryFormatAmount(
                       option?.priceFloor,
                       option?.currency ?? undefined
                     )
@@ -218,7 +246,12 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                       .toString()}~$${tryFormatAmount(option?.priceCap, option?.currency ?? undefined)
                       ?.toExact()
                       .toString()})`}
-                  </TYPE.subHeader>
+                  </Title>
+                  <ShowSmall>
+                    <Circle>
+                      <CurrencyLogo currency={option?.underlying ?? undefined} size="36px" />
+                    </Circle>
+                  </ShowSmall>
                 </RowFixed>
               )}
 
@@ -227,17 +260,14 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                   {option.currency.address}
                 </StyledExternalLink>
               )}
-            </AutoColumn>
+            </TitleWrapper>
             <HideSmall>
               <div style={{ width: 113 }} />
             </HideSmall>
-            <ShowSmall>
-              <div style={{ width: 54 }} />
-            </ShowSmall>
           </RowBetween>
           <ActionWrapper>
             <SwitchTab tab={tab} setTab={handleSetTab} />
-            <StyledAppBody tab={tab}>
+            <StyledAppBody tab={tab} isCard={false}>
               <Elevate>
                 {tab === TABS.SWAP && (
                   <OptionSwap
@@ -296,7 +326,7 @@ function Tab({
     <TabStyle selected={selected} isFirstChild={isFirstChild} onClick={onClick}>
       {isFirstChild ? (
         <svg width="157" height="76" viewBox="0 0 157 76" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M157 42V42C150.187 42 143.885 38.3867 140.443 32.5068L127.793 10.8964C124.205 4.76683 117.635 1 110.533 1H33C15.3269 1 1 15.3269 1 33V76" />
+          <path d="M157 42V41.5C150.187 42 143.885 38.3867 140.443 32.5068L127.793 10.8964C124.205 4.76683 117.635 1 110.533 1H33C15.3269 1 1 15.3269 1 33V76" />
           {!selected && (
             <path
               d="M157 42V42C150.187 42 143.885 38.3867 140.443 32.5068L127.793 10.8964C124.205 4.76683 117.635 1 110.533 1H33C15.3269 1 1 15.3269 1 33V42"
@@ -308,7 +338,13 @@ function Tab({
         </svg>
       ) : (
         <svg width="229" height="43" viewBox="0 0 229 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12.8469 42C25.0603 42 36.2086 35.0479 41.5827 24.0804L44.1114 18.9196C49.4854 7.95208 60.6338 1 72.8472 1H161.754C169.37 1 176.325 5.32574 179.693 12.157L188.904 30.843C192.272 37.6742 199.227 42 206.843 42" />
+          <path d="M12.8469 42C25.0603 42 36.2086 35.0479 41.5827 24.0804L44.1114 18.9196C49.4854 7.95208 60.6338 1 72.8472 1H161.754C169.37 1 176.325 5.32574 179.693 12.157L188.904 30.843C192.272 37.6742 199.227 42 206.843 41.5" />
+
+          <path
+            stroke="transparent"
+            fill={selected ? '#141414' : 'transparent'}
+            d="M12.8469 43C25.0603 42 36.2086 35.0479 41.5827 24.0804L44.1114 18.9196C49.4854 7.95208 60.6338 1 72.8472 1H161.754C169.37 1 176.325 5.32574 179.693 12.157L188.904 30.843C192.272 37.6742 199.227 42 206.843 43"
+          />
         </svg>
       )}
       <TYPE.smallHeader fontSize={18}>{children}</TYPE.smallHeader>

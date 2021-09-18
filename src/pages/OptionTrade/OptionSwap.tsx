@@ -1,24 +1,22 @@
 import React, { useCallback, useEffect, useState } from 'react'
-//import { Currency } from '@uniswap/sdk'
+import { CurrencyAmount } from '@uniswap/sdk'
+import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts'
 import styled from 'styled-components'
 import Swap, { OptionField } from '../Swap'
 import { Option } from '../../state/market/hooks'
-import { Dots } from 'components/swap/styleds'
-import { OutlineCard } from 'components/Card'
 import SwitchTab from 'components/SwitchTab'
-import { TYPE } from 'theme'
-import { CurrencyAmount } from '@uniswap/sdk'
-import useTheme from '../../hooks/useTheme'
 import { Axios } from 'utils/option/axios'
 import { useActiveWeb3React } from 'hooks'
 import { DexTradeData } from 'utils/option/httpRequests'
-import { currencyId } from 'utils/currencyId'
 import { useNetwork } from 'hooks/useNetwork'
+import { ButtonOutlinedPrimary } from 'components/Button'
+import { formatDexTradeData } from 'utils/option/utils'
 
 const Wrapper = styled.div`
   display: flex;
   ${({ theme }) => theme.mediaWidth.upToMedium`
   flex-direction: column;
+  gap: 20px
   `}
 `
 
@@ -27,48 +25,76 @@ const GraphWrapper = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
+  max-width: 559px;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-  width: auto
+  max-width: 50%;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  width: auto;
+  margin: 20px 24px 20px 14px;
+  max-width: unset
   `}
 `
 
-// const Chart = styled.div`
-//   background-color: #000;
-//   width: 100%;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   margin-top: 72px;
-//   margin-left: 3px;
-// `
+const Chart = styled.div`
+  background-color: #000;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 3px;
+`
 // const ChartWrapper = styled.div`
 //   width: 100%;
 //   height: 100%;
 //   margin-left: 3px;
 //   position: relative;
 // `
-//
-// const ButtonGroup = styled.div`
-//   width: 100%;
-//   position: absolute;
-//   display: flex;
-//   left: 30px;
-//   top: 15px;
-//   button:first-child {
-//     margin-right: 10px;
-//   }
-// `
-// const Button = styled(ButtonOutlinedPrimary)<{ isActive: boolean }>`
-//   flex-grow: 0;
-//   padding: 6px 14px;
-//   width: auto !important;
-//   :focus{
-//     border-color:${({ theme }) => theme.primary1}
-//     color:${({ theme }) => theme.primary1}
-//   }
-//   ${({ isActive, theme }) => (!isActive ? `border-color:${theme.text3}; color:${theme.text3};` : '')}
-//
-// `
+
+const ButtonGroup = styled.div`
+  width: 100%;
+  display: flex;
+  margin: 36px 0;
+  button:first-child {
+    margin-right: 10px;
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  button{
+    font-size: 14px
+  }
+  `}
+`
+const Button = styled(ButtonOutlinedPrimary)<{ isActive: boolean }>`
+  flex-grow: 0;
+  padding: 6px 14px;
+  width: auto !important;
+  :focus{
+    border-color:${({ theme }) => theme.primary1}
+    color:${({ theme }) => theme.primary1}
+  }
+  ${({ isActive, theme }) => (!isActive ? `border-color:${theme.text3}; color:${theme.text3};` : '')}
+`
+
+const CurrentPrice = styled.div`
+  position: absolute;
+  right: 0;
+  top: 7;
+  white-space: nowrap;
+  font-size: 18px;
+  font-wight: 500;
+  font-family: Futura PT;
+  color: ${({ theme }) => theme.primary1};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    white-space: pre-wrap;
+    text-align: right;
+    font-size: 14px;
+    font-wight: 400;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 12px;
+  `}
+`
+
 const Tabs = {
   CALL: 'Call Token',
   PUT: 'Put Token'
@@ -88,121 +114,159 @@ export default function OptionSwap({
   putPrice: CurrencyAmount | undefined
 }) {
   const { chainId } = useActiveWeb3React()
-  //const [currentTab, setCurrentTab] = useState('call')
-  //const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
-  //const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
-  //const [isMarketPriceChart, setIsMarketPriceChart] = useState(true)
-  //const [chart, setChart] = useState<IChartApi | undefined>(undefined)
-  const [callData, setCallData] = useState<DexTradeData[] | undefined>(undefined)
+  const [currentTab, setCurrentTab] = useState<keyof typeof Tabs>('CALL')
+  const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
+  const [isMarketPriceChart, setIsMarketPriceChart] = useState(true)
+  const [chart, setChart] = useState<IChartApi | undefined>(undefined)
+  const [callChartData, setCallChartData] = useState<DexTradeData[] | undefined>(undefined)
+  const [putChartData, setPutChartData] = useState<DexTradeData[] | undefined>(undefined)
   const {
-    httpHandlingFunctions: { errorFunction },
-    NetworkErrorModal
+    httpHandlingFunctions: { errorFunction, pendingFunction, pendingCompleteFunction },
+    NetworkErrorModal,
+    NetworkPendingSpinner
   } = useNetwork()
 
-  console.log(999, callData, 999)
-
   useEffect(() => {
-    if (!option || !option.call || !option.put) return
+    pendingFunction()
+    const callId = option?.callToken?.address ?? undefined
+    const putId = option?.putToken?.address ?? undefined
 
-    const callId = option.call.currency ? currencyId(option.call.currency) : undefined
+    if (!callId || !putId) return
+
+    const complete = { call: false, put: false }
+
     if (callId) {
       Axios.get('getDexTradesList', { chainId: chainId, tokenAddress: callId })
         .then(r => {
-          console.log(9999999)
+          complete.call = true
           if (r.data) {
-            setCallData(r.data.data)
+            setCallChartData(formatDexTradeData(r.data.data))
+          }
+          if (complete.put) {
+            pendingCompleteFunction()
           }
         })
         .catch(() => errorFunction())
-      // getDexTradeList(
-      //   (list: DexTradeData[] | undefined) => {
-      //     //setPriceChartData(list)
-      //   },
-      //   id,
-      //   errorFunction
-      // )
     }
-  }, [chainId, errorFunction, option])
+    if (putId) {
+      Axios.get('getDexTradesList', { chainId: chainId, tokenAddress: putId })
+        .then(r => {
+          complete.put = true
+          if (r.data) {
+            setPutChartData(formatDexTradeData(r.data.data))
+          }
+          if (complete.call) {
+            pendingCompleteFunction()
+          }
+        })
+        .catch(() => errorFunction())
+    }
 
-  // useEffect(() => {
-  //   const chart = createChart(document.getElementById('chart') ?? '', {
-  //     width: 556,
-  //     height: 354,
-  //     // watermark: {
-  //     //   visible: true,
-  //     //   fontSize: 24,
-  //     //   horzAlign: 'left',
-  //     //   vertAlign: 'top',
-  //     //   color: '#FFFFFF',
-  //     //   text: '327.4739'
-  //     // },
-  //     layout: {
-  //       backgroundColor: '#000000',
-  //       textColor: '#FFFFFF',
-  //       fontSize: 12,
-  //       fontFamily: 'Roboto'
-  //     },
-  //     grid: {
-  //       vertLines: {
-  //         style: LineStyle.Dotted,
-  //         color: 'rgba(255, 255, 255, 0.4)'
-  //       },
-  //       horzLines: {
-  //         style: LineStyle.Dotted,
-  //         color: 'rgba(255, 255, 255, 0.4)'
-  //       }
-  //     }
-  //   })
-  //   chart.applyOptions({
-  //     rightPriceScale: { autoScale: true },
-  //     timeScale: {
-  //       timeVisible: true,
-  //       secondsVisible: true,
-  //       shiftVisibleRangeOnNewBar: true,
-  //       tickMarkFormatter: (time: any) => {
-  //         const date = new Date(time)
-  //         const year = date.getUTCFullYear()
-  //         const month = date.getUTCMonth()
-  //         const day = date.getUTCDate()
-  //         return year + '/' + month + '/' + day
-  //       }
-  //     },
-  //     crosshair: {
-  //       vertLine: {
-  //         labelVisible: false
-  //       }
-  //     }
-  //   })
-  //   setChart(chart)
-  //   const candlestickSeries = chart.addCandlestickSeries({
-  //     upColor: '#33E74F',
-  //     downColor: '#FF0000',
-  //     wickVisible: false,
-  //     priceFormat: {
-  //       type: 'price',
-  //       precision: 2
-  //     }
-  //   })
-  //   setCandlestickSeries(candlestickSeries)
-  // }, [])
+    // getDexTradeList(
+    //   (list: DexTradeData[] | undefined) => {
+    //     //setPriceChartData(list)
+    //   },
+    //   id,
+    //   errorFunction
+    // )
+  }, [
+    chainId,
+    errorFunction,
+    option?.callToken?.address,
+    option?.putToken?.address,
+    pendingCompleteFunction,
+    pendingFunction
+  ])
 
-  // useEffect(() => {
-  //   if (candlestickSeries) {
-  //     priceChartData && candlestickSeries.setData(priceChartData)
-  //   }
-  //   if (chart) {
-  //     chart.timeScale().fitContent()
-  //   }
-  // }, [candlestickSeries, chart])
+  useEffect(() => {
+    const chartElement = document.getElementById('chart') ?? ''
+    const chart = createChart(chartElement, {
+      width: chartElement ? chartElement.offsetWidth : 556,
+      height: 328,
+      layout: {
+        backgroundColor: '#000000',
+        textColor: '#FFFFFF',
+        fontSize: 12,
+        fontFamily: 'Roboto'
+      },
+      grid: {
+        vertLines: {
+          style: LineStyle.Dotted,
+          color: 'rgba(255, 255, 255, 0.4)'
+        },
+        horzLines: {
+          style: LineStyle.Dotted,
+          color: 'rgba(255, 255, 255, 0.4)'
+        }
+      }
+    })
+    chart.applyOptions({
+      leftPriceScale: { autoScale: true, visible: true },
+      rightPriceScale: { visible: false },
+      timeScale: {
+        timeVisible: true,
+        secondsVisible: true,
+        shiftVisibleRangeOnNewBar: true,
+        tickMarkFormatter: (time: any) => {
+          const date = new Date(time)
+          const year = date.getUTCFullYear()
+          const month = date.getUTCMonth()
+          const day = date.getUTCDate()
+          return year + '/' + month + '/' + day
+        }
+      },
+      crosshair: {
+        vertLine: {
+          labelVisible: false
+        }
+      },
+      handleScroll: {
+        mouseWheel: true,
+        pressedMouseMove: true
+      },
+      handleScale: {
+        axisPressedMouseMove: true,
+        mouseWheel: true,
+        pinch: true
+      }
+    })
+    const resizeFunction = () => {
+      chart.resize(chartElement ? chartElement.offsetWidth : 556, 328)
+    }
+    window.addEventListener('resize', resizeFunction)
+    setChart(chart)
+    const candlestickSeries = chart.addCandlestickSeries({
+      upColor: '#33E74F',
+      downColor: '#FF0000',
+      wickVisible: false,
+      priceFormat: {
+        type: 'price',
+        precision: 2
+      }
+    })
+    setCandlestickSeries(candlestickSeries)
+    return () => window.removeEventListener('resize', resizeFunction)
+  }, [])
 
-  //const handleMarketPriceChart = useCallback(() => setIsMarketPriceChart(true), [])
-  //const handleModalChart = useCallback(() => setIsMarketPriceChart(false), [])
+  useEffect(() => {
+    if (candlestickSeries) {
+      if (currentTab === 'CALL') {
+        callChartData && candlestickSeries.setData(callChartData)
+      } else {
+        putChartData && candlestickSeries.setData(putChartData)
+      }
+    }
+    if (chart) {
+      chart.timeScale().fitContent()
+    }
+  }, [candlestickSeries, chart, currentTab, putChartData, callChartData])
 
-  const theme = useTheme()
+  const handleMarketPriceChart = useCallback(() => setIsMarketPriceChart(true), [])
+  const handleModalChart = useCallback(() => setIsMarketPriceChart(false), [])
 
   const handleTabClick = useCallback(
     (tab: string) => () => {
-      //setCurrentTab(tab)
+      setCurrentTab(tab as keyof typeof Tabs)
     },
     []
   )
@@ -213,8 +277,9 @@ export default function OptionSwap({
       <Wrapper>
         <Swap handleOptionType={handleOptionType} option={option} />
         <GraphWrapper>
-          <TYPE.subHeader style={{ position: 'absolute', right: 0, top: 7 }} fontSize={18} color={theme.primary1}>
-            Current price: ${' '}
+          <NetworkPendingSpinner paddingTop="0" />
+          <CurrentPrice>
+            Current price: {'\n'}${' '}
             {optionType === OptionField.CALL
               ? callPrice
                 ? callPrice.toSignificant(6)
@@ -222,31 +287,19 @@ export default function OptionSwap({
               : putPrice
               ? putPrice.toSignificant(6)
               : '-'}
-          </TYPE.subHeader>
-          <SwitchTab onTabClick={handleTabClick} currentTab={optionType} tabs={Tabs} />
-          <OutlineCard
-            style={{
-              width: 'max-content',
-              borderRadius: 49,
-              padding: '14px 100px',
-              color: '#ffffff',
-              borderColor: '#ffffff',
-              margin: '100px auto 0'
-            }}
-          >
-            Price Chart Coming Soon <Dots />
-          </OutlineCard>
-          {/*<ChartWrapper>*/}
-          {/*  <ButtonGroup>*/}
-          {/*    <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>*/}
-          {/*      MarketPrice*/}
-          {/*    </Button>*/}
-          {/*    <Button isActive={!isMarketPriceChart} onClick={handleModalChart}>*/}
-          {/*      Price Modeling Prediction*/}
-          {/*    </Button>*/}
-          {/*  </ButtonGroup>*/}
-          {/*  <Chart id="chart" />*/}
-          {/*</ChartWrapper>*/}
+          </CurrentPrice>
+          <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} tabs={Tabs} />
+
+          <ButtonGroup>
+            <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>
+              MarketPrice
+            </Button>
+            <Button isActive={!isMarketPriceChart} onClick={handleModalChart}>
+              Price Modeling Prediction
+            </Button>
+          </ButtonGroup>
+
+          <Chart id="chart"></Chart>
         </GraphWrapper>
       </Wrapper>
     </>
