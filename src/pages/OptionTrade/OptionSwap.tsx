@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 //import { Currency } from '@uniswap/sdk'
 import styled from 'styled-components'
 import Swap, { OptionField } from '../Swap'
@@ -9,9 +9,11 @@ import SwitchTab from 'components/SwitchTab'
 import { TYPE } from 'theme'
 import { CurrencyAmount } from '@uniswap/sdk'
 import useTheme from '../../hooks/useTheme'
-//import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
-//import { currencyId } from 'utils/currencyId'
-//import { useNetwork } from 'hooks/useNetwork'
+import { Axios } from 'utils/option/axios'
+import { useActiveWeb3React } from 'hooks'
+import { DexTradeData } from 'utils/option/httpRequests'
+import { currencyId } from 'utils/currencyId'
+import { useNetwork } from 'hooks/useNetwork'
 
 const Wrapper = styled.div`
   display: flex;
@@ -85,28 +87,42 @@ export default function OptionSwap({
   callPrice: CurrencyAmount | undefined
   putPrice: CurrencyAmount | undefined
 }) {
+  const { chainId } = useActiveWeb3React()
   //const [currentTab, setCurrentTab] = useState('call')
   //const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
   //const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
   //const [isMarketPriceChart, setIsMarketPriceChart] = useState(true)
   //const [chart, setChart] = useState<IChartApi | undefined>(undefined)
-  // const {
-  //   httpHandlingFunctions: { errorFunction },
-  //   networkErrorModal
-  // } = useNetwork()
+  const [callData, setCallData] = useState<DexTradeData[] | undefined>(undefined)
+  const {
+    httpHandlingFunctions: { errorFunction },
+    NetworkErrorModal
+  } = useNetwork()
 
-  // useEffect(() => {
-  //   const id = currencyB ? currencyId(currencyB) : undefined
-  //   if (id) {
-  //     getDexTradeList(
-  //       (list: DexTradeData[] | undefined) => {
-  //         //setPriceChartData(list)
-  //       },
-  //       id,
-  //       errorFunction
-  //     )
-  //   }
-  // }, [currencyB, errorFunction])
+  console.log(999, callData, 999)
+
+  useEffect(() => {
+    if (!option || !option.call || !option.put) return
+
+    const callId = option.call.currency ? currencyId(option.call.currency) : undefined
+    if (callId) {
+      Axios.get('getDexTradesList', { chainId: chainId, tokenAddress: callId })
+        .then(r => {
+          console.log(9999999)
+          if (r.data) {
+            setCallData(r.data.data)
+          }
+        })
+        .catch(() => errorFunction())
+      // getDexTradeList(
+      //   (list: DexTradeData[] | undefined) => {
+      //     //setPriceChartData(list)
+      //   },
+      //   id,
+      //   errorFunction
+      // )
+    }
+  }, [chainId, errorFunction, option])
 
   // useEffect(() => {
   //   const chart = createChart(document.getElementById('chart') ?? '', {
@@ -193,7 +209,7 @@ export default function OptionSwap({
 
   return (
     <>
-      {/*{networkErrorModal}*/}
+      <NetworkErrorModal />
       <Wrapper>
         <Swap handleOptionType={handleOptionType} option={option} />
         <GraphWrapper>
@@ -220,18 +236,18 @@ export default function OptionSwap({
           >
             Price Chart Coming Soon <Dots />
           </OutlineCard>
+          {/*<ChartWrapper>*/}
+          {/*  <ButtonGroup>*/}
+          {/*    <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>*/}
+          {/*      MarketPrice*/}
+          {/*    </Button>*/}
+          {/*    <Button isActive={!isMarketPriceChart} onClick={handleModalChart}>*/}
+          {/*      Price Modeling Prediction*/}
+          {/*    </Button>*/}
+          {/*  </ButtonGroup>*/}
+          {/*  <Chart id="chart" />*/}
+          {/*</ChartWrapper>*/}
         </GraphWrapper>
-        {/*<ChartWrapper>*/}
-        {/*  <ButtonGroup>*/}
-        {/*    <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>*/}
-        {/*      MarketPrice*/}
-        {/*    </Button>*/}
-        {/*    <Button isActive={!isMarketPriceChart} onClick={handleModalChart}>*/}
-        {/*      Price Modeling Prediction*/}
-        {/*    </Button>*/}
-        {/*  </ButtonGroup>*/}
-        {/*  <Chart id="chart" />*/}
-        {/*</ChartWrapper>*/}
       </Wrapper>
     </>
   )

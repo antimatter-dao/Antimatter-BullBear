@@ -42,7 +42,7 @@ import OptionExercise from './OptionExercise'
 import Stats from './Stats'
 import ComingSoon from './ComingSoon'
 import Calculator from './Calculator'
-import WarningModal from 'components/Modal/WarningModal'
+// import WarningModal from 'components/Modal/WarningModal'
 import Helper from '../assets/svg/helper.svg'
 import { ExternalLink } from '../theme'
 const AppWrapper = styled.div`
@@ -137,7 +137,7 @@ export default function App() {
             <Popups />
             <Polling />
             <WelcomeSlider />
-            <WarningModal />
+            {/* <WarningModal /> */}
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>

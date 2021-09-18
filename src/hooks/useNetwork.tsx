@@ -24,8 +24,8 @@ const getHeight = () => {
 }
 export function useNetwork(): {
   httpHandlingFunctions: HttpHandlingFunctions
-  networkErrorModal: JSX.Element
-  networkPendingSpinner: JSX.Element
+  NetworkErrorModal: React.FC
+  NetworkPendingSpinner: React.FC
   wrapperId: string
 } {
   const [isOpen, setIsOpen] = useState(false)
@@ -34,7 +34,7 @@ export function useNetwork(): {
   const handleDismiss = useCallback(() => setIsOpen(false), [])
   const handleSpinnerOpen = useCallback(() => setIsSpinnerOpen(true), [])
   const handleSpinnerDismiss = useCallback(() => setIsSpinnerOpen(false), [])
-  const networkErrorModal = useMemo(
+  const NetworkErrorModal = useCallback(
     () => (
       <Modal isOpen={isOpen} onDismiss={handleDismiss}>
         <TransactionErrorContent message="Network Error" onDismiss={handleDismiss} />
@@ -42,7 +42,7 @@ export function useNetwork(): {
     ),
     [handleDismiss, isOpen]
   )
-  const networkPendingSpinner = useMemo(
+  const NetworkPendingSpinner = useCallback(
     () => (
       <>
         {isSpinnerOpen && (
@@ -71,10 +71,10 @@ export function useNetwork(): {
     () => ({
       wrapperId: WRAPPER_ID,
       httpHandlingFunctions: handlingFunctions,
-      networkErrorModal,
-      networkPendingSpinner
+      NetworkErrorModal,
+      NetworkPendingSpinner
     }),
-    [handlingFunctions, networkErrorModal, networkPendingSpinner]
+    [handlingFunctions, NetworkErrorModal, NetworkPendingSpinner]
   )
 
   return result

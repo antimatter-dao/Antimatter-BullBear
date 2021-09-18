@@ -25,7 +25,7 @@ export default function OptionExercise() {
   const [optionList, setOptionList] = useState<OptionInterface[] | undefined>(undefined)
   const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
   const history = useHistory()
-  const { httpHandlingFunctions, networkErrorModal, networkPendingSpinner } = useNetwork()
+  const { httpHandlingFunctions, NetworkErrorModal, NetworkPendingSpinner } = useNetwork()
 
   const handleSearch = useCallback(
     body => {
@@ -59,12 +59,12 @@ export default function OptionExercise() {
 
   return (
     <>
-      {networkErrorModal}
+      <NetworkErrorModal />
       <Wrapper id="optionExercise">
         <Search onSearch={handleSearch} tokenList={tokenList} onClear={handleClearSearch} />
         {filteredList && (
           <ContentWrapper>
-            {networkPendingSpinner}
+            <NetworkPendingSpinner />
             {filteredList.map(option => (
               <OptionCard
                 optionId={'1'}
