@@ -11,6 +11,6 @@ export const Axios = {
     return axiosInstance.get(url, { params })
   },
   post(url: string, data: { [key: string]: any }) {
-    return axiosInstance.post(url, { data })
+    return axiosInstance.post(url, data)
   }
 }

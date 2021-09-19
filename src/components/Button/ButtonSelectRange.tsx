@@ -8,7 +8,11 @@ import NumberInputPanel from 'components/NumberInputPanel'
 import { ButtonSelectStyle, StyledDropDown } from './ButtonSelect'
 import { Minus, X } from 'react-feather'
 import useTheme from 'hooks/useTheme'
-import { Range } from 'pages/OptionTrade'
+
+export interface Range {
+  floor: undefined | number | string
+  cap: undefined | number | string
+}
 
 const RangeInputWrapper = styled.div<{ isOpen: boolean; width?: string }>`
   display: ${({ isOpen }) => (isOpen ? ' grid' : 'none')};

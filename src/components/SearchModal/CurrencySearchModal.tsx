@@ -56,7 +56,7 @@ export default function CurrencySearchModal({
   )
 
   const onShowAll = useCallback(() => {
-    const All = new Token(1, ZERO_ADDRESS, 18, 'All')
+    const All = new Token(1, ZERO_ADDRESS, 18, 'ALL')
     onCurrencySelect(All)
     onDismiss()
   }, [onDismiss, onCurrencySelect])

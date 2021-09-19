@@ -11,13 +11,6 @@ export interface Underlying {
   underlyingSymbol: string
 }
 
-export interface SearchQuery {
-  id?: number | string
-  priceCap?: number | string
-  priceFloor?: number | string
-  underlying?: string
-}
-
 export interface DexTradeData {
   time: UTCTimestamp
   high: number

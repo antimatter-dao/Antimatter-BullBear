@@ -273,3 +273,29 @@ export const formatDexTradeData = (data: DexTradeDataInput | undefined): DexTrad
 //     ...acc
 //   ]
 // }, [] as any[])
+
+export interface Underlying {
+  underlying: string
+  underlyingDecimals: string
+  underlyingSymbol: string
+}
+
+export const formatUnderlying = (
+  data: {
+    underlyingList: Underlying[]
+  },
+  chainId: number | undefined | null
+) => {
+  if (!data?.underlyingList || !chainId) return []
+
+  const set = new Set()
+  return data.underlyingList.reduce(
+    (acc: Token[], { underlying, underlyingDecimals, underlyingSymbol }: Underlying) => {
+      if (set.has(underlying)) return acc
+      set.add(underlying)
+      acc.push(new Token(chainId, underlying, underlyingDecimals ? parseInt(underlyingDecimals) : 18, underlyingSymbol))
+      return acc
+    },
+    []
+  )
+}

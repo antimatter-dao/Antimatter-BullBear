@@ -1,34 +1,29 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router'
 import styled from 'styled-components'
-import { Currency, Token, JSBI } from '@uniswap/sdk'
-import ButtonSelect from 'components/Button/ButtonSelect'
+import { Token } from '@uniswap/sdk'
 import AppBody from 'pages/AppBody'
-import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
+import { ButtonPrimary } from 'components/Button'
 import { AnimatedImg, AnimatedWrapper, ExternalLink, TYPE } from 'theme'
 import { RowBetween, RowFixed } from 'components/Row'
 //import { OptionIcon } from 'components/Icons'
-import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import { AutoColumn } from 'components/Column'
-import { currencyNameHelper } from 'utils/marketStrategyUtils'
 //import { USDT, ZERO_ADDRESS } from '../../constants'
-import { ButtonSelectRange } from 'components/Button/ButtonSelectRange'
-import { ButtonSelectNumericalInput } from 'components/Button/ButtonSelectNumericalInput'
 import OptionTradeAction from './OptionTradeAction'
 //import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
-import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
-import { currencyId } from 'utils/currencyId'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
 //import { useUSDTPrice } from 'utils/useUSDCPrice'
 import { XCircle } from 'react-feather'
-import useTheme from 'hooks/useTheme'
-import { SearchQuery } from 'utils/option/httpRequests'
-//import { useNetwork } from 'hooks/useNetwork'
+import { useNetwork } from 'hooks/useNetwork'
 import { useOption, useOptionTypeCount } from '../../state/market/hooks'
 import { tryFormatAmount } from '../../state/swap/hooks'
 import { useTotalSupply } from '../../data/TotalSupply'
+import { useActiveWeb3React } from 'hooks'
+import Search from 'components/Search'
+import { Axios } from 'utils/option/axios'
+import { formatUnderlying } from 'utils/option/utils'
 
 export interface OptionInterface {
   optionId: string | undefined
@@ -59,16 +54,6 @@ export interface OptionInterface {
   }
 }
 
-export interface Range {
-  floor: undefined | number | string
-  cap: undefined | number | string
-}
-
-const ALL = {
-  id: 'all',
-  title: 'All'
-}
-
 export enum Type {
   CALL = 'call',
   PUT = 'put'
@@ -90,43 +75,6 @@ export const ContentWrapper = styled.div`
   justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
   ${({ theme }) => theme.mediaWidth.upToSmall`padding: 10px`}
-`
-
-const WrapperSearch = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.text5};
-`
-
-const StyledSearch = styled.div`
-  margin: auto;
-  padding: 23px;
-  display: flex;
-  justify-content: center;
-  flex-wrap: nowrap;
-  width: 1280px;
-  & > * {
-    margin-bottom: 8px;
-  }
-  & > div {
-    flex-shrink: 1;
-  }
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    padding: 23px 50px;
-    flex-wrap: wrap
-    flex-direction: column
-    width: 100%;
-  `}
-`
-const ButtonWrapper = styled(RowFixed)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  flex-direction: column
-  width: 100%;
-  button{
-    width: 100%;
-    :first-child{
-      margin-bottom: 8px
-    }
-  }
-`}
 `
 
 const Circle = styled.div`
@@ -173,65 +121,49 @@ export default function OptionTrade({
     params: { optionId }
   }
 }: RouteComponentProps<{ optionId?: string }>) {
-  //const { chainId } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
   const optionCount = useOptionTypeCount()
-  const optionTypeIndexes = useMemo(() => {
-    return Array.from({ length: optionCount }, (v, i) => i.toString())
-  }, [optionCount])
-  //const [tokenList, setTokenList] = useState<Token[] | undefined>(undefined)
-  //const [optionList, setOptionList] = useState<OptionInterface[] | undefined>(undefined)
-  //const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
-  //const [optionTypeQuery, setOptionTypeQuery] = useState('')
+  const [tokenList, setTokenList] = useState<Token[] | undefined>(undefined)
+  const [filteredIndexes, setFilteredIndexes] = useState<string[] | undefined>(undefined)
   const history = useHistory()
-  //const { httpHandlingFunctions, networkErrorModal, networkPendingSpinner, wrapperId } = useNetwork()
+  const {
+    httpHandlingFunctions: { errorFunction } /* networkErrorModal, networkPendingSpinner, wrapperId*/
+  } = useNetwork()
+  const optionTypeIndexes = useMemo(() => {
+    const list = Array.from({ length: optionCount }, (v, i) => i.toString())
+    setFilteredIndexes(list)
+    return list
+  }, [optionCount])
 
-  //const handleSelectOptionType = useCallback((id: string) => setOptionTypeQuery(id), [])
-  //const handleSetTokenList = useCallback((list: Token[] | undefined) => setTokenList(list), [])
-  //const handleSetOptionList = useCallback((list: OptionInterface[] | undefined) => setOptionList(list), [])
-  // const handleClearSearch = useCallback(() => {
-  //   setOptionTypeQuery('')
-  //   setFilteredList(optionList)
-  // }, [optionList])
-  // const handleSearch = useCallback(
-  //   body => {
-  //     const query = Object.keys(body).reduce((acc, key, idx) => {
-  //       if (key === 'underlying' && body.underlying === ZERO_ADDRESS) {
-  //         return acc
-  //       }
-  //       return `${acc}${idx === 0 ? '' : '&'}${key}=${body[key]}`
-  //     }, '')
-  //     const handleFilteredList = (list: OptionInterface[]) => setFilteredList(list)
-  //
-  //     if (optionTypeQuery === Type.CALL) {
-  //       getCallOptionList(httpHandlingFunctions, handleFilteredList, chainId, query)
-  //       return
-  //     }
-  //     if (optionTypeQuery === Type.PUT) {
-  //       getPutOptionList(httpHandlingFunctions, handleFilteredList, chainId, query)
-  //       return
-  //     }
-  //     getSingleOtionList(httpHandlingFunctions, handleFilteredList, chainId, query)
-  //   },
-  //   [chainId, httpHandlingFunctions, optionTypeQuery]
-  // )
+  const handleClearSearch = useCallback(() => {
+    setFilteredIndexes(optionTypeIndexes)
+  }, [optionTypeIndexes])
 
-  // const option = useMemo(() => {
-  //   if (!optionList || optionList.length === 0) {
-  //     return undefined
-  //   }
-  //   return optionList.find(({ address }) => address === addressA)
-  // }, [addressA, optionList])
+  const handleSearch = useCallback(
+    body => {
+      Axios.post('getCreateOptionList', { chainId, ...body })
+        .then(r => {
+          setFilteredIndexes(r.data.data.list.map(({ id }: { id: string }) => id))
+        })
+        .catch(e => {
+          console.error(e)
+          errorFunction()
+        })
+    },
+    [chainId, errorFunction]
+  )
 
-  // useEffect(() => {
-  //   getUnderlyingList(handleSetTokenList, chainId, httpHandlingFunctions.errorFunction)
-  //   getSingleOtionList(httpHandlingFunctions, handleSetOptionList, chainId)
-  // }, [chainId, handleSetTokenList, handleSetOptionList, httpHandlingFunctions.errorFunction, httpHandlingFunctions])
-
-  // useEffect(() => {
-  //   if (optionList) {
-  //     setFilteredList(optionList)
-  //   }
-  // }, [optionList])
+  useEffect(() => {
+    if (!chainId) return
+    Axios.get('getUnderlyingList', { chainId })
+      .then(r => {
+        setTokenList(formatUnderlying(r.data.data, chainId))
+      })
+      .catch(e => {
+        console.error(e)
+        errorFunction()
+      })
+  }, [chainId, errorFunction])
 
   return (
     <>
@@ -240,17 +172,17 @@ export default function OptionTrade({
         <OptionTradeAction optionId={optionId} />
       ) : (
         <Wrapper id="optionTrade">
-          {/*<Search*/}
-          {/*  optionTypeQuery={optionTypeQuery}*/}
-          {/*  onOptionType={handleSelectOptionType}*/}
-          {/*  onClear={handleClearSearch}*/}
-          {/*  onSearch={handleSearch}*/}
-          {/*  tokenList={tokenList}*/}
-          {/*/>*/}
-          {optionTypeIndexes && (
+          <Search
+            // optionTypeQuery={optionTypeQuery}
+            // onOptionType={handleSelectOptionType}
+            onClear={handleClearSearch}
+            onSearch={handleSearch}
+            tokenList={tokenList}
+          />
+          {filteredIndexes && (
             <ContentWrapper id={''}>
               {/*{networkPendingSpinner}*/}
-              {optionTypeIndexes.map(optionId => (
+              {filteredIndexes.map(optionId => (
                 <OptionCard
                   optionId={optionId}
                   key={optionId}
@@ -307,7 +239,7 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
               fontSize={20}
               style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
             >
-              {`${option?.underlying?.symbol} Option`}
+              {option?.underlying ? `${option.underlying.symbol} Option` : ''}
             </TYPE.mediumHeader>
             {option?.underlying && (
               <RowFixed>
@@ -337,121 +269,6 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
         <RowBetween>{buttons}</RowBetween>
       </AutoColumn>
     </AppBody>
-  )
-}
-
-export function Search({
-  onOptionType,
-  optionTypeQuery,
-  onClear,
-  onSearch,
-  tokenList
-}: {
-  onOptionType?: (type: string) => void
-  optionTypeQuery?: string
-  onClear?: () => void
-  onSearch: (query: SearchQuery) => void
-  tokenList?: Token[]
-}) {
-  const [assetTypeQuery, setAssetTypeQuery] = useState<Currency | undefined>(undefined)
-  const [optionIdQuery, setOptionIdQuery] = useState('')
-  const [rangeQuery, setRangeQuery] = useState<Range>({
-    floor: undefined,
-    cap: undefined
-  })
-  const [currencySearchOpen, setCurrencySearchOpen] = useState(false)
-  const handleDismissSearch = useCallback(() => setCurrencySearchOpen(false), [])
-  const handleOpenAssetSearch = useCallback(() => setCurrencySearchOpen(true), [])
-  const handleSearch = useCallback(() => {
-    const body = {} as SearchQuery
-    if (optionIdQuery) {
-      body.id = +optionIdQuery
-    }
-    if (rangeQuery.floor !== undefined) {
-      body.priceFloor = JSBI.multiply(
-        JSBI.BigInt(rangeQuery.floor),
-        JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(6))
-      ).toString()
-    }
-    if (rangeQuery.cap !== undefined) {
-      body.priceCap = JSBI.multiply(
-        JSBI.BigInt(rangeQuery.cap),
-        JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(6))
-      ).toString()
-    }
-    if (assetTypeQuery) {
-      body.underlying = currencyId(assetTypeQuery)
-    }
-    onSearch(body)
-  }, [assetTypeQuery, onSearch, optionIdQuery, rangeQuery.cap, rangeQuery.floor])
-  const handleClear = useCallback(() => {
-    onClear && onClear()
-    setAssetTypeQuery(undefined)
-    setOptionIdQuery('')
-    setRangeQuery({
-      floor: undefined,
-      cap: undefined
-    })
-  }, [onClear])
-
-  const theme = useTheme()
-
-  return (
-    <>
-      <CurrencySearchModal
-        isOpen={currencySearchOpen}
-        onDismiss={handleDismissSearch}
-        onCurrencySelect={setAssetTypeQuery}
-        tokenList={tokenList}
-      />
-      <WrapperSearch>
-        <StyledSearch>
-          <ButtonSelect onClick={handleOpenAssetSearch}>
-            <TYPE.body color={assetTypeQuery ? theme.text1 : theme.text3}>
-              <RowFixed>
-                {assetTypeQuery && assetTypeQuery.symbol !== ALL.title && (
-                  <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />
-                )}
-                {currencyNameHelper(assetTypeQuery, 'Select asset type')}
-              </RowFixed>
-            </TYPE.body>
-          </ButtonSelect>
-          {onOptionType && (
-            <ButtonSelect
-              placeholder="Select option type"
-              selectedId={optionTypeQuery}
-              onSelection={onOptionType}
-              options={[
-                { id: ALL.id, option: ALL.title },
-                { id: Type.CALL, option: 'Call Option' },
-                { id: Type.PUT, option: 'Put Option' }
-              ]}
-            />
-          )}
-          <ButtonSelectRange
-            placeholder="Select price range"
-            rangeCap={rangeQuery.cap?.toString()}
-            rangeFloor={rangeQuery.floor?.toString()}
-            onSetRange={setRangeQuery}
-          />
-          <ButtonSelectNumericalInput
-            placeholder="Select option ID"
-            value={optionIdQuery}
-            onSetValue={setOptionIdQuery}
-          />
-          <ButtonWrapper>
-            <ButtonOutlinedPrimary width="186px" onClick={handleSearch}>
-              <SearchIcon style={{ marginRight: 10 }} />
-              Search
-            </ButtonOutlinedPrimary>
-            <div style={{ width: 10 }} />
-            <ButtonPrimary width="186px" onClick={handleClear}>
-              Show All
-            </ButtonPrimary>
-          </ButtonWrapper>
-        </StyledSearch>
-      </WrapperSearch>
-    </>
   )
 }
 
