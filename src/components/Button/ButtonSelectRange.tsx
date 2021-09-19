@@ -38,7 +38,7 @@ const RangeInputWrapper = styled.div<{ isOpen: boolean; width?: string }>`
 `
 
 export function ButtonSelectRange({
-  width,
+  width = '100%',
   placeholder = 'Select Price Range',
   rangeFloor,
   rangeCap,
@@ -106,7 +106,7 @@ export function ButtonSelectRange({
         </RowBetween>
       </ButtonSelectStyle>
 
-      <RangeInputWrapper isOpen={isOpen} ref={node as any} width="372px">
+      <RangeInputWrapper isOpen={isOpen} ref={node as any}>
         <NumberInputPanel
           intOnly
           label="Price floor($)"

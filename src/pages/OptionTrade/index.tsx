@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Token } from '@uniswap/sdk'
 import AppBody from 'pages/AppBody'
 import { ButtonPrimary } from 'components/Button'
-import { AnimatedImg, AnimatedWrapper, ExternalLink, TYPE } from 'theme'
+import { /*AnimatedImg, AnimatedWrapper,*/ ExternalLink, TYPE } from 'theme'
 import { RowBetween, RowFixed } from 'components/Row'
 //import { OptionIcon } from 'components/Icons'
 import { AutoColumn } from 'components/Column'
@@ -13,7 +13,7 @@ import { AutoColumn } from 'components/Column'
 import OptionTradeAction from './OptionTradeAction'
 //import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
-import Loader from 'assets/svg/antimatter_background_logo.svg'
+// import Loader from 'assets/svg/antimatter_background_logo.svg'
 //import { useUSDTPrice } from 'utils/useUSDCPrice'
 import { XCircle } from 'react-feather'
 import { useNetwork } from 'hooks/useNetwork'
@@ -74,7 +74,7 @@ export const ContentWrapper = styled.div`
   padding: 52px 0;
   justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
-  ${({ theme }) => theme.mediaWidth.upToSmall`padding: 10px`}
+  ${({ theme }) => theme.mediaWidth.upToSmall`padding: 40px 10px`}
 `
 
 const Circle = styled.div`
@@ -127,7 +127,8 @@ export default function OptionTrade({
   const [filteredIndexes, setFilteredIndexes] = useState<string[] | undefined>(undefined)
   const history = useHistory()
   const {
-    httpHandlingFunctions: { errorFunction } /* networkErrorModal, networkPendingSpinner, wrapperId*/
+    httpHandlingFunctions: { errorFunction },
+    NetworkErrorModal
   } = useNetwork()
   const optionTypeIndexes = useMemo(() => {
     const list = Array.from({ length: optionCount }, (v, i) => i.toString())
@@ -167,7 +168,7 @@ export default function OptionTrade({
 
   return (
     <>
-      {/*{networkErrorModal}*/}
+      <NetworkErrorModal />
       {optionId ? (
         <OptionTradeAction optionId={optionId} />
       ) : (
@@ -180,8 +181,7 @@ export default function OptionTrade({
             tokenList={tokenList}
           />
           {filteredIndexes && (
-            <ContentWrapper id={''}>
-              {/*{networkPendingSpinner}*/}
+            <ContentWrapper>
               {filteredIndexes.map(optionId => (
                 <OptionCard
                   optionId={optionId}
@@ -193,7 +193,7 @@ export default function OptionTrade({
               ))}
             </ContentWrapper>
           )}
-          {/*<AlternativeDisplay optionList={optionList} filteredList={filteredList} />*/}
+          <AlternativeDisplay optionIndexes={optionTypeIndexes} filteredIndexes={filteredIndexes} />
         </Wrapper>
       )}
     </>
@@ -234,23 +234,22 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
             {/*)}*/}
             <CurrencyLogo currency={option?.underlying ?? undefined} size="28px" />
           </Circle>
-          <AutoColumn gap="5px" style={{ width: '100%', position: 'relative' }}>
+          <AutoColumn gap="5px" style={{ width: '100%', position: 'relative', minHeight: 51 }}>
             <TYPE.mediumHeader
               fontSize={20}
               style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
             >
-              {option?.underlying ? `${option.underlying.symbol} Option` : ''}
+              {`${option?.underlying?.symbol ?? '-'} Option`}
             </TYPE.mediumHeader>
-            {option?.underlying && (
-              <RowFixed>
-                <OptionId>ID:&nbsp;{optionId}</OptionId>
-                {/*<StyledExternalLink*/}
-                {/*  href={chainId ? getEtherscanLink(chainId, option.underlying?.address, 'token') : ''}*/}
-                {/*>*/}
-                {/*  {shortenAddress(option.underlying?.address, 5)}*/}
-                {/*</StyledExternalLink>*/}
-              </RowFixed>
-            )}
+
+            <RowFixed>
+              <OptionId>ID:&nbsp;{option?.underlying ? optionId : '-'}</OptionId>
+              {/*<StyledExternalLink*/}
+              {/*  href={chainId ? getEtherscanLink(chainId, option.underlying?.address, 'token') : ''}*/}
+              {/*>*/}
+              {/*  {shortenAddress(option.underlying?.address, 5)}*/}
+              {/*</StyledExternalLink>*/}
+            </RowFixed>
           </AutoColumn>
         </TitleWrapper>
         <Divider />
@@ -259,7 +258,13 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
             <RowBetween key={key}>
               <TYPE.smallGray>{key}:</TYPE.smallGray>
               <TYPE.main
-                style={{ textAlign: 'right', overflow: 'hidden', whiteSpace: 'pre-wrap', textOverflow: 'ellipsis' }}
+                style={{
+                  textAlign: 'right',
+                  overflow: 'hidden',
+                  whiteSpace: 'pre-wrap',
+                  textOverflow: 'ellipsis',
+                  minHeight: 19
+                }}
               >
                 {details[key as keyof typeof details]}
               </TYPE.main>
@@ -273,28 +278,28 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
 }
 
 export function AlternativeDisplay({
-  optionList,
-  filteredList
+  optionIndexes,
+  filteredIndexes
 }: {
-  optionList: OptionInterface[] | undefined
-  filteredList: OptionInterface[] | undefined
+  optionIndexes: string[] | undefined
+  filteredIndexes: string[] | undefined
 }) {
   return (
     <AutoColumn justify="center" style={{ marginTop: 100 }}>
-      {optionList && optionList.length > 0 && filteredList && filteredList.length === 0 && (
+      {optionIndexes && optionIndexes.length > 0 && filteredIndexes && filteredIndexes.length === 0 && (
         <AutoColumn justify="center" gap="20px">
           <XCircle size={40} strokeWidth={1} />
           <TYPE.body>No results found</TYPE.body>
           <TYPE.body>Please change your search query and try again</TYPE.body>
         </AutoColumn>
       )}
-      {filteredList === undefined && (
+      {/* {filteredIndexes === undefined && (
         <AnimatedWrapper>
           <AnimatedImg>
             <img src={Loader} alt="loading-icon" />
           </AnimatedImg>
         </AnimatedWrapper>
-      )}
+      )} */}
     </AutoColumn>
   )
 }

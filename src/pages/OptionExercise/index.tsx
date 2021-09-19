@@ -3,7 +3,7 @@ import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import { Token } from '@uniswap/sdk'
 import { ButtonPrimary } from 'components/Button'
-import { OptionCard, OptionInterface, AlternativeDisplay, ContentWrapper } from '../OptionTrade'
+import { OptionCard, OptionInterface, /*AlternativeDisplay,*/ ContentWrapper } from '../OptionTrade'
 import { useActiveWeb3React } from 'hooks'
 import { getUnderlyingList, getOptionTypeList } from 'utils/option/httpRequests'
 import { ZERO_ADDRESS } from 'constants/index'
@@ -88,7 +88,7 @@ export default function OptionExercise() {
             ))}
           </ContentWrapper>
         )}
-        <AlternativeDisplay optionList={optionList} filteredList={filteredList} />
+        {/* <AlternativeDisplay optionList={optionList} filteredList={filteredList} /> */}
       </Wrapper>
     </>
   )
