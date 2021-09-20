@@ -10,7 +10,7 @@ export const Axios = {
   get(url: string, params: { [key: string]: any }) {
     return axiosInstance.get(url, { params })
   },
-  post(url: string, data: { [key: string]: any }) {
-    return axiosInstance.post(url, data)
+  post(url: string, data: { [key: string]: any }, params = {}) {
+    return axiosInstance.post(url, data, { params })
   }
 }

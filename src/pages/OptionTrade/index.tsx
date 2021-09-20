@@ -142,7 +142,7 @@ export default function OptionTrade({
 
   const handleSearch = useCallback(
     body => {
-      Axios.post('getCreateOptionList', { chainId, ...body })
+      Axios.post('getCreateOptionList', {}, { chainId, ...body })
         .then(r => {
           setFilteredIndexes(r.data.data.list.map(({ id }: { id: string }) => id))
         })

@@ -15,33 +15,9 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import ButtonSelect from 'components/Button/ButtonSelect'
 import useTheme from 'hooks/useTheme'
 import CurrencyLogo from 'components/CurrencyLogo'
-// import { currencyId } from 'utils/currencyId'
-
-// const SearchParams = [
-//   {
-//     id: 'indexName',
-//     option: 'Index Name'
-//   },
-//   {
-//     id: 'indexId',
-//     option: 'Index ID'
-//   },
-//   {
-//     id: 'createName',
-//     option: 'Creator name'
-//   }
-// {
-//   id: 'creatorName',
-//   option: 'Creator Name'
-// },
-// {
-//   id: 'creatorAddress',
-//   option: 'Creator Address'
-// }
-// ]
 
 export interface SearchQuery {
-  id?: number | string
+  optionIndex?: number | string
   priceCap?: number | string
   priceFloor?: number | string
   underlyingSymbol?: string
@@ -263,7 +239,7 @@ export default function Search({
   const handleSearch = useCallback(() => {
     const body = {} as SearchQuery
     if (optionIdQuery) {
-      body.id = +optionIdQuery
+      body.optionIndex = +optionIdQuery + 1
     }
     if (rangeQuery.floor !== undefined) {
       body.priceFloor = JSBI.multiply(
