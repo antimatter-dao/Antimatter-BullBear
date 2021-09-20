@@ -239,7 +239,7 @@ export default function Search({
   const handleSearch = useCallback(() => {
     const body = {} as SearchQuery
     if (optionIdQuery) {
-      body.optionIndex = +optionIdQuery + 1
+      body.optionIndex = +optionIdQuery
     }
     if (rangeQuery.floor !== undefined) {
       body.priceFloor = JSBI.multiply(

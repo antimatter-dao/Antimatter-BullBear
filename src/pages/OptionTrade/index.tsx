@@ -144,7 +144,7 @@ export default function OptionTrade({
     body => {
       Axios.post('getCreateOptionList', {}, { chainId, ...body })
         .then(r => {
-          setFilteredIndexes(r.data.data.list.map(({ id }: { id: string }) => id))
+          setFilteredIndexes(r.data.data.list.map(({ optionIndex }: { optionIndex: any }) => optionIndex))
         })
         .catch(e => {
           console.error(e)
