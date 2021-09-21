@@ -178,7 +178,7 @@ export default function Modal({
                   maxWidth={maxWidth}
                 >
                   {/* prevents the automatic focusing of inputs on mobile by the reach dialog */}
-                  {!initialFocusRef && isMobile ? <div tabIndex={1} /> : null}
+                  {!initialFocusRef && isMobile ? <div tabIndex={1} /> : <div tabIndex={1} />}
                   {children}
                 </StyledDialogContent>
                 <Marginer />
