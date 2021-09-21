@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 // import { X } from 'react-feather'
 import { ButtonPrimary } from 'components/Button'
 import { AutoColumn, ColumnCenter } from 'components/Column'
@@ -15,6 +15,15 @@ export default function WarningModal() {
   const theme = useTheme()
   const [isOpen, setIsOpen] = useState(true)
   const [confirmed, setConfirmed] = useState(false)
+  const [enableCheck, setEnableCheck] = useState(false)
+
+  const confirmRef = useRef<HTMLDivElement>()
+
+  const scrollTop = confirmRef.current
+
+  useEffect(() => {
+    console.log('scrollTop', scrollTop)
+  }, [scrollTop])
 
   const handleClose = useCallback(() => setIsOpen(false), [setIsOpen])
   return (
@@ -33,7 +42,17 @@ export default function WarningModal() {
               {/*<X onClick={handleClose} style={{ cursor: 'pointer' }} />*/}
             </ColumnCenter>
 
-            <Card maxHeight={320} overflow={'auto'} style={{ backgroundColor: transparentize(0.8, theme.primary1) }}>
+            <Card
+              onScrollCapture={e => {
+                if (confirmRef.current && confirmRef.current.scrollHeight - confirmRef.current.scrollTop < 420) {
+                  setEnableCheck(true)
+                }
+              }}
+              ref={confirmRef}
+              maxHeight={320}
+              overflow={'auto'}
+              style={{ backgroundColor: transparentize(0.8, theme.primary1) }}
+            >
               <TYPE.body>
                 Please note.The dapp is only open to non-U.S. persons and entities. All registrants must meet
                 eligibility requirements to participate.
@@ -345,11 +364,19 @@ export default function WarningModal() {
             </Card>
 
             <AutoRow style={{ cursor: 'pointer', width: '100%' }}>
-              <Checkbox name="confirmed" type="checkbox" checked={confirmed} onClick={() => setConfirmed(!confirmed)} />
+              <Checkbox
+                disabled={!enableCheck}
+                name="confirmed"
+                type="checkbox"
+                checked={confirmed}
+                onClick={() => setConfirmed(!confirmed)}
+              />
               <TYPE.body ml="10px" fontSize="16px" color={theme.primary1} fontWeight={500}>
                 I agree
               </TYPE.body>
             </AutoRow>
+
+            <TYPE.small style={{marginTop: -20}}>Please read all and scroll down to bottom to confirm </TYPE.small>
 
             <ButtonPrimary disabled={!confirmed} onClick={handleClose}>
               Next
