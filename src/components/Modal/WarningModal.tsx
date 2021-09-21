@@ -371,12 +371,12 @@ export default function WarningModal() {
                 checked={confirmed}
                 onClick={() => setConfirmed(!confirmed)}
               />
-              <TYPE.body ml="10px" fontSize="16px" color={theme.primary1} fontWeight={500}>
+              <TYPE.body ml="10px" fontSize="16px" color={enableCheck ?theme.primary1: theme.primary4} fontWeight={500}>
                 I agree
               </TYPE.body>
             </AutoRow>
 
-            <TYPE.small style={{marginTop: -20}}>Please read all and scroll down to bottom to confirm </TYPE.small>
+            <TYPE.small style={{ marginTop: -20 }}>Please read all and scroll down to bottom to confirm </TYPE.small>
 
             <ButtonPrimary disabled={!confirmed} onClick={handleClose}>
               Next
