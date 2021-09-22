@@ -278,7 +278,7 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
     floor: tryFormatAmount(option?.priceFloor, option?.currency ?? undefined)
   }
   const details = {
-    'Option Price Range': option ? `$${range.floor?.toExact().toString()}~$${range.cap?.toExact().toString()}` : '',
+    'Option Range': option ? `$${range.floor?.toExact().toString()}~$${range.cap?.toExact().toString()}` : '',
     'Underlying Asset': option ? `${option.underlying?.symbol}, ${option.currency?.symbol}` : '-',
     'Current Call Issuance': option ? callTotalSupply?.toFixed(2).toString() : '-',
     'Current Put Issuance': option ? putTotalSupply?.toFixed(2).toString() : '-'

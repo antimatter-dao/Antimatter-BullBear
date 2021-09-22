@@ -371,7 +371,12 @@ export default function WarningModal() {
                 checked={confirmed}
                 onClick={() => setConfirmed(!confirmed)}
               />
-              <TYPE.body ml="10px" fontSize="16px" color={enableCheck ?theme.primary1: theme.primary4} fontWeight={500}>
+              <TYPE.body
+                ml="10px"
+                fontSize="16px"
+                color={enableCheck ? theme.primary1 : theme.primary4}
+                fontWeight={500}
+              >
                 I agree
               </TYPE.body>
             </AutoRow>
