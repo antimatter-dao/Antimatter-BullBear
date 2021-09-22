@@ -53,6 +53,8 @@ export interface Option {
   currency: Token | undefined | null
   priceFloor: string | undefined
   priceCap: string | undefined
+  callToken: Token | undefined | null
+  putToken: Token | undefined | null
 }
 
 export function useOptionTypeCount(): number {
@@ -248,19 +250,23 @@ export function useOption(id: string | undefined): Option | undefined {
 
   const underlying = useToken(underlyingAddress)
   const currency = useToken(currencyAddress)
-  if (!call || !put || !underlying || !currency || !attributesRes?.result?.[2] || !attributesRes?.result?.[3])
-    return undefined
-  const callTokenAmount = new TokenAmount(call, balancesRes?.[0]?.result?.[0] ?? '0')
-  const putTokenAmount = new TokenAmount(put, balancesRes?.[1]?.result?.[0] ?? '0')
 
-  return {
-    priceFloor: attributesRes?.result?.[2].toString(),
-    priceCap: attributesRes?.result?.[3].toString(),
-    call: callTokenAmount,
-    put: putTokenAmount,
-    underlying,
-    currency
-  }
+  return useMemo(() => {
+    if (!call || !put || !underlying || !currency || !attributesRes?.result?.[2] || !attributesRes?.result?.[3])
+      return undefined
+    const callTokenAmount = new TokenAmount(call, balancesRes?.[0]?.result?.[0] ?? '0')
+    const putTokenAmount = new TokenAmount(put, balancesRes?.[1]?.result?.[0] ?? '0')
+    return {
+      priceFloor: attributesRes?.result?.[2].toString(),
+      priceCap: attributesRes?.result?.[3].toString(),
+      call: callTokenAmount,
+      put: putTokenAmount,
+      underlying,
+      currency,
+      callToken: call,
+      putToken: put
+    }
+  }, [attributesRes?.result, balancesRes, call, currency, put, underlying])
 }
 
 export const absolute = (val: string) => {

@@ -53,11 +53,22 @@ export enum OptionField {
 }
 
 const RadioButtonWrapper = styled(AutoColumn)`
-  > fieldset {
+  margin-top: 14px;
+  fieldset {
+    width: 68%;
     display: grid !important;
     grid-template-columns: 50% 50%;
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      width: 100%;
+  `}
   }
 `
+const Label = styled.div`
+  font-size: 14px;
+  color: ${({ theme }) => theme.text3};
+  margin-bottom: 8px;
+`
+
 const SwapAppBody = styled(BodyWrapper)`
   border-color: ${({ theme }) => theme.text4};
   min-height: 100%;
@@ -465,28 +476,33 @@ export default function Swap({
               <SettingsTab onlySlippage />
             </div>
             <RadioButtonWrapper gap="20px">
-              <TypeRadioButton
-                name={'auction_type'}
-                options={[
-                  { label: 'Buy', option: Auction.BUY },
-                  { label: 'Sell', option: Auction.SELL }
-                ]}
-                selected={auction}
-                onCheck={(option: string) => setAuction(option)}
-              />
-
-              <TypeRadioButton
-                name={'option_type'}
-                options={[
-                  { label: '+ Call Token', option: OptionField.CALL },
-                  { label: '− Put Token', option: OptionField.PUT }
-                ]}
-                selected={optionType}
-                onCheck={(option: string) => {
-                  handleOptionType(option)
-                  setOptionType(option)
-                }}
-              />
+              <div>
+                <Label>Choose Action</Label>
+                <TypeRadioButton
+                  name={'auction_type'}
+                  options={[
+                    { label: 'Buy', option: Auction.BUY },
+                    { label: 'Sell', option: Auction.SELL }
+                  ]}
+                  selected={auction}
+                  onCheck={(option: string) => setAuction(option)}
+                />
+              </div>
+              <div>
+                <Label>Choose token type</Label>
+                <TypeRadioButton
+                  name={'option_type'}
+                  options={[
+                    { label: '+ Call Token', option: OptionField.CALL },
+                    { label: '− Put Token', option: OptionField.PUT }
+                  ]}
+                  selected={optionType}
+                  onCheck={(option: string) => {
+                    handleOptionType(option)
+                    setOptionType(option)
+                  }}
+                />
+              </div>
             </RadioButtonWrapper>
             <CurrencyInputPanel
               hideSelect

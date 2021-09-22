@@ -28,7 +28,7 @@ export function useCalculatorCallback(): {
         totalCur: string
         totalValue: string
       } | null> {
-        if (!price && !priceFloor && !priceCap && !totalCall && !totalPut) {
+        if (!price || !priceFloor || !priceCap || !totalCall || !totalPut) {
           return null
         }
         return contract

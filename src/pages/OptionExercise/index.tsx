@@ -3,11 +3,12 @@ import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import { Token } from '@uniswap/sdk'
 import { ButtonPrimary } from 'components/Button'
-import { OptionCard, Search, OptionInterface, AlternativeDisplay, ContentWrapper } from '../OptionTrade'
+import { OptionCard, OptionInterface, /*AlternativeDisplay,*/ ContentWrapper } from '../OptionTrade'
 import { useActiveWeb3React } from 'hooks'
 import { getUnderlyingList, getOptionTypeList } from 'utils/option/httpRequests'
 import { ZERO_ADDRESS } from 'constants/index'
 import { useNetwork } from 'hooks/useNetwork'
+import Search from 'components/Search'
 
 export enum Type {
   CALL = 'call',
@@ -25,7 +26,7 @@ export default function OptionExercise() {
   const [optionList, setOptionList] = useState<OptionInterface[] | undefined>(undefined)
   const [filteredList, setFilteredList] = useState<OptionInterface[] | undefined>(undefined)
   const history = useHistory()
-  const { httpHandlingFunctions, networkErrorModal, networkPendingSpinner } = useNetwork()
+  const { httpHandlingFunctions, NetworkErrorModal, NetworkPendingSpinner } = useNetwork()
 
   const handleSearch = useCallback(
     body => {
@@ -59,12 +60,12 @@ export default function OptionExercise() {
 
   return (
     <>
-      {networkErrorModal}
+      <NetworkErrorModal />
       <Wrapper id="optionExercise">
         <Search onSearch={handleSearch} tokenList={tokenList} onClear={handleClearSearch} />
         {filteredList && (
           <ContentWrapper>
-            {networkPendingSpinner}
+            <NetworkPendingSpinner />
             {filteredList.map(option => (
               <OptionCard
                 optionId={'1'}
@@ -87,7 +88,7 @@ export default function OptionExercise() {
             ))}
           </ContentWrapper>
         )}
-        <AlternativeDisplay optionList={optionList} filteredList={filteredList} />
+        {/* <AlternativeDisplay optionList={optionList} filteredList={filteredList} /> */}
       </Wrapper>
     </>
   )

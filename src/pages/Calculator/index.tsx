@@ -9,6 +9,8 @@ import { RowBetween } from 'components/Row'
 import NumberInputPanel from 'components/NumberInputPanel'
 import { useCalculatorCallback } from 'hooks/useCalculatorCallback'
 import { tryFormatAmount } from 'state/swap/hooks'
+import useTheme from 'hooks/useTheme'
+import Card from 'components/Card'
 
 const InputWrapper = styled(RowBetween)`
   & > div {
@@ -23,21 +25,47 @@ export const Divider = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.bg4};
 `
 
+enum ERROR {
+  EMPTY_PRICE = 'Price cannot be empty or 0',
+  EMPTY_PRICE_CAP = 'Price ceiling cannot be empty or 0',
+  EMPTY_PRICE_FLOOR = 'Price floor cannot be empty or 0',
+  EMPTY_TOTAL_CALL = 'Call Issuance be empty or 0',
+  EMPTY_TOTAL_PUT = 'Put Issuance be empty or 0',
+  LARGER_FLOOR_THAN_CAP = 'Price Floor cannot be larger than Price Ceiling'
+}
+
 export default function Calculator() {
-  const [price, setPrice] = useState('1')
-  const [priceFloor, setPriceFloor] = useState('1')
-  const [priceCap, setPriceCap] = useState('1')
-  const [totalCall, setTotalCall] = useState('1')
-  const [totalPut, setTotalPut] = useState('1')
+  const [error, setError] = useState('')
+  const [price, setPrice] = useState('')
+  const [priceFloor, setPriceFloor] = useState('')
+  const [priceCap, setPriceCap] = useState('')
+  const [totalCall, setTotalCall] = useState('')
+  const [totalPut, setTotalPut] = useState('')
   const [priceCall, setPriceCall] = useState('')
   const [pricePut, setPricePut] = useState('')
   const { callback: calculateCallback } = useCalculatorCallback()
+  const theme = useTheme()
 
   useEffect(() => {
     if (!calculateCallback) return
     debounce(() => {
+      if (!price && !priceFloor && !priceCap && !totalCall && !totalPut) {
+        setError('')
+        return
+      }
+      let error = ''
+      if (+priceFloor > +priceCap) error = ERROR.LARGER_FLOOR_THAN_CAP
+      if (!totalPut || +totalPut === 0) error = ERROR.EMPTY_TOTAL_PUT
+      if (!totalCall || +totalCall === 0) error = ERROR.EMPTY_TOTAL_CALL
+      if (!priceFloor || +priceFloor === 0) error = ERROR.EMPTY_PRICE_FLOOR
+      if (!priceCap || +priceCap === 0) error = ERROR.EMPTY_PRICE_CAP
+      if (!price || +price === 0) error = ERROR.EMPTY_PRICE
+      setError(error)
+    }, 1000)()
+    debounce(() => {
       const res = calculateCallback(price, priceFloor, priceCap, totalCall, totalPut)
       res.then(res => {
+        if (res === null) return
         res.priceCall && setPriceCall(tryFormatAmount(res.priceCall, ETHER)?.toFixed(6) ?? '')
         res.pricePut && setPricePut(tryFormatAmount(res.pricePut, ETHER)?.toFixed(6) ?? '')
       })
@@ -106,31 +134,50 @@ export default function Calculator() {
               hideBalance
             />
           </InputWrapper>
+          <TYPE.body color={theme.primary1} fontSize={14}>
+            {error}
+          </TYPE.body>
         </AutoColumn>
         <Divider />
         <AutoColumn gap="16px">
           <TYPE.smallHeader>Output</TYPE.smallHeader>
           <InputWrapper>
-            <NumberInputPanel
-              label="Price of Call token"
-              onUserInput={() => {}}
-              value={priceCall}
-              showMaxButton={false}
-              id="callPrice"
-              unit="USDT"
-              hideBalance
-              disabled
-            />
-            <NumberInputPanel
-              label="Price of Put token"
-              onUserInput={() => {}}
-              value={pricePut}
-              showMaxButton={false}
-              id="putPrice"
-              unit="USDT"
-              hideBalance
-              disabled
-            />
+            <AutoColumn gap="4px">
+              <TYPE.main color={theme.text3} fontSize={14}>
+                Price of Call token
+              </TYPE.main>
+              <Card
+                style={{
+                  backgroundColor: theme.bg2,
+                  width: '100%',
+                  padding: '1rem',
+                  height: '3rem',
+                  borderRadius: '14px'
+                }}
+              >
+                <RowBetween style={{ height: '100%' }}>
+                  {priceCall ? priceCall : <span style={{ color: theme.text3 }}>0.000000</span>} <span>USDT</span>
+                </RowBetween>
+              </Card>
+            </AutoColumn>
+            <AutoColumn gap="4px">
+              <TYPE.main color={theme.text3} fontSize={14}>
+                Price of Put token
+              </TYPE.main>
+              <Card
+                style={{
+                  backgroundColor: theme.bg2,
+                  width: '100%',
+                  padding: '1rem',
+                  height: '3rem',
+                  borderRadius: '14px'
+                }}
+              >
+                <RowBetween style={{ height: '100%' }}>
+                  {pricePut ? pricePut : <span style={{ color: theme.text3 }}>0.000000</span>} <span>USDT</span>
+                </RowBetween>
+              </Card>
+            </AutoColumn>
           </InputWrapper>
         </AutoColumn>
       </AutoColumn>

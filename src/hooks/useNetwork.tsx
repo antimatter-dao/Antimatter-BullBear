@@ -4,11 +4,15 @@ import Modal from 'components/Modal'
 import { TransactionErrorContent } from 'components/TransactionConfirmationModal'
 import { AnimatedImg, AnimatedWrapper } from 'theme'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
-import { HttpHandlingFunctions } from 'utils/option/httpRequests'
+export interface HttpHandlingFunctions {
+  errorFunction: () => void
+  pendingFunction: () => void
+  pendingCompleteFunction: () => void
+}
 
-const Overlay = styled.div<{ height?: string }>`
+const Overlay = styled.div<{ height?: string; paddingTop?: string }>`
   position: absolute;
-  padding-top: 100px;
+  padding-top: ${({ paddingTop }) => paddingTop ?? '100px'};
   width: 100%;
   height: ${({ height }) => height ?? '300px'};
   background-color:${({ theme }) => theme.bg1}
@@ -24,8 +28,8 @@ const getHeight = () => {
 }
 export function useNetwork(): {
   httpHandlingFunctions: HttpHandlingFunctions
-  networkErrorModal: JSX.Element
-  networkPendingSpinner: JSX.Element
+  NetworkErrorModal: React.FC
+  NetworkPendingSpinner: React.FC<{ paddingTop?: string }>
   wrapperId: string
 } {
   const [isOpen, setIsOpen] = useState(false)
@@ -34,7 +38,7 @@ export function useNetwork(): {
   const handleDismiss = useCallback(() => setIsOpen(false), [])
   const handleSpinnerOpen = useCallback(() => setIsSpinnerOpen(true), [])
   const handleSpinnerDismiss = useCallback(() => setIsSpinnerOpen(false), [])
-  const networkErrorModal = useMemo(
+  const NetworkErrorModal = useCallback(
     () => (
       <Modal isOpen={isOpen} onDismiss={handleDismiss}>
         <TransactionErrorContent message="Network Error" onDismiss={handleDismiss} />
@@ -42,11 +46,11 @@ export function useNetwork(): {
     ),
     [handleDismiss, isOpen]
   )
-  const networkPendingSpinner = useMemo(
-    () => (
+  const NetworkPendingSpinner = useCallback(
+    ({ paddingTop }: { paddingTop?: string }) => (
       <>
         {isSpinnerOpen && (
-          <Overlay height={getHeight()}>
+          <Overlay height={getHeight()} paddingTop={paddingTop}>
             <AnimatedWrapper>
               <AnimatedImg>
                 <img src={Loader} alt="loading-icon" />
@@ -71,10 +75,10 @@ export function useNetwork(): {
     () => ({
       wrapperId: WRAPPER_ID,
       httpHandlingFunctions: handlingFunctions,
-      networkErrorModal,
-      networkPendingSpinner
+      NetworkErrorModal,
+      NetworkPendingSpinner
     }),
-    [handlingFunctions, networkErrorModal, networkPendingSpinner]
+    [handlingFunctions, NetworkErrorModal, NetworkPendingSpinner]
   )
 
   return result
