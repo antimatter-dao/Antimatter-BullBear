@@ -41,6 +41,7 @@ import OptionCreation from './OptionCreation'
 import OptionExercise from './OptionExercise'
 import Stats from './Stats'
 import ComingSoon from './ComingSoon'
+import User from './User'
 import Calculator from './Calculator'
 // import WarningModal from 'components/Modal/WarningModal'
 import Helper from '../assets/svg/helper.svg'
@@ -152,6 +153,8 @@ export default function App() {
                 {/*<Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />*/}
                 <Route exact strict path="/governance" component={ComingSoon} />
                 <Route exact strict path="/info" component={Info} />
+                <Route strict path="/profile/:tab" component={User} />
+                <Route strict path="/profile" component={User} />
                 <Route exact strict path="/statistics" component={Stats} />
                 {/* <Route exact strict path="/exercise" component={Exercise} /> */}
                 {/* <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} /> */}

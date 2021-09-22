@@ -15,10 +15,9 @@ export const Tab = styled.button<{ selected: boolean }>`
   background: none;
   padding: 7px 0;
   margin-right: 40px;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
-  font-family: Futura PT;
-  color: ${({ selected, theme }) => (selected ? theme.primary1 : theme.text5)};
+  color: ${({ selected, theme }) => (selected ? theme.primary1 : theme.white)};
   border-bottom: 2px solid ${({ selected, theme }) => (selected ? theme.primary4 : 'transparent')};
   margin-bottom: -1px;
   transition: 0.3s;
