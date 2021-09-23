@@ -247,7 +247,7 @@ function UserPostionTableCell({ data }: { data: MyPositionProp }) {
         Trade
       </TableButtonOutlined>
     ]
-  }, [data.contract, data.tradesAmount, data.type, option])
+  }, [data, history, option])
 
   return (
     <>
