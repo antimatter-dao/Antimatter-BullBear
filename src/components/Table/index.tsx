@@ -1,10 +1,29 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { TableContainer, TableHead, TableCell, TableRow, TableBody, makeStyles } from '@material-ui/core'
 import useMediaWidth from 'hooks/useMediaWidth'
 import { AutoColumn } from 'components/Column'
 import { RowBetween } from 'components/Row'
 import { TYPE } from 'theme'
+import { useOption } from '../../state/market/hooks'
+import { MyPositionProp, MyPositionType } from 'hooks/useUserFetch'
+import Copy from 'components/AccountDetails/Copy'
+import { shortenAddress } from 'utils'
+import { RowFixed } from 'components/Row'
+import { ButtonOutlined } from 'components/Button'
+import { TokenAmount } from '@uniswap/sdk'
+import { useHistory } from 'react-router'
+const TableButtonOutlined = styled(ButtonOutlined)`
+  height: 40px;
+  width: 100px;
+  color: #b2f355;
+  border: 1px solid #b2f355;
+  opacity: 0.8;
+  &:hover {
+    border: 1px solid #b2f355;
+    opacity: 1;
+  }
+`
 
 interface StyleProps {
   isHeaderGray?: boolean
@@ -162,6 +181,79 @@ export default function Table({
           </table>
         </TableContainer>
       )}
+    </>
+  )
+}
+
+export function UserPostionTable({
+  header,
+  data,
+  isHeaderGray
+}: {
+  header: string[]
+  data: MyPositionProp[]
+  isHeaderGray?: boolean
+}) {
+  const classes = useStyles({ isHeaderGray })
+  return (
+    <>
+      <TableContainer className={classes.root}>
+        <table>
+          <TableHead className={classes.tableHeader}>
+            <TableRow>
+              {header.map((string, idx) => (
+                <TableCell key={idx}>{string}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((row, idx) => (
+              <TableRow key={idx} className={classes.tableRow}>
+                <UserPostionTableCell data={row} />
+              </TableRow>
+            ))}
+          </TableBody>
+        </table>
+      </TableContainer>
+    </>
+  )
+}
+
+function UserPostionTableCell({ data }: { data: MyPositionProp }) {
+  const option = useOption(data.optionIndex)
+  const history = useHistory()
+  const postionData = useMemo(() => {
+    let name = '-'
+    if (option && option.currency && option.priceFloor && option.priceCap) {
+      name = `${option.underlying?.symbol} ($${new TokenAmount(
+        option.currency,
+        option.priceFloor
+      ).toSignificant()}~$${new TokenAmount(option.currency, option.priceCap).toSignificant()})`
+    }
+    let amount = '-'
+    if (option && option.callToken && option.putToken) {
+      const token = data.type === MyPositionType.Call ? option.callToken : option.putToken
+      amount = new TokenAmount(token, data.tradesAmount.replace('-', '')).toSignificant()
+    }
+    return [
+      name,
+      data.type,
+      amount,
+      <RowFixed key={1}>
+        {shortenAddress(data.contract ?? '', 5)}
+        <Copy toCopy={data.contract}></Copy>
+      </RowFixed>,
+      <TableButtonOutlined onClick={() => history.push('/option_trading/' + data.optionIndex)} key={2}>
+        Trade
+      </TableButtonOutlined>
+    ]
+  }, [data.contract, data.tradesAmount, data.type, option])
+
+  return (
+    <>
+      {postionData.map((data, idx) => (
+        <TableCell key={idx}>{data}</TableCell>
+      ))}
     </>
   )
 }

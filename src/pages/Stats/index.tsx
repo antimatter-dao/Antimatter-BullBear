@@ -77,11 +77,8 @@ export default function Stats() {
               </TYPE.gray>
               <RowFixed style={{ alignItems: 'baseline' }}>
                 <TYPE.mediumHeader fontFamily="Roboto" color="white" fontSize="40px" lineHeight="59px">
-                  {statsData ? statsData.totalTradingVolume : '-'}
+                  $ {statsData ? statsData.totalTradingVolume : '-'}
                 </TYPE.mediumHeader>
-                <TYPE.white fontSize="20px" lineHeight="30px" style={{ marginLeft: 5 }}>
-                  Nodes
-                </TYPE.white>
               </RowFixed>
             </StyledItem>
             <StyledItem gap="9px">

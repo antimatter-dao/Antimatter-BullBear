@@ -4,14 +4,11 @@ import { SwitchTabWrapper, Tab } from '../../components/SwitchTab'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { AnimatedImg, AnimatedWrapper, HideSmall, ShowSmall } from '../../theme'
 import Loader from '../../assets/svg/antimatter_background_logo.svg'
-import Table from '../../components/Table'
-import Copy from 'components/AccountDetails/Copy'
-import { shortenAddress } from 'utils'
-import { RowFixed } from 'components/Row'
-import { ButtonOutlined } from 'components/Button'
-import { ReactComponent as BuyIcon } from '../../assets/svg/buy.svg'
-import { ReactComponent as SellIcon } from '../../assets/svg/sell.svg'
-import showPassDateTime from '../../utils/showPassDateTime'
+import Table, { UserPostionTable } from '../../components/Table'
+// import { ReactComponent as BuyIcon } from '../../assets/svg/buy.svg'
+// import { ReactComponent as SellIcon } from '../../assets/svg/sell.svg'
+// import showPassDateTime from '../../utils/showPassDateTime'
+import { useMyPosition } from '../../hooks/useUserFetch'
 
 const Wrapper = styled.div`
   padding: 78px 0 88px;
@@ -45,69 +42,40 @@ const AppBody = styled.div`
   padding: 32px 24px;
   `}
 `
-const TableButtonOutlined = styled(ButtonOutlined)`
-  height: 40px;
-  width: 100px;
-  color: #b2f355;
-  border: 1px solid #b2f355;
-  opacity: 0.8;
-  &:hover {
-    border: 1px solid #b2f355;
-    opacity: 1;
-  }
-`
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
-  CREATION = 'my_creation',
-  ACTIVITY = 'activity'
+  CREATION = 'my_creation'
+  // ACTIVITY = 'activity'
 }
 export const UserInfoTabRoute = {
   [UserInfoTabs.POSITION]: 'My Position',
-  [UserInfoTabs.CREATION]: 'My Creation',
-  [UserInfoTabs.ACTIVITY]: 'Activity'
+  [UserInfoTabs.CREATION]: 'My Creation'
+  // [UserInfoTabs.ACTIVITY]: 'Activity'
 }
 
-const postionData = [
-  'ETH ($1000 ~ $3000)',
-  'CALL',
-  '121',
-  <RowFixed key={1}>
-    {shortenAddress('0x55cB10Cc3AE459EeE072567c8D53d1Bca31761fA' ?? '', 5)}
-    <Copy toCopy={'0x55cB10Cc3AE459EeE072567c8D53d1Bca31761fA'}></Copy>
-  </RowFixed>,
-  <TableButtonOutlined key={2}>Trade</TableButtonOutlined>
-]
-const postionDatas = [postionData, postionData, postionData]
-const creationData = [
-  'ETH ($1000 ~ $3000)',
-  'ETH, USDT',
-  '121',
-  '121 MATTER',
-  <TableButtonOutlined key={2}>Claim</TableButtonOutlined>
-]
-function randTime() {
-  return new Date(new Date().getTime() - Math.floor(Math.random() * 86400 * 1.2 * 1000))
-}
-const creationDatas = [creationData, creationData, creationData, creationData, creationData]
-const makeActiveData = () => [
-  'ETH ($1000 ~ $3000)',
-  'CALL',
-  Math.random() > 0.5 ? (
-    <>
-      <BuyIcon />
-      Buy
-    </>
-  ) : (
-    <>
-      <SellIcon />
-      Sell
-    </>
-  ),
-  '121',
-  showPassDateTime(randTime())
-]
-const activeDatas = [makeActiveData(), makeActiveData(), makeActiveData(), makeActiveData(), makeActiveData()]
+const creationDatas: any[] = []
+// function randTime() {
+//   return new Date(new Date().getTime() - Math.floor(Math.random() * 86400 * 1.2 * 1000))
+// }
+// const makeActiveData = () => [
+//   'ETH ($1000 ~ $3000)',
+//   'CALL',
+//   Math.random() > 0.5 ? (
+//     <>
+//       <BuyIcon />
+//       Buy
+//     </>
+//   ) : (
+//     <>
+//       <SellIcon />
+//       Sell
+//     </>
+//   ),
+//   '121',
+//   showPassDateTime(randTime())
+// ]
+// const activeDatas = [makeActiveData(), makeActiveData(), makeActiveData(), makeActiveData(), makeActiveData()]
 
 export default function User() {
   const history = useHistory()
@@ -127,14 +95,13 @@ export default function User() {
       setCurrentTab(tab as UserInfoTabs)
     }
   }, [location, tab])
+  const { data: myPosition } = useMyPosition()
 
   return (
     <Wrapper>
       <AppBody>
         <SwitchTab style={{ padding: '50px 50px 0' }} onTabClick={handleTabClick} currentTab={currentTab} />
-        {((currentTab === UserInfoTabs.CREATION && false) ||
-          (currentTab === UserInfoTabs.POSITION && false) ||
-          (currentTab === UserInfoTabs.ACTIVITY && false)) && (
+        {((currentTab === UserInfoTabs.CREATION && false) || (currentTab === UserInfoTabs.POSITION && false)) && (
           <>
             <HideSmall>
               <AnimatedWrapper style={{ marginTop: 40 }}>
@@ -154,7 +121,7 @@ export default function User() {
         )}
         {currentTab === UserInfoTabs.POSITION && (
           <>
-            <Table header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT ADDRESS', '']} rows={postionDatas} />
+            <UserPostionTable header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT ADDRESS', '']} data={myPosition} />
           </>
         )}
         {currentTab === UserInfoTabs.CREATION && (
@@ -162,11 +129,11 @@ export default function User() {
             <Table header={['OPTION', 'UNDERLYING ASSET', 'ISSUANCE', 'FEE EARN']} rows={creationDatas} />
           </>
         )}
-        {currentTab === UserInfoTabs.ACTIVITY && (
+        {/* {currentTab === UserInfoTabs.ACTIVITY && (
           <>
             <Table header={['OPTION', 'TYPE', 'ACTION', 'AMOUNT', 'DATE']} rows={activeDatas} />
           </>
-        )}
+        )} */}
       </AppBody>
     </Wrapper>
   )
