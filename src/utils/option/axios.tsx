@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const axiosInstance = axios.create({
   baseURL: 'http://47.242.246.224:8081/app/',
-  timeout: 2000,
+  timeout: 5000,
   headers: { 'content-type': 'application/json', accept: 'application/json' }
 })
 
