@@ -31,7 +31,7 @@ const TogggleMenuWrapper = styled.div`
   overflow-y: auto;
 `
 
-const TabMobile = styled(NavLink)<{ isSubTab?: boolean }>`
+const TabMobile = styled(NavLink)<{ issub?: number }>`
   font-size: 24px;
   font-weight: 400;
   color: ${({ theme }) => theme.text1};
@@ -39,8 +39,8 @@ const TabMobile = styled(NavLink)<{ isSubTab?: boolean }>`
   padding: 16px 30px;
   cursor: pointer;
   text-decoration: none;
-  ${({ isSubTab, theme }) =>
-    isSubTab
+  ${({ issub, theme }) =>
+    issub
       ? `
   font-size: 16px;
   padding: 8px 32px;
@@ -120,7 +120,7 @@ export default function ToggleMenu() {
                             {title}
                           </SubTabMobile>
                         ) : (
-                          <TabMobile key={title} to={`/${route}`} onClick={() => setIsOpen(!isOpen)} isSubTab={true}>
+                          <TabMobile key={title} to={`/${route}`} onClick={() => setIsOpen(!isOpen)} issub={+true}>
                             {titleContent ?? title}
                           </TabMobile>
                         )
