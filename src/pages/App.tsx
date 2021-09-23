@@ -133,7 +133,7 @@ export default function App() {
           'https://docs.google.com/forms/d/e/1FAIpQLSfyWq7xlI_ro72-n9rM-disc7extCoVw5oUiOQND7fnh1c80g/viewform?usp=pp_url'
         }
       >
-        <img src={Helper} />
+        <img alt="" src={Helper} />
       </Feedback>
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
