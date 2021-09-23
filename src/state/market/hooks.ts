@@ -1,4 +1,4 @@
-import { useAntimatterContract, useAttributesContract } from '../../hooks/useContract'
+import { useAntimatterContract, useAntimatterRouterContract, useAttributesContract } from '../../hooks/useContract'
 import {
   NEVER_RELOAD,
   useMultipleContractSingleData,
@@ -55,6 +55,11 @@ export interface Option {
   priceCap: string | undefined
   callToken: Token | undefined | null
   putToken: Token | undefined | null
+}
+
+export interface OptionPrice {
+  priceCall: TokenAmount | undefined | null
+  pricePut: TokenAmount | undefined | null
 }
 
 export function useOptionTypeCount(): number {
@@ -266,7 +271,22 @@ export function useOption(id: string | undefined): Option | undefined {
       callToken: call,
       putToken: put
     }
-  }, [attributesRes?.result, balancesRes, call, currency, put, underlying])
+  }, [attributesRes, balancesRes, call, currency, put, underlying])
+}
+
+export function useOptionPrice(option: Option | undefined): OptionPrice | undefined {
+  const factoryContract = useAntimatterRouterContract()
+  const arg = option
+    ? [option.underlying?.address, option.currency?.address, option.priceFloor, option.priceCap]
+    : [undefined]
+  const priceRes = useSingleCallResult(factoryContract, 'calcPrice4', arg)
+
+  return useMemo(() => {
+    if (!option?.currency || !priceRes?.result?.priceCall || !priceRes.result.pricePut) return undefined
+    const callAmount = new TokenAmount(option?.currency, priceRes?.result?.priceCall)
+    const putAmount = new TokenAmount(option?.currency, priceRes?.result?.pricePut)
+    return { priceCall: callAmount, pricePut: putAmount }
+  }, [priceRes, option])
 }
 
 export const absolute = (val: string) => {

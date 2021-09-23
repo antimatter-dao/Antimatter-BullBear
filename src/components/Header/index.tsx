@@ -599,7 +599,7 @@ export default function Header() {
 
 function LogoButton() {
   return (
-    <RowFlat style={{ marginRight: 60, alignItems: 'flex-start' }}>
+    <RowFlat style={{ alignItems: 'flex-start' }}>
       <Link to={'/'}>
         <StyledLogo />
       </Link>

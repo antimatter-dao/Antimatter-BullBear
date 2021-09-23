@@ -15,13 +15,17 @@ import { AutoColumn } from 'components/Column'
 //import { currencyId } from 'utils/currencyId'
 //import { OptionInterface } from './'
 import Loader from 'assets/svg/gray_loader.svg'
-import { Option, useOption, usePayCurrencyAmount, useSwapInfo } from '../../state/market/hooks'
+import {
+  Option,
+  OptionPrice,
+  useOption,
+  useOptionPrice,
+} from '../../state/market/hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { tryFormatAmount } from '../../state/swap/hooks'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import { useActiveWeb3React } from 'hooks'
 import { useTotalSupply } from '../../data/TotalSupply'
-import { CurrencyAmount } from '@uniswap/sdk'
 import { OptionField } from '../Swap'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 //import { ChainId, WETH } from '@uniswap/sdk'
@@ -152,7 +156,7 @@ const InfoAppBody = styled(BodyWrapper)`
 
   min-height: 402px;
   margin: -1px;
-  border-color: transparent
+  border-color: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -211,13 +215,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
   const handleBack = useCallback(() => history.push('/option_trading'), [history])
   const [optionType, setOptionType] = useState<string>(OptionField.CALL)
 
-  const underlying = option?.underlying
-  const currency = option?.currency
-
-  const callRouterDelta = useSwapInfo(option, '1', '0', underlying, currency, currency)
-  const putRouterDelta = useSwapInfo(option, '0', '1', underlying, currency, currency)
-  const callPrice = usePayCurrencyAmount(callRouterDelta, currency ?? undefined)
-  const putPrice = usePayCurrencyAmount(putRouterDelta, currency ?? undefined)
+  const optionPrice = useOptionPrice(option)
 
   return (
     <>
@@ -273,13 +271,12 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                   <OptionSwap
                     optionType={optionType}
                     handleOptionType={setOptionType}
-                    callPrice={callPrice}
-                    putPrice={putPrice}
+                    optionPrice={optionPrice}
                     option={option}
                   />
                 )}
                 {/*{tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}*/}
-                {tab === TABS.INFO && <Info callPrice={callPrice} putPrice={putPrice} option={option} />}
+                {tab === TABS.INFO && <Info optionPrice={optionPrice} option={option} />}
               </Elevate>
             </StyledAppBody>
           </ActionWrapper>
@@ -354,14 +351,12 @@ function Tab({
 
 function Info({
   option,
-  callPrice,
-  putPrice,
-  placeholder = '-'
+  placeholder = '-',
+  optionPrice
 }: {
   option?: Option
-  callPrice: CurrencyAmount | undefined
-  putPrice: CurrencyAmount | undefined
   placeholder?: string
+  optionPrice: OptionPrice | undefined
 }) {
   // const theme = useTheme()
   const { chainId } = useActiveWeb3React()
@@ -370,6 +365,8 @@ function Info({
   const undTotal = useCurrencyBalance(option?.call?.token.address, option?.underlying ?? undefined)
   const curTotal = useCurrencyBalance(option?.put?.token.address, option?.currency ?? undefined)
 
+  const priceCall = optionPrice?.priceCall
+  const pricePut = optionPrice?.pricePut
   return (
     <InfoAppBody>
       <TYPE.smallHeader style={{ marginBottom: 20 }} fontSize={18}>
@@ -420,7 +417,7 @@ function Info({
             </RowBetween>
             <RowBetween>
               <TYPE.darkGray>{'Call Token Market Price:'}</TYPE.darkGray>
-              <TYPE.main>{`$${callPrice ? callPrice.toSignificant(6) : placeholder}`}</TYPE.main>
+              <TYPE.main>{`$${priceCall ? priceCall.toSignificant(6) : placeholder}`}</TYPE.main>
             </RowBetween>
           </AutoColumn>
           <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
@@ -440,7 +437,7 @@ function Info({
             </RowBetween>
             <RowBetween>
               <TYPE.darkGray>{'Put Token Market Price:'}</TYPE.darkGray>
-              <TYPE.main>{`$${putPrice ? putPrice.toSignificant(6) : placeholder}`}</TYPE.main>
+              <TYPE.main>{`$${pricePut ? pricePut.toSignificant(6) : placeholder}`}</TYPE.main>
             </RowBetween>
           </AutoColumn>
         </AutoColumn>

@@ -73,7 +73,7 @@ export default function Calculator() {
   }, [calculateCallback, price, priceCap, priceFloor, totalCall, totalPut])
 
   return (
-    <AppBody maxWidth="560px" style={{marginTop: 24}}>
+    <AppBody maxWidth="560px" style={{ marginTop: 24 }}>
       <AutoColumn gap="20px">
         <AutoColumn gap="8px">
           <BodyHeader title="Option Calculator" />

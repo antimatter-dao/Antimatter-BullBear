@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { CurrencyAmount } from '@uniswap/sdk'
 import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts'
 import styled from 'styled-components'
 import Swap, { OptionField } from '../Swap'
-import { Option } from '../../state/market/hooks'
+import { Option, OptionPrice } from '../../state/market/hooks'
 import SwitchTab from 'components/SwitchTab'
 import { Axios } from 'utils/option/axios'
 import { useActiveWeb3React } from 'hooks'
@@ -104,14 +103,12 @@ export default function OptionSwap({
   option,
   optionType,
   handleOptionType,
-  callPrice,
-  putPrice
+  optionPrice
 }: {
   option?: Option
   optionType: string
   handleOptionType: (option: string) => void
-  callPrice: CurrencyAmount | undefined
-  putPrice: CurrencyAmount | undefined
+  optionPrice: OptionPrice | undefined
 }) {
   const { chainId } = useActiveWeb3React()
   const [currentTab, setCurrentTab] = useState<keyof typeof Tabs>('CALL')
@@ -120,6 +117,10 @@ export default function OptionSwap({
   const [chart, setChart] = useState<IChartApi | undefined>(undefined)
   const [callChartData, setCallChartData] = useState<DexTradeData[] | undefined>(undefined)
   const [putChartData, setPutChartData] = useState<DexTradeData[] | undefined>(undefined)
+
+  const priceCall = optionPrice?.priceCall
+  const pricePut = optionPrice?.pricePut
+
   const {
     httpHandlingFunctions: { errorFunction, pendingFunction, pendingCompleteFunction },
     NetworkErrorModal,
@@ -169,14 +170,7 @@ export default function OptionSwap({
     //   id,
     //   errorFunction
     // )
-  }, [
-    chainId,
-    errorFunction,
-    option?.callToken?.address,
-    option?.putToken?.address,
-    pendingCompleteFunction,
-    pendingFunction
-  ])
+  }, [chainId, errorFunction, option, pendingCompleteFunction, pendingFunction])
 
   useEffect(() => {
     const chartElement = document.getElementById('chart') ?? ''
@@ -281,11 +275,11 @@ export default function OptionSwap({
           <CurrentPrice>
             Current price: {'\n'}${' '}
             {optionType === OptionField.CALL
-              ? callPrice
-                ? callPrice.toSignificant(6)
+              ? priceCall
+                ? priceCall.toSignificant(6)
                 : '-'
-              : putPrice
-              ? putPrice.toSignificant(6)
+              : pricePut
+              ? pricePut.toSignificant(6)
               : '-'}
           </CurrentPrice>
           <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} tabs={Tabs} />
@@ -299,7 +293,7 @@ export default function OptionSwap({
             </Button>
           </ButtonGroup>
 
-          <Chart id="chart"></Chart>
+          <Chart id="chart" />
         </GraphWrapper>
       </Wrapper>
     </>
