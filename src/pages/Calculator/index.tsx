@@ -31,7 +31,8 @@ enum ERROR {
   EMPTY_PRICE_FLOOR = 'Price floor cannot be empty or 0',
   EMPTY_TOTAL_CALL = 'Call Issuance be empty or 0',
   EMPTY_TOTAL_PUT = 'Put Issuance be empty or 0',
-  LARGER_FLOOR_THAN_CAP = 'Price Floor cannot be larger than Price Ceiling'
+  LARGER_FLOOR_THAN_CAP = 'Price Floor cannot be larger than price ceiling',
+  PRICE_EXCEEDS_PRICE_RANGE = 'Price must be between price floor and price ceiling'
 }
 
 export default function Calculator() {
@@ -48,20 +49,22 @@ export default function Calculator() {
 
   useEffect(() => {
     if (!calculateCallback) return
-    debounce(() => {
-      if (!price && !priceFloor && !priceCap && !totalCall && !totalPut) {
-        setError('')
-        return
-      }
-      let error = ''
-      if (+priceFloor > +priceCap) error = ERROR.LARGER_FLOOR_THAN_CAP
-      if (!totalPut || +totalPut === 0) error = ERROR.EMPTY_TOTAL_PUT
-      if (!totalCall || +totalCall === 0) error = ERROR.EMPTY_TOTAL_CALL
-      if (!priceFloor || +priceFloor === 0) error = ERROR.EMPTY_PRICE_FLOOR
-      if (!priceCap || +priceCap === 0) error = ERROR.EMPTY_PRICE_CAP
-      if (!price || +price === 0) error = ERROR.EMPTY_PRICE
-      setError(error)
-    }, 1000)()
+
+    if (!price && !priceFloor && !priceCap && !totalCall && !totalPut) {
+      setError('')
+      return
+    }
+    let error = ''
+    if (+price < +priceFloor || +price > +priceCap) error = ERROR.PRICE_EXCEEDS_PRICE_RANGE
+    if (+priceFloor > +priceCap) error = ERROR.LARGER_FLOOR_THAN_CAP
+    if (!totalPut || +totalPut === 0) error = ERROR.EMPTY_TOTAL_PUT
+    if (!totalCall || +totalCall === 0) error = ERROR.EMPTY_TOTAL_CALL
+    if (!priceFloor || +priceFloor === 0) error = ERROR.EMPTY_PRICE_FLOOR
+    if (!priceCap || +priceCap === 0) error = ERROR.EMPTY_PRICE_CAP
+    if (!price || +price === 0) error = ERROR.EMPTY_PRICE
+    setError(error)
+
+    if (error) return
     debounce(() => {
       const res = calculateCallback(price, priceFloor, priceCap, totalCall, totalPut)
       res.then(res => {
