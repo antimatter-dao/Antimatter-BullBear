@@ -46,6 +46,7 @@ import Calculator from './Calculator'
 // import WarningModal from 'components/Modal/WarningModal'
 import Helper from '../assets/svg/helper.svg'
 import { ExternalLink } from '../theme'
+
 const AppWrapper = styled.div`
   display: flex;
   align-items: flex-start;
@@ -95,14 +96,23 @@ const BodyWrapper = styled.div`
   margin-top: ${({ theme }) => theme.mobileHeaderHeight}
   `};
 `
-
-const Feedback = styled.img`
+const Feedback = styled(ExternalLink)`
   z-index: 9;
   position: fixed;
-  width: 32px;
-  height: 32px;
   right: 100px;
   bottom: 50px;
+  img {
+    width: 32px;
+    height: 32px;
+  }
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    right:14px
+    bottom: 38px;
+    img {
+      width: 26px;
+      height: 26px;
+    }
+  `};
 `
 
 export const Marginer = styled.div`
@@ -118,13 +128,13 @@ export const Marginer = styled.div`
 export default function App() {
   return (
     <Suspense fallback={null}>
-      <ExternalLink
+      <Feedback
         href={
           'https://docs.google.com/forms/d/e/1FAIpQLSfyWq7xlI_ro72-n9rM-disc7extCoVw5oUiOQND7fnh1c80g/viewform?usp=pp_url'
         }
       >
-        <Feedback src={Helper} />
-      </ExternalLink>
+        <img src={Helper} />
+      </Feedback>
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper id="app">

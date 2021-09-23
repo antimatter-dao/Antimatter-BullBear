@@ -41,7 +41,7 @@ export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; wi
     :hover {
       border-color: transparent;
     }
-    opacity: 100%;
+    opacity: 50%;
     cursor: auto;
     color: ${({ theme }) => theme.text3};
   }

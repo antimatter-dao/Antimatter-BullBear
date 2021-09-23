@@ -2,13 +2,13 @@ import React, { useState, useCallback } from 'react'
 // import { X } from 'react-feather'
 import styled from 'styled-components'
 import { RowFixed } from 'components/Row'
-import { Currency, JSBI, Token } from '@uniswap/sdk'
+import { Currency, Token } from '@uniswap/sdk'
 import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import { currencyNameHelper } from 'utils/marketStrategyUtils'
 // import { TextValueInput } from 'components/TextInput'
 import { /*CloseIcon, MEDIA_WIDTHS,*/ TYPE } from 'theme'
-import { ButtonSelectRange, Range } from 'components/Button/ButtonSelectRange'
+// import { ButtonSelectRange, Range } from 'components/Button/ButtonSelectRange'
 import { ButtonSelectNumericalInput } from 'components/Button/ButtonSelectNumericalInput'
 // import useMediaWidth from 'hooks/useMediaWidth'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
@@ -51,8 +51,7 @@ const StyledSearch = styled.div`
     grid-gap:10px;
   `}
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  padding: 0;
-  padding-top: 44px;
+  padding: 44px 14px 23px;
   grid-gap: 24px
 `}
 `
@@ -229,11 +228,12 @@ export default function Search({
 }) {
   const [assetTypeQuery, setAssetTypeQuery] = useState<Currency | undefined>(undefined)
   const [optionIdQuery, setOptionIdQuery] = useState('')
-  const [rangeQuery, setRangeQuery] = useState<Range>({
-    floor: undefined,
-    cap: undefined
-  })
+  // const [rangeQuery, setRangeQuery] = useState<Range>({
+  //   floor: undefined,
+  //   cap: undefined
+  // })
   const [currencySearchOpen, setCurrencySearchOpen] = useState(false)
+
   const handleDismissSearch = useCallback(() => setCurrencySearchOpen(false), [])
   const handleOpenAssetSearch = useCallback(() => setCurrencySearchOpen(true), [])
   const handleSearch = useCallback(() => {
@@ -241,18 +241,21 @@ export default function Search({
     if (optionIdQuery) {
       body.optionIndex = +optionIdQuery
     }
-    if (rangeQuery.floor !== undefined) {
-      body.priceFloor = JSBI.multiply(
-        JSBI.BigInt(rangeQuery.floor),
-        JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(6))
-      ).toString()
-    }
-    if (rangeQuery.cap !== undefined) {
-      body.priceCap = JSBI.multiply(
-        JSBI.BigInt(rangeQuery.cap),
-        JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(6))
-      ).toString()
-    }
+    // if (assetTypeQuery && assetTypeQuery.symbol === ALL.id) {
+    //   if (rangeQuery.floor !== undefined && assetTypeQuery) {
+    //     body.priceFloor = JSBI.multiply(
+    //       JSBI.BigInt(rangeQuery.floor),
+    //       JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(assetTypeQuery?.decimals))
+    //     ).toString()
+    //   }
+    //   if (rangeQuery.cap !== undefined && assetTypeQuery) {
+    //     body.priceCap = JSBI.multiply(
+    //       JSBI.BigInt(rangeQuery.cap),
+    //       JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(assetTypeQuery?.decimals))
+    //     ).toString()
+    //   }
+    // }
+
     if (assetTypeQuery) {
       if (assetTypeQuery.symbol === ALL.id) {
         delete body.underlyingSymbol
@@ -260,16 +263,17 @@ export default function Search({
         body.underlyingSymbol = assetTypeQuery.symbol
       }
     }
+
     onSearch(body)
-  }, [assetTypeQuery, onSearch, optionIdQuery, rangeQuery.cap, rangeQuery.floor])
+  }, [assetTypeQuery, onSearch, optionIdQuery])
   const handleClear = useCallback(() => {
     onClear && onClear()
     setAssetTypeQuery(undefined)
     setOptionIdQuery('')
-    setRangeQuery({
-      floor: undefined,
-      cap: undefined
-    })
+    // setRangeQuery({
+    //   floor: undefined,
+    //   cap: undefined
+    // })
   }, [onClear])
 
   const theme = useTheme()
@@ -306,17 +310,18 @@ export default function Search({
               ]}
             />
           )} */}
-          <ButtonSelectRange
-            placeholder="Select price range"
-            rangeCap={rangeQuery.cap?.toString()}
-            rangeFloor={rangeQuery.floor?.toString()}
-            onSetRange={setRangeQuery}
-          />
           <ButtonSelectNumericalInput
             placeholder="Select option ID"
             value={optionIdQuery}
             onSetValue={setOptionIdQuery}
           />
+          {/* <ButtonSelectRange
+            placeholder="Select price range"
+            rangeCap={rangeQuery.cap?.toString()}
+            rangeFloor={rangeQuery.floor?.toString()}
+            onSetRange={setRangeQuery}
+            disabled={!assetTypeQuery}
+          /> */}
           <ButtonWrapper>
             <ButtonPrimary width="186px" onClick={handleSearch}>
               <SearchIcon style={{ marginRight: 10 }} />

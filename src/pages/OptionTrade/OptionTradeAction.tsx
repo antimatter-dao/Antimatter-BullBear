@@ -15,12 +15,7 @@ import { AutoColumn } from 'components/Column'
 //import { currencyId } from 'utils/currencyId'
 //import { OptionInterface } from './'
 import Loader from 'assets/svg/gray_loader.svg'
-import {
-  Option,
-  OptionPrice,
-  useOption,
-  useOptionPrice,
-} from '../../state/market/hooks'
+import { Option, OptionPrice, useOption, useOptionPrice } from '../../state/market/hooks'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { tryFormatAmount } from '../../state/swap/hooks'
 import { getEtherscanLink, shortenAddress } from 'utils'
@@ -253,10 +248,20 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                 </RowFixed>
               )}
 
-              {option?.currency && (
-                <StyledExternalLink href={getEtherscanLink(option.currency.chainId, option.currency.address, 'token')}>
-                  {option.currency.address}
-                </StyledExternalLink>
+              {option && option.callToken && option.putToken && (
+                <RowFixed gap="10px">
+                  <StyledExternalLink
+                    href={getEtherscanLink(option.callToken.chainId, option.callToken.address, 'token')}
+                  >
+                    {shortenAddress(option.callToken.address, 6)}
+                  </StyledExternalLink>
+                  <TYPE.smallGray>&nbsp;&nbsp;|&nbsp;&nbsp;</TYPE.smallGray>
+                  <StyledExternalLink
+                    href={getEtherscanLink(option.putToken.chainId, option.putToken.address, 'token')}
+                  >
+                    {shortenAddress(option.putToken.address, 6)}
+                  </StyledExternalLink>
+                </RowFixed>
               )}
             </TitleWrapper>
             <HideSmall>

@@ -46,7 +46,8 @@ export const tabs: Tab[] = [
       { title: 'Github', link: 'https://github.com/antimatter-finance' },
       {
         title: 'Auditing Report',
-        link: 'https://github.com/antimatter-finance/antimatter-assets/blob/main/PeckShield-Audit-Report-AntimatterFinance-v1.0.pdf'
+        link:
+          'https://github.com/antimatter-finance/antimatter-assets/blob/main/PeckShield-Audit-Report-AntimatterFinance-v1.0.pdf'
       },
       {
         title: 'faq',
@@ -271,10 +272,6 @@ const NetworkCard = styled.div<{ color?: string }>`
       }
     }
   }
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 0
-`};
-
 `
 
 const activeClassName = 'ACTIVE'

@@ -42,7 +42,8 @@ export function ButtonSelectRange({
   placeholder = 'Select Price Range',
   rangeFloor,
   rangeCap,
-  onSetRange
+  onSetRange,
+  disabled
 }: ButtonProps & {
   placeholder?: string
   width?: string
@@ -99,6 +100,7 @@ export function ButtonSelectRange({
         }}
         width="100%"
         selected={!!rangeCap || !!rangeFloor}
+        disabled={disabled}
       >
         <RowBetween>
           <div style={{ display: 'flex', alignItems: 'center' }}>{buttonContent}</div>
