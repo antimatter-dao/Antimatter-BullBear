@@ -9,6 +9,7 @@ import Table, { UserPostionTable } from '../../components/Table'
 // import { ReactComponent as SellIcon } from '../../assets/svg/sell.svg'
 // import showPassDateTime from '../../utils/showPassDateTime'
 import { useMyPosition } from '../../hooks/useUserFetch'
+import Pagination from '../../components/Pagination'
 
 const Wrapper = styled.div`
   padding: 78px 0 88px;
@@ -95,45 +96,60 @@ export default function User() {
       setCurrentTab(tab as UserInfoTabs)
     }
   }, [location, tab])
-  const { data: myPosition } = useMyPosition()
+  const { data: myPosition, page: myPositionPage, loading: myPositionLoading } = useMyPosition()
 
   return (
     <Wrapper>
       <AppBody>
         <SwitchTab style={{ padding: '50px 50px 0' }} onTabClick={handleTabClick} currentTab={currentTab} />
-        {((currentTab === UserInfoTabs.CREATION && false) || (currentTab === UserInfoTabs.POSITION && false)) && (
+        {(currentTab === UserInfoTabs.CREATION && false) ||
+        (currentTab === UserInfoTabs.POSITION && myPositionLoading) ? (
           <>
             <HideSmall>
-              <AnimatedWrapper style={{ marginTop: 40 }}>
+              <AnimatedWrapper>
                 <AnimatedImg>
                   <img src={Loader} alt="loading-icon" />
                 </AnimatedImg>
               </AnimatedWrapper>
             </HideSmall>
             <ShowSmall>
-              <AnimatedWrapper style={{ marginTop: 40 }}>
+              <AnimatedWrapper>
                 <AnimatedImg>
                   <img src={Loader} alt="loading-icon" />
                 </AnimatedImg>
               </AnimatedWrapper>
             </ShowSmall>
           </>
-        )}
-        {currentTab === UserInfoTabs.POSITION && (
+        ) : (
           <>
-            <UserPostionTable header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT ADDRESS', '']} data={myPosition} />
+            {' '}
+            {currentTab === UserInfoTabs.POSITION && (
+              <>
+                <UserPostionTable header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT ADDRESS', '']} data={myPosition} />
+                {myPositionPage.totalPages !== 0 && (
+                  <Pagination
+                    page={myPositionPage.currentPage}
+                    count={myPositionPage.totalPages}
+                    setPage={myPositionPage.setCurrentPage}
+                  />
+                )}
+                {!myPosition.length && !myPositionLoading && (
+                  <p style={{ margin: 50 }}>You have no postion at the moment</p>
+                )}
+              </>
+            )}
+            {currentTab === UserInfoTabs.CREATION && (
+              <>
+                <Table header={['OPTION', 'UNDERLYING ASSET', 'ISSUANCE', 'FEE EARN']} rows={creationDatas} />
+              </>
+            )}
+            {/* {currentTab === UserInfoTabs.ACTIVITY && (
+              <>
+                <Table header={['OPTION', 'TYPE', 'ACTION', 'AMOUNT', 'DATE']} rows={activeDatas} />
+              </>
+            )} */}
           </>
         )}
-        {currentTab === UserInfoTabs.CREATION && (
-          <>
-            <Table header={['OPTION', 'UNDERLYING ASSET', 'ISSUANCE', 'FEE EARN']} rows={creationDatas} />
-          </>
-        )}
-        {/* {currentTab === UserInfoTabs.ACTIVITY && (
-          <>
-            <Table header={['OPTION', 'TYPE', 'ACTION', 'AMOUNT', 'DATE']} rows={activeDatas} />
-          </>
-        )} */}
       </AppBody>
     </Wrapper>
   )
