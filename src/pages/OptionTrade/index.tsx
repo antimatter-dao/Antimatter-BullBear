@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router'
 import styled from 'styled-components'
@@ -17,13 +17,15 @@ import CurrencyLogo from 'components/CurrencyLogo'
 //import { useUSDTPrice } from 'utils/useUSDCPrice'
 import { XCircle } from 'react-feather'
 import { useNetwork } from 'hooks/useNetwork'
+import { useOptionList } from 'hooks/useOptionList'
 import { useOption, useOptionTypeCount } from '../../state/market/hooks'
 import { tryFormatAmount } from '../../state/swap/hooks'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useActiveWeb3React } from 'hooks'
-import Search from 'components/Search'
+import Search, { SearchQuery } from 'components/Search'
 import { Axios } from 'utils/option/axios'
 import { formatUnderlying } from 'utils/option/utils'
+import Pagination from 'components/Pagination'
 
 export interface OptionInterface {
   optionId: string | undefined
@@ -126,33 +128,28 @@ export default function OptionTrade({
   const [tokenList, setTokenList] = useState<Token[] | undefined>(undefined)
   const [filteredIndexes, setFilteredIndexes] = useState<string[] | undefined>(undefined)
   const history = useHistory()
+  const [searchParams, setSearchParams] = useState<SearchQuery>({})
+  const { page, data: currentIds } = useOptionList(searchParams)
+  useEffect(() => {
+    setFilteredIndexes(currentIds)
+  }, [currentIds])
+
   const {
     httpHandlingFunctions: { errorFunction },
     NetworkErrorModal
   } = useNetwork()
   const optionTypeIndexes = useMemo(() => {
     const list = Array.from({ length: optionCount }, (v, i) => i.toString())
-    setFilteredIndexes(list)
     return list
   }, [optionCount])
 
   const handleClearSearch = useCallback(() => {
-    setFilteredIndexes(optionTypeIndexes)
-  }, [optionTypeIndexes])
+    setSearchParams({})
+  }, [])
 
-  const handleSearch = useCallback(
-    body => {
-      Axios.post('getCreateOptionList', {}, { chainId, ...body })
-        .then(r => {
-          setFilteredIndexes(r.data.data.list.map(({ optionIndex }: { optionIndex: any }) => optionIndex))
-        })
-        .catch(e => {
-          console.error(e)
-          errorFunction()
-        })
-    },
-    [chainId, errorFunction]
-  )
+  const handleSearch = useCallback((body: SearchQuery) => {
+    setSearchParams(body)
+  }, [])
 
   useEffect(() => {
     if (!chainId) return
@@ -192,6 +189,9 @@ export default function OptionTrade({
                 />
               ))}
             </ContentWrapper>
+          )}
+          {page.totalPages !== 0 && (
+            <Pagination page={page.currentPage} count={page.totalPages} setPage={page.setCurrentPage} />
           )}
           <AlternativeDisplay optionIndexes={optionTypeIndexes} filteredIndexes={filteredIndexes} />
         </Wrapper>

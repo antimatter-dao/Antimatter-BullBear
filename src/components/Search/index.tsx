@@ -18,6 +18,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 
 export interface SearchQuery {
   optionIndex?: number | string
+  id?: number | string
   priceCap?: number | string
   priceFloor?: number | string
   underlyingSymbol?: string
@@ -239,7 +240,7 @@ export default function Search({
   const handleSearch = useCallback(() => {
     const body = {} as SearchQuery
     if (optionIdQuery) {
-      body.optionIndex = +optionIdQuery
+      body.id = +optionIdQuery
     }
     // if (assetTypeQuery && assetTypeQuery.symbol === ALL.id) {
     //   if (rangeQuery.floor !== undefined && assetTypeQuery) {
