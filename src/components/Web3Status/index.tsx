@@ -18,7 +18,7 @@ import { isTransactionRecent, useAllTransactions } from '../../state/transaction
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
 import { ButtonOutlined } from '../Button'
-import Copy from '../AccountDetails/Copy'
+// import Copy from '../AccountDetails/Copy'
 
 // import Identicon from '../Identicon'
 import Loader from '../Loader'
@@ -133,11 +133,11 @@ const Dot = styled.span`
   border-radius: 50%;
 `
 
-const HideSmall = styled.span`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
-`
+// const HideSmall = styled.span`
+//   ${({ theme }) => theme.mediaWidth.upToSmall`
+//     display: none;
+//   `};
+// `
 
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
@@ -213,11 +213,11 @@ function Web3StatusInner() {
           ) : (
             <>
               {hasSocks ? SOCK : null}
-              <Text>{ENSName || shortenAddress(account)}</Text>
+              <Text style={{ marginRight: 4 }}>{ENSName || shortenAddress(account)}</Text>
             </>
           )}
         </Web3StatusConnected>
-        <HideSmall> {account && <Copy toCopy={account} />}</HideSmall>
+        {/* <HideSmall> {account && <Copy toCopy={account} />}</HideSmall> */}
       </>
     )
   } else if (error) {
