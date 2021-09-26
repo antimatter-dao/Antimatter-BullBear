@@ -73,7 +73,7 @@ const SwapAppBody = styled(BodyWrapper)`
   border-color: ${({ theme }) => theme.text4};
   min-height: 100%;
   margin: -1px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   max-width: unset
   width: calc(100% + 2px)
   `}
