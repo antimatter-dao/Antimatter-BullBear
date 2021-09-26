@@ -67,9 +67,9 @@ const Button = styled(ButtonOutlinedPrimary)<{ isActive: boolean }>`
   flex-grow: 0;
   padding: 6px 14px;
   width: auto !important;
-  :focus{
-    border-color:${({ theme }) => theme.primary1}
-    color:${({ theme }) => theme.primary1}
+  :focus {
+    border-color: ${({ theme }) => theme.primary1};
+    color: ${({ theme }) => theme.primary1};
   }
   ${({ isActive, theme }) => (!isActive ? `border-color:${theme.text3}; color:${theme.text3};` : '')}
 `
@@ -80,14 +80,14 @@ const CurrentPrice = styled.div`
   top: 7;
   white-space: nowrap;
   font-size: 18px;
-  font-wight: 500;
+  font-weight: 500;
   font-family: Futura PT;
   color: ${({ theme }) => theme.primary1};
   ${({ theme }) => theme.mediaWidth.upToSmall`
     white-space: pre-wrap;
     text-align: right;
     font-size: 14px;
-    font-wight: 400;
+    font-weight: 400;
   `}
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     font-size: 12px;
@@ -117,6 +117,7 @@ export default function OptionSwap({
   const [chart, setChart] = useState<IChartApi | undefined>(undefined)
   const [callChartData, setCallChartData] = useState<DexTradeData[] | undefined>(undefined)
   const [putChartData, setPutChartData] = useState<DexTradeData[] | undefined>(undefined)
+  const [graphLoading, setGraphLoading] = useState(true)
 
   const priceCall = optionPrice?.priceCall
   const pricePut = optionPrice?.pricePut
@@ -145,6 +146,7 @@ export default function OptionSwap({
           }
           if (complete.put) {
             pendingCompleteFunction()
+            setGraphLoading(false)
           }
         })
         .catch(() => errorFunction())
@@ -158,6 +160,7 @@ export default function OptionSwap({
           }
           if (complete.call) {
             pendingCompleteFunction()
+            setGraphLoading(false)
           }
         })
         .catch(() => errorFunction())
@@ -271,10 +274,10 @@ export default function OptionSwap({
       <Wrapper>
         <Swap handleOptionType={handleOptionType} option={option} />
         <GraphWrapper>
-          <NetworkPendingSpinner paddingTop="0" />
+          {graphLoading && <NetworkPendingSpinner paddingTop="0" />}
           <CurrentPrice>
             Current price: {'\n'}${' '}
-            {optionType === OptionField.CALL
+            {currentTab === OptionField.CALL
               ? priceCall
                 ? priceCall.toSignificant(6)
                 : '-'

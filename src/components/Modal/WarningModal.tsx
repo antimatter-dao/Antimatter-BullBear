@@ -24,11 +24,12 @@ export default function WarningModal() {
   // useEffect(() => {
   //   console.log('scrollTop', scrollTop)
   // }, [scrollTop])
+  const isDev = process.env.NODE_ENV === 'development'
 
   const handleClose = useCallback(() => setIsOpen(false), [setIsOpen])
   return (
     <>
-      {isOpen && (
+      {isOpen && !isDev && (
         <Modal maxWidth={608} isOpen={isOpen} onDismiss={() => {}}>
           <AutoColumn
             gap="24px"

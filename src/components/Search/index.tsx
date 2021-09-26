@@ -50,11 +50,13 @@ const StyledSearch = styled.div`
     grid-gap:10px;
   `} */
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  padding: 44px 14px 23px;
+  padding: 10px 14px 0px;
   width: 100%;
   flex-wrap: wrap
   flex-direction: column
-  grid-gap: 24px
+  &>div {
+    margin-bottom: 20px;
+  }
 `}
 `
 
@@ -64,11 +66,12 @@ const ButtonWrapper = styled(RowFixed)`
     margin-left: 0;
   `}
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  margin-bottom: 35px;
+  margin-bottom: 20px;
   flex-direction: column
   width: 100%;
   button{
     width: 100%;
+    margin-right: 14px;
     :first-child{
       margin-bottom: 16px
     }
