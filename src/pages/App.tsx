@@ -71,11 +71,10 @@ const HeaderWrapper = styled.div`
   width: 100%;
   justify-content: space-between;
   flex-direction: column;
-  min-width: 1280px;
   ${({ theme }) => theme.flexRowNoWrap}
   ${({ theme }) => theme.mediaWidth.upToSmall`
   height:0;
-  overflow: hidden
+  // overflow: hidden
   min-width: auto;
   `}
 `
@@ -84,7 +83,6 @@ const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-width: 1280px;
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
   justify-content: center;
   align-items: center;
