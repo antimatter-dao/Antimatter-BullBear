@@ -29,11 +29,10 @@ enum ERROR {
   EMPTY_PRICE = 'Price cannot be empty or 0',
   EMPTY_PRICE_CAP = 'Price ceiling cannot be empty or 0',
   EMPTY_PRICE_FLOOR = 'Price floor cannot be empty or 0',
-  EMPTY_TOTAL_CALL = 'Call issuance cannot be empty or 0',
-  EMPTY_TOTAL_PUT = 'Put issuance cannot be empty or 0',
+  EMPTY_TOTAL_CALL = 'Call issuance cannot be empty',
+  EMPTY_TOTAL_PUT = 'Put issuance cannot be empty',
   LARGER_FLOOR_THAN_CAP = 'Price floor cannot be larger than price ceiling',
-  PRICE_EXCEEDS_PRICE_RANGE = 'Price must be between price floor and price ceiling',
-  ISSUANCE_ZERO = 'Call issuance and put issuance cannont be 0 simultaneously'
+  PRICE_EXCEEDS_PRICE_RANGE = 'Price must be between price floor and price ceiling'
 }
 
 export default function Calculator() {
@@ -56,7 +55,6 @@ export default function Calculator() {
       return
     }
     let error = ''
-    if (+totalPut === 0 && +totalCall === 0) error = ERROR.ISSUANCE_ZERO
     if (+price < +priceFloor || +price > +priceCap) error = ERROR.PRICE_EXCEEDS_PRICE_RANGE
     if (+priceFloor > +priceCap) error = ERROR.LARGER_FLOOR_THAN_CAP
     if (!totalPut) error = ERROR.EMPTY_TOTAL_PUT
