@@ -7,7 +7,6 @@ import Header from '../components/Header'
 import Polling from '../components/Header/Polling'
 // import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
-// import Sidebar from '../components/Sidebar'
 import Web3ReactManager from '../components/Web3ReactManager'
 // import { ApplicationModal } from '../state/application/actions'
 // import { useModalOpen, useToggleModal } from '../state/application/hooks'
@@ -43,7 +42,7 @@ import Stats from './Stats'
 import ComingSoon from './ComingSoon'
 import User from './User'
 import Calculator from './Calculator'
-// import WarningModal from 'components/Modal/WarningModal'
+import WarningModal from 'components/Modal/WarningModal'
 import Helper from '../assets/svg/helper.svg'
 import { ExternalLink } from '../theme'
 
@@ -139,7 +138,6 @@ export default function App() {
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper id="app">
         {/* <URLWarning /> */}
-        {/* <Sidebar /> */}
         <ContentWrapper>
           <HeaderWrapper id="header">
             <Header />
@@ -148,7 +146,7 @@ export default function App() {
             <Popups />
             <Polling />
             <WelcomeSlider />
-            {/* <WarningModal /> */}
+            <WarningModal />
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>

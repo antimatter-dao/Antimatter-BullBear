@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 // import { X } from 'react-feather'
 import { ButtonPrimary } from 'components/Button'
 import { AutoColumn, ColumnCenter } from 'components/Column'
@@ -19,11 +19,11 @@ export default function WarningModal() {
 
   const confirmRef = useRef<HTMLDivElement>()
 
-  const scrollTop = confirmRef.current
+  // const scrollTop = confirmRef.current
 
-  useEffect(() => {
-    console.log('scrollTop', scrollTop)
-  }, [scrollTop])
+  // useEffect(() => {
+  //   console.log('scrollTop', scrollTop)
+  // }, [scrollTop])
 
   const handleClose = useCallback(() => setIsOpen(false), [setIsOpen])
   return (
@@ -381,7 +381,9 @@ export default function WarningModal() {
               </TYPE.body>
             </AutoRow>
 
-            <TYPE.small style={{ marginTop: -20 }}>Please read all and scroll down to bottom to confirm </TYPE.small>
+            <TYPE.small style={{ marginTop: -20 }} color={theme.red1}>
+              Please read all and scroll down to bottom to confirm{' '}
+            </TYPE.small>
 
             <ButtonPrimary disabled={!confirmed} onClick={handleClose}>
               Next
