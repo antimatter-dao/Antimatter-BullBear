@@ -61,16 +61,22 @@ const ContentWrapper = styled.div`
   max-height: 100vh;
   overflow: auto;
   align-items: center;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+   align-items: center;
+   min-width: auto;
+  `};
 `
 
 const HeaderWrapper = styled.div`
   width: 100%;
   justify-content: space-between;
   flex-direction: column;
+  min-width: 1280px;
   ${({ theme }) => theme.flexRowNoWrap}
   ${({ theme }) => theme.mediaWidth.upToSmall`
   height:0;
   overflow: hidden
+  min-width: auto;
   `}
 `
 
@@ -78,6 +84,7 @@ const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 1280px;
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
   justify-content: center;
   align-items: center;
@@ -86,12 +93,13 @@ const BodyWrapper = styled.div`
   overflow-x: hidden;
   position: relative;
   padding-bottom: 100px;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  /* ${({ theme }) => theme.mediaWidth.upToLarge`
   margin-bottom: ${theme.headerHeight};
   min-height: calc(100vh - ${theme.headerHeight + ' - ' + theme.mobileHeaderHeight}); 
-  `}
+  `} */
   ${({ theme }) => theme.mediaWidth.upToSmall`
   padding-bottom: 0;
+  min-width: auto;
   margin-top: ${({ theme }) => theme.mobileHeaderHeight}
   `};
 `

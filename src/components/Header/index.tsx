@@ -99,13 +99,13 @@ const HeaderFrame = styled.div`
   flex-direction: row;
   width: 100%;
   top: 0;
-  height: ${({ theme }) => theme.headerHeight}
+  height: ${({ theme }) => theme.headerHeight};
   position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 27px 0 0;
   z-index: 5;
-  background-color:${({ theme }) => theme.bg1}
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  background-color: ${({ theme }) => theme.bg1};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     grid-template-columns: 1fr;
     padding: 0 1rem;
     width: 100%;
@@ -122,7 +122,7 @@ const HeaderControls = styled.div`
   flex-direction: row;
   justify-self: flex-end;
   align-items: center;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     height: ${theme.headerHeight};
     flex-direction: row;
     align-items: center;
@@ -165,11 +165,9 @@ const HeaderElement = styled.div<{
 
 const HeaderRow = styled(RowFixed)`
   width: 100%;
-  min-width: 1100px;
   padding-left: 2rem;
-  align-items: flex-start
-    ${({ theme }) => theme.mediaWidth.upToLarge`
-    background: red
+  align-items: flex-start;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
    align-items: center
   `};
 `
@@ -177,7 +175,7 @@ const HeaderRow = styled(RowFixed)`
 const HeaderLinks = styled(Row)`
   justify-content: center;
   width: auto;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
     display: none
@@ -286,7 +284,7 @@ const StyledNavLink = styled(NavLink).attrs({
   color: ${({ theme }) => theme.text3};
   font-size: 14px;
   width: fit-content;
-  margin: 0 20px;
+  margin: 0 18px;
   font-weight: 400;
   padding: 10px 0 27px;
   white-space: nowrap;
@@ -425,20 +423,20 @@ function FAQButton() {
 }
 
 const MobileHeader = styled.header`
-  width:100%;
-  display:flex;
-  justify-content:space-between;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 0 24px;
-  position:relative;
-  background-color: ${({ theme }) => theme.bg1}
-  height:${({ theme }) => theme.mobileHeaderHeight}
-  position:fixed;
+  position: relative;
+  background-color: ${({ theme }) => theme.bg1};
+  height: ${({ theme }) => theme.mobileHeaderHeight};
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
   display: none;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     display: inherit
 `};
 `

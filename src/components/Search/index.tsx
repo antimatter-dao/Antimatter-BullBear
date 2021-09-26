@@ -43,15 +43,18 @@ const StyledSearch = styled.div`
   & > div {
     flex-shrink: 1;
   }
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  /* ${({ theme }) => theme.mediaWidth.upToLarge`
     padding: 23px 50px;
     width: 100%;
     flex-wrap: wrap
     flex-direction: column
     grid-gap:10px;
-  `}
+  `} */
   ${({ theme }) => theme.mediaWidth.upToSmall`
   padding: 44px 14px 23px;
+  width: 100%;
+  flex-wrap: wrap
+  flex-direction: column
   grid-gap: 24px
 `}
 `

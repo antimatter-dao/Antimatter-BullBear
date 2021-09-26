@@ -13,7 +13,7 @@ import { formatDexTradeData } from 'utils/option/utils'
 
 const Wrapper = styled.div`
   display: flex;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   flex-direction: column;
   gap: 20px
   `}
@@ -25,10 +25,10 @@ const GraphWrapper = styled.div`
   height: 100%;
   position: relative;
   max-width: 559px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  /* ${({ theme }) => theme.mediaWidth.upToMedium`
   max-width: 50%;
-  `}
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  `} */
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   width: auto;
   margin: 20px 24px 20px 14px;
   max-width: unset
