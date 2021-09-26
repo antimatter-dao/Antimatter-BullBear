@@ -24,11 +24,12 @@ export default function WarningModal() {
   useEffect(() => {
     console.log('scrollTop', scrollTop)
   }, [scrollTop])
+  const isDev = process.env.NODE_ENV === 'development'
 
   const handleClose = useCallback(() => setIsOpen(false), [setIsOpen])
   return (
     <>
-      {isOpen && (
+      {isOpen && !isDev && (
         <Modal maxWidth={608} isOpen={isOpen} onDismiss={() => {}}>
           <AutoColumn
             gap="24px"
@@ -381,7 +382,11 @@ export default function WarningModal() {
               </TYPE.body>
             </AutoRow>
 
-            <TYPE.small style={{ marginTop: -20 }}>Please read all and scroll down to bottom to confirm </TYPE.small>
+            {!enableCheck && (
+              <TYPE.small style={{ marginTop: -20, color: 'red' }}>
+                Please read all and scroll down to bottom to confirm{' '}
+              </TYPE.small>
+            )}
 
             <ButtonPrimary disabled={!confirmed} onClick={handleClose}>
               Next
