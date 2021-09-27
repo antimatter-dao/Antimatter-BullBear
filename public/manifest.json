@@ -1,7 +1,7 @@
 {
-  "background_color": "#fff",
+  "background_color": "#000",
   "display": "standalone",
-  "homepage_url": "https://app.uniswap.org",
+  "homepage_url": "https://antimatter.finance/",
   "icons": [
     {
       "src": "./images/192x192_App_Icon.png",
@@ -17,8 +17,8 @@
     }
   ],
   "orientation": "portrait",
-  "name": "Uniswap",
-  "short_name": "Uniswap",
+  "name": "Antimatter",
+  "short_name": "Antimatter",
   "start_url": ".",
-  "theme_color": "#ff007a"
+  "theme_color": "#B2F355"
 }

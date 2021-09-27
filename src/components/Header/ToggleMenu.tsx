@@ -17,7 +17,7 @@ const ToggleMenuButton = styled(Base)`
     border: none;
   }
 `
-const TogggleMenuWrapper = styled.div`
+const TogggleMenuWrapper = styled.nav`
   z-index: 100;
   position: absolute;
   left: 0;
@@ -98,12 +98,12 @@ function ToggleTab({ children, title }: { children: JSX.Element | string; title:
   )
 }
 
-export default function ToggleMenu() {
+export default function ToggleMenu({ padding = '6px 14px 18px 14px' }: { padding?: number | string }) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
     <>
-      <ToggleMenuButton onClick={() => setIsOpen(!isOpen)}>
+      <ToggleMenuButton onClick={() => setIsOpen(!isOpen)} style={{ padding: padding }}>
         {isOpen ? <X size={24} /> : <Menu style={{ height: 30, width: 24 }} />}
       </ToggleMenuButton>
       {isOpen && (

@@ -163,7 +163,7 @@ export default function Modal({
               unstable_lockFocusAcrossFrames={false}
             >
               {/* <Filler /> */}
-              <Wrapper>
+              <Wrapper id="modalWrapper">
                 <StyledDialogContent
                   {...(isMobile
                     ? {

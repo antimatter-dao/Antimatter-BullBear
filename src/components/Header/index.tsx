@@ -6,7 +6,7 @@ import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
 import { useActiveWeb3React } from '../../hooks'
-import { ExternalHeaderLink, ExternalLink, TYPE } from '../../theme'
+import { ExternalHeaderLink, ExternalLink, TYPE, HideMedium } from '../../theme'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -35,8 +35,14 @@ export const tabs: Tab[] = [
   { title: 'Option Trading', route: 'option_trading' },
   { title: 'Option Creation', route: 'option_creation' },
   // { title: 'Farm', route: 'farm' },
-  { title: 'Calculator', route: 'calculator' },
-  { title: 'Statistics', route: 'statistics' },
+  {
+    title: 'Tools',
+    subTab: [
+      { title: 'Calculator', route: 'calculator' },
+      { title: 'Statistics', route: 'statistics' }
+    ]
+  },
+
   { title: 'Governance', link: 'https://governance.antimatter.finance' },
   {
     title: 'About',
@@ -105,13 +111,13 @@ const HeaderFrame = styled.div`
   flex-direction: row;
   width: 100%;
   top: 0;
-  height: ${({ theme }) => theme.headerHeight}
   position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 27px 0 0;
-  z-index: 5;
-  background-color:${({ theme }) => theme.bg1}
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  z-index: 99;
+  background-color: ${({ theme }) => theme.bg1};
+  height: ${({ theme }) => theme.headerHeight};
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
     padding: 0 1rem;
     width: 100%;
@@ -126,64 +132,74 @@ const HeaderFrame = styled.div`
 const HeaderControls = styled.div`
   display: flex;
   flex-direction: row;
-  justify-self: flex-end;
   align-items: center;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    height: ${theme.headerHeight};
-    flex-direction: row;
-    align-items: center;
-    justify-self: center;
-    padding: 1rem;
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    width: 100%;
-    z-index: 99;
-    background-color: ${theme.bg2};
-    justify-content: center;
-    border-top: 1px solid;
-    border-top-color: #303030;
-  `};
+  padding-left: 8px;
+  margin-feft: auto;
+  margin-right: 2rem;
 `
 
-const HeaderElement = styled.div<{
-  show?: boolean
-}>`
-  display: flex;
+// ${({ theme }) => theme.mediaWidth.upToSmall`
+// height: ${theme.headerHeight};
+// flex-direction: row;
+// align-items: center;
+// justify-self: center;
+// padding: 1rem;
+// position: fixed;
+// bottom: 0px;
+// left: 0px;
+// width: 100%;
+// z-index: 99;
+// background-color: ${theme.bg2};
+// justify-content: center;
+// border-top: 1px solid;
+// border-top-color: #303030;
+// `}
 
-  /* addresses safari's lack of support for "gap" */
-  & > *:not(:first-child) {
-    margin-left: 8px;
-  }
+// const HeaderElement = styled.div<{
+//   show?: boolean
+// }>`
+//   display: flex;
 
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    align-items: center;
-  `};
-  & > div {
-    border: 1px solid ${({ theme, show }) => (show ? theme.text1 : 'transparent')};
-    border-radius: 4px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    font-size: 13px;
-  }
-`
+//   /* addresses safari's lack of support for "gap" */
+//   & > *:not(:first-child) {
+//     margin-left: 8px;
+//   }
+
+//   ${({ theme }) => theme.mediaWidth.upToLarge`
+//     align-items: center;
+//   `};
+//   & > div {
+//     border: 1px solid ${({ theme, show }) => (show ? theme.text1 : 'transparent')};
+//     border-radius: 4px;
+//     height: 32px;
+//     display: flex;
+//     align-items: center;
+//     font-size: 13px;
+//   }
+// `
 
 const HeaderRow = styled(RowFixed)`
   width: 100%;
-  min-width: 1100px;
   padding-left: 2rem;
-  align-items: flex-start
-    ${({ theme }) => theme.mediaWidth.upToLarge`
-    background: red
-   align-items: center
+  align-items: flex-start;
+  justify-content: space-between;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    height: ${({ theme }) => theme.headerHeight};
+    background-color: rgb(25, 25, 25);
+    border-top: 1px solid rgb(48, 48, 48);
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    z-index: 100;
+    padding: 0;
+    justify-content: center
   `};
 `
 
 const HeaderLinks = styled(Row)`
   justify-content: center;
   width: auto;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
     display: none
@@ -222,8 +238,15 @@ const AccountElement = styled.div<{ active: boolean }>`
 //   position: relative;
 // `
 
-// const HideSmall = styled.span`
-//   ${({ theme }) => theme.mediaWidth.upToSmall`
+// const HideLarge = styled(RowFixed)`
+//   display: none;
+//   ${({ theme }) => theme.mediaWidth.upToLarge`
+//     display: inherit;
+//   `};
+// `
+
+// const ShowLarge = styled(RowFixed)`
+//   ${({ theme }) => theme.mediaWidth.upToLarge`
 //     display: none;
 //   `};
 // `
@@ -292,7 +315,7 @@ const StyledNavLink = styled(NavLink).attrs({
   color: ${({ theme }) => theme.text3};
   font-size: 14px;
   width: fit-content;
-  margin: 0 20px;
+  margin: 0 18px;
   font-weight: 400;
   padding: 10px 0 27px;
   white-space: nowrap;
@@ -307,6 +330,9 @@ const StyledNavLink = styled(NavLink).attrs({
   :focus {
     color: ${({ theme }) => darken(0.1, theme.primary1)};
   }
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    margin: 0 10px;
+  `};
 `
 
 const StyledDropdown = styled.div`
@@ -317,7 +343,7 @@ const StyledDropdown = styled.div`
   color: ${({ theme }) => theme.text3};
   font-size: 14px;
   width: fit-content;
-  margin: 0 20px;
+  margin: 0 18px;
   font-weight: 400;
   padding: 10px 0 27px;
   transition: 0.5s;
@@ -345,6 +371,9 @@ const StyledDropdown = styled.div`
       border: 1px solid ${({ theme }) => theme.text5};
     }
   }
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    margin: 0 10px;
+  `};
 `
 const Dropdown = styled.div<{ width?: string }>`
   z-index: 3;
@@ -428,19 +457,20 @@ function FAQButton() {
 }
 
 const MobileHeader = styled.header`
-  width:100%;
-  justify-content:space-between;
+  width: 100%;
+  justify-content: space-between;
   align-items: center;
   padding: 0 24px;
-  background-color: ${({ theme }) => theme.bg1}
-  height:${({ theme }) => theme.mobileHeaderHeight}
-  position:fixed;
+  position: relative;
+  background-color: ${({ theme }) => theme.bg1};
+  height: ${({ theme }) => theme.mobileHeaderHeight};
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
   display: none;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    display: inherit
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: flex
 `};
 `
 
@@ -456,134 +486,141 @@ export default function Header() {
     <HeaderFrame>
       <ClaimModal />
       <HeaderRow>
-        <LogoButton />
-        <HeaderLinks>
-          {tabs.map(({ title, route, link, subTab }) => {
-            if (subTab) {
-              return (
-                <StyledDropdown key={title}>
-                  {title}
-                  <ChevronDown size={15} />
-                  <Dropdown>
-                    {subTab.map(({ title, route, link, titleContent }) => {
-                      return link ? (
-                        <ExternalLink href={link} key={title}>
-                          {titleContent ?? title}
-                        </ExternalLink>
-                      ) : route ? (
-                        <NavLink to={route} key={title}>
-                          {titleContent ?? title}
-                        </NavLink>
-                      ) : null
-                    })}
-                  </Dropdown>
-                </StyledDropdown>
-              )
-            }
-            if (route === 'option_exercise') {
-              return (
-                <StyledNavLink
-                  key={route}
-                  to={`/${route}`}
-                  isActive={(match, { pathname }) =>
-                    Boolean(match) || pathname.startsWith('/generate') || pathname.startsWith('/redeem')
-                  }
-                >
-                  {title}
-                </StyledNavLink>
-              )
-            }
-            return (
-              <React.Fragment key={title}>
-                {link ? (
-                  <ExternalHeaderLink href={link} key={title}>
-                    {title}
-                  </ExternalHeaderLink>
-                ) : (
-                  <StyledNavLink id={`stake-nav-link`} to={'/' + route} key={route}>
-                    {title}
-                  </StyledNavLink>
-                )}
-              </React.Fragment>
-            )
-          })}
-        </HeaderLinks>
-        <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
-          <HeaderControls>
-            <HeaderElement show={!!account}>
-              {/* <HideSmall> */}
-              {chainId && NetworkInfo[chainId] && (
-                <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
-                  {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
-                  <ChevronDown size={18} style={{ marginLeft: '5px' }} />
-                  <div className="dropdown_wrapper">
-                    <Dropdown>
-                      {Object.keys(NetworkInfo).map(key => {
-                        const info = NetworkInfo[parseInt(key) as keyof typeof NetworkInfo]
-                        if (!info) {
-                          return null
-                        }
-                        return info.link ? (
-                          <ExternalLink href={info.link} key={info.link}>
-                            {parseInt(key) === chainId && (
-                              <span style={{ position: 'absolute', left: '15px' }}>
-                                <Check size={18} />
-                              </span>
-                            )}
-                            {info.linkIcon ?? info.icon}
-                            {info.title}
-                          </ExternalLink>
-                        ) : null
-                      })}
-                    </Dropdown>
-                  </div>
-                </NetworkCard>
-              )}
-              {/* </HideSmall> */}
-            </HeaderElement>
-            {/* <HeaderElementWrap>
+        <HideMedium>
+          <RowFixed>
+            <LogoButton />
+
+            <HeaderLinks>
+              {tabs.map(({ title, route, link, subTab }) => {
+                if (subTab) {
+                  return (
+                    <StyledDropdown key={title}>
+                      {title}
+                      <ChevronDown size={15} />
+                      <Dropdown>
+                        {subTab.map(({ title, route, link, titleContent }) => {
+                          return link ? (
+                            <ExternalLink href={link} key={title}>
+                              {titleContent ?? title}
+                            </ExternalLink>
+                          ) : route ? (
+                            <NavLink to={route} key={title}>
+                              {titleContent ?? title}
+                            </NavLink>
+                          ) : null
+                        })}
+                      </Dropdown>
+                    </StyledDropdown>
+                  )
+                }
+                if (route === 'option_exercise') {
+                  return (
+                    <StyledNavLink
+                      key={route}
+                      to={`/${route}`}
+                      isActive={(match, { pathname }) =>
+                        Boolean(match) || pathname.startsWith('/generate') || pathname.startsWith('/redeem')
+                      }
+                    >
+                      {title}
+                    </StyledNavLink>
+                  )
+                }
+                return (
+                  <React.Fragment key={title}>
+                    {link ? (
+                      <ExternalHeaderLink href={link} key={title}>
+                        {title}
+                      </ExternalHeaderLink>
+                    ) : (
+                      <StyledNavLink id={`stake-nav-link`} to={'/' + route} key={route}>
+                        {title}
+                      </StyledNavLink>
+                    )}
+                  </React.Fragment>
+                )
+              })}
+            </HeaderLinks>
+          </RowFixed>
+        </HideMedium>
+        <HeaderControls>
+          {/* <HeaderElement show={!!account}> */}
+          {/* <HideSmall>
+            <HideLarge>
+              <ToggleMenu padding={0} />
+            </HideLarge>
+          </HideSmall> */}
+          {chainId && NetworkInfo[chainId] && (
+            <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
+              {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
+              <ChevronDown size={18} style={{ marginLeft: '5px' }} />
+              <div className="dropdown_wrapper">
+                <Dropdown>
+                  {Object.keys(NetworkInfo).map(key => {
+                    const info = NetworkInfo[parseInt(key) as keyof typeof NetworkInfo]
+                    if (!info) {
+                      return null
+                    }
+                    return info.link ? (
+                      <ExternalLink href={info.link} key={info.link}>
+                        {parseInt(key) === chainId && (
+                          <span style={{ position: 'absolute', left: '15px' }}>
+                            <Check size={18} />
+                          </span>
+                        )}
+                        {info.linkIcon ?? info.icon}
+                        {info.title}
+                      </ExternalLink>
+                    ) : null
+                  })}
+                </Dropdown>
+              </div>
+            </NetworkCard>
+          )}
+
+          {/* </HeaderElement> */}
+          {/* <HeaderElementWrap>
           <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </StyledMenuButton>
           <Menu />
         </HeaderElementWrap> */}
 
-            <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-              {/*{!!account && aggregateBalance && (*/}
-              {/*  <UNIWrapper>*/}
-              {/*    <UNIAmount style={{ pointerEvents: 'none' }}>*/}
-              {/*      {account && (*/}
-              {/*        // <HideSmall>*/}
-              {/*        <TYPE.white*/}
-              {/*          style={{*/}
-              {/*            paddingRight: '.4rem'*/}
-              {/*          }}*/}
-              {/*        >*/}
-              {/*          <CountUp*/}
-              {/*            key={countUpValue}*/}
-              {/*            isCounting*/}
-              {/*            start={parseFloat(countUpValuePrevious)}*/}
-              {/*            end={parseFloat(countUpValue)}*/}
-              {/*            thousandsSeparator={','}*/}
-              {/*            duration={1}*/}
-              {/*          />*/}
-              {/*        </TYPE.white>*/}
-              {/*        // </HideSmall>*/}
-              {/*      )}*/}
-              {/*      MATTER*/}
-              {/*    </UNIAmount>*/}
-              {/*    /!* <CardNoise /> *!/*/}
-              {/*  </UNIWrapper>*/}
-              {/*)}*/}
-              {/* {account && userEthBalance ? (
+          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+            {/*{!!account && aggregateBalance && (*/}
+            {/*  <UNIWrapper>*/}
+            {/*    <UNIAmount style={{ pointerEvents: 'none' }}>*/}
+            {/*      {account && (*/}
+            {/*        // <HideSmall>*/}
+            {/*        <TYPE.white*/}
+            {/*          style={{*/}
+            {/*            paddingRight: '.4rem'*/}
+            {/*          }}*/}
+            {/*        >*/}
+            {/*          <CountUp*/}
+            {/*            key={countUpValue}*/}
+            {/*            isCounting*/}
+            {/*            start={parseFloat(countUpValuePrevious)}*/}
+            {/*            end={parseFloat(countUpValue)}*/}
+            {/*            thousandsSeparator={','}*/}
+            {/*            duration={1}*/}
+            {/*          />*/}
+            {/*        </TYPE.white>*/}
+            {/*        // </HideSmall>*/}
+            {/*      )}*/}
+            {/*      MATTER*/}
+            {/*    </UNIAmount>*/}
+            {/*    /!* <CardNoise /> *!/*/}
+            {/*  </UNIWrapper>*/}
+            {/*)}*/}
+            {/* {account && userEthBalance ? (
                 <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
                   {userEthBalance?.toSignificant(4)} ETH
                 </BalanceText>
               ) : null} */}
-              <Web3Status />
-            </AccountElement>
-          </HeaderControls>
-        </div>
+            <Web3Status />
+          </AccountElement>
+        </HeaderControls>
       </HeaderRow>
       <MobileHeader>
         <RowBetween>
@@ -601,7 +638,7 @@ function LogoButton() {
       <Link to={'/'}>
         <StyledLogo />
       </Link>
-      <StyledDropdown style={{ color: '#ffffff', padding: '6px 25px 18px 20px', marginLeft: 0 }}>
+      <StyledDropdown style={{ color: '#ffffff', padding: '6px 25px 18px 20px', margin: 0 }}>
         <Plus style={{ margin: 'auto auto' }} />
         <Dropdown>
           <ExternalLink href={'https://v1.antimatter.finance'}>Antimatter V1</ExternalLink>

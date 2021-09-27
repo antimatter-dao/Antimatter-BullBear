@@ -73,8 +73,8 @@ export const ContentWrapper = styled.div`
   grid-template-columns: repeat(auto-fill, 280px);
   padding: 52px 0;
   justify-content: center;
-  ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
-  ${({ theme }) => theme.mediaWidth.upToSmall`padding: 40px 10px`}
+  /* ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`} */
+  ${({ theme }) => theme.mediaWidth.upToSmall`padding: 20px 10px`}
 `
 
 const Circle = styled.div`

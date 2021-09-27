@@ -7,7 +7,6 @@ import Header from '../components/Header'
 import Polling from '../components/Header/Polling'
 // import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
-// import Sidebar from '../components/Sidebar'
 import Web3ReactManager from '../components/Web3ReactManager'
 // import { ApplicationModal } from '../state/application/actions'
 // import { useModalOpen, useToggleModal } from '../state/application/hooks'
@@ -43,7 +42,7 @@ import Stats from './Stats'
 import ComingSoon from './ComingSoon'
 import User from './User'
 import Calculator from './Calculator'
-// import WarningModal from 'components/Modal/WarningModal'
+import WarningModal from 'components/Modal/WarningModal'
 import Helper from '../assets/svg/helper.svg'
 import { ExternalLink } from '../theme'
 
@@ -62,6 +61,10 @@ const ContentWrapper = styled.div`
   max-height: 100vh;
   overflow: auto;
   align-items: center;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+   align-items: center;
+   min-width: auto;
+  `};
 `
 
 const HeaderWrapper = styled.div`
@@ -71,7 +74,8 @@ const HeaderWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   ${({ theme }) => theme.mediaWidth.upToSmall`
   height:0;
-  overflow: hidden
+  // overflow: hidden
+  min-width: auto;
   `}
 `
 
@@ -87,12 +91,13 @@ const BodyWrapper = styled.div`
   overflow-x: hidden;
   position: relative;
   padding-bottom: 100px;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  /* ${({ theme }) => theme.mediaWidth.upToLarge`
   margin-bottom: ${theme.headerHeight};
   min-height: calc(100vh - ${theme.headerHeight + ' - ' + theme.mobileHeaderHeight}); 
-  `}
+  `} */
   ${({ theme }) => theme.mediaWidth.upToSmall`
   padding-bottom: 0;
+  min-width: auto;
   margin-top: ${({ theme }) => theme.mobileHeaderHeight}
   `};
 `
@@ -139,7 +144,6 @@ export default function App() {
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper id="app">
         {/* <URLWarning /> */}
-        {/* <Sidebar /> */}
         <ContentWrapper>
           <HeaderWrapper id="header">
             <Header />
@@ -148,7 +152,7 @@ export default function App() {
             <Popups />
             <Polling />
             <WelcomeSlider />
-            {/* <WarningModal /> */}
+            <WarningModal />
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>

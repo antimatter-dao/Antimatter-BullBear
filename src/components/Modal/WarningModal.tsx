@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
-// import { X } from 'react-feather'
 import { ButtonPrimary } from 'components/Button'
 import { AutoColumn, ColumnCenter } from 'components/Column'
 import Modal from '.'
@@ -9,26 +8,48 @@ import { AutoRow } from '../Row'
 import useTheme from '../../hooks/useTheme'
 import { transparentize } from 'polished'
 import Card from '../Card'
-// import { RowBetween } from 'components/Row'
+
+const STORAGE_KEY = 'isWarningModalShown'
 
 export default function WarningModal() {
   const theme = useTheme()
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
   const [enableCheck, setEnableCheck] = useState(false)
 
   const confirmRef = useRef<HTMLDivElement>()
 
-  const scrollTop = confirmRef.current
+  const isDev = process.env.NODE_ENV === 'development'
+
+  const handleClose = useCallback(() => {
+    setIsOpen(false)
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        expiry: new Date().getTime() + 604800000
+      })
+    )
+  }, [setIsOpen])
 
   useEffect(() => {
-    console.log('scrollTop', scrollTop)
-  }, [scrollTop])
-
-  const handleClose = useCallback(() => setIsOpen(false), [setIsOpen])
+    if (!window || !window?.localStorage) {
+      return
+    }
+    const stored = window.localStorage.getItem(STORAGE_KEY)
+    if (!stored) {
+      setIsOpen(true)
+    } else {
+      const { expiry } = JSON.parse(stored)
+      const now = new Date().getTime()
+      if (now > expiry) {
+        setIsOpen(true)
+        return
+      }
+    }
+  }, [])
   return (
     <>
-      {isOpen && (
+      {!isDev && (
         <Modal maxWidth={608} isOpen={isOpen} onDismiss={() => {}}>
           <AutoColumn
             gap="24px"
@@ -381,7 +402,9 @@ export default function WarningModal() {
               </TYPE.body>
             </AutoRow>
 
-            <TYPE.small style={{ marginTop: -20 }}>Please read all and scroll down to bottom to confirm </TYPE.small>
+            <TYPE.small style={{ marginTop: -20 }} color={enableCheck ? '' : theme.red1}>
+              Please read all and scroll down to bottom to confirm{' '}
+            </TYPE.small>
 
             <ButtonPrimary disabled={!confirmed} onClick={handleClose}>
               Next
