@@ -3,7 +3,13 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
 
-export const ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
+export const ROUTER_ADDRESS: { [chainId in ChainId]: string } = {
+  [ChainId.MAINNET]: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+  [ChainId.ROPSTEN]: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+  [ChainId.BSC]: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
+  [ChainId.Arbitrum]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
+  [ChainId.Avalanche]: '0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106'
+}
 
 export const ANTIMATTER_ADDRESS = '0x90183C741CC13195884B6E332Aa0ac1F7c1E67Fa'
 
@@ -64,10 +70,10 @@ export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
 export const UNI: { [chainId in ChainId]: Token } = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
-  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
+  [ChainId.BSC]: new Token(ChainId.BSC, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
   [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
-  [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'MATTER', 'Matter')
+  [ChainId.Arbitrum]: new Token(ChainId.Arbitrum, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
+  [ChainId.Avalanche]: new Token(ChainId.Avalanche, UNI_ADDRESS, 18, 'MATTER', 'Matter')
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
@@ -84,9 +90,9 @@ export const MERKLE_DISTRIBUTOR_ADDRESS: { [chainId in ChainId]?: string } = {
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
   [ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
-  [ChainId.RINKEBY]: [WETH[ChainId.RINKEBY]],
-  [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
-  [ChainId.KOVAN]: [WETH[ChainId.KOVAN]]
+  [ChainId.BSC]: [WETH[ChainId.BSC]],
+  [ChainId.Arbitrum]: [WETH[ChainId.Arbitrum]],
+  [ChainId.Avalanche]: [WETH[ChainId.Avalanche]]
 }
 
 // used to construct intermediary pairs for trading
@@ -243,3 +249,17 @@ export const BLOCKED_ADDRESSES: string[] = [
   '0xA7e5d5A720f06526557c513402f2e6B5fA20b008',
   '0x8576aCC5C05D6Ce88f4e49bf65BdF0C62F91353C'
 ]
+
+export const Symbol: { readonly [chainId in ChainId]?: string } = {
+  [ChainId.MAINNET]: 'ETH',
+  [ChainId.BSC]: 'BNB',
+  [ChainId.Avalanche]: 'ETH',
+  [ChainId.Arbitrum]: 'AVAX'
+}
+
+export const Name: { readonly [chainId in ChainId]?: string } = {
+  [ChainId.MAINNET]: 'ETHER',
+  [ChainId.BSC]: 'Binance Coin',
+  [ChainId.Avalanche]: 'ETHER',
+  [ChainId.Arbitrum]: 'Avalanche'
+}

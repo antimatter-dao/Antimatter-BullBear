@@ -21,6 +21,7 @@ import { useTransactionAdder } from '../../state/transactions/hooks'
 import { LoadingView, SubmittedView } from '../ModalViews'
 import AppBody from 'pages/AppBody'
 import DataCard from 'components/Card/DataCard'
+import { NETWORK_CHAIN_ID } from '../../connectors'
 
 // const HypotheticalRewardRate = styled.div<{ dim: boolean }>`
 //   display: flex;
@@ -68,7 +69,11 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   // pair contract for this token to be staked
   const dummyPair =
     stakingInfo?.tokens[0] && stakingInfo?.tokens[1]
-      ? new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
+      ? new Pair(
+          chainId ?? NETWORK_CHAIN_ID,
+          new TokenAmount(stakingInfo.tokens[0], '0'),
+          new TokenAmount(stakingInfo.tokens[1], '0')
+        )
       : undefined
   const pairContract = usePairContract(dummyPair?.liquidityToken.address)
 

@@ -1,21 +1,20 @@
-import { ChainId, TokenAmount } from '@uniswap/sdk'
+import { ChainId } from '@uniswap/sdk'
 import React from 'react'
 import { Check, ChevronDown } from 'react-feather'
 import { Link, NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
-import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
-import { useAggregateUniBalance } from '../../state/wallet/hooks'
 import { ExternalHeaderLink, ExternalLink, TYPE } from '../../theme'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
-import usePrevious from '../../hooks/usePrevious'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
+import { ReactComponent as BSCInvert } from '../../assets/svg/binance.svg'
+import { ReactComponent as BSC } from '../../assets/svg/binance.svg'
 import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
 import { ReactComponent as Plus } from '../../assets/svg/plus.svg'
 import useTheme from 'hooks/useTheme'
@@ -61,7 +60,7 @@ export const tabs: Tab[] = [
 const NetworkInfo: {
   [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
 } = {
-  1: {
+  [ChainId.MAINNET]: {
     color: '#FFFFFF',
     icon: <ETH />,
     link: 'https://antimatter-v2.netlify.app/#/',
@@ -72,23 +71,30 @@ const NetworkInfo: {
     icon: <ETH />,
     title: 'Ropsten'
   },
-  [ChainId.RINKEBY]: {
-    color: '#FFFFFF',
-    icon: <ETH />,
-    title: 'Rinkeby'
-  },
   128: {
     color: '#059BDC',
     icon: <HECOInvert />,
     linkIcon: <HECO />,
     title: 'HECO'
+  },
+  [ChainId.BSC]: {
+    color: '#F0B90B',
+    icon: <BSCInvert />,
+    linkIcon: <BSC />,
+    title: 'Binance Smart Chain Mainnet'
+  },
+  [ChainId.Arbitrum]: {
+    color: '#F0B90B',
+    icon: <BSCInvert />,
+    linkIcon: <BSC />,
+    title: 'Arbitrum'
+  },
+  [ChainId.Avalanche]: {
+    color: '#F0B90B',
+    icon: <BSCInvert />,
+    linkIcon: <BSC />,
+    title: 'Avalanche Network'
   }
-  // 56: {
-  //   color: '#F0B90B',
-  //   icon: <BSCInvert />,
-  //   linkIcon: <BSC />,
-  //  title:'BSC'
-  // }
 }
 
 export const headerHeightDisplacement = '32px'
@@ -196,25 +202,25 @@ const AccountElement = styled.div<{ active: boolean }>`
   border: 1px solid ${({ theme, active }) => (active ? theme.text1 : 'transparent')};
 `
 
-const UNIAmount = styled.div`
-  color: white;
-  font-size: 13px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background-color: transparent;
-  &:after {
-    content: '';
-    border-right: 1px solid ${({ theme }) => theme.text1};
-    margin: 0 16px;
-    height: 16px;
-  }
-`
+// const UNIAmount = styled.div`
+//   color: white;
+//   font-size: 13px;
+//   display: flex;
+//   flex-direction: row;
+//   align-items: center;
+//   background-color: transparent;
+//   &:after {
+//     content: '';
+//     border-right: 1px solid ${({ theme }) => theme.text1};
+//     margin: 0 16px;
+//     height: 16px;
+//   }
+// `
 
-const UNIWrapper = styled.span`
-  width: fit-content;
-  position: relative;
-`
+// const UNIWrapper = styled.span`
+//   width: fit-content;
+//   position: relative;
+// `
 
 // const HideSmall = styled.span`
 //   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -371,11 +377,8 @@ const Dropdown = styled.div<{ width?: string }>`
 export const StyledMenuButton = styled.button`
   position: relative;
   width: 100%;
-  height: 100%;
   border: none;
-  background-color: transparent;
   margin: 0;
-  padding: 0;
   height: 35px;
   background-color: ${({ theme }) => theme.bg3};
   margin-left: 8px;
@@ -426,11 +429,9 @@ function FAQButton() {
 
 const MobileHeader = styled.header`
   width:100%;
-  display:flex;
   justify-content:space-between;
   align-items: center;
   padding: 0 24px;
-  position:relative;
   background-color: ${({ theme }) => theme.bg1}
   height:${({ theme }) => theme.mobileHeaderHeight}
   position:fixed;
@@ -446,10 +447,10 @@ const MobileHeader = styled.header`
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
 
-  const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
+  //const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
-  const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
-  const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
+  //const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
+  //const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame>
@@ -548,32 +549,32 @@ export default function Header() {
         </HeaderElementWrap> */}
 
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-              {!!account && aggregateBalance && (
-                <UNIWrapper>
-                  <UNIAmount style={{ pointerEvents: 'none' }}>
-                    {account && (
-                      // <HideSmall>
-                      <TYPE.white
-                        style={{
-                          paddingRight: '.4rem'
-                        }}
-                      >
-                        <CountUp
-                          key={countUpValue}
-                          isCounting
-                          start={parseFloat(countUpValuePrevious)}
-                          end={parseFloat(countUpValue)}
-                          thousandsSeparator={','}
-                          duration={1}
-                        />
-                      </TYPE.white>
-                      // </HideSmall>
-                    )}
-                    MATTER
-                  </UNIAmount>
-                  {/* <CardNoise /> */}
-                </UNIWrapper>
-              )}
+              {/*{!!account && aggregateBalance && (*/}
+              {/*  <UNIWrapper>*/}
+              {/*    <UNIAmount style={{ pointerEvents: 'none' }}>*/}
+              {/*      {account && (*/}
+              {/*        // <HideSmall>*/}
+              {/*        <TYPE.white*/}
+              {/*          style={{*/}
+              {/*            paddingRight: '.4rem'*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <CountUp*/}
+              {/*            key={countUpValue}*/}
+              {/*            isCounting*/}
+              {/*            start={parseFloat(countUpValuePrevious)}*/}
+              {/*            end={parseFloat(countUpValue)}*/}
+              {/*            thousandsSeparator={','}*/}
+              {/*            duration={1}*/}
+              {/*          />*/}
+              {/*        </TYPE.white>*/}
+              {/*        // </HideSmall>*/}
+              {/*      )}*/}
+              {/*      MATTER*/}
+              {/*    </UNIAmount>*/}
+              {/*    /!* <CardNoise /> *!/*/}
+              {/*  </UNIWrapper>*/}
+              {/*)}*/}
               {/* {account && userEthBalance ? (
                 <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
                   {userEthBalance?.toSignificant(4)} ETH

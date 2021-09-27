@@ -7,6 +7,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { NEVER_RELOAD, useMultipleContractSingleData } from '../multicall/hooks'
 import { tryParseAmount } from '../swap/hooks'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
+import { NETWORK_CHAIN_ID } from '../../connectors'
 
 export const STAKING_GENESIS = 1600387200
 
@@ -159,7 +160,11 @@ export function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
 
         // get the LP token
         const tokens = info[index].tokens
-        const dummyPair = new Pair(new TokenAmount(tokens[0], '0'), new TokenAmount(tokens[1], '0'))
+        const dummyPair = new Pair(
+          chainId ?? NETWORK_CHAIN_ID,
+          new TokenAmount(tokens[0], '0'),
+          new TokenAmount(tokens[1], '0')
+        )
 
         // check for account, if no account set to 0
         const stakedAmount = new TokenAmount(dummyPair.liquidityToken, JSBI.BigInt(balanceState?.result?.[0] ?? 0))

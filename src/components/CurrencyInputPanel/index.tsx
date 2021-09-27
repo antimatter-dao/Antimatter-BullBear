@@ -1,4 +1,4 @@
-import { Currency, Pair, Token } from '@uniswap/sdk'
+import { Currency, ETHER, Pair, Token } from '@uniswap/sdk'
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
@@ -14,7 +14,7 @@ import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
-
+import { Symbol } from '../../constants'
 const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean; hideSelect?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.bg2};
@@ -185,7 +185,7 @@ export default function CurrencyInputPanel({
   const { t } = useTranslation()
 
   const [modalOpen, setModalOpen] = useState(false)
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
   const theme = useTheme()
 
@@ -246,6 +246,8 @@ export default function CurrencyInputPanel({
                         ? currency.symbol.slice(0, 4) +
                           '...' +
                           currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+                        : currency === ETHER
+                        ? Symbol[chainId ?? 1]
                         : currency?.symbol) || t('selectToken')}
                     </StyledTokenName>
                   )}

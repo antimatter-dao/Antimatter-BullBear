@@ -18,7 +18,7 @@ const Overlay = styled.div<{ height?: string; paddingTop?: string }>`
   background-color:${({ theme }) => theme.bg1}
   top: 0;
   left: 0;
-  z-index: 5;
+  z-index: 2;
 `
 const WRAPPER_ID = 'option-card-wrapper'
 

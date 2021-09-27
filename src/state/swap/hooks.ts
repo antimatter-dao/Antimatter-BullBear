@@ -288,7 +288,7 @@ export function useOptionSwapInfo(
   if (!account) {
     inputError = 'Connect Wallet'
   }
-  //console.log('tag--->',isUndNegative, curBestTradeExactIn, curBestTradeExactOut)
+
   return {
     undTrade: isUndNegative ? undBestTradeExactIn : undBestTradeExactOut,
     curTrade: isCurNegative ? curBestTradeExactIn : curBestTradeExactOut,

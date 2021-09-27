@@ -16,7 +16,8 @@ import {
   GOVERNANCE_ADDRESS,
   MERKLE_DISTRIBUTOR_ADDRESS,
   UNI,
-  ANTIMATTER_GOVERNANCE_ADDRESS, ANTIMATTER_ROUTER_ADDRESS
+  ANTIMATTER_GOVERNANCE_ADDRESS,
+  ANTIMATTER_ROUTER_ADDRESS
 } from '../constants'
 import {
   ARGENT_WALLET_DETECTOR_ABI,
@@ -86,9 +87,10 @@ export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contrac
   if (chainId) {
     switch (chainId) {
       case ChainId.MAINNET:
-      case ChainId.GÖRLI:
+      case ChainId.BSC:
       case ChainId.ROPSTEN:
-      case ChainId.RINKEBY:
+      case ChainId.Arbitrum:
+      case ChainId.Avalanche:
         address = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
         break
     }

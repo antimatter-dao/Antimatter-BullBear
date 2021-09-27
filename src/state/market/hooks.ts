@@ -384,7 +384,10 @@ export function useSwapInfo(
     if (dUnd?.toString() === '0') {
       return underlying?.address ? [underlying.address] : undefined
     }
-    if (payCurrency?.symbol?.toUpperCase() === 'ETH' && underlying?.symbol?.toUpperCase() === 'WETH') {
+    if (
+      payCurrency?.symbol?.toUpperCase() === 'ETH' &&
+      underlying?.symbol?.toUpperCase() === WETH[chainId ?? 1].symbol
+    ) {
       return [WETH[chainId ?? 3].address]
     }
     if (underlying?.symbol === payCurrency?.symbol) {
@@ -402,8 +405,8 @@ export function useSwapInfo(
     if (dCur?.toString() === '0') {
       return currency?.address ? [currency.address] : undefined
     }
-    if (payCurrency?.symbol?.toUpperCase() === 'ETH' && currency?.symbol?.toUpperCase() === 'WETH') {
-      return [WETH[chainId ?? 3].address]
+    if (payCurrency?.symbol?.toUpperCase() === 'ETH' && currency?.symbol?.toUpperCase() === WETH[chainId ?? 1].symbol) {
+      return [WETH[chainId ?? 1].address]
     }
     if (currency?.symbol === payCurrency?.symbol) {
       return currency?.address ? [currency?.address] : undefined

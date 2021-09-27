@@ -242,18 +242,6 @@ export default function Swap({
     optionType === OptionField.PUT ? formattedAmounts[Field.OPTION] : '0'
   )
 
-  // const [underlyingFrom, underlyingTo] = delta?.dUnd
-  //   ? delta?.dUnd.toString()[0] === '-'
-  //     ? [option?.underlying, payCurrency]
-  //     : [payCurrency, option?.underlying]
-  //   : [undefined, undefined]
-  //
-  // const [currencyFrom, currencyTo] = delta?.dCur
-  //   ? delta?.dCur.toString()[0] === '-'
-  //     ? [option?.currency, payCurrency]
-  //     : [payCurrency, option?.currency]
-  //   : [undefined, undefined]
-
   const underlying = option?.underlying
   const currency = option?.currency
 
@@ -276,45 +264,6 @@ export default function Swap({
   const curPriceImpactSeverity = warningSeverity(curPriceImpact)
 
   const undPriceImpactSeverity = warningSeverity(undPriceImpact)
-
-  // const dUnd = delta?.dUnd
-  // const dCur = delta?.dCur
-
-  // const undTradeAddresses: string[] | undefined = useMemo(() => {
-  //   if (dUnd?.toString() === '0') {
-  //     return underlying?.address ? [underlying.address] : undefined
-  //   }
-  //   if (payCurrency?.symbol?.toUpperCase() === 'ETH' && underlying?.symbol?.toUpperCase() === 'WETH') {
-  //     return [WETH[chainId ?? 3].address]
-  //   }
-  //   if (underlying?.symbol === payCurrency?.symbol) {
-  //     return underlying?.address ? [underlying.address] : undefined
-  //   }
-  //   if (underlyingTrade) {
-  //     return dUnd?.toString()[0] === '-'
-  //       ? underlyingTrade.route.path.map(({ address }) => address)
-  //       : underlyingTrade.route.path.reverse().map(({ address }) => address)
-  //   }
-  //   return undefined
-  // }, [chainId, dUnd, payCurrency, underlying, underlyingTrade])
-
-  // const curTradeAddresses: string[] | undefined = useMemo(() => {
-  //   if (dCur?.toString() === '0') {
-  //     return currency?.address ? [currency.address] : undefined
-  //   }
-  //   if (payCurrency?.symbol?.toUpperCase() === 'ETH' && currency?.symbol?.toUpperCase() === 'WETH') {
-  //     return [WETH[chainId ?? 3].address]
-  //   }
-  //   if (currency?.symbol === payCurrency?.symbol) {
-  //     return currency?.address ? [currency?.address] : undefined
-  //   }
-  //   if (currencyTrade) {
-  //     return dCur?.toString()[0] === '-'
-  //       ? currencyTrade.route.path.map(({ address }) => address)
-  //       : currencyTrade.route.path.reverse().map(({ address }) => address)
-  //   }
-  //   return
-  // }, [payCurrency, currency, currencyTrade, chainId, dCur])
 
   const routerDelta = useSwapInfo(
     option,

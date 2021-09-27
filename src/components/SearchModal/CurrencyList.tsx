@@ -21,7 +21,7 @@ import { LightGreyCard } from 'components/Card'
 import TokenListLogo from '../../assets/svg/tokenlist.svg'
 import QuestionHelper from 'components/QuestionHelper'
 import useTheme from 'hooks/useTheme'
-import { ZERO_ADDRESS } from 'constants/index'
+import { Name, Symbol, ZERO_ADDRESS } from 'constants/index'
 
 function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
@@ -111,7 +111,7 @@ function CurrencyRow({
   otherSelected: boolean
   style: CSSProperties
 }) {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const key = currencyKey(currency)
   const selectedTokenList = useCombinedActiveList()
   const isOnSelectedList = isTokenOnList(selectedTokenList, currency)
@@ -128,14 +128,26 @@ function CurrencyRow({
       selected={otherSelected}
     >
       <CurrencyLogo currency={currency} size={'24px'} />
-      <Column>
-        <Text title={currency.name} fontWeight={500}>
-          {currency.symbol}
-        </Text>
-        <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
-          {currency.name} {!isOnSelectedList && customAdded && '• Added by user'}
-        </TYPE.darkGray>
-      </Column>
+      {currency === ETHER ? (
+        <Column>
+          <Text title={Name[chainId ?? 1]} fontWeight={500}>
+            {Symbol[chainId ?? 1]}
+          </Text>
+          <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
+            {currency.name} {!isOnSelectedList && customAdded && '• Added by user'}
+          </TYPE.darkGray>
+        </Column>
+      ) : (
+        <Column>
+          <Text title={currency.name} fontWeight={500}>
+            {currency.symbol}
+          </Text>
+          <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
+            {currency.name} {!isOnSelectedList && customAdded && '• Added by user'}
+          </TYPE.darkGray>
+        </Column>
+      )}
+
       <TokenTags currency={currency} />
       <RowFixed style={{ justifySelf: 'flex-end' }}>
         {balance ? <Balance balance={balance} /> : account ? key === ZERO_ADDRESS ? null : <Loader /> : null}
