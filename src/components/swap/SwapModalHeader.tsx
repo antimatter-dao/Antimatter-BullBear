@@ -13,6 +13,7 @@ import { RowBetween, RowFixed } from '../Row'
 import { SwapShowAcceptChanges } from './styleds'
 import { OutlineCard } from 'components/Card'
 import { currencyNameHelper } from '../../utils/marketStrategyUtils'
+import { OptionPrice } from '../../state/market/hooks'
 
 const TokenPanel = styled.div`
   flex: 1;
@@ -27,6 +28,7 @@ const TokenPanel = styled.div`
 
 export default function SwapModalHeader({
   auction,
+  optionPrice,
   optionCurrencyAmount,
   payTitle,
   payCurrencyAmount,
@@ -34,6 +36,7 @@ export default function SwapModalHeader({
   onAcceptChanges
 }: {
   auction: Auction
+  optionPrice: OptionPrice | undefined
   optionCurrencyAmount: CurrencyAmount | undefined
   payTitle: string
   payCurrencyAmount: CurrencyAmount | undefined
@@ -48,11 +51,19 @@ export default function SwapModalHeader({
   //const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
 
   const theme = useContext(ThemeContext)
-
+  const priceCall = optionPrice?.priceCall
+  const pricePut = optionPrice?.pricePut
   return (
     <AutoColumn gap={'md'} style={{ marginTop: '20px', padding: '0 1rem' }} justify="center">
       <TYPE.main width={'100%'} color={theme.primary1}>
-        Current unit price of {optionCurrencyAmount?.currency.symbol}: ~
+        Current unit price of {optionCurrencyAmount?.currency.symbol}:{' '}
+        {optionCurrencyAmount?.currency?.symbol?.[0] === '+'
+          ? priceCall
+            ? '$' + priceCall.toSignificant(6)
+            : '-'
+          : pricePut
+          ? '$' + pricePut.toSignificant(6)
+          : '-'}
       </TYPE.main>
       <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)', padding: '16px 20px' }}>
         <AutoColumn style={{ flex: 1 }} gap={'8px'}>

@@ -7,6 +7,7 @@ import TransactionConfirmationModal, {
 import SwapModalFooter from './SwapModalFooter'
 import SwapModalHeader from './SwapModalHeader'
 import { Auction } from '../../state/swap/actions'
+import { OptionPrice } from '../../state/market/hooks'
 
 /**
  * Returns true if the trade requires a confirmation of details before we can submit it
@@ -25,6 +26,7 @@ function tradeMeaningfullyDiffers(tradeA: Trade, tradeB: Trade): boolean {
 
 export default function ConfirmSwapModal({
   auction,
+  optionPrice,
   optionCurrencyAmount,
   payTitle,
   payCurrencyAmount,
@@ -40,6 +42,7 @@ export default function ConfirmSwapModal({
   txHash
 }: {
   auction: Auction
+  optionPrice: OptionPrice | undefined
   optionCurrencyAmount: CurrencyAmount | undefined
   payTitle: string
   payCurrencyAmount: CurrencyAmount | undefined
@@ -62,6 +65,7 @@ export default function ConfirmSwapModal({
   const modalHeader = useCallback(() => {
     return auction && optionCurrencyAmount && payCurrencyAmount ? (
       <SwapModalHeader
+        optionPrice={optionPrice}
         auction={auction}
         optionCurrencyAmount={optionCurrencyAmount}
         payTitle={payTitle}
@@ -70,7 +74,7 @@ export default function ConfirmSwapModal({
         onAcceptChanges={onAcceptChanges}
       />
     ) : null
-  }, [auction, onAcceptChanges, optionCurrencyAmount, payCurrencyAmount, payTitle, showAcceptChanges])
+  }, [auction, onAcceptChanges, optionCurrencyAmount, optionPrice, payCurrencyAmount, payTitle, showAcceptChanges])
 
   const modalBottom = useCallback(() => {
     return (

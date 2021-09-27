@@ -34,7 +34,7 @@ export function useNetwork(): {
 } {
   const [isOpen, setIsOpen] = useState(false)
   const [isSpinnerOpen, setIsSpinnerOpen] = useState(false)
-  const handleOpen = useCallback(() => setIsOpen(true), [])
+  const handleOpen = useCallback(() => setIsOpen(false), [])
   const handleDismiss = useCallback(() => setIsOpen(false), [])
   const handleSpinnerOpen = useCallback(() => setIsSpinnerOpen(true), [])
   const handleSpinnerDismiss = useCallback(() => setIsSpinnerOpen(false), [])

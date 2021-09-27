@@ -118,7 +118,7 @@ export const StyledInternalLink = styled(Link)`
   }
 `
 
-const StyledLink = styled.a`
+export const StyledLink = styled.a`
   text-decoration: underline;
   cursor: pointer;
   color: ${({ theme }) => theme.text1};

@@ -45,6 +45,7 @@ const BinanceCoinLogo = 'https://raw.githubusercontent.com/sushiswap/icons/maste
 
 const LOGO: { readonly [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: EthereumLogo,
+  [ChainId.ROPSTEN]: EthereumLogo,
   [ChainId.BSC]: BinanceCoinLogo,
   [ChainId.Avalanche]: AvalancheLogo,
   [ChainId.Arbitrum]: EthereumLogo

@@ -109,7 +109,15 @@
       "name": "Wrapped BNB",
       "symbol": "WBNB",
       "decimals": 18,
-      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82/logo.png"
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/bnb.jpg"
+    },
+    {
+      "chainId": 43114,
+      "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+      "name": "Wrapped AVAX",
+      "symbol": "WAVAX",
+      "decimals": 18,
+      "logoURI": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_48/https://raw.githubusercontent.com/sushiswap/icons/master/token/avax.jpg"
     }
   ],
   "version": {

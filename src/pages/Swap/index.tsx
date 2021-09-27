@@ -34,7 +34,13 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import { BodyWrapper } from '../AppBody'
 import Loader from '../../components/Loader'
 //import { isTradeBetter } from 'utils/trades'
-import { Option, useDerivedStrategyInfo, usePayCurrencyAmount, useSwapInfo } from '../../state/market/hooks'
+import {
+  Option,
+  OptionPrice,
+  useDerivedStrategyInfo,
+  usePayCurrencyAmount,
+  useSwapInfo
+} from '../../state/market/hooks'
 import { TypeRadioButton } from '../../components/MarketStrategy/TypeRadioButton'
 import { ANTIMATTER_ROUTER_ADDRESS, INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
@@ -81,9 +87,11 @@ const SwapAppBody = styled(BodyWrapper)`
 
 export default function Swap({
   option,
+  optionPrice,
   handleOptionType
 }: {
   option: Option | undefined
+  optionPrice: OptionPrice | undefined
   handleOptionType: (option: string) => void
 }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -404,6 +412,7 @@ export default function Swap({
         {/*<SwapHeader /> */}
         <Wrapper id="swap-page" style={{ padding: '1rem 0' }}>
           <ConfirmSwapModal
+            optionPrice={optionPrice}
             auction={auction as Auction}
             optionCurrencyAmount={parsedAmounts[Field.OPTION]}
             payTitle={payFormattedAmount?.[0] === '-' ? 'You will receive' : 'You will pay'}

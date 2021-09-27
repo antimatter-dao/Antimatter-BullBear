@@ -6,16 +6,14 @@ import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
 import { useActiveWeb3React } from '../../hooks'
-import { ExternalHeaderLink, ExternalLink, TYPE, HideMedium } from '../../theme'
+import { ExternalHeaderLink, ExternalLink, TYPE, HideMedium, StyledLink } from '../../theme'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
-import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
 import { ReactComponent as BSCInvert } from '../../assets/svg/binance.svg'
 import { ReactComponent as BSC } from '../../assets/svg/binance.svg'
-import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
 import { ReactComponent as Plus } from '../../assets/svg/plus.svg'
 import useTheme from 'hooks/useTheme'
 import ToggleMenu from './ToggleMenu'
@@ -69,7 +67,6 @@ const NetworkInfo: {
   [ChainId.MAINNET]: {
     color: '#FFFFFF',
     icon: <ETH />,
-    link: 'https://antimatter-v2.netlify.app/#/',
     title: 'ETH'
   },
   [ChainId.ROPSTEN]: {
@@ -77,29 +74,82 @@ const NetworkInfo: {
     icon: <ETH />,
     title: 'Ropsten'
   },
-  128: {
-    color: '#059BDC',
-    icon: <HECOInvert />,
-    linkIcon: <HECO />,
-    title: 'HECO'
-  },
   [ChainId.BSC]: {
     color: '#F0B90B',
     icon: <BSCInvert />,
     linkIcon: <BSC />,
-    title: 'Binance Smart Chain Mainnet'
+    title: 'BSC'
   },
   [ChainId.Arbitrum]: {
-    color: '#F0B90B',
+    color: '#FFFFFF',
     icon: <BSCInvert />,
     linkIcon: <BSC />,
     title: 'Arbitrum'
   },
   [ChainId.Avalanche]: {
-    color: '#F0B90B',
+    color: '#ff5155',
     icon: <BSCInvert />,
     linkIcon: <BSC />,
-    title: 'Avalanche Network'
+    title: 'Avalanche'
+  }
+}
+
+export const SUPPORTED_NETWORKS: {
+  [chainId in ChainId]?: {
+    chainId: string
+    chainName: string
+    nativeCurrency: {
+      name: string
+      symbol: string
+      decimals: number
+    }
+    rpcUrls: string[]
+    blockExplorerUrls: string[]
+  }
+} = {
+  [ChainId.MAINNET]: {
+    chainId: '0x1',
+    chainName: 'Ethereum',
+    nativeCurrency: {
+      name: 'Ethereum',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://mainnet.infura.io/v3'],
+    blockExplorerUrls: ['https://etherscan.com']
+  },
+  [ChainId.BSC]: {
+    chainId: '0x38',
+    chainName: 'Binance Smart Chain',
+    nativeCurrency: {
+      name: 'Binance Coin',
+      symbol: 'BNB',
+      decimals: 18
+    },
+    rpcUrls: ['https://bsc-dataseed.binance.org'],
+    blockExplorerUrls: ['https://bscscan.com']
+  },
+  [ChainId.Avalanche]: {
+    chainId: '0xA86A',
+    chainName: 'Avalanche',
+    nativeCurrency: {
+      name: 'Avalanche Token',
+      symbol: 'AVAX',
+      decimals: 18
+    },
+    rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+    blockExplorerUrls: ['https://cchain.explorer.avax.network']
+  },
+  [ChainId.Arbitrum]: {
+    chainId: '0xA4B1',
+    chainName: 'Arbitrum',
+    nativeCurrency: {
+      name: 'Ethereum',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+    blockExplorerUrls: ['https://mainnet-arb-explorer.netlify.app']
   }
 }
 
@@ -475,7 +525,7 @@ const MobileHeader = styled.header`
 `
 
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React()
+  const { account, chainId, library } = useActiveWeb3React()
 
   //const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
@@ -552,7 +602,7 @@ export default function Header() {
           </HideSmall> */}
           {chainId && NetworkInfo[chainId] && (
             <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
-              {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
+              {NetworkInfo[chainId].title}
               <ChevronDown size={18} style={{ marginLeft: '5px' }} />
               <div className="dropdown_wrapper">
                 <Dropdown>
@@ -568,10 +618,30 @@ export default function Header() {
                             <Check size={18} />
                           </span>
                         )}
-                        {info.linkIcon ?? info.icon}
+                        {/*{info.linkIcon ?? info.icon}*/}
                         {info.title}
                       </ExternalLink>
-                    ) : null
+                    ) : (
+                      <StyledLink
+                        onClick={() => {
+                          if (parseInt(key) === ChainId.MAINNET) {
+                            library?.send('wallet_switchEthereumChain', [{ chainId: '0x1' }, account])
+                          } else if (parseInt(key) === ChainId.ROPSTEN) {
+                            library?.send('wallet_switchEthereumChain', [{ chainId: '0x3' }, account])
+                          } else {
+                            const params = SUPPORTED_NETWORKS[parseInt(key) as ChainId]
+                            library?.send('wallet_addEthereumChain', [params, account])
+                          }
+                        }}
+                      >
+                        {parseInt(key) === chainId && (
+                          <span style={{ position: 'absolute', left: '15px' }}>
+                            <Check size={18} />
+                          </span>
+                        )}
+                        {info.title}
+                      </StyledLink>
+                    )
                   })}
                 </Dropdown>
               </div>

@@ -252,14 +252,16 @@ export const BLOCKED_ADDRESSES: string[] = [
 
 export const Symbol: { readonly [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: 'ETH',
+  [ChainId.ROPSTEN]: 'ETH',
   [ChainId.BSC]: 'BNB',
-  [ChainId.Avalanche]: 'ETH',
-  [ChainId.Arbitrum]: 'AVAX'
+  [ChainId.Avalanche]: 'AVAX',
+  [ChainId.Arbitrum]: 'ETH'
 }
 
 export const Name: { readonly [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: 'ETHER',
+  [ChainId.ROPSTEN]: 'ETHER',
   [ChainId.BSC]: 'Binance Coin',
-  [ChainId.Avalanche]: 'ETHER',
-  [ChainId.Arbitrum]: 'Avalanche'
+  [ChainId.Avalanche]: 'Avalanche',
+  [ChainId.Arbitrum]: 'ETHER'
 }
