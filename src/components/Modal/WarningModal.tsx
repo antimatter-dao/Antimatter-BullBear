@@ -41,7 +41,6 @@ export default function WarningModal() {
     } else {
       const { expiry } = JSON.parse(stored)
       const now = new Date().getTime()
-      console.log(expiry - now)
       if (now > expiry) {
         setIsOpen(true)
         return
