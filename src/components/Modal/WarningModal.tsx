@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { ButtonPrimary } from 'components/Button'
 import { AutoColumn, ColumnCenter } from 'components/Column'
 import Modal from '.'
@@ -9,25 +9,48 @@ import useTheme from '../../hooks/useTheme'
 import { transparentize } from 'polished'
 import Card from '../Card'
 
+const STORAGE_KEY = 'isWarningModalShown'
+
 export default function WarningModal() {
   const theme = useTheme()
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
   const [enableCheck, setEnableCheck] = useState(false)
 
   const confirmRef = useRef<HTMLDivElement>()
 
-  // const scrollTop = confirmRef.current
-
-  // useEffect(() => {
-  //   console.log('scrollTop', scrollTop)
-  // }, [scrollTop])
   const isDev = process.env.NODE_ENV === 'development'
 
-  const handleClose = useCallback(() => setIsOpen(false), [setIsOpen])
+  const handleClose = useCallback(() => {
+    setIsOpen(false)
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        expiry: new Date().getTime() + 604800000
+      })
+    )
+  }, [setIsOpen])
+
+  useEffect(() => {
+    if (!window || !window?.localStorage) {
+      return
+    }
+    const stored = window.localStorage.getItem(STORAGE_KEY)
+    if (!stored) {
+      setIsOpen(true)
+    } else {
+      const { expiry } = JSON.parse(stored)
+      const now = new Date().getTime()
+      console.log(expiry - now)
+      if (now > expiry) {
+        setIsOpen(true)
+        return
+      }
+    }
+  }, [])
   return (
     <>
-      {isOpen && !isDev && (
+      {!isDev && (
         <Modal maxWidth={608} isOpen={isOpen} onDismiss={() => {}}>
           <AutoColumn
             gap="24px"
