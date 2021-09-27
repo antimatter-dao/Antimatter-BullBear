@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useRef } from 'react'
-// import { X } from 'react-feather'
 import { ButtonPrimary } from 'components/Button'
 import { AutoColumn, ColumnCenter } from 'components/Column'
 import Modal from '.'
@@ -9,7 +8,6 @@ import { AutoRow } from '../Row'
 import useTheme from '../../hooks/useTheme'
 import { transparentize } from 'polished'
 import Card from '../Card'
-// import { RowBetween } from 'components/Row'
 
 export default function WarningModal() {
   const theme = useTheme()

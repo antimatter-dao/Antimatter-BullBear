@@ -206,7 +206,7 @@ const StyledHeaderLink = styled.a`
   color: ${({ theme }) => theme.text3};
   font-size: 14px;
   width: fit-content;
-  margin: 0 20px;
+  margin: 0 18px;
   font-weight: 400;
   padding: 10px 0 27px;
   white-space: nowrap;
@@ -215,6 +215,9 @@ const StyledHeaderLink = styled.a`
   :hover {
     color: ${({ theme }) => darken(0.1, theme.primary1)};
   }
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    margin: 0 10px;
+  `};
 `
 
 export function ExternalHeaderLink({
@@ -353,6 +356,12 @@ export function BackArrow({ to }: { to: string }) {
 export const CustomLightSpinner = styled(Spinner)<{ size: string }>`
   height: ${({ size }) => size};
   width: ${({ size }) => size};
+`
+
+export const HideMedium = styled.span`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: none;
+  `}
 `
 
 export const HideSmall = styled.span`

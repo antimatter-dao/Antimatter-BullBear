@@ -8,7 +8,7 @@ import { darken } from 'polished'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
-import { ExternalHeaderLink, ExternalLink, TYPE, HideSmall } from '../../theme'
+import { ExternalHeaderLink, ExternalLink, TYPE, HideMedium } from '../../theme'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -36,8 +36,14 @@ export const tabs: Tab[] = [
   { title: 'Option Trading', route: 'option_trading' },
   { title: 'Option Creation', route: 'option_creation' },
   // { title: 'Farm', route: 'farm' },
-  { title: 'Calculator', route: 'calculator' },
-  { title: 'Statistics', route: 'statistics' },
+  {
+    title: 'Tools',
+    subTab: [
+      { title: 'Calculator', route: 'calculator' },
+      { title: 'Statistics', route: 'statistics' }
+    ]
+  },
+
   { title: 'Governance', link: 'https://governance.antimatter.finance' },
   {
     title: 'About',
@@ -105,7 +111,7 @@ const HeaderFrame = styled.div`
   z-index: 99;
   background-color: ${({ theme }) => theme.bg1};
   height: ${({ theme }) => theme.headerHeight};
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
     padding: 0 1rem;
     width: 100%;
@@ -171,7 +177,7 @@ const HeaderRow = styled(RowFixed)`
   padding-left: 2rem;
   align-items: flex-start;
   justify-content: space-between;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     height: ${({ theme }) => theme.headerHeight};
     background-color: rgb(25, 25, 25);
     border-top: 1px solid rgb(48, 48, 48);
@@ -179,6 +185,7 @@ const HeaderRow = styled(RowFixed)`
     position: fixed;
     bottom: 0;
     z-index: 100;
+    padding: 0;
     justify-content: center
   `};
 `
@@ -225,18 +232,18 @@ const UNIWrapper = styled.span`
   position: relative;
 `
 
-const HideLarge = styled(RowFixed)`
-  display: none;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    display: inherit;
-  `};
-`
+// const HideLarge = styled(RowFixed)`
+//   display: none;
+//   ${({ theme }) => theme.mediaWidth.upToLarge`
+//     display: inherit;
+//   `};
+// `
 
-const ShowLarge = styled(RowFixed)`
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    display: none;
-  `};
-`
+// const ShowLarge = styled(RowFixed)`
+//   ${({ theme }) => theme.mediaWidth.upToLarge`
+//     display: none;
+//   `};
+// `
 
 const NetworkCard = styled.div<{ color?: string }>`
   color: #000000;
@@ -317,6 +324,9 @@ const StyledNavLink = styled(NavLink).attrs({
   :focus {
     color: ${({ theme }) => darken(0.1, theme.primary1)};
   }
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    margin: 0 10px;
+  `};
 `
 
 const StyledDropdown = styled.div`
@@ -327,7 +337,7 @@ const StyledDropdown = styled.div`
   color: ${({ theme }) => theme.text3};
   font-size: 14px;
   width: fit-content;
-  margin: 0 20px;
+  margin: 0 18px;
   font-weight: 400;
   padding: 10px 0 27px;
   transition: 0.5s;
@@ -355,6 +365,9 @@ const StyledDropdown = styled.div`
       border: 1px solid ${({ theme }) => theme.text5};
     }
   }
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    margin: 0 10px;
+  `};
 `
 const Dropdown = styled.div<{ width?: string }>`
   z-index: 3;
@@ -453,7 +466,7 @@ const MobileHeader = styled.header`
   left: 0;
   z-index: 100;
   display: none;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     display: flex
 `};
 `
@@ -470,71 +483,70 @@ export default function Header() {
     <HeaderFrame>
       <ClaimModal />
       <HeaderRow>
-        <HideSmall>
+        <HideMedium>
           <RowFixed>
             <LogoButton />
-            <ShowLarge>
-              <HeaderLinks>
-                {tabs.map(({ title, route, link, subTab }) => {
-                  if (subTab) {
-                    return (
-                      <StyledDropdown key={title}>
+
+            <HeaderLinks>
+              {tabs.map(({ title, route, link, subTab }) => {
+                if (subTab) {
+                  return (
+                    <StyledDropdown key={title}>
+                      {title}
+                      <ChevronDown size={15} />
+                      <Dropdown>
+                        {subTab.map(({ title, route, link, titleContent }) => {
+                          return link ? (
+                            <ExternalLink href={link} key={title}>
+                              {titleContent ?? title}
+                            </ExternalLink>
+                          ) : route ? (
+                            <NavLink to={route} key={title}>
+                              {titleContent ?? title}
+                            </NavLink>
+                          ) : null
+                        })}
+                      </Dropdown>
+                    </StyledDropdown>
+                  )
+                }
+                if (route === 'option_exercise') {
+                  return (
+                    <StyledNavLink
+                      key={route}
+                      to={`/${route}`}
+                      isActive={(match, { pathname }) =>
+                        Boolean(match) || pathname.startsWith('/generate') || pathname.startsWith('/redeem')
+                      }
+                    >
+                      {title}
+                    </StyledNavLink>
+                  )
+                }
+                return (
+                  <React.Fragment key={title}>
+                    {link ? (
+                      <ExternalHeaderLink href={link} key={title}>
                         {title}
-                        <ChevronDown size={15} />
-                        <Dropdown>
-                          {subTab.map(({ title, route, link, titleContent }) => {
-                            return link ? (
-                              <ExternalLink href={link} key={title}>
-                                {titleContent ?? title}
-                              </ExternalLink>
-                            ) : route ? (
-                              <NavLink to={route} key={title}>
-                                {titleContent ?? title}
-                              </NavLink>
-                            ) : null
-                          })}
-                        </Dropdown>
-                      </StyledDropdown>
-                    )
-                  }
-                  if (route === 'option_exercise') {
-                    return (
-                      <StyledNavLink
-                        key={route}
-                        to={`/${route}`}
-                        isActive={(match, { pathname }) =>
-                          Boolean(match) || pathname.startsWith('/generate') || pathname.startsWith('/redeem')
-                        }
-                      >
+                      </ExternalHeaderLink>
+                    ) : (
+                      <StyledNavLink id={`stake-nav-link`} to={'/' + route} key={route}>
                         {title}
                       </StyledNavLink>
-                    )
-                  }
-                  return (
-                    <React.Fragment key={title}>
-                      {link ? (
-                        <ExternalHeaderLink href={link} key={title}>
-                          {title}
-                        </ExternalHeaderLink>
-                      ) : (
-                        <StyledNavLink id={`stake-nav-link`} to={'/' + route} key={route}>
-                          {title}
-                        </StyledNavLink>
-                      )}
-                    </React.Fragment>
-                  )
-                })}
-              </HeaderLinks>
-            </ShowLarge>
+                    )}
+                  </React.Fragment>
+                )
+              })}
+            </HeaderLinks>
           </RowFixed>
-        </HideSmall>
+        </HideMedium>
         <HeaderControls>
           {/* <HeaderElement show={!!account}> */}
-          <HideSmall>
+          {/* <HideSmall>
             <HideLarge>
               <ToggleMenu padding={0} />
             </HideLarge>
-          </HideSmall>
+          </HideSmall> */}
           {chainId && NetworkInfo[chainId] && (
             <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
               {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
@@ -623,7 +635,7 @@ function LogoButton() {
       <Link to={'/'}>
         <StyledLogo />
       </Link>
-      <StyledDropdown style={{ color: '#ffffff', padding: '6px 25px 18px 20px', marginLeft: 0 }}>
+      <StyledDropdown style={{ color: '#ffffff', padding: '6px 25px 18px 20px', margin: 0 }}>
         <Plus style={{ margin: 'auto auto' }} />
         <Dropdown>
           <ExternalLink href={'https://v1.antimatter.finance'}>Antimatter V1</ExternalLink>
