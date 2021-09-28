@@ -59,44 +59,31 @@ export default function Stats() {
     <Wrapper>
       <AutoColumn gap="36px">
         <TYPE.mediumHeader fontFamily="Roboto" color="white" fontSize="28px">
-          Antimatter Stats
+          Statistics:
         </TYPE.mediumHeader>
         <AutoColumn gap="20px">
           <StyledTotal>
             <TYPE.gray fontSize="16px" style={{ opacity: '0.4' }} fontFamily="Roboto" color="#fff" fontWeight="400">
-              Total Value Locked
+              Total Trading Volume:
             </TYPE.gray>
             <TYPE.largeHeader fontSize="48px" fontFamily="Roboto" letterSpacing="0.02em" lineHeight="71px">
-              $ {statsData ? statsData.totalValueLocked : '-'}
+              $ {statsData ? statsData.totalTradingVolume : '-'}
             </TYPE.largeHeader>
           </StyledTotal>
           <RowBetween>
             <StyledItem gap="9px">
               <TYPE.gray fontSize="16px" style={{ opacity: '0.4' }} fontFamily="Roboto" color="#fff" fontWeight="400">
-                Total Trading Volume
+                Total Value Locked:
               </TYPE.gray>
               <RowFixed style={{ alignItems: 'baseline' }}>
                 <TYPE.mediumHeader fontFamily="Roboto" color="white" fontSize="40px" lineHeight="59px">
-                  $ {statsData ? statsData.totalTradingVolume : '-'}
+                  $ {statsData ? statsData.totalValueLocked : '-'}
                 </TYPE.mediumHeader>
               </RowFixed>
             </StyledItem>
             <StyledItem gap="9px">
               <TYPE.gray fontSize="16px" style={{ opacity: '0.4' }} fontFamily="Roboto" color="#fff" fontWeight="400">
-                Connected via the bridged
-              </TYPE.gray>
-              <RowFixed style={{ alignItems: 'baseline' }}>
-                <TYPE.mediumHeader fontFamily="Roboto" color="white" fontSize="40px" lineHeight="59px">
-                  {statsData ? statsData.availableChains : '-'}
-                </TYPE.mediumHeader>
-                <TYPE.white fontSize="20px" lineHeight="30px" style={{ marginLeft: 5 }}>
-                  Chains
-                </TYPE.white>
-              </RowFixed>
-            </StyledItem>
-            <StyledItem gap="9px">
-              <TYPE.gray fontSize="16px" style={{ opacity: '0.4' }} fontFamily="Roboto" color="#fff" fontWeight="400">
-                Supported
+                Supported asset:
               </TYPE.gray>
               <RowFixed style={{ alignItems: 'baseline' }}>
                 <TYPE.mediumHeader fontFamily="Roboto" color="white" fontSize="40px" lineHeight="59px">
@@ -104,6 +91,19 @@ export default function Stats() {
                 </TYPE.mediumHeader>
                 <TYPE.white fontSize="20px" lineHeight="30px" style={{ marginLeft: 5 }}>
                   Tokens
+                </TYPE.white>
+              </RowFixed>
+            </StyledItem>
+            <StyledItem gap="9px">
+              <TYPE.gray fontSize="16px" style={{ opacity: '0.4' }} fontFamily="Roboto" color="#fff" fontWeight="400">
+                Available Chains:
+              </TYPE.gray>
+              <RowFixed style={{ alignItems: 'baseline' }}>
+                <TYPE.mediumHeader fontFamily="Roboto" color="white" fontSize="40px" lineHeight="59px">
+                  {statsData ? statsData.availableChains : '-'}
+                </TYPE.mediumHeader>
+                <TYPE.white fontSize="20px" lineHeight="30px" style={{ marginLeft: 5 }}>
+                  Chains
                 </TYPE.white>
               </RowFixed>
             </StyledItem>

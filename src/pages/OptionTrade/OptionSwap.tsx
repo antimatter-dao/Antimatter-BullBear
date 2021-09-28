@@ -259,7 +259,7 @@ export default function OptionSwap({
   }, [candlestickSeries, chart, currentTab, putChartData, callChartData])
 
   const handleMarketPriceChart = useCallback(() => setIsMarketPriceChart(true), [])
-  const handleModalChart = useCallback(() => setIsMarketPriceChart(false), [])
+  // const handleModalChart = useCallback(() => setIsMarketPriceChart(false), [])
 
   const handleTabClick = useCallback(
     (tab: string) => () => {
@@ -291,9 +291,9 @@ export default function OptionSwap({
             <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>
               MarketPrice
             </Button>
-            <Button isActive={!isMarketPriceChart} onClick={handleModalChart}>
+            {/* <Button isActive={!isMarketPriceChart} onClick={handleModalChart}>
               Price Modeling Prediction
-            </Button>
+            </Button> */}
           </ButtonGroup>
 
           <Chart id="chart" />
