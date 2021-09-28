@@ -134,7 +134,7 @@ function CurrencyRow({
             {Symbol[chainId ?? 1]}
           </Text>
           <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
-            {currency.name} {!isOnSelectedList && customAdded && '• Added by user'}
+            {Name[chainId ?? 1]}
           </TYPE.darkGray>
         </Column>
       ) : (

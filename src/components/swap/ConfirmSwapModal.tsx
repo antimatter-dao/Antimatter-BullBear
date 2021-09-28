@@ -1,4 +1,4 @@
-import { CurrencyAmount, currencyEquals, Trade } from '@uniswap/sdk'
+import { CurrencyAmount, currencyEquals, ETHER, Trade } from '@uniswap/sdk'
 import React, { useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
@@ -8,6 +8,8 @@ import SwapModalFooter from './SwapModalFooter'
 import SwapModalHeader from './SwapModalHeader'
 import { Auction } from '../../state/swap/actions'
 import { OptionPrice } from '../../state/market/hooks'
+import { Symbol } from '../../constants'
+import { useActiveWeb3React } from '../../hooks'
 
 /**
  * Returns true if the trade requires a confirmation of details before we can submit it
@@ -57,6 +59,10 @@ export default function ConfirmSwapModal({
   swapErrorMessage: string | undefined
   onDismiss: () => void
 }) {
+  const { chainId } = useActiveWeb3React()
+  const payCurrencySymbol =
+    payCurrencyAmount?.currency === ETHER ? Symbol[chainId ?? 1] : payCurrencyAmount?.currency.symbol
+
   const showAcceptChanges = useMemo(
     () => Boolean(trade && originalTrade && tradeMeaningfullyDiffers(trade, originalTrade)),
     [originalTrade, trade]
@@ -90,9 +96,9 @@ export default function ConfirmSwapModal({
   // text to show while loading
   const pendingText = `Swapping ${
     auction === Auction.BUY ? payCurrencyAmount?.toSignificant(6) : optionCurrencyAmount?.toSignificant(6)
-  } ${auction === Auction.BUY ? payCurrencyAmount?.currency.symbol : optionCurrencyAmount?.currency.symbol} for ${
+  } ${auction === Auction.BUY ? payCurrencySymbol : optionCurrencyAmount?.currency.symbol} for ${
     auction === Auction.BUY ? optionCurrencyAmount?.toSignificant(6) : payCurrencyAmount?.toSignificant(6)
-  } ${auction === Auction.BUY ? optionCurrencyAmount?.currency.symbol : payCurrencyAmount?.currency.symbol}`
+  } ${auction === Auction.BUY ? optionCurrencyAmount?.currency.symbol : payCurrencySymbol}`
 
   const confirmationContent = useCallback(
     () =>

@@ -156,7 +156,9 @@ export function useSwapCallback(
                 callAmount !== '0'
                   ? (tryFormatAmount(absolute(callAmount), option.call?.token)
                       ?.toExact()
-                      .toString() ?? '') + option.call?.token.symbol
+                      .toString() ?? '') +
+                    ' ' +
+                    option.call?.token.symbol
                   : ''
               } ${
                 putAmount !== '0'
