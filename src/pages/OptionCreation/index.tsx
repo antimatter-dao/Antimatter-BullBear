@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { Currency } from '@uniswap/sdk'
 import { Plus } from 'react-feather'
 import styled from 'styled-components'
+import debounce from 'lodash.debounce'
 import AppBody, { BodyHeader } from 'pages/AppBody'
 import { RowBetween, RowFixed } from 'components/Row'
 import { TYPE } from 'theme'
@@ -30,6 +31,15 @@ const InputWrapper = styled(RowBetween)`
   }
 `
 const underlyingAssetList = [WUSDT, WDAI, WUSDC]
+
+enum ERROR {
+  CAP_TOO_LARGE = 'Price cap should not be larger than four times price cap',
+  FLOOR_TOO_LARGE = 'Price floor should be smaller than price cap',
+  FLOOR_REQUIRED = 'Price floor is required',
+  CAP_REQUIRED = 'Price cap is required',
+  CURRENCY_REQUIRED = 'Currency  is required',
+  UNDERLYING_REQUIRED = 'Underlying is required'
+}
 
 export default function OptionCreation() {
   const { chainId } = useActiveWeb3React()
@@ -83,16 +93,27 @@ export default function OptionCreation() {
 
   const handleNext = () => {
     let errorString = ''
-    if (floor && cap && +cap > +floor * 4) errorString = 'Price cap should not be larger than four times price cap'
-    if (floor && cap && +floor > +cap) errorString = 'Price floor should be smaller than price cap'
-    if (!floor) errorString = 'Price floor is required'
-    if (!cap) errorString = 'Price cap is required'
-    if (!asset1) errorString = 'Currency  is required'
-    if (!asset0) errorString = 'Underlying is required'
+    if (floor && cap && +cap > +floor * 4) errorString = ERROR.CAP_TOO_LARGE
+    if (floor && cap && +floor > +cap) errorString = ERROR.FLOOR_TOO_LARGE
+    if (!floor) errorString = ERROR.FLOOR_REQUIRED
+    if (!cap) errorString = ERROR.CAP_REQUIRED
+    if (!asset1) errorString = ERROR.CURRENCY_REQUIRED
+    if (!asset0) errorString = ERROR.UNDERLYING_REQUIRED
     setError(errorString)
     if (errorString) return
     setShowConfirm(true)
   }
+
+  useEffect(() => {
+    debounce(() => {
+      let errorString = ''
+      if (floor && cap && +cap > +floor * 4) errorString = ERROR.CAP_TOO_LARGE
+      if (floor && cap && +floor > +cap) errorString = ERROR.FLOOR_TOO_LARGE
+      if ((floor || cap) && !asset1) errorString = ERROR.CURRENCY_REQUIRED
+      if ((floor || cap) && !asset0) errorString = ERROR.UNDERLYING_REQUIRED
+      setError(errorString)
+    }, 1000)()
+  }, [asset0, asset1, cap, floor])
 
   const createdOption = `${asset0?.symbol} (${floor}$${cap})`
 
@@ -302,8 +323,8 @@ export default function OptionCreation() {
               />
             </InputWrapper>
           </AutoColumn>
-          <TYPE.body color={theme.primary1} fontSize={14}>
-            {error}
+          <TYPE.body color={theme.primary1} fontSize={14} height={16}>
+            {error}{' '}
           </TYPE.body>
           <ButtonPrimary onClick={handleNext}>Create</ButtonPrimary>
         </AutoColumn>
