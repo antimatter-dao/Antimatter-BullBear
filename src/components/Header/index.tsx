@@ -1,22 +1,19 @@
-import { ChainId, TokenAmount } from '@uniswap/sdk'
+import { ChainId } from '@uniswap/sdk'
 import React from 'react'
 import { Check, ChevronDown } from 'react-feather'
 import { Link, NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
-import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
-import { useAggregateUniBalance } from '../../state/wallet/hooks'
-import { ExternalHeaderLink, ExternalLink, TYPE, HideMedium } from '../../theme'
+import { ExternalHeaderLink, ExternalLink, TYPE, HideMedium, StyledLink } from '../../theme'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
-import usePrevious from '../../hooks/usePrevious'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
-import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
-import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
+//import { ReactComponent as BSCInvert } from '../../assets/svg/binance.svg'
+//import { ReactComponent as BSC } from '../../assets/svg/binance.svg'
 import { ReactComponent as Plus } from '../../assets/svg/plus.svg'
 import useTheme from 'hooks/useTheme'
 import ToggleMenu from './ToggleMenu'
@@ -44,12 +41,12 @@ export const tabs: Tab[] = [
     ]
   },
 
+  { title: 'Governance', link: 'https://governance.antimatter.finance' },
   {
     title: 'About',
     subTab: [
       { title: 'Docs', link: 'https://docs.antimatter.finance/' },
-      // { title: 'Github', link: 'https://github.com/antimatter-finance' },
-      { title: 'Governance', link: 'https://governance.antimatter.finance' },
+      { title: 'Github', link: 'https://github.com/antimatter-finance' },
       {
         title: 'Auditing Report',
         link:
@@ -67,33 +64,92 @@ export const tabs: Tab[] = [
 const NetworkInfo: {
   [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
 } = {
-  1: {
-    color: '#FFFFFF',
-    icon: <ETH />,
-    link: 'https://antimatter-v2.netlify.app/#/',
-    title: 'ETH'
-  },
+  // [ChainId.MAINNET]: {
+  //   color: '#FFFFFF',
+  //   icon: <ETH />,
+  //   title: 'ETH'
+  // },
   [ChainId.ROPSTEN]: {
     color: '#FFFFFF',
     icon: <ETH />,
     title: 'Ropsten'
   },
-  [ChainId.RINKEBY]: {
-    color: '#FFFFFF',
-    icon: <ETH />,
-    title: 'Rinkeby'
-  },
-  128: {
-    color: '#059BDC',
-    icon: <HECOInvert />,
-    linkIcon: <HECO />,
-    title: 'HECO'
-  }
-  // 56: {
+  // [ChainId.BSC]: {
   //   color: '#F0B90B',
   //   icon: <BSCInvert />,
   //   linkIcon: <BSC />,
-  //  title:'BSC'
+  //   title: 'BSC'
+  // },
+  // [ChainId.Arbitrum]: {
+  //   color: '#FFFFFF',
+  //   icon: <BSCInvert />,
+  //   linkIcon: <BSC />,
+  //   title: 'Arbitrum'
+  // },
+  // [ChainId.Avalanche]: {
+  //   color: '#ff5155',
+  //   icon: <BSCInvert />,
+  //   linkIcon: <BSC />,
+  //   title: 'Avalanche'
+  // }
+}
+
+export const SUPPORTED_NETWORKS: {
+  [chainId in ChainId]?: {
+    chainId: string
+    chainName: string
+    nativeCurrency: {
+      name: string
+      symbol: string
+      decimals: number
+    }
+    rpcUrls: string[]
+    blockExplorerUrls: string[]
+  }
+} = {
+  [ChainId.MAINNET]: {
+    chainId: '0x1',
+    chainName: 'Ethereum',
+    nativeCurrency: {
+      name: 'Ethereum',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://mainnet.infura.io/v3'],
+    blockExplorerUrls: ['https://etherscan.com']
+  },
+  // [ChainId.BSC]: {
+  //   chainId: '0x38',
+  //   chainName: 'Binance Smart Chain',
+  //   nativeCurrency: {
+  //     name: 'Binance Coin',
+  //     symbol: 'BNB',
+  //     decimals: 18
+  //   },
+  //   rpcUrls: ['https://bsc-dataseed.binance.org'],
+  //   blockExplorerUrls: ['https://bscscan.com']
+  // },
+  // [ChainId.Avalanche]: {
+  //   chainId: '0xA86A',
+  //   chainName: 'Avalanche',
+  //   nativeCurrency: {
+  //     name: 'Avalanche Token',
+  //     symbol: 'AVAX',
+  //     decimals: 18
+  //   },
+  //   rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+  //   blockExplorerUrls: ['https://cchain.explorer.avax.network']
+  // },
+  // [ChainId.Arbitrum]: {
+  //   chainId: '0xA4B1',
+  //   chainName: 'Arbitrum',
+  //   nativeCurrency: {
+  //     name: 'Ethereum',
+  //     symbol: 'ETH',
+  //     decimals: 18
+  //   },
+  //   rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+  //   blockExplorerUrls: ['https://mainnet-arb-explorer.netlify.app']
   // }
 }
 
@@ -212,25 +268,25 @@ const AccountElement = styled.div<{ active: boolean }>`
   border: 1px solid ${({ theme, active }) => (active ? theme.text1 : 'transparent')};
 `
 
-const UNIAmount = styled.div`
-  color: white;
-  font-size: 13px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background-color: transparent;
-  &:after {
-    content: '';
-    border-right: 1px solid ${({ theme }) => theme.text1};
-    margin: 0 16px;
-    height: 16px;
-  }
-`
+// const UNIAmount = styled.div`
+//   color: white;
+//   font-size: 13px;
+//   display: flex;
+//   flex-direction: row;
+//   align-items: center;
+//   background-color: transparent;
+//   &:after {
+//     content: '';
+//     border-right: 1px solid ${({ theme }) => theme.text1};
+//     margin: 0 16px;
+//     height: 16px;
+//   }
+// `
 
-const UNIWrapper = styled.span`
-  width: fit-content;
-  position: relative;
-`
+// const UNIWrapper = styled.span`
+//   width: fit-content;
+//   position: relative;
+// `
 
 // const HideLarge = styled(RowFixed)`
 //   display: none;
@@ -249,7 +305,7 @@ const NetworkCard = styled.div<{ color?: string }>`
   color: #000000;
   cursor: pointer;
   display: flex;
-  padding: 0 4px;
+  padding: 0 8px;
   height: 32px;
   margin-right: 12px;
   margin-left: 19px;
@@ -400,11 +456,8 @@ const Dropdown = styled.div<{ width?: string }>`
 export const StyledMenuButton = styled.button`
   position: relative;
   width: 100%;
-  height: 100%;
   border: none;
-  background-color: transparent;
   margin: 0;
-  padding: 0;
   height: 35px;
   background-color: ${({ theme }) => theme.bg3};
   margin-left: 8px;
@@ -472,12 +525,12 @@ const MobileHeader = styled.header`
 `
 
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React()
+  const { account, chainId, library } = useActiveWeb3React()
 
-  const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
+  //const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
-  const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
-  const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
+  //const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
+  //const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame>
@@ -547,9 +600,10 @@ export default function Header() {
               <ToggleMenu padding={0} />
             </HideLarge>
           </HideSmall> */}
-          {chainId && NetworkInfo[chainId] && (
+          {account && chainId && NetworkInfo[chainId] && (
             <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
-              {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
+              {NetworkInfo[chainId].icon ?? NetworkInfo[chainId].icon}
+              {NetworkInfo[chainId].title}
               <ChevronDown size={18} style={{ marginLeft: '5px' }} />
               <div className="dropdown_wrapper">
                 <Dropdown>
@@ -568,7 +622,28 @@ export default function Header() {
                         {info.linkIcon ?? info.icon}
                         {info.title}
                       </ExternalLink>
-                    ) : null
+                    ) : (
+                      <StyledLink
+                        onClick={() => {
+                          if (parseInt(key) === ChainId.MAINNET) {
+                            library?.send('wallet_switchEthereumChain', [{ chainId: '0x1' }, account])
+                          } else if (parseInt(key) === ChainId.ROPSTEN) {
+                            library?.send('wallet_switchEthereumChain', [{ chainId: '0x3' }, account])
+                          } else {
+                            const params = SUPPORTED_NETWORKS[parseInt(key) as ChainId]
+                            library?.send('wallet_addEthereumChain', [params, account])
+                          }
+                        }}
+                      >
+                        {parseInt(key) === chainId && (
+                          <span style={{ position: 'absolute', left: '15px' }}>
+                            <Check size={18} />
+                          </span>
+                        )}
+                        {info.icon ?? info.icon}
+                        {info.title}
+                      </StyledLink>
+                    )
                   })}
                 </Dropdown>
               </div>
@@ -584,32 +659,32 @@ export default function Header() {
         </HeaderElementWrap> */}
 
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {!!account && aggregateBalance && (
-              <UNIWrapper>
-                <UNIAmount style={{ pointerEvents: 'none' }}>
-                  {account && (
-                    // <HideSmall>
-                    <TYPE.white
-                      style={{
-                        paddingRight: '.4rem'
-                      }}
-                    >
-                      <CountUp
-                        key={countUpValue}
-                        isCounting
-                        start={parseFloat(countUpValuePrevious)}
-                        end={parseFloat(countUpValue)}
-                        thousandsSeparator={','}
-                        duration={1}
-                      />
-                    </TYPE.white>
-                    // </HideSmall>
-                  )}
-                  MATTER
-                </UNIAmount>
-                {/* <CardNoise /> */}
-              </UNIWrapper>
-            )}
+            {/*{!!account && aggregateBalance && (*/}
+            {/*  <UNIWrapper>*/}
+            {/*    <UNIAmount style={{ pointerEvents: 'none' }}>*/}
+            {/*      {account && (*/}
+            {/*        // <HideSmall>*/}
+            {/*        <TYPE.white*/}
+            {/*          style={{*/}
+            {/*            paddingRight: '.4rem'*/}
+            {/*          }}*/}
+            {/*        >*/}
+            {/*          <CountUp*/}
+            {/*            key={countUpValue}*/}
+            {/*            isCounting*/}
+            {/*            start={parseFloat(countUpValuePrevious)}*/}
+            {/*            end={parseFloat(countUpValue)}*/}
+            {/*            thousandsSeparator={','}*/}
+            {/*            duration={1}*/}
+            {/*          />*/}
+            {/*        </TYPE.white>*/}
+            {/*        // </HideSmall>*/}
+            {/*      )}*/}
+            {/*      MATTER*/}
+            {/*    </UNIAmount>*/}
+            {/*    /!* <CardNoise /> *!/*/}
+            {/*  </UNIWrapper>*/}
+            {/*)}*/}
             {/* {account && userEthBalance ? (
                 <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
                   {userEthBalance?.toSignificant(4)} ETH
