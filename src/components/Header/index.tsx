@@ -36,8 +36,8 @@ export const tabs: Tab[] = [
   {
     title: 'Tools',
     subTab: [
-      { title: 'Calculator', route: 'calculator' },
-      { title: 'Statistics', route: 'statistics' }
+      { title: 'Calculator', route: '/calculator' },
+      { title: 'Statistics', route: '/statistics' }
     ]
   },
   {
