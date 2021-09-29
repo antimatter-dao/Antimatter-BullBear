@@ -37,17 +37,15 @@ export const tabs: Tab[] = [
   {
     title: 'Tools',
     subTab: [
-      { title: 'Calculator', route: 'calculator' },
-      { title: 'Statistics', route: 'statistics' }
+      { title: 'Calculator', route: '/calculator' },
+      { title: 'Statistics', route: '/statistics' }
     ]
   },
-
-  { title: 'Governance', link: 'https://governance.antimatter.finance' },
   {
     title: 'About',
     subTab: [
       { title: 'Docs', link: 'https://docs.antimatter.finance/' },
-      { title: 'Github', link: 'https://github.com/antimatter-finance' },
+      { title: 'Governance', link: 'https://governance.antimatter.finance' },
       {
         title: 'Auditing Report',
         link:
