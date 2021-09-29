@@ -509,7 +509,6 @@ const MobileHeader = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 0 24px;
-  position: relative;
   background-color: ${({ theme }) => theme.bg1};
   height: ${({ theme }) => theme.mobileHeaderHeight};
   position: fixed;

@@ -11,7 +11,7 @@ import { useMemo } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useActiveWeb3React } from '../../hooks'
 import { useUserSlippageTolerance } from '../user/hooks'
-import { Currency, CurrencyAmount, JSBI, Token, TokenAmount, WETH } from '@uniswap/sdk'
+import { Currency, CurrencyAmount, JSBI, Token, TokenAmount, Trade, WETH } from '@uniswap/sdk'
 import { RouteDelta, tryFormatAmount, tryParseAmount, useOptionSwapInfo, useRouteDelta } from '../swap/hooks'
 import { useToken } from '../../hooks/Tokens'
 import { useTotalSupply } from '../../data/TotalSupply'
@@ -280,7 +280,6 @@ export function useOptionPrice(option: Option | undefined): OptionPrice | undefi
     ? [option.underlying?.address, option.currency?.address, option.priceFloor, option.priceCap]
     : [undefined]
   const priceRes = useSingleCallResult(factoryContract, 'calcPrice4', arg)
-
   return useMemo(() => {
     if (!option?.currency || !priceRes?.result?.priceCall || !priceRes.result.pricePut) return undefined
     const callAmount = new TokenAmount(option?.currency, priceRes?.result?.priceCall)
@@ -371,7 +370,7 @@ export function useSwapInfo(
   undCurrency?: Currency | undefined | null,
   curCurrency?: Currency | undefined | null,
   payCurrency?: Currency | undefined | null
-): RouteDelta | undefined {
+): (RouteDelta & { undTrade: Trade | undefined | null; curTrade: Trade | undefined | null }) {
   const { chainId } = useActiveWeb3React()
   const { delta } = useDerivedStrategyInfo(option, callAmount, putAmount)
   const dUnd = delta?.dUnd.toString()
@@ -416,7 +415,7 @@ export function useSwapInfo(
     return
   }, [payCurrency, currency, curTrade, chainId, dCur])
 
-  return useRouteDelta(
+  const routeDelta = useRouteDelta(
     option,
     undTradeAddresses,
     curTradeAddresses,
@@ -425,6 +424,8 @@ export function useSwapInfo(
     putAmount ?? '0',
     option?.put?.token
   )
+
+  return Object.assign(routeDelta,{undTrade,curTrade})
 }
 
 export function usePayCurrencyAmount(

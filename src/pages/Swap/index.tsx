@@ -26,7 +26,7 @@ import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallbac
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import { useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks'
 import { Auction } from '../../state/swap/actions'
-import { tryParseAmount, useDefaultsFromURLSearch, useOptionSwapInfo } from '../../state/swap/hooks'
+import { tryParseAmount, useDefaultsFromURLSearch } from '../../state/swap/hooks'
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
@@ -34,7 +34,12 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import { BodyWrapper } from '../AppBody'
 import Loader from '../../components/Loader'
 //import { isTradeBetter } from 'utils/trades'
-import { Option, useDerivedStrategyInfo, usePayCurrencyAmount, useSwapInfo } from '../../state/market/hooks'
+import {
+  Option,
+  OptionPrice,
+  usePayCurrencyAmount,
+  useSwapInfo
+} from '../../state/market/hooks'
 import { TypeRadioButton } from '../../components/MarketStrategy/TypeRadioButton'
 import { ANTIMATTER_ROUTER_ADDRESS, INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
@@ -81,9 +86,11 @@ const SwapAppBody = styled(BodyWrapper)`
 
 export default function Swap({
   option,
+  optionPrice,
   handleOptionType
 }: {
   option: Option | undefined
+  optionPrice: OptionPrice | undefined
   handleOptionType: (option: string) => void
 }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -236,85 +243,20 @@ export default function Swap({
 
   const handleOutputSelect = useCallback(outputCurrency => setPayCurrency(outputCurrency), [setPayCurrency])
 
-  const { delta } = useDerivedStrategyInfo(
-    option,
-    optionType === OptionField.CALL ? formattedAmounts[Field.OPTION] : '0',
-    optionType === OptionField.PUT ? formattedAmounts[Field.OPTION] : '0'
-  )
-
-  // const [underlyingFrom, underlyingTo] = delta?.dUnd
-  //   ? delta?.dUnd.toString()[0] === '-'
-  //     ? [option?.underlying, payCurrency]
-  //     : [payCurrency, option?.underlying]
-  //   : [undefined, undefined]
-  //
-  // const [currencyFrom, currencyTo] = delta?.dCur
-  //   ? delta?.dCur.toString()[0] === '-'
-  //     ? [option?.currency, payCurrency]
-  //     : [payCurrency, option?.currency]
-  //   : [undefined, undefined]
-
   const underlying = option?.underlying
   const currency = option?.currency
 
-  const { undTrade: underlyingTrade, curTrade: currencyTrade } = useOptionSwapInfo(
-    delta?.dUnd.toString(),
-    delta?.dCur.toString(),
-    underlying,
-    currency,
-    payCurrency
-  )
+  // const { undTrade: underlyingTrade, curTrade: currencyTrade } = useOptionSwapInfo(
+  //   delta?.dUnd.toString(),
+  //   delta?.dCur.toString(),
+  //   underlying,
+  //   currency,
+  //   payCurrency
+  // )
 
   useEffect(() => {
     setOptionCurrency(optionType === OptionField.CALL ? option?.call?.currency : option?.put?.currency)
   }, [optionType, option])
-
-  const { priceImpactWithoutFee: curPriceImpact } = computeTradePriceBreakdown(currencyTrade)
-
-  const { priceImpactWithoutFee: undPriceImpact } = computeTradePriceBreakdown(underlyingTrade)
-
-  const curPriceImpactSeverity = warningSeverity(curPriceImpact)
-
-  const undPriceImpactSeverity = warningSeverity(undPriceImpact)
-
-  // const dUnd = delta?.dUnd
-  // const dCur = delta?.dCur
-
-  // const undTradeAddresses: string[] | undefined = useMemo(() => {
-  //   if (dUnd?.toString() === '0') {
-  //     return underlying?.address ? [underlying.address] : undefined
-  //   }
-  //   if (payCurrency?.symbol?.toUpperCase() === 'ETH' && underlying?.symbol?.toUpperCase() === 'WETH') {
-  //     return [WETH[chainId ?? 3].address]
-  //   }
-  //   if (underlying?.symbol === payCurrency?.symbol) {
-  //     return underlying?.address ? [underlying.address] : undefined
-  //   }
-  //   if (underlyingTrade) {
-  //     return dUnd?.toString()[0] === '-'
-  //       ? underlyingTrade.route.path.map(({ address }) => address)
-  //       : underlyingTrade.route.path.reverse().map(({ address }) => address)
-  //   }
-  //   return undefined
-  // }, [chainId, dUnd, payCurrency, underlying, underlyingTrade])
-
-  // const curTradeAddresses: string[] | undefined = useMemo(() => {
-  //   if (dCur?.toString() === '0') {
-  //     return currency?.address ? [currency.address] : undefined
-  //   }
-  //   if (payCurrency?.symbol?.toUpperCase() === 'ETH' && currency?.symbol?.toUpperCase() === 'WETH') {
-  //     return [WETH[chainId ?? 3].address]
-  //   }
-  //   if (currency?.symbol === payCurrency?.symbol) {
-  //     return currency?.address ? [currency?.address] : undefined
-  //   }
-  //   if (currencyTrade) {
-  //     return dCur?.toString()[0] === '-'
-  //       ? currencyTrade.route.path.map(({ address }) => address)
-  //       : currencyTrade.route.path.reverse().map(({ address }) => address)
-  //   }
-  //   return
-  // }, [payCurrency, currency, currencyTrade, chainId, dCur])
 
   const routerDelta = useSwapInfo(
     option,
@@ -332,6 +274,14 @@ export default function Swap({
     currency,
     payCurrency
   )
+
+  const { priceImpactWithoutFee: curPriceImpact } = computeTradePriceBreakdown(routerDelta?.curTrade)
+
+  const { priceImpactWithoutFee: undPriceImpact } = computeTradePriceBreakdown(routerDelta?.undTrade)
+
+  const curPriceImpactSeverity = warningSeverity(curPriceImpact)
+
+  const undPriceImpactSeverity = warningSeverity(undPriceImpact)
 
   const payFormattedAmount = useMemo(() => {
     if (!routerDelta?.undMax || !routerDelta.curMax) return undefined
@@ -418,8 +368,11 @@ export default function Swap({
         text: `Select a token`
       }
     }
+    if(routerDelta?.isLoading){
+      return { ...defaultContent, disabled: true, text: 'Loading' }
+    }
     if (!payCurrency || !payFormattedAmount || !payBalance) {
-      return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
+      return { ...defaultContent, disabled: true, text: 'Loading' }
     }
     if (payFormattedAmount[0] !== '-' && payCurrencyAmount?.greaterThan(payBalance)) {
       return { ...defaultContent, disabled: true, text: `Insufficient ${payCurrency.symbol} balance` }
@@ -429,6 +382,7 @@ export default function Swap({
     }
     return defaultContent
   }, [
+    routerDelta,
     optionTyped,
     auction,
     parsedAmounts,
@@ -455,12 +409,13 @@ export default function Swap({
         {/*<SwapHeader /> */}
         <Wrapper id="swap-page" style={{ padding: '1rem 0' }}>
           <ConfirmSwapModal
+            optionPrice={optionPrice}
             auction={auction as Auction}
             optionCurrencyAmount={parsedAmounts[Field.OPTION]}
             payTitle={payFormattedAmount?.[0] === '-' ? 'You will receive' : 'You will pay'}
             payCurrencyAmount={payCurrencyAmount}
             isOpen={showConfirm}
-            trade={underlyingTrade ?? undefined}
+            trade={routerDelta?.undTrade ?? undefined}
             originalTrade={tradeToConfirm}
             onAcceptChanges={() => {}}
             attemptingTxn={attemptingTxn}
@@ -599,7 +554,7 @@ export default function Swap({
                   disabled={approval !== ApprovalState.APPROVED}
                   onClick={() => {
                     setSwapState({
-                      tradeToConfirm: underlyingTrade ?? undefined,
+                      tradeToConfirm: routerDelta?.undTrade ?? undefined,
                       attemptingTxn: false,
                       swapErrorMessage: undefined,
                       showConfirm: true,
@@ -622,7 +577,7 @@ export default function Swap({
                 borderRadius="49px"
                 onClick={() => {
                   setSwapState({
-                    tradeToConfirm: underlyingTrade ?? undefined,
+                    tradeToConfirm: routerDelta?.undTrade ?? undefined,
                     attemptingTxn: false,
                     swapErrorMessage: undefined,
                     showConfirm: true,

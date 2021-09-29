@@ -128,7 +128,10 @@ export function useSwapCallback(
       !callAmount ||
       !putAmount ||
       !contract ||
-      !routeDelta ||
+      !routeDelta?.curMax ||
+      !routeDelta.undMax ||
+      !routeDelta.undPathAddresses ||
+      !routeDelta.curPathAddresses ||
       !library ||
       !account ||
       !chainId ||

@@ -32,6 +32,13 @@ export interface RouteDelta {
   totalCur: string
   undPathAddresses: string[] | undefined
   curPathAddresses: string[] | undefined
+  isLoading: boolean
+}
+
+export interface  SwapInfo {
+  routeDelta: RouteDelta | undefined
+  undTrade: Trade | undefined | null
+  curTrade: Trade | undefined | null
 }
 
 export function useSwapState(): AppState['swap'] {
@@ -288,7 +295,6 @@ export function useOptionSwapInfo(
   if (!account) {
     inputError = 'Connect Wallet'
   }
-  //console.log('tag--->',isUndNegative, curBestTradeExactIn, curBestTradeExactOut)
   return {
     undTrade: isUndNegative ? undBestTradeExactIn : undBestTradeExactOut,
     curTrade: isCurNegative ? curBestTradeExactIn : curBestTradeExactOut,
@@ -304,7 +310,7 @@ export function useRouteDelta(
   callToken: Token | undefined,
   putAmount: string,
   putToken: Token | undefined
-): RouteDelta | undefined {
+): RouteDelta {
   const [allowedSlippage] = useUserSlippageTolerance()
   const contract = useAntimatterRouterContract()
   const args =
@@ -324,15 +330,15 @@ export function useRouteDelta(
       : [undefined]
 
   const deltaRes = useSingleCallResult(contract, 'calcDeltaRoute', args)
-  if (!deltaRes || !deltaRes.result) return undefined
-  const delta = deltaRes.result
+  const delta = deltaRes?.result
   return {
-    undMax: delta.undMax.toString(),
-    curMax: delta.curMax.toString(),
-    totalCur: delta.totalCur.toString(),
-    totalUnd: delta.totalUnd.toString(),
+    undMax: delta?.undMax.toString(),
+    curMax: delta?.curMax.toString(),
+    totalCur: delta?.totalCur.toString(),
+    totalUnd: delta?.totalUnd.toString(),
     undPathAddresses: undTrade,
-    curPathAddresses: curTrade
+    curPathAddresses: curTrade,
+    isLoading: deltaRes.loading
   }
 }
 
