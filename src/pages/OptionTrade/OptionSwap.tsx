@@ -165,15 +165,17 @@ export default function OptionSwap({
         })
         .catch(() => errorFunction())
     }
-
-    // getDexTradeList(
-    //   (list: DexTradeData[] | undefined) => {
-    //     //setPriceChartData(list)
-    //   },
-    //   id,
-    //   errorFunction
-    // )
-  }, [chainId, errorFunction, option, pendingCompleteFunction, pendingFunction])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    chainId,
+    errorFunction,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    option?.callToken?.address,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    option?.putToken?.address,
+    pendingCompleteFunction,
+    pendingFunction
+  ])
 
   useEffect(() => {
     const chartElement = document.getElementById('chart') ?? ''
@@ -259,7 +261,7 @@ export default function OptionSwap({
   }, [candlestickSeries, chart, currentTab, putChartData, callChartData])
 
   const handleMarketPriceChart = useCallback(() => setIsMarketPriceChart(true), [])
-  const handleModalChart = useCallback(() => setIsMarketPriceChart(false), [])
+  // const handleModalChart = useCallback(() => setIsMarketPriceChart(false), [])
 
   const handleTabClick = useCallback(
     (tab: string) => () => {
@@ -291,9 +293,9 @@ export default function OptionSwap({
             <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>
               MarketPrice
             </Button>
-            <Button isActive={!isMarketPriceChart} onClick={handleModalChart}>
+            {/* <Button isActive={!isMarketPriceChart} onClick={handleModalChart}>
               Price Modeling Prediction
-            </Button>
+            </Button> */}
           </ButtonGroup>
 
           <Chart id="chart" />

@@ -13,7 +13,8 @@ import ClaimModal from '../claim/ClaimModal'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as BSCInvert } from '../../assets/svg/binance.svg'
-import { ReactComponent as BSC } from '../../assets/svg/binance.svg'
+import { ReactComponent as Arbitrum } from '../../assets/svg/arbitrum_logo.svg'
+import { ReactComponent as AVAX } from '../../assets/svg/avax_logo.svg'
 import { ReactComponent as Plus } from '../../assets/svg/plus.svg'
 import useTheme from 'hooks/useTheme'
 import ToggleMenu from './ToggleMenu'
@@ -64,11 +65,11 @@ export const tabs: Tab[] = [
 const NetworkInfo: {
   [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
 } = {
-  [ChainId.MAINNET]: {
-    color: '#FFFFFF',
-    icon: <ETH />,
-    title: 'ETH'
-  },
+  // [ChainId.MAINNET]: {
+  //   color: '#FFFFFF',
+  //   icon: <ETH />,
+  //   title: 'ETH'
+  // },
   [ChainId.ROPSTEN]: {
     color: '#FFFFFF',
     icon: <ETH />,
@@ -77,19 +78,16 @@ const NetworkInfo: {
   [ChainId.BSC]: {
     color: '#F0B90B',
     icon: <BSCInvert />,
-    linkIcon: <BSC />,
     title: 'BSC'
   },
   [ChainId.Arbitrum]: {
-    color: '#FFFFFF',
-    icon: <BSCInvert />,
-    linkIcon: <BSC />,
+    color: '#059BDC',
+    icon: <Arbitrum />,
     title: 'Arbitrum'
   },
   [ChainId.Avalanche]: {
-    color: '#ff5155',
-    icon: <BSCInvert />,
-    linkIcon: <BSC />,
+    color: '#FFFFFF',
+    icon: <AVAX />,
     title: 'Avalanche'
   }
 }
@@ -305,7 +303,7 @@ const NetworkCard = styled.div<{ color?: string }>`
   color: #000000;
   cursor: pointer;
   display: flex;
-  padding: 0 4px;
+  padding: 0 8px;
   height: 32px;
   margin-right: 12px;
   margin-left: 19px;
@@ -600,8 +598,9 @@ export default function Header() {
               <ToggleMenu padding={0} />
             </HideLarge>
           </HideSmall> */}
-          {chainId && NetworkInfo[chainId] && (
+          {account && chainId && NetworkInfo[chainId] && (
             <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
+              {NetworkInfo[chainId].icon ?? NetworkInfo[chainId].icon}
               {NetworkInfo[chainId].title}
               <ChevronDown size={18} style={{ marginLeft: '5px' }} />
               <div className="dropdown_wrapper">
@@ -618,7 +617,7 @@ export default function Header() {
                             <Check size={18} />
                           </span>
                         )}
-                        {/*{info.linkIcon ?? info.icon}*/}
+                        {info.linkIcon ?? info.icon}
                         {info.title}
                       </ExternalLink>
                     ) : (
@@ -639,6 +638,7 @@ export default function Header() {
                             <Check size={18} />
                           </span>
                         )}
+                        {info.icon ?? info.icon}
                         {info.title}
                       </StyledLink>
                     )
