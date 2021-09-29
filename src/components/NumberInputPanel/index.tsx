@@ -91,6 +91,7 @@ interface NumberInputPanelProps {
   negativeMarginTop?: string
   intOnly?: boolean
   unit?: string
+  placeholder?: string
 }
 
 export default function NumberInputPanel({
@@ -106,7 +107,8 @@ export default function NumberInputPanel({
   negativeMarginTop,
   onUserInput,
   intOnly,
-  unit
+  unit,
+  placeholder
 }: NumberInputPanelProps) {
   const { account } = useActiveWeb3React()
   const theme = useTheme()
@@ -136,7 +138,7 @@ export default function NumberInputPanel({
         </LabelRow>
         <InputRow disabled={disabled}>
           <CustomNumericalInput
-            placeholder={intOnly ? '0' : undefined}
+            placeholder={intOnly ? '0' : placeholder ?? undefined}
             disabled={disabled}
             className="token-amount-input"
             value={value}

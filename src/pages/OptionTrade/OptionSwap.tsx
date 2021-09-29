@@ -165,15 +165,17 @@ export default function OptionSwap({
         })
         .catch(() => errorFunction())
     }
-
-    // getDexTradeList(
-    //   (list: DexTradeData[] | undefined) => {
-    //     //setPriceChartData(list)
-    //   },
-    //   id,
-    //   errorFunction
-    // )
-  }, [chainId, errorFunction, option, pendingCompleteFunction, pendingFunction])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    chainId,
+    errorFunction,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    option?.callToken?.address,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    option?.putToken?.address,
+    pendingCompleteFunction,
+    pendingFunction
+  ])
 
   useEffect(() => {
     const chartElement = document.getElementById('chart') ?? ''

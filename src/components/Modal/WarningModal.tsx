@@ -402,7 +402,7 @@ export default function WarningModal() {
               </TYPE.body>
             </AutoRow>
 
-            <TYPE.small style={{ marginTop: -20 }} color={enableCheck ? '' : theme.red1}>
+            <TYPE.small style={{ marginTop: -20 }} color={enableCheck ? 'transparent' : theme.red1}>
               Please read all and scroll down to bottom to confirm{' '}
             </TYPE.small>
 
