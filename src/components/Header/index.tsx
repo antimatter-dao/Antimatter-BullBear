@@ -507,7 +507,6 @@ const MobileHeader = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 0 24px;
-  position: relative;
   background-color: ${({ theme }) => theme.bg1};
   height: ${({ theme }) => theme.mobileHeaderHeight};
   position: fixed;
@@ -599,6 +598,7 @@ export default function Header() {
           {account && chainId && NetworkInfo[chainId] && (
             <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
               {NetworkInfo[chainId].icon ?? NetworkInfo[chainId].icon}
+              <span style={{marginRight: 4}}/>
               {NetworkInfo[chainId].title}
               <ChevronDown size={18} style={{ marginLeft: '5px' }} />
               <div className="dropdown_wrapper">

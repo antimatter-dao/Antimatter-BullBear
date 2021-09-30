@@ -274,7 +274,7 @@ export default function OptionSwap({
     <>
       <NetworkErrorModal />
       <Wrapper>
-        <Swap handleOptionType={handleOptionType} option={option} optionPrice={optionPrice}/>
+        <Swap optionPrice={optionPrice} handleOptionType={handleOptionType} option={option} />
         <GraphWrapper>
           {graphLoading && <NetworkPendingSpinner paddingTop="0" />}
           <CurrentPrice>
