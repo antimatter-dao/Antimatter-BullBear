@@ -13,6 +13,7 @@ import ClaimModal from '../claim/ClaimModal'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as BSCInvert } from '../../assets/svg/binance.svg'
+import { ReactComponent as BSCSelected } from '../../assets/svg/bsc_logo_selected.svg'
 import { ReactComponent as Arbitrum } from '../../assets/svg/arbitrum_logo.svg'
 import { ReactComponent as AVAX } from '../../assets/svg/avax_logo.svg'
 import { ReactComponent as Plus } from '../../assets/svg/plus.svg'
@@ -61,7 +62,7 @@ export const tabs: Tab[] = [
 ]
 
 const NetworkInfo: {
-  [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
+  [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; selectedIcon?: JSX.Element }
 } = {
   // [ChainId.MAINNET]: {
   //   color: '#FFFFFF',
@@ -76,6 +77,7 @@ const NetworkInfo: {
   [ChainId.BSC]: {
     color: '#F0B90B',
     icon: <BSCInvert />,
+    selectedIcon: <BSCSelected />,
     title: 'BSC'
   },
   [ChainId.Arbitrum]: {
@@ -597,8 +599,8 @@ export default function Header() {
           </HideSmall> */}
           {account && chainId && NetworkInfo[chainId] && (
             <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
-              {NetworkInfo[chainId].icon ?? NetworkInfo[chainId].icon}
-              <span style={{marginRight: 4}}/>
+              {NetworkInfo[chainId].selectedIcon ? NetworkInfo[chainId].selectedIcon : NetworkInfo[chainId].icon}
+              <span style={{ marginRight: 4 }} />
               {NetworkInfo[chainId].title}
               <ChevronDown size={18} style={{ marginLeft: '5px' }} />
               <div className="dropdown_wrapper">
@@ -615,7 +617,7 @@ export default function Header() {
                             <Check size={18} />
                           </span>
                         )}
-                        {info.linkIcon ?? info.icon}
+                        {info.icon ?? info.icon}
                         {info.title}
                       </ExternalLink>
                     ) : (
