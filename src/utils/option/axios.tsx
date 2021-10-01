@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const axiosInstance = axios.create({
   baseURL: 'https://testapi.antimatter.finance/app/',
-  timeout: 2000,
+  timeout: 5000,
   headers: { 'content-type': 'application/json', accept: 'application/json' }
 })
 

@@ -36,11 +36,18 @@ export interface MyPositionProp {
 
 export function useMyPosition(): {
   loading: boolean
+  page: {
+    totalPages: number
+    currentPage: number
+    setCurrentPage: (page: number) => void
+  }
   data: MyPositionProp[]
 } {
   const { chainId, account } = useActiveWeb3React()
   const [data, setData] = useState<MyPositionProp[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalPages, setTotalPages] = useState<number>(0)
 
   useEffect(() => {
     ;(async () => {
@@ -50,7 +57,7 @@ export function useMyPosition(): {
       }
       try {
         setLoading(true)
-        const res = await Axios.get('getMyposition', { chainId, creator: account })
+        const res = await Axios.get('getMyposition', { chainId, creator: account, pageNum: currentPage })
         setLoading(false)
         if (res.data.code !== 200) {
           setData([])
@@ -62,6 +69,7 @@ export function useMyPosition(): {
             return item
           })
         )
+        setTotalPages(Number(res.data.data.pages))
       } catch (error) {
         setLoading(false)
         console.error('request error getMyposition', error)
@@ -69,9 +77,12 @@ export function useMyPosition(): {
         return
       }
     })()
-  }, [chainId, account])
-  return {
+  }, [chainId, account, currentPage])
+  const res = useMemo(() => ({ page: { totalPages, currentPage, setCurrentPage }, loading, data }), [
+    currentPage,
+    data,
     loading,
-    data
-  }
+    totalPages
+  ])
+  return res
 }
