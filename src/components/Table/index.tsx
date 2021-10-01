@@ -185,7 +185,7 @@ export default function Table({
   )
 }
 
-export function UserPostionTable({
+export function UserPositionTable({
   header,
   data,
   isHeaderGray
@@ -209,7 +209,7 @@ export function UserPostionTable({
           <TableBody>
             {data.map((row, idx) => (
               <TableRow key={idx} className={classes.tableRow}>
-                <UserPostionTableCell data={row} />
+                <UserPositionTableCell data={row} />
               </TableRow>
             ))}
           </TableBody>
@@ -219,10 +219,10 @@ export function UserPostionTable({
   )
 }
 
-function UserPostionTableCell({ data }: { data: MyPositionProp }) {
+function UserPositionTableCell({ data }: { data: MyPositionProp }) {
   const option = useOption(data.optionIndex)
   const history = useHistory()
-  const postionData = useMemo(() => {
+  const positionData = useMemo(() => {
     let name = '-'
     if (option && option.currency && option.priceFloor && option.priceCap) {
       name = `${option.underlying?.symbol} ($${new TokenAmount(
@@ -251,7 +251,7 @@ function UserPostionTableCell({ data }: { data: MyPositionProp }) {
 
   return (
     <>
-      {postionData.map((data, idx) => (
+      {positionData.map((data, idx) => (
         <TableCell key={idx}>{data}</TableCell>
       ))}
     </>

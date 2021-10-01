@@ -1,12 +1,13 @@
-import { ChainId } from '@uniswap/sdk'
-import React from 'react'
+import { ChainId, TokenAmount } from '@uniswap/sdk'
+import React, { useCallback } from 'react'
 import { Check, ChevronDown } from 'react-feather'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
 import { useActiveWeb3React } from '../../hooks'
-import { ExternalHeaderLink, ExternalLink, TYPE, HideMedium, StyledLink } from '../../theme'
+import { useAggregateUniBalance } from '../../state/wallet/hooks'
+import { ButtonText, ExternalHeaderLink, ExternalLink, HideMedium, StyledLink, TYPE } from '../../theme'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -19,6 +20,14 @@ import { ReactComponent as AVAX } from '../../assets/svg/avax_logo.svg'
 import { ReactComponent as Plus } from '../../assets/svg/plus.svg'
 import useTheme from 'hooks/useTheme'
 import ToggleMenu from './ToggleMenu'
+import { ReactComponent as AntimatterIcon } from 'assets/svg/antimatter_icon.svg'
+import { AutoColumn } from 'components/Column'
+import { shortenAddress } from 'utils'
+import Copy from 'components/AccountDetails/Copy'
+import { UserInfoTabRoute, UserInfoTabs } from 'pages/User'
+import { useWalletModalToggle } from 'state/application/hooks'
+import usePrevious from '../../hooks/usePrevious'
+import { CountUp } from 'use-count-up/lib'
 
 interface TabContent {
   title: string
@@ -258,33 +267,35 @@ const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: transparent;
-  border-radius: 4px;
+  background-color: #ffffff;
+  border-radius: 32px;
   white-space: nowrap;
-  cursor: pointer;
-  padding: ${({ active }) => (active ? '7px 12px' : 'unset')};
-  border: 1px solid ${({ theme, active }) => (active ? theme.text1 : 'transparent')};
+  padding: ${({ active }) => (active ? '14px 16px' : 'unset')};
+  padding-right: 0;
+  height: 44px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  width:100%`}
 `
 
-// const UNIAmount = styled.div`
-//   color: white;
-//   font-size: 13px;
-//   display: flex;
-//   flex-direction: row;
-//   align-items: center;
-//   background-color: transparent;
-//   &:after {
-//     content: '';
-//     border-right: 1px solid ${({ theme }) => theme.text1};
-//     margin: 0 16px;
-//     height: 16px;
-//   }
-// `
+const UNIAmount = styled.div`
+  color: ${({ theme }) => theme.bg1};
+  font-size: 13px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: transparent;
+  &:after {
+    content: '';
+    border-right: 2px solid ${({ theme }) => theme.text2};
+    margin-left: 16px;
+    height: 20px;
+  }
+`
 
-// const UNIWrapper = styled.span`
-//   width: fit-content;
-//   position: relative;
-// `
+const UNIWrapper = styled.span`
+  width: fit-content;
+  position: relative;
+`
 
 // const HideLarge = styled(RowFixed)`
 //   display: none;
@@ -480,6 +491,90 @@ export const StyledMenuButton = styled.button`
 const StyledLogo = styled(Logo)`
   margin-top: 5px;
 `
+const UserButtonWrap = styled.div`
+  position: relative;
+  :hover {
+    #userButton {
+      :hover,
+      :focus {
+        background: linear-gradient(360deg, #fffa8b 0%, rgba(207, 209, 86, 0) 50%),
+          linear-gradient(259.57deg, #b2f355 1.58%, #66d7fa 92.54%);
+      }
+    }
+    div {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  div {
+    opacity: 0;
+    visibility: hidden;
+  }
+`
+const UserMenuItem = styled.button`
+  padding: 12px 24px;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  :hover {
+    background-color: #ededed;
+  }
+`
+
+const UserButton = styled(ButtonText)<{ isOpen: boolean; size?: string }>`
+  height: ${({ size }) => size ?? '44px'};
+  width: ${({ size }) => size ?? '44px'};
+  border-radius: 50%;
+  background: ${({ isOpen }) =>
+    isOpen
+      ? `linear-gradient(360deg, #fffa8b 0%, rgba(207, 209, 86, 0) 50%),
+  linear-gradient(259.57deg, #b2f355 1.58%, #66d7fa 92.54%);`
+      : `linear-gradient(360deg, #66d7fa 0%, rgba(207, 209, 86, 0) 50%),
+    linear-gradient(259.57deg, #66d7fa 1.58%, #66d7fa 92.54%);`};
+  border: none;
+  flex-shrink: 0;
+  ${({ theme }) => theme.flexRowNoWrap};
+  justify-content: center;
+  align-items: center;
+  transition: 0.4s;
+  :disabled {
+    cursor: auto;
+  }
+  :hover {
+    background: linear-gradient(360deg, #fffa8b 0%, rgba(207, 209, 86, 0) 50%),
+      linear-gradient(259.57deg, #b2f355 1.58%, #66d7fa 92.54%);
+  }
+`
+const UserMenuWrapper = styled.div`
+  position: absolute;
+  top: 60px;
+  right: 0;
+  z-index: 2000;
+  min-width: 15rem;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  overflow: hidden;
+  border-radius: 16px;
+  transition-duration: 0.3s;
+  transition-property: visibility, opacity;
+  display: flex;
+  border: 1px solid #ededed;
+  flex-direction: column;
+  & > div:first-child {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ededed;
+    width: 100%;
+  }
+  & > button:last-child {
+    padding: 16px 24px;
+    border-top: 1px solid #ededed;
+  }
+`
 
 function FAQButton() {
   const theme = useTheme()
@@ -524,10 +619,17 @@ const MobileHeader = styled.header`
 export default function Header() {
   const { account, chainId, library } = useActiveWeb3React()
 
-  //const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
+  const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
-  //const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
-  //const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
+  const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
+  const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
+
+  const history = useHistory()
+  const match = useRouteMatch('/profile')
+  const toShowUserPanel = useCallback(() => {
+    history.push('/profile')
+    return
+  }, [history])
 
   return (
     <HeaderFrame>
@@ -656,41 +758,41 @@ export default function Header() {
           <Menu />
         </HeaderElementWrap> */}
 
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {/*{!!account && aggregateBalance && (*/}
-            {/*  <UNIWrapper>*/}
-            {/*    <UNIAmount style={{ pointerEvents: 'none' }}>*/}
-            {/*      {account && (*/}
-            {/*        // <HideSmall>*/}
-            {/*        <TYPE.white*/}
-            {/*          style={{*/}
-            {/*            paddingRight: '.4rem'*/}
-            {/*          }}*/}
-            {/*        >*/}
-            {/*          <CountUp*/}
-            {/*            key={countUpValue}*/}
-            {/*            isCounting*/}
-            {/*            start={parseFloat(countUpValuePrevious)}*/}
-            {/*            end={parseFloat(countUpValue)}*/}
-            {/*            thousandsSeparator={','}*/}
-            {/*            duration={1}*/}
-            {/*          />*/}
-            {/*        </TYPE.white>*/}
-            {/*        // </HideSmall>*/}
-            {/*      )}*/}
-            {/*      MATTER*/}
-            {/*    </UNIAmount>*/}
-            {/*    /!* <CardNoise /> *!/*/}
-            {/*  </UNIWrapper>*/}
-            {/*)}*/}
-            {/* {account && userEthBalance ? (
-                <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
-                  {userEthBalance?.toSignificant(4)} ETH
-                </BalanceText>
-              ) : null} */}
-            <Web3Status />
-          </AccountElement>
-        </HeaderControls>
+            <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+              {!!account && aggregateBalance && (
+                <UNIWrapper>
+                  <UNIAmount style={{ pointerEvents: 'none' }}>
+                    {account && (
+                      <TYPE.gray
+                        style={{
+                          paddingRight: '.4rem'
+                        }}
+                      >
+                        <CountUp
+                          key={countUpValue}
+                          isCounting
+                          start={parseFloat(countUpValuePrevious)}
+                          end={parseFloat(countUpValue)}
+                          thousandsSeparator={','}
+                          duration={1}
+                        />
+                      </TYPE.gray>
+                    )}
+                    MATTER
+                  </UNIAmount>
+                </UNIWrapper>
+              )}
+              <Web3Status />
+              {account && (
+                <UserButtonWrap>
+                  <UserButton id="userButton" onClick={toShowUserPanel} isOpen={!!match}>
+                    <AntimatterIcon />
+                  </UserButton>
+                  <UserMenu account={account} />
+                </UserButtonWrap>
+              )}
+            </AccountElement>
+          </HeaderControls>
       </HeaderRow>
       <MobileHeader>
         <RowBetween>
@@ -718,5 +820,35 @@ function LogoButton() {
         </Dropdown>
       </StyledDropdown>
     </RowFlat>
+  )
+}
+
+function UserMenu({ account }: { account?: string | null }) {
+  const toggleWalletModal = useWalletModalToggle()
+  const history = useHistory()
+
+  return (
+    <UserMenuWrapper>
+      <div>
+        <UserButton isOpen={true} disabled size="28px">
+          <AntimatterIcon />
+        </UserButton>
+        <TYPE.darkGray fontWeight={400} style={{ marginLeft: 15 }}>
+          {account && shortenAddress(account)}
+        </TYPE.darkGray>
+        {account && <Copy toCopy={account} fixedSize />}
+      </div>
+      <div>
+        <AutoColumn style={{ width: '100%' }}>
+          <UserMenuItem onClick={() => history.push('/profile/' + UserInfoTabs.POSITION)}>
+            {UserInfoTabRoute[UserInfoTabs.POSITION]}
+          </UserMenuItem>
+          <UserMenuItem onClick={() => history.push('/profile/' + UserInfoTabs.CREATION)}>
+            {UserInfoTabRoute[UserInfoTabs.CREATION]}
+          </UserMenuItem>
+          <UserMenuItem onClick={toggleWalletModal}>Wallet</UserMenuItem>
+        </AutoColumn>
+      </div>
+    </UserMenuWrapper>
   )
 }
