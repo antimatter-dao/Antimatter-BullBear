@@ -43,7 +43,7 @@ function List({ list }: { list: string[] }) {
 
 const pageContent = [
   {
-    title: 'Welcome to AntiMatter',
+    title: 'Welcome to Antimatter',
     content:
       'Antimatter is a simple light weight onchain defi derivative protocol. You can now trade and conduct market strategies for onchain perpetual options.'
   },
