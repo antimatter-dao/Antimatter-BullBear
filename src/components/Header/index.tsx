@@ -272,7 +272,6 @@ const AccountElement = styled.div<{ active: boolean }>`
   white-space: nowrap;
   padding: ${({ active }) => (active ? '14px 16px' : 'unset')};
   padding-right: 0;
-  height: 44px;
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
   width:100%`}
 `
