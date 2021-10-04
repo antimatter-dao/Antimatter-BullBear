@@ -83,7 +83,7 @@ const useStyles = makeStyles({
       padding: '22px 20px',
       fontSize: '12px',
       fontWeight: 500,
-      color: 'rgba(255,255,255, 0.8)',
+      color: 'rgba(255,255,255, 0.6)',
       borderBottom: ({ isHeaderGray }: StyleProps) => (isHeaderGray ? 'none' : '1px solid #333333'),
       '&:first-child': {
         paddingLeft: 50
