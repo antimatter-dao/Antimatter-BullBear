@@ -34,12 +34,7 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import { BodyWrapper } from '../AppBody'
 import Loader from '../../components/Loader'
 //import { isTradeBetter } from 'utils/trades'
-import {
-  Option,
-  OptionPrice,
-  usePayCurrencyAmount,
-  useSwapInfo
-} from '../../state/market/hooks'
+import { Option, OptionPrice, usePayCurrencyAmount, useSwapInfo } from '../../state/market/hooks'
 import { TypeRadioButton } from '../../components/MarketStrategy/TypeRadioButton'
 import { ANTIMATTER_ROUTER_ADDRESS, INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
@@ -87,11 +82,13 @@ const SwapAppBody = styled(BodyWrapper)`
 export default function Swap({
   option,
   optionPrice,
-  handleOptionType
+  handleOptionType,
+  setParentTXHash
 }: {
   option: Option | undefined
   optionPrice: OptionPrice | undefined
   handleOptionType: (option: string) => void
+  setParentTXHash: (hash: string) => void
 }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
   // const history = useHistory()
@@ -325,7 +322,7 @@ export default function Swap({
     swapCallback()
       .then(hash => {
         setSwapState({ attemptingTxn: false, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash })
-
+        setParentTXHash(hash)
         ReactGA.event({
           category: 'Swap',
           action: '',
@@ -338,6 +335,7 @@ export default function Swap({
         })
       })
       .catch(error => {
+        setParentTXHash('')
         setSwapState({
           attemptingTxn: false,
           tradeToConfirm,
@@ -346,7 +344,7 @@ export default function Swap({
           txHash: undefined
         })
       })
-  }, [swapCallback, tradeToConfirm, showConfirm, singleHopOnly])
+  }, [swapCallback, tradeToConfirm, showConfirm, setParentTXHash, singleHopOnly])
 
   const statusButton = useMemo(() => {
     const defaultContent = { disabled: false, text: '' }
@@ -368,7 +366,7 @@ export default function Swap({
         text: `Select a token`
       }
     }
-    if(routerDelta?.isLoading){
+    if (routerDelta?.isLoading) {
       return { ...defaultContent, disabled: true, text: 'Loading' }
     }
     if (!payCurrency || !payFormattedAmount || !payBalance) {

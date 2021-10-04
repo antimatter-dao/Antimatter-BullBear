@@ -246,7 +246,7 @@ export default function Search({
   const handleSearch = useCallback(() => {
     const body = {} as SearchQuery
     if (optionIdQuery) {
-      body.id = +optionIdQuery
+      body.optionIndex = +optionIdQuery
     }
     // if (assetTypeQuery && assetTypeQuery.symbol === ALL.id) {
     //   if (rangeQuery.floor !== undefined && assetTypeQuery) {

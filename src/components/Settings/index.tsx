@@ -88,15 +88,15 @@ const EmojiWrapper = styled.div`
 //   text-align: left;
 // `
 
-const Overlay = styled.div`
-  z-index: ;
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
-  background-color: ${({ theme }) => theme.modalBG};
-`
+// const Overlay = styled.div`
+//   z-index: ;
+//   position: absolute;
+//   width: 100vw;
+//   height: 100vh;
+//   top: 0;
+//   left: 0;
+//   background-color: ${({ theme }) => theme.modalBG};
+// `
 // ${({ theme }) => theme.mediaWidth.upToMedium`
 
 // `}
@@ -109,10 +109,10 @@ const OverlayWrapper = styled.div`
   height: 100vh;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 100;
   background-color: rgba(0, 0, 0, 0.7);
 
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
    height:calc(100vh - ${theme.mobileHeaderHeight + ' - ' + theme.headerHeight});
    top: ${theme.mobileHeaderHeight}
    `}
@@ -129,7 +129,7 @@ const MenuFlyout = styled.span`
   flex-direction: column;
   font-size: 1rem;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 18.125rem;
     border-radius: 42px 42px 0 0;
     width: 100%;
@@ -235,7 +235,7 @@ export default function SettingsTab({
           </EmojiWrapper>
         ) : null}
       </StyledMenuButton>
-      {(open || showConfirmation) && <Overlay />}
+      {/* {(open || showConfirmation) && <Overlay />} */}
       {open && (
         <OverlayWrapper>
           {/* <Filler /> */}

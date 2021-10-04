@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts'
 import styled from 'styled-components'
 import Swap, { OptionField } from '../Swap'
@@ -110,6 +111,7 @@ export default function OptionSwap({
   handleOptionType: (option: string) => void
   optionPrice: OptionPrice | undefined
 }) {
+  const transactions = useSelector((store: any) => store.transactions)
   const { chainId } = useActiveWeb3React()
   const [currentTab, setCurrentTab] = useState<keyof typeof Tabs>('CALL')
   const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
@@ -118,6 +120,10 @@ export default function OptionSwap({
   const [callChartData, setCallChartData] = useState<DexTradeData[] | undefined>(undefined)
   const [putChartData, setPutChartData] = useState<DexTradeData[] | undefined>(undefined)
   const [graphLoading, setGraphLoading] = useState(true)
+  const [txHash, setTxHash] = useState('')
+  const [refresh, setRefresh] = useState(0)
+
+  const handleHash = useCallback(hash => setTxHash(hash), [])
 
   const priceCall = optionPrice?.priceCall
   const pricePut = optionPrice?.pricePut
@@ -129,6 +135,13 @@ export default function OptionSwap({
   } = useNetwork()
 
   useEffect(() => {
+    if (chainId && transactions?.[chainId]?.[txHash]?.receipt?.status === 1) {
+      setRefresh(re => re + 1)
+    }
+  }, [transactions, chainId, txHash])
+
+  useEffect(() => {
+    setTxHash('')
     pendingFunction()
     const callId = option?.callToken?.address ?? undefined
     const putId = option?.putToken?.address ?? undefined
@@ -174,7 +187,8 @@ export default function OptionSwap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     option?.putToken?.address,
     pendingCompleteFunction,
-    pendingFunction
+    pendingFunction,
+    refresh
   ])
 
   useEffect(() => {
@@ -274,7 +288,12 @@ export default function OptionSwap({
     <>
       <NetworkErrorModal />
       <Wrapper>
-        <Swap optionPrice={optionPrice} handleOptionType={handleOptionType} option={option} />
+        <Swap
+          optionPrice={optionPrice}
+          handleOptionType={handleOptionType}
+          option={option}
+          setParentTXHash={handleHash}
+        />
         <GraphWrapper>
           {graphLoading && <NetworkPendingSpinner paddingTop="0" />}
           <CurrentPrice>

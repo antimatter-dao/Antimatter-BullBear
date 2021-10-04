@@ -32,7 +32,12 @@ enum ERROR {
   EMPTY_TOTAL_CALL = 'Call issuance cannot be empty',
   EMPTY_TOTAL_PUT = 'Put issuance cannot be empty',
   LARGER_FLOOR_THAN_CAP = 'Price floor cannot be larger than price ceiling',
-  PRICE_EXCEEDS_PRICE_RANGE = 'Price must be between price floor and price ceiling'
+  PRICE_EXCEEDS_PRICE_RANGE = 'Price must not be smaller than price floor or larger than price ceiling'
+}
+
+const limitDigits = (string: string, currencyDecimal = 6) => {
+  const dotIndex = string.indexOf('.')
+  return string.slice(0, dotIndex + currencyDecimal)
 }
 
 export default function Calculator() {
@@ -90,7 +95,7 @@ export default function Calculator() {
           <TYPE.smallHeader>Input</TYPE.smallHeader>
           <NumberInputPanel
             label="Underlying Currency Price"
-            onUserInput={price => setPrice(price)}
+            onUserInput={price => setPrice(limitDigits(price))}
             value={price}
             showMaxButton={false}
             id="price"
@@ -100,7 +105,7 @@ export default function Calculator() {
           <InputWrapper>
             <NumberInputPanel
               label="Price Ceiling"
-              onUserInput={priceCap => setPriceCap(priceCap)}
+              onUserInput={priceCap => setPriceCap(limitDigits(priceCap))}
               value={priceCap}
               showMaxButton={false}
               id="priceCeiling"
@@ -109,7 +114,7 @@ export default function Calculator() {
             />
             <NumberInputPanel
               label="Price Floor"
-              onUserInput={priceFloor => setPriceFloor(priceFloor)}
+              onUserInput={priceFloor => setPriceFloor(limitDigits(priceFloor))}
               value={priceFloor}
               showMaxButton={false}
               id="pricefloor"
@@ -137,7 +142,7 @@ export default function Calculator() {
               hideBalance
             />
           </InputWrapper>
-          <TYPE.body color={theme.primary1} fontSize={14}>
+          <TYPE.body color={theme.red1} fontSize={14}>
             {error}
           </TYPE.body>
         </AutoColumn>

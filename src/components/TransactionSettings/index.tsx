@@ -79,6 +79,7 @@ const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }
 
 const SlippageEmojiContainer = styled.span`
   color: #f3841e;
+  font-size: 14px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;  
   `}
@@ -212,21 +213,25 @@ export default function SlippageTabs({
             </RowBetween>
           </OptionCustom>
         </RowBetween>
-        {!!slippageError && (
-          <RowBetween
-            style={{
-              fontSize: '14px',
-              paddingTop: '7px',
-              color: slippageError === SlippageError.InvalidInput ? 'red' : '#F3841E'
-            }}
-          >
-            {slippageError === SlippageError.InvalidInput
-              ? 'Enter a valid slippage percentage'
-              : slippageError === SlippageError.RiskyLow
-              ? 'Your transaction may fail'
-              : 'Your transaction may be frontrun'}
-          </RowBetween>
-        )}
+
+        <RowBetween
+          style={{
+            fontSize: '14px',
+            paddingTop: '7px',
+            minHeight: 23,
+            color: slippageError === SlippageError.InvalidInput ? 'red' : '#F3841E'
+          }}
+        >
+          {!!slippageError && (
+            <>
+              {slippageError === SlippageError.InvalidInput
+                ? 'Enter a valid slippage percentage'
+                : slippageError === SlippageError.RiskyLow
+                ? 'Your transaction may fail'
+                : 'Your transaction may be frontrun'}
+            </>
+          )}
+        </RowBetween>
       </AutoColumn>
 
       {!onlySlippage && (
