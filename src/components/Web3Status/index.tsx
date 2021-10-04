@@ -59,6 +59,8 @@ const Web3StatusError = styled(Web3StatusGeneric)`
   :focus {
     background-color: ${({ theme }) => darken(0.1, theme.red1)};
   }
+  padding: 1rem;
+  border-radius: 100px;
 `
 
 const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
@@ -90,9 +92,9 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
 `
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
-  color: ${({ pending, theme }) => (pending ? theme.white : theme.text3)};
+  color: ${({ pending, theme }) => (pending ? theme.text3 : theme.text3)};
   padding: 0;
-  border: none
+  border: none;
   font-weight: 500;
   :hover,
   :focus {
@@ -208,7 +210,7 @@ function Web3StatusInner() {
           {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}
           {hasPendingTransactions ? (
             <RowBetween>
-              <Loader stroke={theme.text1} /> <Text style={{ marginLeft: '12px' }}>{pending?.length} Pending</Text>
+              <Loader stroke={theme.text1} /> <Text style={{ marginLeft: 6, marginRight: 6 }}>{pending?.length} Pending</Text>
             </RowBetween>
           ) : (
             <>

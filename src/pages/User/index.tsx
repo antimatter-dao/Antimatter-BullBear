@@ -128,9 +128,9 @@ export default function User() {
                 <UserPositionTable header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT ADDRESS', '']} data={myPosition} />
                 {myPositionPage.totalPages !== 0 && (
                   <Pagination
-                    page={myPositionPage.currentPage}
-                    count={myPositionPage.totalPages}
-                    setPage={myPositionPage.setCurrentPage}
+                  page={myPositionPage.currentPage}
+                  count={myPositionPage.totalPages}
+                  setPage={myPositionPage.setCurrentPage}
                   />
                 )}
                 {!myPosition.length && !myPositionLoading && (
