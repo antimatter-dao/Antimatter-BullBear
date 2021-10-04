@@ -370,7 +370,7 @@ export function useSwapInfo(
   undCurrency?: Currency | undefined | null,
   curCurrency?: Currency | undefined | null,
   payCurrency?: Currency | undefined | null
-): (RouteDelta & { undTrade: Trade | undefined | null; curTrade: Trade | undefined | null }) {
+): RouteDelta & { undTrade: Trade | undefined | null; curTrade: Trade | undefined | null } {
   const { chainId } = useActiveWeb3React()
   const { delta } = useDerivedStrategyInfo(option, callAmount, putAmount)
   const dUnd = delta?.dUnd.toString()
@@ -425,7 +425,7 @@ export function useSwapInfo(
     option?.put?.token
   )
 
-  return Object.assign(routeDelta,{undTrade,curTrade})
+  return Object.assign(routeDelta, { undTrade, curTrade })
 }
 
 export function usePayCurrencyAmount(

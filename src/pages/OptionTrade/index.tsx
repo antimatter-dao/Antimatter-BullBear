@@ -26,6 +26,7 @@ import Search, { SearchQuery } from 'components/Search'
 import { Axios } from 'utils/option/axios'
 import { formatUnderlying } from 'utils/option/utils'
 import Pagination from 'components/Pagination'
+import { Skeleton } from '@material-ui/lab'
 
 export interface OptionInterface {
   optionId: string | undefined
@@ -75,8 +76,11 @@ export const ContentWrapper = styled.div`
   grid-template-columns: repeat(auto-fill, 280px);
   padding: 52px 0;
   justify-content: center;
+  .MuiSkeleton-root{
+    background-color: rgba(255, 255, 255, 0.15);
+  };
   /* ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`} */
-  ${({ theme }) => theme.mediaWidth.upToSmall`padding: 20px 10px`}
+  ${({ theme }) => theme.mediaWidth.upToSmall`padding: 20px 10px`},
 `
 
 const Circle = styled.div`
@@ -135,10 +139,15 @@ export default function OptionTrade({
     setFilteredIndexes(currentIds)
   }, [currentIds])
 
+  const setPage = useCallback((event: object, page: number) => {
+    setFilteredIndexes(['', '', '', '', '', '', '', ''])
+  }, [])
+
   const {
     httpHandlingFunctions: { errorFunction },
     NetworkErrorModal
   } = useNetwork()
+
   const optionTypeIndexes = useMemo(() => {
     const list = Array.from({ length: optionCount }, (v, i) => i.toString())
     return list
@@ -180,19 +189,28 @@ export default function OptionTrade({
           />
           {filteredIndexes && (
             <ContentWrapper>
-              {filteredIndexes.map(optionId => (
-                <OptionCard
-                  optionId={optionId}
-                  key={optionId}
-                  buttons={
-                    <ButtonPrimary onClick={() => history.push(`/option_trading/${optionId}`)}>Trade</ButtonPrimary>
-                  }
-                />
-              ))}
+              {filteredIndexes.map((optionId, idx) =>
+                optionId ? (
+                  <OptionCard
+                    optionId={optionId}
+                    key={optionId}
+                    buttons={
+                      <ButtonPrimary onClick={() => history.push(`/option_trading/${optionId}`)}>Trade</ButtonPrimary>
+                    }
+                  />
+                ) : (
+                  <OptionCardSkeleton key={optionId + idx} />
+                )
+              )}
             </ContentWrapper>
           )}
           {page.totalPages !== 0 && (
-            <Pagination page={page.currentPage} count={page.totalPages} setPage={page.setCurrentPage} />
+            <Pagination
+              page={page.currentPage}
+              count={page.totalPages}
+              setPage={page.setCurrentPage}
+              onChange={setPage}
+            />
           )}
           <AlternativeDisplay optionIndexes={optionTypeIndexes} filteredIndexes={filteredIndexes} />
         </Wrapper>
@@ -216,63 +234,80 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
     'Current Call Issuance': option ? callTotalSupply?.toFixed(2).toString() : '-',
     'Current Put Issuance': option ? putTotalSupply?.toFixed(2).toString() : '-'
   }
-  //const underlyingCurrency = useCurrency(underlyingAddress)
-  //const currency = useCurrency(address)
-  //const price = useUSDTPrice(currency ?? undefined)
+
   return (
-    <AppBody style={{ position: 'relative', padding: '24px 20px' }} isCard>
+    <>
+      {option ? (
+        <AppBody style={{ position: 'relative', padding: '24px 20px' }} isCard>
+          <AutoColumn gap="20px">
+            <TitleWrapper>
+              <Circle>
+                <CurrencyLogo currency={option?.underlying ?? undefined} size="28px" />
+              </Circle>
+              <AutoColumn gap="5px" style={{ width: '100%', position: 'relative', minHeight: 51 }}>
+                <TYPE.mediumHeader
+                  fontSize={20}
+                  style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
+                >
+                  {`${option?.underlying?.symbol ?? '-'} Option`}
+                </TYPE.mediumHeader>
+
+                <RowFixed>
+                  <OptionId>ID:&nbsp;{option?.underlying ? optionId : '-'}</OptionId>
+                </RowFixed>
+              </AutoColumn>
+            </TitleWrapper>
+            <Divider />
+            <AutoColumn gap="12px">
+              {Object.keys(details).map(key => (
+                <RowBetween key={key}>
+                  <TYPE.smallGray>{key}:</TYPE.smallGray>
+                  <TYPE.main
+                    style={{
+                      textAlign: 'right',
+                      overflow: 'hidden',
+                      whiteSpace: 'pre-wrap',
+                      textOverflow: 'ellipsis',
+                      minHeight: 19
+                    }}
+                  >
+                    {details[key as keyof typeof details]}
+                  </TYPE.main>
+                </RowBetween>
+              ))}
+            </AutoColumn>
+            <RowBetween>{buttons}</RowBetween>
+          </AutoColumn>
+        </AppBody>
+      ) : (
+        <OptionCardSkeleton />
+      )}
+    </>
+  )
+}
+
+function OptionCardSkeleton() {
+  return (
+    <AppBody isCard>
       <AutoColumn gap="20px">
         <TitleWrapper>
-          <Circle>
-            {/*{type ? (*/}
-            {/*  <OptionIcon*/}
-            {/*    tokenIcon={<CurrencyLogo currency={underlyingCurrency ?? undefined} size="28px" />}*/}
-            {/*    type={type}*/}
-            {/*    size="26px"*/}
-            {/*  />*/}
-            {/*) : (*/}
-            {/*  <CurrencyLogo currency={underlyingCurrency ?? undefined} size="28px" />*/}
-            {/*)}*/}
-            <CurrencyLogo currency={option?.underlying ?? undefined} size="28px" />
-          </Circle>
-          <AutoColumn gap="5px" style={{ width: '100%', position: 'relative', minHeight: 51 }}>
-            <TYPE.mediumHeader
-              fontSize={20}
-              style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
-            >
-              {`${option?.underlying?.symbol ?? '-'} Option`}
-            </TYPE.mediumHeader>
+          <Skeleton variant="circle" height={44} width={44} animation="wave" />
 
+          <AutoColumn gap="5px" style={{ position: 'relative', minHeight: 51, marginLeft: 16 }}>
+            <Skeleton variant="rect" width={130} height={26} animation="wave" />
             <RowFixed>
-              <OptionId>ID:&nbsp;{option?.underlying ? optionId : '-'}</OptionId>
-              {/*<StyledExternalLink*/}
-              {/*  href={chainId ? getEtherscanLink(chainId, option.underlying?.address, 'token') : ''}*/}
-              {/*>*/}
-              {/*  {shortenAddress(option.underlying?.address, 5)}*/}
-              {/*</StyledExternalLink>*/}
+              <Skeleton variant="text" width={50} height={24} animation="wave" />
             </RowFixed>
           </AutoColumn>
         </TitleWrapper>
         <Divider />
         <AutoColumn gap="12px">
-          {Object.keys(details).map(key => (
-            <RowBetween key={key}>
-              <TYPE.smallGray>{key}:</TYPE.smallGray>
-              <TYPE.main
-                style={{
-                  textAlign: 'right',
-                  overflow: 'hidden',
-                  whiteSpace: 'pre-wrap',
-                  textOverflow: 'ellipsis',
-                  minHeight: 19
-                }}
-              >
-                {details[key as keyof typeof details]}
-              </TYPE.main>
-            </RowBetween>
-          ))}
+          <Skeleton variant="text" width="100%" height={19} animation="wave" />
+          <Skeleton variant="text" width="100%" height={19} animation="wave" />
+          <Skeleton variant="text" width="50%" height={19} animation="wave" />
+          <Skeleton variant="text" width="30%" height={19} animation="wave" />
         </AutoColumn>
-        <RowBetween>{buttons}</RowBetween>
+        <Skeleton variant="rect" width="100%" height={49} animation="wave" style={{ borderRadius: 49 }} />
       </AutoColumn>
     </AppBody>
   )

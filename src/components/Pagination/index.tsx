@@ -27,7 +27,7 @@ const StyledPagination = styled.div`
 interface PaginationProps {
   count: number
   page: number
-  setPage: (page: number) => void
+  setPage?: (page: number) => void
   onChange?: (event: object, page: number) => void
   isLightBg?: boolean
 }
@@ -41,7 +41,7 @@ export default function Pagination({ count, page, onChange, setPage, isLightBg }
             page={page}
             onChange={(event, page) => {
               onChange && onChange(event, page)
-              setPage(page)
+              setPage && setPage(page)
             }}
             size="large"
           />
