@@ -36,7 +36,7 @@ export default function TransactionPopup({
       </RowNoFlex>
       {chainId && (
         <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')} style={{ margin: '9px 32px' }}>
-          View on Etherscan
+          View on explorer
         </ExternalLink>
       )}
     </AutoColumn>

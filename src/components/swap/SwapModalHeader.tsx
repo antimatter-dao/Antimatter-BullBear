@@ -1,4 +1,4 @@
-import { CurrencyAmount } from '@uniswap/sdk'
+import { CurrencyAmount, ETHER } from '@uniswap/sdk'
 import React, { useContext } from 'react'
 import { AlertTriangle } from 'react-feather'
 //import { Text } from 'rebass'
@@ -14,6 +14,8 @@ import { SwapShowAcceptChanges } from './styleds'
 import { OutlineCard } from 'components/Card'
 import { currencyNameHelper } from '../../utils/marketStrategyUtils'
 import { OptionPrice } from '../../state/market/hooks'
+import { Symbol } from '../../constants'
+import { useActiveWeb3React } from '../../hooks'
 
 const TokenPanel = styled.div`
   flex: 1;
@@ -49,7 +51,7 @@ export default function SwapModalHeader({
   // ])
   //const { priceImpactWithoutFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   //const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
-
+  const { chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
   const priceCall = optionPrice?.priceCall
   const pricePut = optionPrice?.pricePut
@@ -90,7 +92,7 @@ export default function SwapModalHeader({
           <TokenPanel>
             {payCurrencyAmount && <CurrencyLogo currency={payCurrencyAmount?.currency} size={'20px'} />}
             <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'} flex={1}>
-              {currencyNameHelper(payCurrencyAmount?.currency, 'Call Token')}
+              {payCurrencyAmount?.currency === ETHER ? Symbol[chainId ?? 1] : payCurrencyAmount?.currency.symbol}
             </TYPE.black>
             <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
               {payCurrencyAmount && payCurrencyAmount.toExact().toString()}

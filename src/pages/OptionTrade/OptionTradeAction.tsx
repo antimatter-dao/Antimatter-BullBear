@@ -280,7 +280,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                   />
                 )}
                 {/*{tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}*/}
-                {/*{tab === TABS.INFO && <Info optionPrice={optionPrice} option={option} />}*/}
+                {tab === TABS.INFO && <Info optionPrice={optionPrice} option={option} />}
               </Elevate>
             </StyledAppBody>
           </ActionWrapper>
