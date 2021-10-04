@@ -13,7 +13,7 @@ export const SwitchTabWrapper = styled.div`
 export const Tab = styled.button<{ selected: boolean }>`
   border: none;
   background: none;
-  padding: 7px 0;
+  padding: 14px 0;
   margin-right: 40px;
   font-size: 16px;
   font-weight: 500;

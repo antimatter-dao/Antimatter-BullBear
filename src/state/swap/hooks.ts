@@ -315,7 +315,7 @@ export function useRouteDelta(
   const [allowedSlippage] = useUserSlippageTolerance()
   const contract = useAntimatterRouterContract()
   const args =
-    option && callToken && putToken && undTrade && curTrade && callAmount && putAmount
+    option && callToken && putToken && undTrade && curTrade && (callAmount || putAmount)
       ? [
           undTrade,
           curTrade,

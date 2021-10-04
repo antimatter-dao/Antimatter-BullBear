@@ -11,7 +11,7 @@ import { useMemo } from 'react'
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useActiveWeb3React } from '../../hooks'
 import { useUserSlippageTolerance } from '../user/hooks'
-import { Currency, CurrencyAmount, JSBI, Token, TokenAmount, Trade, WETH } from '@uniswap/sdk'
+import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade, WETH } from '@uniswap/sdk'
 import { RouteDelta, tryFormatAmount, tryParseAmount, useOptionSwapInfo, useRouteDelta } from '../swap/hooks'
 import { useToken } from '../../hooks/Tokens'
 import { useTotalSupply } from '../../data/TotalSupply'
@@ -370,7 +370,7 @@ export function useSwapInfo(
   undCurrency?: Currency | undefined | null,
   curCurrency?: Currency | undefined | null,
   payCurrency?: Currency | undefined | null
-): (RouteDelta & { undTrade: Trade | undefined | null; curTrade: Trade | undefined | null }) {
+): RouteDelta & { undTrade: Trade | undefined | null; curTrade: Trade | undefined | null } {
   const { chainId } = useActiveWeb3React()
   const { delta } = useDerivedStrategyInfo(option, callAmount, putAmount)
   const dUnd = delta?.dUnd.toString()
@@ -383,10 +383,7 @@ export function useSwapInfo(
     if (dUnd?.toString() === '0') {
       return underlying?.address ? [underlying.address] : undefined
     }
-    if (
-      payCurrency?.symbol?.toUpperCase() === 'ETH' &&
-      underlying?.symbol?.toUpperCase() === WETH[chainId ?? 1].symbol
-    ) {
+    if (payCurrency === ETHER && underlying?.symbol?.toUpperCase() === WETH[chainId ?? 1].symbol) {
       return [WETH[chainId ?? 3].address]
     }
     if (underlying?.symbol === payCurrency?.symbol) {
@@ -404,7 +401,7 @@ export function useSwapInfo(
     if (dCur?.toString() === '0') {
       return currency?.address ? [currency.address] : undefined
     }
-    if (payCurrency?.symbol?.toUpperCase() === 'ETH' && currency?.symbol?.toUpperCase() === WETH[chainId ?? 1].symbol) {
+    if (payCurrency === ETHER && currency?.symbol?.toUpperCase() === WETH[chainId ?? 1].symbol) {
       return [WETH[chainId ?? 1].address]
     }
     if (currency?.symbol === payCurrency?.symbol) {
@@ -415,7 +412,7 @@ export function useSwapInfo(
         ? curTrade.route.path.map(({ address }) => address)
         : curTrade.route.path.reverse().map(({ address }) => address)
     }
-    return
+    return undefined
   }, [payCurrency, currency, curTrade, chainId, dCur])
 
   const routeDelta = useRouteDelta(
@@ -428,7 +425,7 @@ export function useSwapInfo(
     option?.put?.token
   )
 
-  return Object.assign(routeDelta,{undTrade,curTrade})
+  return Object.assign(routeDelta, { undTrade, curTrade })
 }
 
 export function usePayCurrencyAmount(

@@ -492,6 +492,7 @@ const StyledLogo = styled(Logo)`
   margin-top: 5px;
 `
 const UserButtonWrap = styled.div`
+  margin-left: 5px;
   position: relative;
   :hover {
     #userButton {
@@ -758,41 +759,41 @@ export default function Header() {
           <Menu />
         </HeaderElementWrap> */}
 
-            <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-              {!!account && aggregateBalance && (
-                <UNIWrapper>
-                  <UNIAmount style={{ pointerEvents: 'none' }}>
-                    {account && (
-                      <TYPE.gray
-                        style={{
-                          paddingRight: '.4rem'
-                        }}
-                      >
-                        <CountUp
-                          key={countUpValue}
-                          isCounting
-                          start={parseFloat(countUpValuePrevious)}
-                          end={parseFloat(countUpValue)}
-                          thousandsSeparator={','}
-                          duration={1}
-                        />
-                      </TYPE.gray>
-                    )}
-                    MATTER
-                  </UNIAmount>
-                </UNIWrapper>
-              )}
-              <Web3Status />
-              {account && (
-                <UserButtonWrap>
-                  <UserButton id="userButton" onClick={toShowUserPanel} isOpen={!!match}>
-                    <AntimatterIcon />
-                  </UserButton>
-                  <UserMenu account={account} />
-                </UserButtonWrap>
-              )}
-            </AccountElement>
-          </HeaderControls>
+          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+            {!!account && aggregateBalance && (
+              <UNIWrapper>
+                <UNIAmount style={{ pointerEvents: 'none' }}>
+                  {account && (
+                    <TYPE.gray
+                      style={{
+                        paddingRight: '.4rem'
+                      }}
+                    >
+                      <CountUp
+                        key={countUpValue}
+                        isCounting
+                        start={parseFloat(countUpValuePrevious)}
+                        end={parseFloat(countUpValue)}
+                        thousandsSeparator={','}
+                        duration={1}
+                      />
+                    </TYPE.gray>
+                  )}
+                  MATTER
+                </UNIAmount>
+              </UNIWrapper>
+            )}
+            <Web3Status />
+            {account && (
+              <UserButtonWrap>
+                <UserButton id="userButton" onClick={toShowUserPanel} isOpen={!!match}>
+                  <AntimatterIcon />
+                </UserButton>
+                <UserMenu account={account} />
+              </UserButtonWrap>
+            )}
+          </AccountElement>
+        </HeaderControls>
       </HeaderRow>
       <MobileHeader>
         <RowBetween>

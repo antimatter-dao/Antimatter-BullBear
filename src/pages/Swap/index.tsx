@@ -367,7 +367,7 @@ export default function Swap({
       return { ...defaultContent, disabled: true, text: 'Loading' }
     }
     if (!payCurrency || !payFormattedAmount || !payBalance) {
-      return { ...defaultContent, disabled: true, text: 'Loading' }
+      return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
     }
     if (payFormattedAmount[0] !== '-' && payCurrencyAmount?.greaterThan(payBalance)) {
       return { ...defaultContent, disabled: true, text: `Insufficient ${payCurrency.symbol} balance` }
