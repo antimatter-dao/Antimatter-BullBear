@@ -24,7 +24,7 @@ const faqList = [
   {
     question: 'What is the symbol system for an antimatter option product?',
     answer:
-      'An option product consists of call and put tokens.\nAntimatter uses a standardized systematic way to represents:\n1. Option product    2. Call token    3. Put token'
+      'An option product consists of bull and bear tokens.\nAntimatter uses a standardized systematic way to represents:\n1. Option product    2. Bull token    3. Bear token'
   },
   {
     question: 'What is the symbol system for an antimatter option type?',
@@ -46,13 +46,13 @@ const faqList = [
     )
   },
   {
-    question: 'What is the symbol system for an antimatter call token?',
+    question: 'What is the symbol system for an antimatter bull token?',
     answer: (
       <>
         <div>
-          A CALL OPTION TOKEN has three variables to consider:
+          A BULL OPTION TOKEN has three variables to consider:
           <br />
-          1. Call 2. Asset 3. Price floor
+          1. Bull 2. Asset 3. Price floor
           <br />
           <br />
           The Symbol is as followed:
@@ -60,18 +60,18 @@ const faqList = [
         <br />
         <Badge>+ASSET ($ price floor)</Badge>
         <br />
-        e.g. The ETH call OPTION from 1000 will look like +ETH($1000)
+        e.g. The ETH bull OPTION from 1000 will look like +ETH($1000)
       </>
     )
   },
   {
-    question: 'What is the symbol system for an antimatter put token?',
+    question: 'What is the symbol system for an antimatter bear token?',
     answer: (
       <>
         <div>
-          A PUT OPTION TOKEN has three variables to consider:
+          A BEAR OPTION TOKEN has three variables to consider:
           <br />
-          1. Put 2. Asset 3. Price ceiling
+          1. Bear 2. Asset 3. Price ceiling
           <br />
           <br />
           The Symbol is as followed:
@@ -79,7 +79,7 @@ const faqList = [
         <br />
         <Badge>-ASSET ($ price ceiling)</Badge>
         <br />
-        e.g. The ETH put OPTION from 3000 will look like -ETH($3000)
+        e.g. The ETH bear OPTION from 3000 will look like -ETH($3000)
       </>
     )
   }

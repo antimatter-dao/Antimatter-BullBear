@@ -48,8 +48,8 @@ export interface OptionInterface {
     'Underlying Asset': string | undefined
     'Total Current Issuance'?: string | undefined
     'Market Price'?: string | undefined
-    'Your Call Position'?: string | undefined
-    'Your Put Position'?: string | undefined
+    'Your Bull Position'?: string | undefined
+    'Your Bear Position'?: string | undefined
   }
   range: {
     floor: string | undefined
@@ -231,8 +231,8 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
   const details = {
     'Option Range': option ? `$${range.floor?.toExact().toString()}~$${range.cap?.toExact().toString()}` : '',
     'Underlying Asset': option ? `${option.underlying?.symbol}, ${option.currency?.symbol}` : '-',
-    'Current Call Issuance': option ? callTotalSupply?.toFixed(2).toString() : '-',
-    'Current Put Issuance': option ? putTotalSupply?.toFixed(2).toString() : '-'
+    'Current Bull Issuance': option ? callTotalSupply?.toFixed(2).toString() : '-',
+    'Current Bear Issuance': option ? putTotalSupply?.toFixed(2).toString() : '-'
   }
 
   return (

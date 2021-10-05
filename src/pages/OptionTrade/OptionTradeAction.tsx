@@ -404,7 +404,7 @@ function Info({
           </AutoColumn>
           <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
             <RowBetween>
-              <TYPE.darkGray>{'Call Token Contact Address:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bull Token Contact Address:'}</TYPE.darkGray>
               <ExternalLink
                 href={option?.call && chainId ? getEtherscanLink(chainId, option?.call?.token.address, 'token') : ''}
               >
@@ -414,17 +414,17 @@ function Info({
               </ExternalLink>
             </RowBetween>
             <RowBetween>
-              <TYPE.darkGray>{'Call Token Issuance:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bull Token Issuance:'}</TYPE.darkGray>
               <TYPE.main>{callTotal?.toFixed(2).toString() ?? placeholder}</TYPE.main>
             </RowBetween>
             <RowBetween>
-              <TYPE.darkGray>{'Call Token Market Price:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bull Token Market Price:'}</TYPE.darkGray>
               <TYPE.main>{`$${priceCall ? priceCall.toSignificant(6) : placeholder}`}</TYPE.main>
             </RowBetween>
           </AutoColumn>
           <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
             <RowBetween>
-              <TYPE.darkGray>{'Put Token Contact Address:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bear Token Contact Address:'}</TYPE.darkGray>
               <ExternalLink
                 href={option?.put && chainId ? getEtherscanLink(chainId, option?.put?.token.address, 'token') : ''}
               >
@@ -434,11 +434,11 @@ function Info({
               </ExternalLink>
             </RowBetween>
             <RowBetween>
-              <TYPE.darkGray>{'Put Token Issuance:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bear Token Issuance:'}</TYPE.darkGray>
               <TYPE.main>{putTotal?.toFixed(2).toString() ?? placeholder}</TYPE.main>
             </RowBetween>
             <RowBetween>
-              <TYPE.darkGray>{'Put Token Market Price:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bear Token Market Price:'}</TYPE.darkGray>
               <TYPE.main>{`$${pricePut ? pricePut.toSignificant(6) : placeholder}`}</TYPE.main>
             </RowBetween>
           </AutoColumn>

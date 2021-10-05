@@ -84,7 +84,7 @@ const formatMyCreation = (data: any[] | undefined, historyPush: (param: string) 
             priceCap,
             currencyDecimals
           )})`,
-          'Call',
+          'Bull',
           totalCall,
           <RowFixed>
             {shortenAddress(callAddress, 6)}
@@ -105,7 +105,7 @@ const formatMyCreation = (data: any[] | undefined, historyPush: (param: string) 
             priceCap,
             currencyDecimals
           )})`,
-          'Put',
+          'Bear',
           totalPut,
           <RowFixed>
             {shortenAddress(putAddress, 6)}

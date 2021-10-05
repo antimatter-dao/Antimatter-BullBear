@@ -29,8 +29,8 @@ enum ERROR {
   EMPTY_PRICE = 'Price cannot be empty or 0',
   EMPTY_PRICE_CAP = 'Price ceiling cannot be empty or 0',
   EMPTY_PRICE_FLOOR = 'Price floor cannot be empty or 0',
-  EMPTY_TOTAL_CALL = 'Call issuance cannot be empty',
-  EMPTY_TOTAL_PUT = 'Put issuance cannot be empty',
+  EMPTY_TOTAL_CALL = 'Bull issuance cannot be empty',
+  EMPTY_TOTAL_PUT = 'Bear issuance cannot be empty',
   LARGER_FLOOR_THAN_CAP = 'Price floor cannot be larger than price ceiling',
   PRICE_EXCEEDS_PRICE_RANGE = 'Price must not be smaller than price floor or larger than price ceiling'
 }
@@ -86,7 +86,7 @@ export default function Calculator() {
         <AutoColumn gap="8px">
           <BodyHeader title="Option Calculator" />
           <TYPE.body fontSize={14}>
-            The calculator is configured with Antimatter option equation and allows you to estimate call and put token
+            The calculator is configured with Antimatter option equation and allows you to estimate bull and bear token
             prices in various options. You can use it as the referral for the potential arbitrage opportunity.
           </TYPE.body>
         </AutoColumn>
@@ -124,7 +124,7 @@ export default function Calculator() {
           </InputWrapper>
           <InputWrapper>
             <NumberInputPanel
-              label="Call Issuance"
+              label="Bull Issuance"
               onUserInput={totalCall => setTotalCall(totalCall)}
               value={totalCall}
               showMaxButton={false}
@@ -133,7 +133,7 @@ export default function Calculator() {
               hideBalance
             />
             <NumberInputPanel
-              label="Put Issuance"
+              label="Bear Issuance"
               onUserInput={totalPut => setTotalPut(totalPut)}
               value={totalPut}
               showMaxButton={false}
@@ -152,7 +152,7 @@ export default function Calculator() {
           <InputWrapper>
             <AutoColumn gap="4px">
               <TYPE.main color={theme.text3} fontSize={14}>
-                Price of Call token
+                Price of Bull token
               </TYPE.main>
               <Card
                 style={{
@@ -170,7 +170,7 @@ export default function Calculator() {
             </AutoColumn>
             <AutoColumn gap="4px">
               <TYPE.main color={theme.text3} fontSize={14}>
-                Price of Put token
+                Price of Bull token
               </TYPE.main>
               <Card
                 style={{

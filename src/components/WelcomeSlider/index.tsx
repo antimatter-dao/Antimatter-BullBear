@@ -50,14 +50,14 @@ const pageContent = [
   {
     title: 'What is option? ',
     content:
-      'An option is a contract giving the buyer the right, but not the obligation, to buy (in the case of a call option contract) or sell (in the case of a put option contract) the underlying asset at a specific price on or before a certain date. Traders can use on-chain options for speculation or to hedge their positions. Options are known as derivatives because they derive their value from an underlying asset.\n\nIn short, if you are bullish, buy call option tokens, if you are bearish, buy put option tokens.'
+      'An option is a contract giving the buyer the right, but not the obligation, to buy (in the case of a bull option contract) or sell (in the case of a bear option contract) the underlying asset at a specific price on or before a certain date. Traders can use on-chain options for speculation or to hedge their positions. Options are known as derivatives because they derive their value from an underlying asset.\n\nIn short, if you are bullish, buy bull option tokens, if you are bearish, buy bear option tokens.'
   },
   {
     title: 'Antimatter option feature',
     content: (
       <List
         list={[
-          'Each option has a pair of tokens: call token and put token',
+          'Each option has a pair of tokens: bull token and bear token',
           'No liquidation',
           'Perpetual option, no expiry time',
           'Free Funding fee '
@@ -68,12 +68,12 @@ const pageContent = [
   {
     title: 'Option Market',
     content:
-      'You can buy and sell call and put tokens in the option market page. The experience is same as if you trade tokens on uniswap.'
+      'You can buy and sell bull and bear tokens in the option market page. The experience is same as if you trade tokens on uniswap.'
   },
   {
     title: 'Market Strategy',
     content:
-      'You can generate and redeem call and put tokens in this section. In addition, you can provide liquidity to the call and put tokens through market strategy.'
+      'You can generate and redeem bull and bear tokens in this section. In addition, you can provide liquidity to the bull and bear tokens through market strategy.'
   }
 ]
 

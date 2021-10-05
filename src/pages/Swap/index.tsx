@@ -443,8 +443,8 @@ export default function Swap({
                 <TypeRadioButton
                   name={'option_type'}
                   options={[
-                    { label: '+ Call Token', option: OptionField.CALL },
-                    { label: '− Put Token', option: OptionField.PUT }
+                    { label: '+ Bull Token', option: OptionField.CALL },
+                    { label: '− Bear Token', option: OptionField.PUT }
                   ]}
                   selected={optionType}
                   onCheck={(option: string) => {

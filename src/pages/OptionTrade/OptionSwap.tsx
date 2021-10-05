@@ -97,8 +97,8 @@ const CurrentPrice = styled.div`
 `
 
 const Tabs = {
-  CALL: 'Call Token',
-  PUT: 'Put Token'
+  CALL: 'Bull Token',
+  PUT: 'Bear Token'
 }
 
 export default function OptionSwap({
