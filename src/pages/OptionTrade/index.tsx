@@ -242,7 +242,7 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
           <AutoColumn gap="20px">
             <TitleWrapper>
               <Circle>
-                <CurrencyLogo currency={option?.underlying ?? undefined} size="28px" />
+                <CurrencyLogo currency={option?.underlying ?? undefined} size="100%" />
               </Circle>
               <AutoColumn gap="5px" style={{ width: '100%', position: 'relative', minHeight: 51 }}>
                 <TYPE.mediumHeader

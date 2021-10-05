@@ -21,7 +21,7 @@ import { tryFormatAmount } from '../../state/swap/hooks'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import { useActiveWeb3React } from 'hooks'
 import { useTotalSupply } from '../../data/TotalSupply'
-import { OptionField } from '../Swap'
+// import { OptionField } from '../Swap'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 //import { ChainId, WETH } from '@uniswap/sdk'
 //import { useDerivedMintInfo } from 'state/mint/hooks'
@@ -77,6 +77,8 @@ const Circle = styled.div`
   background-color: ${({ theme }) => theme.bg4};
   min-height: 32px;
   min-width: 32px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,7 +210,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
 
   const handleSetTab = useCallback((tab: TABS) => setTab(tab), [setTab])
   const handleBack = useCallback(() => history.push('/option_trading'), [history])
-  const [optionType, setOptionType] = useState<string>(OptionField.CALL)
+  // const [optionType, setOptionType] = useState<string>(OptionField.CALL)
 
   const optionPrice = useOptionPrice(option)
 
@@ -217,7 +219,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
       {optionId ? (
         <Wrapper>
           <RowBetween style={{ padding: '27px 0', maxWidth: 1116 }}>
-            <ButtonEmpty width="auto" color={theme.text1} onClick={handleBack}>
+            <ButtonEmpty width="auto" color={theme.text1} onClick={handleBack} padding="14px 14px 14px 0">
               <ChevronLeft style={{ flexShrink: 0 }} />
               <HideSmall>Go Back</HideSmall>
             </ButtonEmpty>
@@ -227,7 +229,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                 <RowFixed>
                   <HideSmall>
                     <Circle>
-                      <CurrencyLogo currency={option?.underlying ?? undefined} size="20px" />
+                      <CurrencyLogo currency={option?.underlying ?? undefined} size="100%" />
                     </Circle>
                   </HideSmall>
                   <Title fontSize={24} fontWeight={500}>
@@ -273,12 +275,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
             <StyledAppBody tab={tab} isCard={false}>
               <Elevate>
                 {tab === TABS.SWAP && (
-                  <OptionSwap
-                    optionType={optionType}
-                    handleOptionType={setOptionType}
-                    optionPrice={optionPrice}
-                    option={option}
-                  />
+                  <OptionSwap /*handleOptionType={setOptionType}*/ optionPrice={optionPrice} option={option} />
                 )}
                 {/*{tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}*/}
                 {tab === TABS.INFO && <Info optionPrice={optionPrice} option={option} />}
