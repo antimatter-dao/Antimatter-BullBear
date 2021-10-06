@@ -207,8 +207,7 @@ export default function Redeem({
   return (
     <AppBody maxWidth="560px">
       <MarketStrategyTabs generation={false} />
-      <TYPE.darkGray fontSize={14} style={{ padding: '4px 16px 30px' }}>
-        In this section you can remove both call and put tokens at the same time.
+      <TYPE.darkGray fontSize={14} style={{ padding: '4px 16px 30px' }}>In this section you can remove both call and put tokens at the same time.
       </TYPE.darkGray>
       <Wrapper>
         <TransactionConfirmationModal
