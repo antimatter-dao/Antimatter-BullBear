@@ -82,16 +82,16 @@ export default function Generate({
 
   const error = useMemo(() => {
     if (balanceA && balanceB && delta && option?.callToken && option?.putToken) {
-      const callAmount = new TokenAmount(option.callToken, delta.dUnd)
-      const putAmount = new TokenAmount(option.putToken, delta.dCur)
-      if (balanceA.lessThan(callAmount)) {
+      const callAmount = delta.dUnd.toString()[0] === '-' ? undefined : new TokenAmount(option.callToken, delta.dUnd)
+      const putAmount = delta.dCur.toString()[0] === '-' ? undefined : new TokenAmount(option.putToken, delta.dCur)
+      if (callAmount && putAmount && balanceA.lessThan(callAmount) && balanceB.lessThan(putAmount)) {
+        return `Insufficient ${option.underlying?.symbol} and ${option.currency?.symbol} balance`
+      }
+      if (callAmount && balanceA.lessThan(callAmount)) {
         return 'Insufficient ' + option.underlying?.symbol + ' balance'
       }
-      if (balanceB.lessThan(putAmount)) {
+      if (putAmount && balanceB.lessThan(putAmount)) {
         return 'Insufficient ' + option.currency?.symbol + ' balance'
-      }
-      if (balanceA.lessThan(callAmount) || balanceB.lessThan(putAmount)) {
-        return `Insufficient ${option.underlying?.symbol} and ${option.currency?.symbol} balance`
       }
     }
     return null
@@ -244,7 +244,7 @@ export default function Generate({
                 label="Option Type"
                 content={
                   <RowFixed>
-                    <CurrencyLogo currency={option?.underlying ?? undefined} size="17px" style={{ marginRight: 12 }} />
+                    <CurrencyLogo currency={option?.underlying ?? undefined} size="20px" style={{ marginRight: 12 }} />
                     {optionName}
                   </RowFixed>
                 }
@@ -260,6 +260,12 @@ export default function Generate({
               defaultSymbol={option?.call?.token.symbol}
               halfWidth={true}
               isCall={true}
+              label="Bull Token"
+              hideBalance={false}
+              balance={option?.call?.toSignificant(6)}
+              onMax={() => {
+                setCallTyped(option?.call?.toSignificant(6))
+              }}
             />
             <ColumnCenter>
               <Plus size="28" color={theme.text2} />
@@ -274,6 +280,12 @@ export default function Generate({
               defaultSymbol={option?.put?.token.symbol}
               negativeMarginTop={'-20px'}
               isCall={false}
+              label="Bear Token"
+              hideBalance={false}
+              balance={option?.put?.toSignificant(6)}
+              onMax={() => {
+                setPutTyped(option?.put?.toSignificant(6))
+              }}
             />
             {option?.call?.token && option?.put?.token && delta?.dUnd && delta.dCur && (
               <GenerateBar

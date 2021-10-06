@@ -68,6 +68,29 @@ const CallOrPutIcon = styled.img`
   margin-left: 16px;
 `
 
+const StyledBalanceMax = styled.button`
+  height: 28px;
+  background-color: ${({ theme }) => theme.bg3};
+  border: 1px solid transparent;
+  border-radius: 49px;
+  font-size: 0.875rem;
+  padding: 0 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: ${({ theme }) => theme.text1};
+  :hover {
+    border: 1px solid ${({ theme }) => theme.primary1};
+  }
+  :focus {
+    border: 1px solid ${({ theme }) => theme.primary1};
+    outline: none;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    margin-right: 0.5rem;
+  `};
+`
+
 interface CallOrPutInputPanelProps {
   value: string
   onUserInput: (value: string) => void
@@ -83,6 +106,7 @@ interface CallOrPutInputPanelProps {
   negativeMarginTop?: string
   defaultSymbol?: string
   isCall?: boolean
+  balance?: string
 }
 
 export default function CallOrPutInputPanel({
@@ -95,7 +119,10 @@ export default function CallOrPutInputPanel({
   halfWidth,
   defaultSymbol,
   negativeMarginTop,
-  isCall
+  isCall,
+  onMax,
+  hideBalance,
+  balance
 }: CallOrPutInputPanelProps) {
   const theme = useTheme()
 
@@ -108,6 +135,17 @@ export default function CallOrPutInputPanel({
               <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
                 {label}
               </TYPE.body>
+              {!hideBalance && (
+                <TYPE.body
+                  onClick={onMax}
+                  color={theme.text3}
+                  fontWeight={500}
+                  fontSize={14}
+                  style={{ display: 'inline', cursor: 'pointer' }}
+                >
+                  {`Your balance: ${!!currency && balance ? balance : '-'}`}
+                </TYPE.body>
+              )}
             </AutoRow>
           </LabelRow>
         )}
@@ -141,6 +179,7 @@ export default function CallOrPutInputPanel({
                     onUserInput(val)
                   }}
                 />
+                {onMax && balance && <StyledBalanceMax onClick={onMax}>Max</StyledBalanceMax>}
               </>
             )}
           </InputRow>
