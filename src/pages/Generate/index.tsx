@@ -10,7 +10,7 @@ import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CallOrPutInputPanel from '../../components/CallOrPutInputPanel'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
-import { RowBetween } from '../../components/Row'
+import { RowBetween, RowFixed } from '../../components/Row'
 import { useDerivedStrategyInfo, useOption } from '../../state/market/hooks'
 import { ANTIMATTER_ADDRESS, Symbol } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
@@ -24,7 +24,6 @@ import { calculateGasMargin } from '../../utils'
 import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
 import { ConfirmGenerationModalBottom } from './ConfirmAddModalBottom'
-import ButtonSelect from '../../components/Button/ButtonSelect'
 import { tryParseAmount } from '../../state/swap/hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useAntimatterContract } from '../../hooks/useContract'
@@ -32,6 +31,8 @@ import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { isNegative, parseBalance } from '../../utils/marketStrategyUtils'
 import { OptionField } from '../Swap'
 import { useTokenBalance } from 'state/wallet/hooks'
+import { LabeledCard } from 'components/Card'
+import CurrencyLogo from 'components/CurrencyLogo'
 
 export default function Generate({
   match: {
@@ -211,8 +212,12 @@ export default function Generate({
 
   return (
     <>
-      <AppBody>
+      <AppBody maxWidth="560px">
         <MarketStrategyTabs generation />
+        <TYPE.darkGray fontSize={14} style={{ padding: '4px 16px 30px' }}>
+          In this section you can generate both call and put tokens at the same time. You need to generate equal amount
+          of call and put tokens.
+        </TYPE.darkGray>
         <Wrapper>
           <TransactionConfirmationModal
             isOpen={showConfirm}
@@ -230,9 +235,19 @@ export default function Generate({
             pendingText="Generating"
           />
           <AutoColumn gap="20px">
-            <ButtonSelect label="Option Type" disabled={true}>
-              {optionName}
-            </ButtonSelect>
+            <RowBetween>
+              <LabeledCard label="Option ID" content={optionTypeIndex ?? ''} style={{ marginRight: 15 }} />
+              <LabeledCard
+                label="Option Type"
+                content={
+                  <RowFixed>
+                    <CurrencyLogo currency={option?.underlying ?? undefined} size="17px" style={{ marginRight: 12 }} />
+                    {optionName}
+                  </RowFixed>
+                }
+              />
+            </RowBetween>
+
             <CallOrPutInputPanel
               value={callTyped ?? ''}
               onUserInput={setCallTyped}

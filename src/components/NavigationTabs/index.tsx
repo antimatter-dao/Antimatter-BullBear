@@ -119,7 +119,7 @@ export function MarketStrategyTabs({ generation }: { generation: boolean }) {
         >
           <StyledArrowLeft />
         </HistoryLink>
-        <TYPE.mediumHeader>{generation ? 'Generation' : 'Redemption'}</TYPE.mediumHeader>
+        <TYPE.mediumHeader>{generation ? 'Add Liquidity Position' : 'Redemption'}</TYPE.mediumHeader>
         <Setting onlySlippage={true} slippageType={generation ? SLIPPAGE_TYPE.generation : SLIPPAGE_TYPE.redeem} />
       </RowBetween>
     </Tabs>

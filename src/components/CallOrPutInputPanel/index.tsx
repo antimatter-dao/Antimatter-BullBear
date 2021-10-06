@@ -10,6 +10,7 @@ import CallIcon from '../../assets/svg/call_icon.svg'
 import PutIcon from '../../assets/svg/put_icon.svg'
 
 import useTheme from '../../hooks/useTheme'
+import { LabeledCard } from 'components/Card'
 
 const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean }>`
   align-items: center;
@@ -17,7 +18,7 @@ const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean }>`
   border-radius: 14px;
   height: 3rem;
   padding: ${({ selected }) => (selected ? '0 0.5rem 0 1rem' : '0 0.65rem 0 0.75rem')};
-  width: ${({ halfWidth }) => (halfWidth ? '48%' : '55%')}};
+  width: ${({ halfWidth }) => (halfWidth ? '50%' : '55%')}};
   ${({ theme }) => theme.flexRowNoWrap}
 `
 
@@ -111,21 +112,25 @@ export default function CallOrPutInputPanel({
           </LabelRow>
         )}
         <Aligner>
-          <Aligner>
-            <Aligner>
-              <CurrencyLogo currency={currency} size={'24px'} />
-              <CallOrPutIcon src={isCall ? CallIcon : PutIcon} />
-              <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
-                {defaultSymbol
-                  ? defaultSymbol
-                  : currency && currency.symbol && currency.symbol.length > 20
-                  ? currency.symbol.slice(0, 4) +
-                    '...' +
-                    currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                  : currency?.symbol}
-              </StyledTokenName>
-            </Aligner>
-          </Aligner>
+          <LabeledCard
+            style={{ width: halfWidth ? '50%' : '100%', marginRight: 15 }}
+            content={
+              <Aligner>
+                <CurrencyLogo currency={currency} size={'24px'} />
+                <CallOrPutIcon src={isCall ? CallIcon : PutIcon} />
+                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
+                  {defaultSymbol
+                    ? defaultSymbol
+                    : currency && currency.symbol && currency.symbol.length > 20
+                    ? currency.symbol.slice(0, 4) +
+                      '...' +
+                      currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+                    : currency?.symbol}
+                </StyledTokenName>
+              </Aligner>
+            }
+          />
+
           <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} halfWidth={halfWidth} selected>
             {!hideInput && (
               <>

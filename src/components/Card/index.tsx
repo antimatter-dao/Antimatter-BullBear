@@ -1,8 +1,10 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { CSSProperties } from 'styled-components'
 import { CardProps, Text } from 'rebass'
 import { Box } from 'rebass/styled-components'
-// import useTheme from 'hooks/useTheme'
+import { AutoColumn } from 'components/Column'
+import { TYPE } from 'theme'
+import useTheme from 'hooks/useTheme'
 
 const Card = styled(Box)<{ width?: string; padding?: string; border?: string; borderRadius?: string }>`
   width: ${({ width }) => width ?? '100%'};
@@ -67,3 +69,27 @@ export const GradientCard = styled(Card)`
 export const TranslucentCard = styled(Card)`
   background-color: ${({ theme }) => theme.translucent};
 `
+
+export function LabeledCard({
+  label,
+  content,
+  style
+}: {
+  label?: string
+  content: string | number | JSX.Element
+  style?: CSSProperties
+}) {
+  const theme = useTheme()
+  return (
+    <AutoColumn gap="4px" style={{ width: '100%', ...style }}>
+      {label && (
+        <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
+          {label}
+        </TYPE.body>
+      )}
+      <LightGreyCard padding="12px 20px" style={{ height: 48, display: 'flex', alignItems: 'center' }}>
+        {content}
+      </LightGreyCard>
+    </AutoColumn>
+  )
+}
