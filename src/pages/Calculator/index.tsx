@@ -26,9 +26,9 @@ export const Divider = styled.div`
 `
 
 enum ERROR {
-  EMPTY_PRICE = 'Price cannot be empty or 0',
-  EMPTY_PRICE_CAP = 'Price ceiling cannot be empty or 0',
-  EMPTY_PRICE_FLOOR = 'Price floor cannot be empty or 0',
+  EMPTY_PRICE = 'Price cannot be 0',
+  EMPTY_PRICE_CAP = 'Price ceiling cannot be 0',
+  EMPTY_PRICE_FLOOR = 'Price floor cannot be 0',
   EMPTY_TOTAL_CALL = 'Bull issuance cannot be empty',
   EMPTY_TOTAL_PUT = 'Bear issuance cannot be empty',
   LARGER_FLOOR_THAN_CAP = 'Price floor cannot be larger than price ceiling',
@@ -55,10 +55,11 @@ export default function Calculator() {
   useEffect(() => {
     if (!calculateCallback) return
 
-    if (!price && !priceFloor && !priceCap && !totalCall && !totalPut) {
+    if (!price || !priceFloor || !priceCap || !totalCall || !totalPut) {
       setError('')
       return
     }
+
     let error = ''
     if (+price < +priceFloor || +price > +priceCap) error = ERROR.PRICE_EXCEEDS_PRICE_RANGE
     if (+priceFloor > +priceCap) error = ERROR.LARGER_FLOOR_THAN_CAP
@@ -104,20 +105,20 @@ export default function Calculator() {
           />
           <InputWrapper>
             <NumberInputPanel
-              label="Price Ceiling"
-              onUserInput={priceCap => setPriceCap(limitDigits(priceCap))}
-              value={priceCap}
-              showMaxButton={false}
-              id="priceCeiling"
-              unit="USDT"
-              hideBalance
-            />
-            <NumberInputPanel
               label="Price Floor"
               onUserInput={priceFloor => setPriceFloor(limitDigits(priceFloor))}
               value={priceFloor}
               showMaxButton={false}
               id="pricefloor"
+              unit="USDT"
+              hideBalance
+            />
+            <NumberInputPanel
+              label="Price Ceiling"
+              onUserInput={priceCap => setPriceCap(limitDigits(priceCap))}
+              value={priceCap}
+              showMaxButton={false}
+              id="priceCeiling"
               unit="USDT"
               hideBalance
             />
@@ -142,7 +143,7 @@ export default function Calculator() {
               hideBalance
             />
           </InputWrapper>
-          <TYPE.body color={theme.red1} fontSize={14}>
+          <TYPE.body color={theme.red1} fontSize={14} style={{ height: 16 }}>
             {error}
           </TYPE.body>
         </AutoColumn>

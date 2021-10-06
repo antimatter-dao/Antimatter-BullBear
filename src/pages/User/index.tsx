@@ -1,20 +1,13 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled, { CSSProperties } from 'styled-components'
 import { SwitchTabWrapper, Tab } from '../../components/SwitchTab'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { AnimatedImg, AnimatedWrapper, HideSmall, ShowSmall } from '../../theme'
 import Loader from '../../assets/svg/antimatter_background_logo.svg'
-import Table, { UserPositionTable } from '../../components/Table'
-// import { ReactComponent as BuyIcon } from '../../assets/svg/buy.svg'
-// import { ReactComponent as SellIcon } from '../../assets/svg/sell.svg'
-// import showPassDateTime from '../../utils/showPassDateTime'
-import { useMyPosition, useMyCreation } from '../../hooks/useUserFetch'
+import Table, { UserTransactionTable } from '../../components/Table'
+import { useMyTransaction, useMyCreation, useMyPosition } from '../../hooks/useUserFetch'
 import Pagination from '../../components/Pagination'
-import { parsePrice } from 'utils/option/utils'
-import { ButtonOutlinedPrimary } from 'components/Button'
-import { RowFixed } from 'components/Row'
-import CopyHelper from 'components/AccountDetails/Copy'
-import { shortenAddress } from 'utils'
+import useMediaWidth from 'hooks/useMediaWidth'
 
 const Wrapper = styled.div`
   padding: 78px 0 88px;
@@ -51,81 +44,13 @@ const AppBody = styled.div`
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
-  CREATION = 'my_creation'
-  // ACTIVITY = 'activity'
+  CREATION = 'my_creation',
+  TRANSACTION = 'my_transaction'
 }
 export const UserInfoTabRoute = {
   [UserInfoTabs.POSITION]: 'My Position',
-  [UserInfoTabs.CREATION]: 'My Creation'
-  // [UserInfoTabs.ACTIVITY]: 'Activity'
-}
-
-const formatMyCreation = (data: any[] | undefined, historyPush: (param: string) => void) => {
-  if (!data) return []
-
-  return data.reduce(
-    (
-      acc,
-      {
-        underlyingSymbol,
-        priceCap,
-        priceFloor,
-        currencyDecimals,
-        totalCall,
-        totalPut,
-        callAddress,
-        putAddress,
-        optionIndex
-      }
-    ) => {
-      acc.push(
-        [
-          `${underlyingSymbol}($${parsePrice(priceFloor, currencyDecimals)} ~ $${parsePrice(
-            priceCap,
-            currencyDecimals
-          )})`,
-          'Bull',
-          totalCall,
-          <RowFixed>
-            {shortenAddress(callAddress, 6)}
-            <CopyHelper key={callAddress + 'a'} toCopy={callAddress} />
-          </RowFixed>,
-          <ButtonOutlinedPrimary
-            key={callAddress}
-            onClick={() => {
-              historyPush(`/option_trading/${optionIndex}`)
-            }}
-            padding="12px"
-          >
-            Trade
-          </ButtonOutlinedPrimary>
-        ],
-        [
-          `${underlyingSymbol}($${parsePrice(priceFloor, currencyDecimals)} ~ $${parsePrice(
-            priceCap,
-            currencyDecimals
-          )})`,
-          'Bear',
-          totalPut,
-          <RowFixed>
-            {shortenAddress(putAddress, 6)}
-            <CopyHelper key={putAddress + 'a'} toCopy={putAddress} />
-          </RowFixed>,
-          <ButtonOutlinedPrimary
-            key={putAddress}
-            onClick={() => {
-              historyPush(`/option_trading/${optionIndex}`)
-            }}
-            padding="12px"
-          >
-            Trade
-          </ButtonOutlinedPrimary>
-        ]
-      )
-      return acc
-    },
-    []
-  )
+  [UserInfoTabs.CREATION]: 'My Creation',
+  [UserInfoTabs.TRANSACTION]: 'My Transaction'
 }
 
 // function randTime() {
@@ -155,6 +80,7 @@ export default function User() {
   const { tab } = useParams<{ tab: string }>()
   const location = useLocation()
   const [currentTab, setCurrentTab] = useState(UserInfoTabs.POSITION)
+  const isUptoSmall = useMediaWidth('upToSmall')
   const handleTabClick = useCallback(
     tab => () => {
       setCurrentTab(tab)
@@ -168,29 +94,32 @@ export default function User() {
       setCurrentTab(tab as UserInfoTabs)
     }
   }, [location, tab])
-  const { data: myPosition, page: myPositionPage, loading: myPositionLoading } = useMyPosition()
+  const { data: myTransaction, page: myTransactionPage, loading: myTransactionLoading } = useMyTransaction()
 
   const myCreation = useMyCreation()
 
-  const myCreationData = useMemo(() => {
-    return formatMyCreation(myCreation, history.push)
-  }, [history.push, myCreation])
+  const myPosition = useMyPosition()
 
   return (
     <Wrapper>
       <AppBody>
-        <SwitchTab style={{ padding: '50px 50px 0' }} onTabClick={handleTabClick} currentTab={currentTab} />
+        <SwitchTab
+          style={{ padding: isUptoSmall ? '50px 24px 0' : '50px 50px 0' }}
+          onTabClick={handleTabClick}
+          currentTab={currentTab}
+        />
         {(currentTab === UserInfoTabs.CREATION && myCreation === undefined) ||
-        (currentTab === UserInfoTabs.POSITION && myPositionLoading) ? (
+        (currentTab === UserInfoTabs.POSITION && myTransactionLoading) ||
+        (currentTab === UserInfoTabs.POSITION && !myPosition?.[0]?.[0]) ? (
           <>
             <HideSmall>
-              <AnimatedWrapper>
+              <AnimatedWrapper style={{ marginTop: -100 }}>
                 <AnimatedImg>
                   <img src={Loader} alt="loading-icon" />
                 </AnimatedImg>
               </AnimatedWrapper>
             </HideSmall>
-            <ShowSmall>
+            <ShowSmall style={{ marginTop: 100 }}>
               <AnimatedWrapper>
                 <AnimatedImg>
                   <img src={Loader} alt="loading-icon" />
@@ -202,33 +131,37 @@ export default function User() {
           <>
             {currentTab === UserInfoTabs.POSITION && (
               <>
-                <UserPositionTable header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT ADDRESS', '']} data={myPosition} />
-                {myPositionPage.totalPages !== 0 && (
-                  <Pagination
-                    page={myPositionPage.currentPage}
-                    count={myPositionPage.totalPages}
-                    setPage={myPositionPage.setCurrentPage}
-                  />
-                )}
-                {!myPosition.length && !myPositionLoading && (
-                  <p style={{ margin: 50 }}>You have no postion at the moment</p>
-                )}
+                <Table header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT \nADDRESS', '']} rows={myPosition} />
               </>
             )}
             {currentTab === UserInfoTabs.CREATION && (
               <>
-                <Table header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT ADDRESS', '']} rows={myCreationData} />
+                <Table header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT \nADDRESS', '']} rows={myCreation ?? []} />
 
-                {/* {!myCreation.length && !myCreationLoading && (
+                {myCreation !== undefined && !myCreation.length && (
                   <p style={{ margin: 50 }}>You have no creation at the moment</p>
-                )} */}
+                )}
               </>
             )}
-            {/* {currentTab === UserInfoTabs.ACTIVITY && (
+
+            {currentTab === UserInfoTabs.TRANSACTION && (
               <>
-                <Table header={['OPTION', 'TYPE', 'ACTION', 'AMOUNT', 'DATE']} rows={activeDatas} />
+                <UserTransactionTable
+                  header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT ADDRESS', '']}
+                  data={myTransaction}
+                />
+                {myTransactionPage.totalPages !== 0 && (
+                  <Pagination
+                    page={myTransactionPage.currentPage}
+                    count={myTransactionPage.totalPages}
+                    setPage={myTransactionPage.setCurrentPage}
+                  />
+                )}
+                {!myTransaction.length && !myTransactionLoading && (
+                  <p style={{ margin: 50 }}>You have no transaction at the moment</p>
+                )}
               </>
-            )} */}
+            )}
           </>
         )}
       </AppBody>
