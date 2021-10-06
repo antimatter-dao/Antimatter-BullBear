@@ -247,6 +247,7 @@ const HeaderRow = styled(RowFixed)`
     align-items: center;
     position: fixed;
     bottom: 0;
+    left:0 ;
     z-index: 100;
     padding: 0;
     justify-content: center
