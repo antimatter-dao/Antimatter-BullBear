@@ -23,7 +23,7 @@ const Title = styled.p`
 
 export default function ComingSoon() {
   return (
-    <Frame>
+    <Frame style={{minWidth: 560}}>
       <Title>
         Coming Soon <Dots />
       </Title>

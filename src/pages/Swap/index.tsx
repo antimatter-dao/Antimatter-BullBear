@@ -410,9 +410,7 @@ export default function Swap({
             optionCurrencyAmount={parsedAmounts[Field.OPTION]}
             payTitle={payFormattedAmount?.[0] === '-' ? 'You will receive' : 'You will pay'}
             paySubTitle={
-              payFormattedAmount?.[0] === '-'
-                ? 'This is the minimum price you will receive based on your slippage setting. Please check your transaction foe exact execution price. Real execution price might be higher tan this price.'
-                : 'This is the maximum price you will pay based on your slippage setting. Please check your transaction for exact execution price . Real execution price might be lower than this price.'
+              'Please note that this is an approximate transaction price calculated based on the slippage you’ve selected. The actual transaction price should be more favourable.'
             }
             payCurrencyAmount={payCurrencyAmount}
             isOpen={showConfirm}
@@ -500,9 +498,7 @@ export default function Swap({
                       <QuestionHelper
                         size={16}
                         text={
-                          payFormattedAmount?.[0] !== '-'
-                            ? 'This is the maximum price you will pay based on your slippage setting. Please check your transaction for exact execution price . Real execution price might be lower than this price.'
-                            : 'This is the minimum price you will receive based on your slippage setting. Please check your transaction foe exact execution price. Real execution price might be higher tan this price.'
+                          'Please note that this is an approximate transaction price calculated based on the slippage you’ve selected. The actual transaction price should be more favourable.'
                         }
                       />
                     </Text>

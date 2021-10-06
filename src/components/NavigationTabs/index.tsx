@@ -112,14 +112,14 @@ export function MarketStrategyTabs({ generation }: { generation: boolean }) {
     <Tabs>
       <RowBetween style={{ padding: '0rem 1rem 0 1rem' }}>
         <HistoryLink
-          to="/option_exercise"
+          to="/option_creation"
           onClick={() => {
             //adding && dispatch(resetMintState())
           }}
         >
           <StyledArrowLeft />
         </HistoryLink>
-        <TYPE.mediumHeader>{generation ? 'Generation' : 'Redemption'}</TYPE.mediumHeader>
+        <TYPE.mediumHeader>{generation ? 'Add Liquidity Position' : 'Remove Liquidity Position'}</TYPE.mediumHeader>
         <Setting onlySlippage={true} slippageType={generation ? SLIPPAGE_TYPE.generation : SLIPPAGE_TYPE.redeem} />
       </RowBetween>
     </Tabs>

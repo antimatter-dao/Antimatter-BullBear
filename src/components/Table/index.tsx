@@ -1,31 +1,11 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { TableContainer, TableHead, TableCell, TableRow, TableBody, makeStyles } from '@material-ui/core'
 import useMediaWidth from 'hooks/useMediaWidth'
 import { AutoColumn } from 'components/Column'
 import { RowBetween } from 'components/Row'
 import { TYPE } from 'theme'
-import { useOption } from '../../state/market/hooks'
-import { MyPositionProp, MyPositionType } from 'hooks/useUserFetch'
-import Copy from 'components/AccountDetails/Copy'
-import { shortenAddress } from 'utils'
-import { RowFixed } from 'components/Row'
-import { ButtonOutlined } from 'components/Button'
-import { TokenAmount } from '@uniswap/sdk'
-import { useHistory } from 'react-router'
-import { parseBalance } from 'utils/marketStrategyUtils'
-
-const TableButtonOutlined = styled(ButtonOutlined)`
-  height: 40px;
-  width: 100px;
-  color: #b2f355;
-  border: 1px solid #b2f355;
-  opacity: 0.8;
-  &:hover {
-    border: 1px solid #b2f355;
-    opacity: 1;
-  }
-`
+export * from './UserTransactionTable'
 
 interface StyleProps {
   isHeaderGray?: boolean
@@ -54,7 +34,7 @@ export function OwnerCell({ url, name }: { url?: string; name: string }) {
   )
 }
 
-const useStyles = makeStyles({
+export const useStyles = makeStyles(theme => ({
   root: {
     display: 'table',
     borderRadius: '40px',
@@ -108,11 +88,16 @@ const useStyles = makeStyles({
     '&:last-child': {
       border: 'none'
     }
+  },
+  longTitle: {
+    [theme.breakpoints.down('sm')]: {
+      whiteSpace: 'pre-wrap'
+    }
   }
-})
+}))
 
 const Card = styled.div`
-  background: #ffffff;
+  background: ${({ theme }) => theme.gradient1};
   border-radius: 30px;
   padding: 24px;
   > div {
@@ -123,7 +108,7 @@ const Card = styled.div`
 const CardRow = styled(RowBetween)`
   grid-template-columns: auto 100%;
   > div:first-child {
-    white-space: nowrap;
+    white-space: pre-wrap;
   }
   > div:last-child {
     width: 100%;
@@ -147,20 +132,20 @@ export default function Table({
   return (
     <>
       {match ? (
-        <>
+        <AutoColumn gap="20px" style={{ marginTop: 20 }}>
           {rows.map((data, index) => (
             <Card key={index}>
               <AutoColumn gap="16px">
                 {header.map((headerString, index) => (
                   <CardRow key={index}>
-                    <TYPE.darkGray>{headerString}</TYPE.darkGray>
-                    <TYPE.body color="#000000"> {data[index] ?? null}</TYPE.body>
+                    <TYPE.darkGray className={classes.longTitle}>{headerString}</TYPE.darkGray>
+                    <TYPE.body> {data[index] ?? null}</TYPE.body>
                   </CardRow>
                 ))}
               </AutoColumn>
             </Card>
           ))}
-        </>
+        </AutoColumn>
       ) : (
         <TableContainer className={classes.root}>
           <table>
@@ -183,80 +168,6 @@ export default function Table({
           </table>
         </TableContainer>
       )}
-    </>
-  )
-}
-
-export function UserPositionTable({
-  header,
-  data,
-  isHeaderGray
-}: {
-  header: string[]
-  data: MyPositionProp[]
-  isHeaderGray?: boolean
-}) {
-  const classes = useStyles({ isHeaderGray })
-  return (
-    <>
-      <TableContainer className={classes.root}>
-        <table>
-          <TableHead className={classes.tableHeader}>
-            <TableRow>
-              {header.map((string, idx) => (
-                <TableCell key={idx}>{string}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map((row, idx) => (
-              <TableRow key={idx} className={classes.tableRow}>
-                <UserPositionTableCell data={row} />
-              </TableRow>
-            ))}
-          </TableBody>
-        </table>
-      </TableContainer>
-    </>
-  )
-}
-
-function UserPositionTableCell({ data }: { data: MyPositionProp }) {
-  const option = useOption(data.optionIndex)
-  const history = useHistory()
-  const positionData = useMemo(() => {
-    let name = '-'
-    if (option && option.currency && option.priceFloor && option.priceCap) {
-      name = `${option.underlying?.symbol} ($${new TokenAmount(
-        option.currency,
-        option.priceFloor
-      ).toSignificant()}~$${new TokenAmount(option.currency, option.priceCap).toSignificant()})`
-    }
-    let amount = '-'
-    if (option && option.callToken && option.putToken) {
-      const token = data.type === MyPositionType.Call ? option.callToken : option.putToken
-      amount = parseBalance({ val: data.tradesAmount, token })
-      // amount = new TokenAmount(token, data.tradesAmount.replace('-', '')).toSignificant()
-    }
-    return [
-      name,
-      data.type,
-      amount,
-      <RowFixed key={1}>
-        {shortenAddress(data.contract ?? '', 5)}
-        <Copy toCopy={data.contract}></Copy>
-      </RowFixed>,
-      <TableButtonOutlined onClick={() => history.push('/option_trading/' + data.optionIndex)} key={2}>
-        Trade
-      </TableButtonOutlined>
-    ]
-  }, [data, history, option])
-
-  return (
-    <>
-      {positionData.map((data, idx) => (
-        <TableCell key={idx}>{data}</TableCell>
-      ))}
     </>
   )
 }

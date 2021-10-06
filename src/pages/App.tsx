@@ -27,8 +27,8 @@ import MatterToken from './MatterToken'
 // import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 // import Swap from './Swap'
 import { /*OpenClaimAddressModalAndRedirectToSwap,*/ RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
-//import Generate from './Generate'
-//import Redeem from './Redeem'
+import Generate from './Generate'
+import Redeem from './Redeem'
 // import Exercise from './Exercise'
 // import ComingSoon from './ComingSoon'
 import Info from './Info'
@@ -162,9 +162,9 @@ export default function App() {
                 <Route exact strict path="/calculator" component={Calculator} />
                 <Route exact strict path="/option_trading/:optionId" component={OptionTrade} />
                 <Route exact strict path="/option_exercise" component={OptionExercise} />
-                {/* <Route exact strict path="/generate" component={Generate} /> */}
+                <Route exact strict path="/liquidity/add/:optionTypeIndex" component={Generate} />
                 {/* <Route exact strict path="/redeem" component={Redeem} /> */}
-                {/*<Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />*/}
+                <Route exact strict path="/liquidity/remove/:optionTypeIndex" component={Redeem} />
                 <Route exact strict path="/governance" component={ComingSoon} />
                 <Route exact strict path="/info" component={Info} />
                 <Route strict path="/profile/:tab" component={User} />

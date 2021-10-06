@@ -35,7 +35,6 @@ export function ConfirmRedeemModalBottom({
         currency1={currencyB ?? undefined}
       />
       <GenerateBar
-        tokenType={tokenType}
         cardTitle={``}
         subTitle="Input Token"
         callTitle={'You will pay'}

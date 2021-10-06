@@ -30,7 +30,6 @@ export function ConfirmGenerationModalBottom({
   return (
     <>
       <GenerateBar
-        tokenType={tokenType}
         cardTitle={``}
         subTitle="Input Token"
         callTitle={'You will receive'}
