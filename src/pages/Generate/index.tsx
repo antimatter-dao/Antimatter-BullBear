@@ -31,6 +31,7 @@ import { useAntimatterContract } from '../../hooks/useContract'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { isNegative, parseBalance } from '../../utils/marketStrategyUtils'
 import { OptionField } from '../Swap'
+import { useTokenBalance } from 'state/wallet/hooks'
 
 export default function Generate({
   match: {
@@ -74,6 +75,34 @@ export default function Generate({
     tryParseAmount(delta?.totalCur.toString(), option?.currency ?? undefined),
     chainId ? ANTIMATTER_ADDRESS : undefined
   )
+
+  const balanceA = useTokenBalance(account ?? undefined, option?.call?.token)
+  const balanceB = useTokenBalance(account ?? undefined, option?.put?.token)
+
+  const error = useMemo(() => {
+    if (balanceA && balanceB && delta && option?.callToken && option?.putToken) {
+      const callAmount = new TokenAmount(option.callToken, delta.dUnd)
+      const putAmount = new TokenAmount(option.putToken, delta.dCur)
+      if (balanceA.lessThan(callAmount)) {
+        return 'Insufficient ' + option.underlying?.symbol + ' balance'
+      }
+      if (balanceB.lessThan(putAmount)) {
+        return 'Insufficient ' + option.currency?.symbol + ' balance'
+      }
+      if (balanceA.lessThan(callAmount) || balanceB.lessThan(putAmount)) {
+        return `Insufficient ${option.underlying?.symbol} and ${option.currency?.symbol} balance`
+      }
+    }
+    return null
+  }, [
+    balanceA,
+    balanceB,
+    delta,
+    option?.callToken,
+    option?.currency?.symbol,
+    option?.putToken,
+    option?.underlying?.symbol
+  ])
 
   const addTransaction = useTransactionAdder()
 
@@ -250,7 +279,7 @@ export default function Generate({
                 currency1={option?.currency ?? undefined}
               />
             )}
-
+            <TYPE.body color={theme.red1}>{error}</TYPE.body>
             {!option || !delta ? (
               <ButtonOutlined style={{ opacity: '0.5' }} disabled={true}>
                 <TYPE.main>Enter Amount</TYPE.main>
@@ -261,44 +290,45 @@ export default function Generate({
               </ButtonPrimary>
             ) : (
               <AutoColumn gap={'md'}>
-                {(approvalA === ApprovalState.NOT_APPROVED ||
-                  approvalA === ApprovalState.PENDING ||
-                  approvalB === ApprovalState.NOT_APPROVED ||
-                  approvalB === ApprovalState.PENDING) && (
-                  <RowBetween>
-                    {approvalA !== ApprovalState.APPROVED && (
-                      <ButtonPrimary
-                        onClick={approveACallback}
-                        disabled={approvalA === ApprovalState.PENDING}
-                        width={approvalB !== ApprovalState.APPROVED ? '48%' : '100%'}
-                      >
-                        {approvalA === ApprovalState.PENDING ? (
-                          <Dots>Approving {option?.underlying?.symbol}</Dots>
-                        ) : (
-                          'Approve ' + option?.underlying?.symbol
-                        )}
-                      </ButtonPrimary>
-                    )}
-                    {approvalB !== ApprovalState.APPROVED && (
-                      <ButtonPrimary
-                        onClick={approveBCallback}
-                        disabled={approvalB === ApprovalState.PENDING}
-                        width={approvalA !== ApprovalState.APPROVED ? '48%' : '100%'}
-                      >
-                        {approvalB === ApprovalState.PENDING ? (
-                          <Dots>Approving {option?.currency?.symbol}</Dots>
-                        ) : (
-                          'Approve ' + option?.currency?.symbol
-                        )}
-                      </ButtonPrimary>
-                    )}
-                  </RowBetween>
-                )}
+                {!error &&
+                  (approvalA === ApprovalState.NOT_APPROVED ||
+                    approvalA === ApprovalState.PENDING ||
+                    approvalB === ApprovalState.NOT_APPROVED ||
+                    approvalB === ApprovalState.PENDING) && (
+                    <RowBetween>
+                      {approvalA !== ApprovalState.APPROVED && (
+                        <ButtonPrimary
+                          onClick={approveACallback}
+                          disabled={approvalA === ApprovalState.PENDING}
+                          width={approvalB !== ApprovalState.APPROVED ? '48%' : '100%'}
+                        >
+                          {approvalA === ApprovalState.PENDING ? (
+                            <Dots>Approving {option?.underlying?.symbol}</Dots>
+                          ) : (
+                            'Approve ' + option?.underlying?.symbol
+                          )}
+                        </ButtonPrimary>
+                      )}
+                      {approvalB !== ApprovalState.APPROVED && (
+                        <ButtonPrimary
+                          onClick={approveBCallback}
+                          disabled={approvalB === ApprovalState.PENDING}
+                          width={approvalA !== ApprovalState.APPROVED ? '48%' : '100%'}
+                        >
+                          {approvalB === ApprovalState.PENDING ? (
+                            <Dots>Approving {option?.currency?.symbol}</Dots>
+                          ) : (
+                            'Approve ' + option?.currency?.symbol
+                          )}
+                        </ButtonPrimary>
+                      )}
+                    </RowBetween>
+                  )}
                 <ButtonError
                   onClick={() => {
                     expertMode ? onGenerate() : setShowConfirm(true)
                   }}
-                  disabled={approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED}
+                  disabled={approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED || !!error}
                   error={!callTyped && !putTyped}
                 >
                   <Text fontSize={16} fontWeight={500}>
