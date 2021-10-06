@@ -18,7 +18,7 @@ import AppBody from '../AppBody'
 import { Wrapper } from '../Pool/styleds'
 import { ConfirmRedeemModalBottom } from './ConfirmRedeemModalBottom'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
-import { useDerivedStrategyInfo, useOption } from '../../state/market/hooks'
+import { absolute, useDerivedStrategyInfo, useOption } from '../../state/market/hooks'
 import { tryParseAmount } from '../../state/swap/hooks'
 import { useAntimatterContract } from '../../hooks/useContract'
 import { calculateGasMargin } from '../../utils'
@@ -55,6 +55,8 @@ export default function Redeem({
 
   const userCallBalance = useTokenBalance(account ?? undefined, option?.call?.token)
   const userPutBalance = useTokenBalance(account ?? undefined, option?.put?.token)
+  const userUndBalance = useTokenBalance(account ?? undefined, option?.underlying ?? undefined)
+  const userCurBalance = useTokenBalance(account ?? undefined, option?.currency ?? undefined)
 
   const { delta } = useDerivedStrategyInfo(
     option,
@@ -70,23 +72,33 @@ export default function Redeem({
     ) {
       return 'Insufficient Balance'
     }
+    console.log('amount', delta?.dUnd.toString(), delta?.dCur.toString())
+
+    if (delta?.dUnd && !isNegative(delta.dUnd.toString()) && option?.underlying) {
+      const undAmount = new TokenAmount(option.underlying, absolute(delta.dUnd.toString()))
+      if (userUndBalance?.lessThan(undAmount)) return 'Insufficient ' + option.underlying?.symbol + ' balance'
+    }
+    if (delta?.dCur && !isNegative(delta.dCur.toString()) && option?.currency) {
+      const curAmount = new TokenAmount(option.currency, absolute(delta.dCur.toString()))
+      if (userCurBalance?.lessThan(curAmount)) return 'Insufficient ' + option.currency?.symbol + ' balance'
+    }
     return ''
-  }, [callTypedAmount, putTypedAmount, userCallBalance, userPutBalance])
+  }, [callTypedAmount, delta, option, putTypedAmount, userCallBalance, userCurBalance, userPutBalance, userUndBalance])
 
   // txn values
   // const deadline = useTransactionDeadline() // custom from users settings
   // const [allowedSlippage] = useUserSlippageTolerance() // custom from users
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(
-    tryParseAmount(delta?.totalUnd.toString(), option?.underlying ?? undefined),
+    tryParseAmount(delta?.dUnd.toString(), option?.underlying ?? undefined),
     chainId ? ANTIMATTER_ADDRESS : undefined
   )
   const [approvalB, approveBCallback] = useApproveCallback(
-    tryParseAmount(delta?.totalCur.toString(), option?.currency ?? undefined),
+    tryParseAmount(delta?.dCur.toString(), option?.currency ?? undefined),
     chainId ? ANTIMATTER_ADDRESS : undefined
   )
-  const approval1 = isNegative(delta?.totalUnd.toString()) ? ApprovalState.APPROVED : approvalA
-  const approval2 = isNegative(delta?.totalCur.toString()) ? ApprovalState.APPROVED : approvalB
+  const approval1 = isNegative(delta?.dUnd.toString()) ? ApprovalState.APPROVED : approvalA
+  const approval2 = isNegative(delta?.dCur.toString()) ? ApprovalState.APPROVED : approvalB
 
   const parsedAmounts = {
     [OptionField.CALL]: tryParseAmount(callTypedAmount, option?.call?.token),
@@ -241,7 +253,7 @@ export default function Redeem({
             label={'Bull token'}
             currency={option?.put?.token}
             negativeMarginTop="-25px"
-            currencyBalance={userCallBalance?.toExact().toString()}
+            currencyBalance={userPutBalance?.toExact().toString()}
             isCall={false}
           />
           {option?.underlying && option?.currency && delta?.dUnd && delta.dCur && (
@@ -299,7 +311,12 @@ export default function Redeem({
                     expertMode ? onRedeem() : setShowConfirm(true)
                   }}
                   disabled={
-                    !!redeemError || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED
+                    !callTypedAmount ||
+                    !putTypedAmount ||
+                    !delta ||
+                    !!redeemError ||
+                    approval1 !== ApprovalState.APPROVED ||
+                    approval2 !== ApprovalState.APPROVED
                   }
                 >
                   <Text fontSize={16} fontWeight={500}>

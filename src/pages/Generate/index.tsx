@@ -69,11 +69,11 @@ export default function Generate({
 
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(
-    tryParseAmount(delta?.totalUnd.toString(), option?.underlying ?? undefined),
+    tryParseAmount(delta?.dUnd.toString(), option?.underlying ?? undefined),
     chainId ? ANTIMATTER_ADDRESS : undefined
   )
   const [approvalB, approveBCallback] = useApproveCallback(
-    tryParseAmount(delta?.totalCur.toString(), option?.currency ?? undefined),
+    tryParseAmount(delta?.dCur.toString(), option?.currency ?? undefined),
     chainId ? ANTIMATTER_ADDRESS : undefined
   )
 
@@ -81,9 +81,9 @@ export default function Generate({
   const balanceB = useTokenBalance(account ?? undefined, option?.put?.token)
 
   const error = useMemo(() => {
-    if (balanceA && balanceB && delta && option?.callToken && option?.putToken) {
-      const callAmount = new TokenAmount(option.callToken, delta.dUnd)
-      const putAmount = new TokenAmount(option.putToken, delta.dCur)
+    if (balanceA && balanceB && delta && option?.underlying && option?.currency) {
+      const callAmount = new TokenAmount(option.underlying, delta.dUnd)
+      const putAmount = new TokenAmount(option.currency, delta.dCur)
       if (balanceA.lessThan(callAmount)) {
         return 'Insufficient ' + option.underlying?.symbol + ' balance'
       }
