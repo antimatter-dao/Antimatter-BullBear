@@ -725,6 +725,7 @@ export default function Header() {
                       </ExternalLink>
                     ) : (
                       <StyledLink
+                        key={info.title}
                         onClick={() => {
                           if (parseInt(key) === ChainId.MAINNET) {
                             library?.send('wallet_switchEthereumChain', [{ chainId: '0x1' }, account])

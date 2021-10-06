@@ -83,7 +83,7 @@ export default function Stats() {
             </StyledItem>
             <StyledItem gap="9px">
               <TYPE.gray fontSize="16px" style={{ opacity: '0.4' }} fontFamily="Roboto" color="#fff" fontWeight="400">
-                Supported asset:
+                Supported assets:
               </TYPE.gray>
               <RowFixed style={{ alignItems: 'baseline' }}>
                 <TYPE.mediumHeader fontFamily="Roboto" color="white" fontSize="40px" lineHeight="59px">

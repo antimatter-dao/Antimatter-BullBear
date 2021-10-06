@@ -64,7 +64,7 @@ export function GenerateBar({
               <TokenPanel>
                 {currency0 && <CurrencyLogo currency={currency0} size={'20px'} />}
                 <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'} flex={1}>
-                  {currencyNameHelper(currency0, 'Call Token')}
+                  {currencyNameHelper(currency0, 'Bull Token')}
                 </TYPE.black>
                 <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
                   {callVol?.[0] === '-' ? callVol.slice(1) : callVol}
@@ -84,7 +84,7 @@ export function GenerateBar({
               <TokenPanel>
                 {currency1 && <CurrencyLogo currency={currency1} size={'20px'} />}
                 <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text1} marginLeft={'8px'} flex={1}>
-                  {currencyNameHelper(currency1, 'Put Token')}
+                  {currencyNameHelper(currency1, 'Bear Token')}
                 </TYPE.subHeader>
                 <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
                   {putVol?.[0] === '-' ? putVol.slice(1) : putVol}

@@ -104,11 +104,11 @@ const BodyWrapper = styled.div`
 const Feedback = styled(ExternalLink)`
   z-index: 9;
   position: fixed;
-  right: 100px;
+  right: 50px;
   bottom: 50px;
   img {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
   }
   ${({ theme }) => theme.mediaWidth.upToLarge`
     right:14px

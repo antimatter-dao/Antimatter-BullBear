@@ -21,7 +21,7 @@ import { tryFormatAmount } from '../../state/swap/hooks'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import { useActiveWeb3React } from 'hooks'
 import { useTotalSupply } from '../../data/TotalSupply'
-import { OptionField } from '../Swap'
+// import { OptionField } from '../Swap'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 //import { ChainId, WETH } from '@uniswap/sdk'
 //import { useDerivedMintInfo } from 'state/mint/hooks'
@@ -77,6 +77,8 @@ const Circle = styled.div`
   background-color: ${({ theme }) => theme.bg4};
   min-height: 32px;
   min-width: 32px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,7 +210,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
 
   const handleSetTab = useCallback((tab: TABS) => setTab(tab), [setTab])
   const handleBack = useCallback(() => history.push('/option_trading'), [history])
-  const [optionType, setOptionType] = useState<string>(OptionField.CALL)
+
   const optionPrice = useOptionPrice(option)
 
   return (
@@ -216,7 +218,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
       {optionId ? (
         <Wrapper>
           <RowBetween style={{ padding: '27px 0', maxWidth: 1116 }}>
-            <ButtonEmpty width="auto" color={theme.text1} onClick={handleBack}>
+            <ButtonEmpty width="auto" color={theme.text1} onClick={handleBack} padding="14px 14px 14px 0">
               <ChevronLeft style={{ flexShrink: 0 }} />
               <HideSmall>Go Back</HideSmall>
             </ButtonEmpty>
@@ -226,7 +228,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
                 <RowFixed>
                   <HideSmall>
                     <Circle>
-                      <CurrencyLogo currency={option?.underlying ?? undefined} size="20px" />
+                      <CurrencyLogo currency={option?.underlying ?? undefined} size="100%" />
                     </Circle>
                   </HideSmall>
                   <Title fontSize={24} fontWeight={500}>
@@ -272,12 +274,7 @@ export default function OptionTradeAction({ optionId }: { optionId?: string }) {
             <StyledAppBody tab={tab} isCard={false}>
               <Elevate>
                 {tab === TABS.SWAP && (
-                  <OptionSwap
-                    optionType={optionType}
-                    handleOptionType={setOptionType}
-                    optionPrice={optionPrice}
-                    option={option}
-                  />
+                  <OptionSwap /*handleOptionType={setOptionType}*/ optionPrice={optionPrice} option={option} />
                 )}
                 {/*{tab === TABS.LIQUIDITY && <Liquidity currencyA={currencyA} currencyB={currencyB} pair={pair} />}*/}
                 {tab === TABS.INFO && <Info optionPrice={optionPrice} option={option} />}
@@ -406,7 +403,7 @@ export function Info({
           </AutoColumn>
           <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
             <RowBetween>
-              <TYPE.darkGray>{'Call Token Contact Address:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bull Token Contact Address:'}</TYPE.darkGray>
               <ExternalLink
                 href={option?.call && chainId ? getEtherscanLink(chainId, option?.call?.token.address, 'token') : ''}
               >
@@ -416,17 +413,17 @@ export function Info({
               </ExternalLink>
             </RowBetween>
             <RowBetween>
-              <TYPE.darkGray>{'Call Token Issuance:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bull Token Issuance:'}</TYPE.darkGray>
               <TYPE.main>{callTotal?.toFixed(2).toString() ?? placeholder}</TYPE.main>
             </RowBetween>
             <RowBetween>
-              <TYPE.darkGray>{'Call Token Market Price:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bull Token Market Price:'}</TYPE.darkGray>
               <TYPE.main>{`$${priceCall ? priceCall.toSignificant(6) : placeholder}`}</TYPE.main>
             </RowBetween>
           </AutoColumn>
           <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
             <RowBetween>
-              <TYPE.darkGray>{'Put Token Contact Address:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bear Token Contact Address:'}</TYPE.darkGray>
               <ExternalLink
                 href={option?.put && chainId ? getEtherscanLink(chainId, option?.put?.token.address, 'token') : ''}
               >
@@ -436,11 +433,11 @@ export function Info({
               </ExternalLink>
             </RowBetween>
             <RowBetween>
-              <TYPE.darkGray>{'Put Token Issuance:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bear Token Issuance:'}</TYPE.darkGray>
               <TYPE.main>{putTotal?.toFixed(2).toString() ?? placeholder}</TYPE.main>
             </RowBetween>
             <RowBetween>
-              <TYPE.darkGray>{'Put Token Market Price:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bear Token Market Price:'}</TYPE.darkGray>
               <TYPE.main>{`$${pricePut ? pricePut.toSignificant(6) : placeholder}`}</TYPE.main>
             </RowBetween>
           </AutoColumn>

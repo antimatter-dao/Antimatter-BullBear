@@ -63,21 +63,21 @@ export const ETH_CALL = new Token(
   '0x3843a61f2960108287A51806c683fc854dC00354',
   18,
   '+ETH($1000)',
-  'AntiMatter.Finance ETH Perpetual Call Option Floor $1000 Cap $3000'
+  'AntiMatter.Finance ETH Perpetual Bull Option Floor $1000 Cap $3000'
 )
 export const ETH_PUT = new Token(
   ChainId.MAINNET,
   '0xfE41168Fe09359c4b010E414c724c643dF4159A3',
   18,
   '-ETH($3000)',
-  'AntiMatter.Finance ETH Perpetual Put Option Floor $1000 Cap $3000'
+  'AntiMatter.Finance ETH Perpetual Bear Option Floor $1000 Cap $3000'
 )
 export const MATTER_CALL = new Token(
   ChainId.MAINNET,
   '0xD5eE7F431fFB7F03a19CFAE69A1E75a450Ec2021',
   18,
   '+MATTER($1)',
-  'AntiMatter.Finance MATTER Perpetual Call Option Floor $1 Cap $100'
+  'AntiMatter.Finance MATTER Perpetual Bull Option Floor $1 Cap $100'
 )
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
@@ -234,7 +234,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
 export const NetworkContextName = 'NETWORK'
 
 // default allowed slippage, in bips
-export const INITIAL_ALLOWED_SLIPPAGE = 200
+export const INITIAL_ALLOWED_SLIPPAGE = 100
 // 20 minutes, denominated in seconds
 export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20
 

@@ -33,12 +33,17 @@ const InputWrapper = styled(RowBetween)`
 const underlyingAssetList = [WUSDT, WDAI, WUSDC]
 
 enum ERROR {
-  CAP_TOO_LARGE = 'Price cap should not be larger than four times price cap',
+  CAP_TOO_LARGE = 'Price cap should not be larger than four times price floor',
   FLOOR_TOO_LARGE = 'Price floor should be smaller than price cap',
   FLOOR_REQUIRED = 'Price floor is required',
   CAP_REQUIRED = 'Price cap is required',
   CURRENCY_REQUIRED = 'Currency  is required',
   UNDERLYING_REQUIRED = 'Underlying is required'
+}
+
+const limitDigits = (string: string, currencyDecimal = 18) => {
+  const dotIndex = string.indexOf('.')
+  return string.slice(0, dotIndex + currencyDecimal)
 }
 
 export default function OptionCreation() {
@@ -82,8 +87,6 @@ export default function OptionCreation() {
   )
   const handleDismissSearch = useCallback(() => setCurrencySearchOpen(false), [])
   const handleOpenAssetSearch = useCallback(() => setCurrencySearchOpen(true), [])
-  const handleFloor = useCallback((floor: string) => setFloor(floor), [])
-  const handleCap = useCallback((cap: string) => setCap(cap), [])
   const handleDismissConfirmation = useCallback(() => {
     setShowConfirm(false)
     setAttemptingTxn(false)
@@ -280,7 +283,7 @@ export default function OptionCreation() {
           <AutoColumn gap="15px">
             <TYPE.body>1. Option underlying asset pair:</TYPE.body>
             <RowBetween>
-              <ButtonSelect width="46%" onClick={handleOpenAssetSearch} label="Asset to create option " marginRight="0">
+              <ButtonSelect width="46%" onClick={handleOpenAssetSearch} label="Underlying asset" marginRight="0">
                 <TYPE.body color={asset0 ? theme.text1 : theme.text3}>
                   <RowFixed>
                     {asset0 && <CurrencyLogo currency={asset0} size={'24px'} style={{ marginRight: 20 }} />}
@@ -291,7 +294,7 @@ export default function OptionCreation() {
               <Plus size={30} style={{ marginTop: 20 }} color={theme.text3} />
               <ButtonSelect
                 width="46%"
-                label="Underlying asset"
+                label="Asset to create option"
                 placeholder="Select asset"
                 marginRight="0"
                 selectedId={asset1 ? asset1.symbol : ''}
@@ -307,7 +310,7 @@ export default function OptionCreation() {
                 label="Price Floor"
                 id="floor"
                 value={floor}
-                onUserInput={handleFloor}
+                onUserInput={(floor: string) => setFloor(limitDigits(floor, asset1?.decimals))}
                 showMaxButton={false}
                 hideBalance={true}
                 placeholder="Enter Price Floor"
@@ -316,7 +319,7 @@ export default function OptionCreation() {
                 label="Price Ceiling"
                 id="cap"
                 value={cap}
-                onUserInput={handleCap}
+                onUserInput={(cap: string) => setCap(limitDigits(cap, asset1?.decimals))}
                 showMaxButton={false}
                 hideBalance={true}
                 placeholder="Enter Price Ceiling"

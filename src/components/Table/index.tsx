@@ -13,6 +13,8 @@ import { RowFixed } from 'components/Row'
 import { ButtonOutlined } from 'components/Button'
 import { TokenAmount } from '@uniswap/sdk'
 import { useHistory } from 'react-router'
+import { parseBalance } from 'utils/marketStrategyUtils'
+
 const TableButtonOutlined = styled(ButtonOutlined)`
   height: 40px;
   width: 100px;
@@ -233,7 +235,8 @@ function UserPositionTableCell({ data }: { data: MyPositionProp }) {
     let amount = '-'
     if (option && option.callToken && option.putToken) {
       const token = data.type === MyPositionType.Call ? option.callToken : option.putToken
-      amount = new TokenAmount(token, data.tradesAmount.replace('-', '')).toSignificant()
+      amount = parseBalance({ val: data.tradesAmount, token })
+      // amount = new TokenAmount(token, data.tradesAmount.replace('-', '')).toSignificant()
     }
     return [
       name,

@@ -84,7 +84,7 @@ const formatMyCreation = (data: any[] | undefined, historyPush: (param: string) 
             priceCap,
             currencyDecimals
           )})`,
-          'Call',
+          'Bull',
           totalCall,
           <RowFixed>
             {shortenAddress(callAddress, 6)}
@@ -105,7 +105,7 @@ const formatMyCreation = (data: any[] | undefined, historyPush: (param: string) 
             priceCap,
             currencyDecimals
           )})`,
-          'Put',
+          'Bear',
           totalPut,
           <RowFixed>
             {shortenAddress(putAddress, 6)}
@@ -172,8 +172,6 @@ export default function User() {
 
   const myCreation = useMyCreation()
 
-  console.log(999, myCreation)
-
   const myCreationData = useMemo(() => {
     return formatMyCreation(myCreation, history.push)
   }, [history.push, myCreation])
@@ -207,9 +205,9 @@ export default function User() {
                 <UserPositionTable header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT ADDRESS', '']} data={myPosition} />
                 {myPositionPage.totalPages !== 0 && (
                   <Pagination
-                  page={myPositionPage.currentPage}
-                  count={myPositionPage.totalPages}
-                  setPage={myPositionPage.setCurrentPage}
+                    page={myPositionPage.currentPage}
+                    count={myPositionPage.totalPages}
+                    setPage={myPositionPage.setCurrentPage}
                   />
                 )}
                 {!myPosition.length && !myPositionLoading && (

@@ -31,6 +31,7 @@ export default function ConfirmSwapModal({
   optionPrice,
   optionCurrencyAmount,
   payTitle,
+  paySubTitle,
   payCurrencyAmount,
   trade,
   originalTrade,
@@ -47,6 +48,7 @@ export default function ConfirmSwapModal({
   optionPrice: OptionPrice | undefined
   optionCurrencyAmount: CurrencyAmount | undefined
   payTitle: string
+  paySubTitle: string
   payCurrencyAmount: CurrencyAmount | undefined
   isOpen: boolean
   trade: Trade | undefined
@@ -75,12 +77,22 @@ export default function ConfirmSwapModal({
         auction={auction}
         optionCurrencyAmount={optionCurrencyAmount}
         payTitle={payTitle}
+        paySubTitle={paySubTitle}
         payCurrencyAmount={payCurrencyAmount}
         showAcceptChanges={showAcceptChanges}
         onAcceptChanges={onAcceptChanges}
       />
     ) : null
-  }, [auction, onAcceptChanges, optionCurrencyAmount, optionPrice, payCurrencyAmount, payTitle, showAcceptChanges])
+  }, [
+    auction,
+    onAcceptChanges,
+    optionCurrencyAmount,
+    optionPrice,
+    payCurrencyAmount,
+    paySubTitle,
+    payTitle,
+    showAcceptChanges
+  ])
 
   const modalBottom = useCallback(() => {
     return (

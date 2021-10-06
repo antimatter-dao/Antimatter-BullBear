@@ -1,12 +1,13 @@
 import { ChainId, Currency, ETHER, Token } from '@uniswap/sdk'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-
-import EthereumLogo from '../../assets/images/ethereum-logo.png'
+import CircleEth from '../../assets/svg/circle_ETH.svg'
+// import EthereumLogo from '../../assets/images/ethereum-logo.png'
 import useHttpLocations from '../../hooks/useHttpLocations'
 import { WrappedTokenInfo } from '../../state/lists/hooks'
 import Logo from '../Logo'
 import { useActiveWeb3React } from '../../hooks'
+import { Symbol } from '../../constants'
 
 export const getTokenLogoURL = (address: string) =>
   `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
@@ -44,11 +45,11 @@ const BinanceCoinLogo = 'https://raw.githubusercontent.com/sushiswap/icons/maste
 // const MovrLogo = 'https://raw.githubusercontent.com/sushiswap/icons/master/token/movr.jpg'
 
 const LOGO: { readonly [chainId in ChainId]?: string } = {
-  [ChainId.MAINNET]: EthereumLogo,
-  [ChainId.ROPSTEN]: EthereumLogo,
+  [ChainId.MAINNET]: CircleEth,
+  [ChainId.ROPSTEN]: CircleEth,
   [ChainId.BSC]: BinanceCoinLogo,
   [ChainId.Avalanche]: AvalancheLogo,
-  [ChainId.Arbitrum]: EthereumLogo
+  [ChainId.Arbitrum]: CircleEth
 }
 
 const unknown = 'https://raw.githubusercontent.com/sushiswap/icons/master/token/unknown.png'
@@ -83,8 +84,8 @@ export default function CurrencyLogo({
     return []
   }, [chainId, currency, uriLocations])
 
-  if (currency === ETHER) {
-    return <StyledEthereumLogo src={LOGO[chainId ?? 1]} size={size} style={style} />
+  if (currency === ETHER || currency?.symbol === Symbol[chainId ?? 1]) {
+    return <StyledEthereumLogo src={CircleEth} size={size} style={style} />
   }
 
   return <StyledLogo size={size} srcs={srcs} alt={`${currency?.symbol ?? 'token'} logo`} style={style} />

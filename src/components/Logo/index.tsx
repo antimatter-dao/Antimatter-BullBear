@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
-import { HelpCircle } from 'react-feather'
+// import { HelpCircle } from 'react-feather'
 import { ImageProps } from 'rebass'
+import { ReactComponent as Unknown } from 'assets/svg/circle_unknown.svg'
+import unknownUrl from 'assets/svg/circle_unknown.svg'
 
 const BAD_SRCS: { [tokenAddress: string]: true } = {}
 
@@ -21,7 +23,7 @@ export default function Logo({ srcs, alt, ...rest }: LogoProps) {
       <img
         {...rest}
         alt={alt}
-        src={src}
+        src={src ?? unknownUrl}
         onError={() => {
           if (src) BAD_SRCS[src] = true
           refresh(i => i + 1)
@@ -29,6 +31,6 @@ export default function Logo({ srcs, alt, ...rest }: LogoProps) {
       />
     )
   }
-
-  return <HelpCircle {...rest} />
+  return <Unknown {...rest} />
+  // return <HelpCircle {...rest} />
 }
