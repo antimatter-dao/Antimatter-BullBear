@@ -16,7 +16,7 @@ export default function TradePrice({ currencyAmount }: TradePriceProps) {
     >
       {currencyAmount ? (
         <>
-          {currencyAmount.toExact().toString() ?? '-'} {currencyAmount.currency.symbol}
+          ~ {currencyAmount.toExact().toString() ?? '-'} {currencyAmount.currency.symbol}
         </>
       ) : (
         '-'

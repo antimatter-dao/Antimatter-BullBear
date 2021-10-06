@@ -31,6 +31,7 @@ export default function SwapModalHeader({
   optionPrice,
   optionCurrencyAmount,
   payTitle,
+  paySubTitle,
   payCurrencyAmount,
   showAcceptChanges,
   onAcceptChanges
@@ -39,6 +40,7 @@ export default function SwapModalHeader({
   optionPrice: OptionPrice | undefined
   optionCurrencyAmount: CurrencyAmount | undefined
   payTitle: string
+  paySubTitle: string
   payCurrencyAmount: CurrencyAmount | undefined
   showAcceptChanges: boolean
   onAcceptChanges: () => void
@@ -87,6 +89,7 @@ export default function SwapModalHeader({
           <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
             {payTitle}
           </TYPE.subHeader>
+          <TYPE.small color={'#B2F355'}>{paySubTitle}</TYPE.small>
           <TokenPanel>
             {payCurrencyAmount && <CurrencyLogo currency={payCurrencyAmount?.currency} size={'20px'} />}
             <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'} flex={1}>

@@ -41,6 +41,7 @@ import { useCurrencyBalance } from '../../state/wallet/hooks'
 import TradePrice from '../../components/swap/TradePrice'
 import { ClickableText } from '../Pool/styleds'
 import SettingsTab from '../../components/Settings'
+import QuestionHelper from '../../components/QuestionHelper'
 
 enum Field {
   OPTION = 'OPTION',
@@ -411,6 +412,11 @@ export default function Swap({
             auction={auction as Auction}
             optionCurrencyAmount={parsedAmounts[Field.OPTION]}
             payTitle={payFormattedAmount?.[0] === '-' ? 'You will receive' : 'You will pay'}
+            paySubTitle={
+              payFormattedAmount?.[0] === '-'
+                ? 'This is the minimum price you will receive based on your slippage setting. Please check your transaction foe exact execution price. Real execution price might be higher tan this price.'
+                : 'This is the maximum price you will pay based on your slippage setting. Please check your transaction for exact execution price . Real execution price might be lower than this price.'
+            }
             payCurrencyAmount={payCurrencyAmount}
             isOpen={showConfirm}
             trade={routerDelta?.undTrade ?? undefined}
@@ -491,6 +497,13 @@ export default function Swap({
                   <RowBetween align="center">
                     <Text fontWeight={500} fontSize={14} color={'rgba(178, 243, 85, 1)'}>
                       {payFormattedAmount?.[0] === '-' ? 'You will receive' : 'You will pay'}
+                      <QuestionHelper
+                        text={
+                          payFormattedAmount?.[0] !== '-'
+                            ? 'This is the maximum price you will pay based on your slippage setting. Please check your transaction for exact execution price . Real execution price might be lower than this price.'
+                            : 'This is the minimum price you will receive based on your slippage setting. Please check your transaction foe exact execution price. Real execution price might be higher tan this price.'
+                        }
+                      />
                     </Text>
                     <TradePrice currencyAmount={payCurrencyAmount} />
                   </RowBetween>
