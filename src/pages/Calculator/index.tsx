@@ -104,20 +104,20 @@ export default function Calculator() {
           />
           <InputWrapper>
             <NumberInputPanel
-              label="Price Ceiling"
-              onUserInput={priceCap => setPriceCap(limitDigits(priceCap))}
-              value={priceCap}
-              showMaxButton={false}
-              id="priceCeiling"
-              unit="USDT"
-              hideBalance
-            />
-            <NumberInputPanel
               label="Price Floor"
               onUserInput={priceFloor => setPriceFloor(limitDigits(priceFloor))}
               value={priceFloor}
               showMaxButton={false}
               id="pricefloor"
+              unit="USDT"
+              hideBalance
+            />
+            <NumberInputPanel
+              label="Price Ceiling"
+              onUserInput={priceCap => setPriceCap(limitDigits(priceCap))}
+              value={priceCap}
+              showMaxButton={false}
+              id="priceCeiling"
               unit="USDT"
               hideBalance
             />

@@ -490,9 +490,15 @@ export default function Swap({
               <Card padding={'.25rem 0 0 '} borderRadius={'20px'}>
                 <AutoColumn gap="8px">
                   <RowBetween align="center">
-                    <Text fontWeight={500} fontSize={14} color={'rgba(178, 243, 85, 1)'}>
+                    <Text
+                      style={{ display: 'flex', alignItems: 'center' }}
+                      fontWeight={500}
+                      fontSize={14}
+                      color={'rgba(178, 243, 85, 1)'}
+                    >
                       {payFormattedAmount?.[0] === '-' ? 'You will receive' : 'You will pay'}
                       <QuestionHelper
+                        size={16}
                         text={
                           payFormattedAmount?.[0] !== '-'
                             ? 'This is the maximum price you will pay based on your slippage setting. Please check your transaction for exact execution price . Real execution price might be lower than this price.'
