@@ -25,6 +25,7 @@ import { RowBetween, RowFixed, AutoRow } from '../Row'
 import { Dots } from '../swap/styleds'
 import useTheme from 'hooks/useTheme'
 import { useOption } from '../../state/market/hooks'
+import { Link } from 'react-router-dom'
 
 export const FixedHeightRow = styled(RowBetween)`
   height: 24px;
@@ -255,18 +256,22 @@ export default function FullPositionCard({ index }: { index: string }) {
 
             <RowBetween marginTop="10px">
               <ButtonOutlined
+                as={Link}
+                to={`/generate/${index}`}
                 padding="4px"
                 width="48%"
                 style={{ color: theme.primary1, borderColor: theme.primary1 }}
               >
-                Add
+                + Add
               </ButtonOutlined>
               <ButtonOutlined
+                as={Link}
+                to={`/generate/${index}`}
                 style={{ color: theme.primary1, borderColor: theme.primary1 }}
                 padding="4px"
                 width="48%"
               >
-                Remove
+                - Remove
               </ButtonOutlined>
             </RowBetween>
           </AutoColumn>

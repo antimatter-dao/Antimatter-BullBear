@@ -98,7 +98,6 @@ export default function Generate({
       delta.dCur.toString(),
       '0x'
     ]
-    console.log('args--->', ...args)
     if (option?.underlying?.symbol?.toUpperCase() === Symbol[chainId ?? 1]) {
       value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
     }

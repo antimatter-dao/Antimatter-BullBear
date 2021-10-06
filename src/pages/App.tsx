@@ -162,7 +162,8 @@ export default function App() {
                 <Route exact strict path="/calculator" component={Calculator} />
                 <Route exact strict path="/option_trading/:optionId" component={OptionTrade} />
                 <Route exact strict path="/option_exercise" component={OptionExercise} />
-                <Route exact strict path="/generate/:optionTypeIndex" component={Generate} />
+                <Route exact strict path="/liquidity/add/:optionTypeIndex" component={Generate} />
+                <Route exact strict path="/liquidity/remove/:optionTypeIndex" component={Generate} />
                 {/* <Route exact strict path="/redeem" component={Redeem} /> */}
                 {/*<Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />*/}
                 <Route exact strict path="/governance" component={ComingSoon} />
