@@ -54,7 +54,6 @@ export enum OptionField {
 }
 
 const RadioButtonWrapper = styled(AutoColumn)`
-  margin-top: 14px;
   fieldset {
     width: 68%;
     display: grid !important;
@@ -83,16 +82,15 @@ const SwapAppBody = styled(BodyWrapper)`
 export default function Swap({
   option,
   optionPrice,
-  handleOptionType,
+  // handleOptionType,
   setParentTXHash
 }: {
   option: Option | undefined
   optionPrice: OptionPrice | undefined
-  handleOptionType: (option: string) => void
+  // handleOptionType: (option: string) => void
   setParentTXHash: (hash: string) => void
 }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
-  // const history = useHistory()
   const { account } = useActiveWeb3React()
 
   const theme = useTheme()
@@ -115,7 +113,6 @@ export default function Swap({
     useCurrency(loadedUrlParams?.outputCurrencyId)
   ]
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
-  //const [optionType, setOptionType] = useState<string>(OptionType.CALL)
   const [auction, setAuction] = useState<string>(Auction.BUY)
   const [optionType, setOptionType] = useState<string>(OptionField.CALL)
 
@@ -430,11 +427,11 @@ export default function Swap({
             onDismiss={handleConfirmDismiss}
           />
 
-          <AutoColumn gap="20px">
+          <AutoColumn gap="28px">
             <div style={{ position: 'absolute', top: -5, right: 0 }}>
               <SettingsTab onlySlippage />
             </div>
-            <RadioButtonWrapper gap="20px">
+            <RadioButtonWrapper gap="28px">
               <div>
                 <Label>Choose Action</Label>
                 <TypeRadioButton
@@ -452,12 +449,12 @@ export default function Swap({
                 <TypeRadioButton
                   name={'option_type'}
                   options={[
-                    { label: '+ Call Token', option: OptionField.CALL },
-                    { label: '− Put Token', option: OptionField.PUT }
+                    { label: '+ Bull Token', option: OptionField.CALL },
+                    { label: '− Bear Token', option: OptionField.PUT }
                   ]}
                   selected={optionType}
                   onCheck={(option: string) => {
-                    handleOptionType(option)
+                    // handleOptionType(option)
                     setOptionType(option)
                   }}
                 />
@@ -476,7 +473,6 @@ export default function Swap({
               otherCurrency={payCurrency}
               id="swap-currency-input"
             />
-            <div style={{ marginTop: 6 }} />
             <CurrencyInputPanel
               hideInput={true}
               disableCurrencySelect={false}
@@ -488,11 +484,10 @@ export default function Swap({
               onCurrencySelect={handleOutputSelect}
               otherCurrency={optionCurrency}
               id="swap-currency-output"
-              negativeMarginTop="-16px"
             />
 
             {payCurrencyAmount && (
-              <Card padding={'.25rem 1rem 0 1rem'} borderRadius={'20px'}>
+              <Card padding={'.25rem 0 0 '} borderRadius={'20px'}>
                 <AutoColumn gap="8px">
                   <RowBetween align="center">
                     <Text fontWeight={500} fontSize={14} color={'rgba(178, 243, 85, 1)'}>

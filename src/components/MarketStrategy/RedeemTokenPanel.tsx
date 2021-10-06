@@ -129,7 +129,7 @@ export default function RedeemTokenPanel({
         <LabelRow>
           <AutoRow justify="space-between">
             <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
-              {isCall ? 'Call token' : 'Put token'}
+              {isCall ? 'Bull token' : 'Bear token'}
             </TYPE.body>
             {account && (
               <TYPE.body
@@ -144,8 +144,8 @@ export default function RedeemTokenPanel({
                 {inputOnly &&
                   currencyBalance &&
                   (isCall
-                    ? `Call Token Balance: ${currencyBalance} CALL`
-                    : `Put Token Balance: ${currencyBalance} PUT`)}
+                    ? `Bull Token Balance: ${currencyBalance} BULL`
+                    : `Bear Token Balance: ${currencyBalance} BEAR`)}
               </TYPE.body>
             )}
           </AutoRow>

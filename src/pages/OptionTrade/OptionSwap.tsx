@@ -9,8 +9,9 @@ import { Axios } from 'utils/option/axios'
 import { useActiveWeb3React } from 'hooks'
 import { DexTradeData } from 'utils/option/httpRequests'
 import { useNetwork } from 'hooks/useNetwork'
-import { ButtonOutlinedPrimary } from 'components/Button'
+// import { ButtonOutlinedPrimary } from 'components/Button'
 import { formatDexTradeData } from 'utils/option/utils'
+import { TYPE } from 'theme'
 
 const Wrapper = styled.div`
   display: flex;
@@ -54,7 +55,7 @@ const Chart = styled.div`
 const ButtonGroup = styled.div`
   width: 100%;
   display: flex;
-  margin: 36px 0;
+  margin: 24px 0 36px;
   button:first-child {
     margin-right: 10px;
   }
@@ -64,26 +65,26 @@ const ButtonGroup = styled.div`
   }
   `}
 `
-const Button = styled(ButtonOutlinedPrimary)<{ isActive: boolean }>`
-  flex-grow: 0;
-  padding: 6px 14px;
-  width: auto !important;
-  :focus {
-    border-color: ${({ theme }) => theme.primary1};
-    color: ${({ theme }) => theme.primary1};
-  }
-  ${({ isActive, theme }) => (!isActive ? `border-color:${theme.text3}; color:${theme.text3};` : '')}
-`
+// const Button = styled(ButtonOutlinedPrimary)<{ isActive: boolean }>`
+//   flex-grow: 0;
+//   padding: 6px 14px;
+//   width: auto !important;
+//   :focus {
+//     border-color: ${({ theme }) => theme.primary1};
+//     color: ${({ theme }) => theme.primary1};
+//   }
+//   ${({ isActive, theme }) => (!isActive ? `border-color:${theme.text3}; color:${theme.text3};` : '')}
+// `
 
 const CurrentPrice = styled.div`
   position: absolute;
   right: 0;
-  top: 7;
+  top: 14px;
   white-space: nowrap;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 400;
   font-family: Futura PT;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.text3};
   ${({ theme }) => theme.mediaWidth.upToSmall`
     white-space: pre-wrap;
     text-align: right;
@@ -96,26 +97,24 @@ const CurrentPrice = styled.div`
 `
 
 const Tabs = {
-  CALL: 'Call Token',
-  PUT: 'Put Token'
+  CALL: 'Bull Token',
+  PUT: 'Bear Token'
 }
 
 export default function OptionSwap({
   option,
-  optionType,
-  handleOptionType,
+  // handleOptionType,
   optionPrice
 }: {
   option?: Option
-  optionType: string
-  handleOptionType: (option: string) => void
+  // handleOptionType: (option: string) => void
   optionPrice: OptionPrice | undefined
 }) {
   const transactions = useSelector((store: any) => store.transactions)
   const { chainId } = useActiveWeb3React()
   const [currentTab, setCurrentTab] = useState<keyof typeof Tabs>('CALL')
   const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
-  const [isMarketPriceChart, setIsMarketPriceChart] = useState(true)
+  // const [isMarketPriceChart, setIsMarketPriceChart] = useState(true)
   const [chart, setChart] = useState<IChartApi | undefined>(undefined)
   const [callChartData, setCallChartData] = useState<DexTradeData[] | undefined>(undefined)
   const [putChartData, setPutChartData] = useState<DexTradeData[] | undefined>(undefined)
@@ -274,7 +273,7 @@ export default function OptionSwap({
     }
   }, [candlestickSeries, chart, currentTab, putChartData, callChartData])
 
-  const handleMarketPriceChart = useCallback(() => setIsMarketPriceChart(true), [])
+  // const handleMarketPriceChart = useCallback(() => setIsMarketPriceChart(true), [])
   // const handleModalChart = useCallback(() => setIsMarketPriceChart(false), [])
 
   const handleTabClick = useCallback(
@@ -290,7 +289,7 @@ export default function OptionSwap({
       <Wrapper>
         <Swap
           optionPrice={optionPrice}
-          handleOptionType={handleOptionType}
+          // handleOptionType={handleOptionType}
           option={option}
           setParentTXHash={handleHash}
         />
@@ -306,12 +305,18 @@ export default function OptionSwap({
               ? pricePut.toSignificant(6)
               : '-'}
           </CurrentPrice>
-          <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} tabs={Tabs} />
+          <SwitchTab
+            onTabClick={handleTabClick}
+            currentTab={currentTab}
+            tabs={Tabs}
+            tabStyle={{ fontFamily: 'Futura PT', fontSize: 20, fontWeight: 500 }}
+          />
 
           <ButtonGroup>
-            <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart}>
-              MarketPrice
-            </Button>
+            {/* <Button isActive={isMarketPriceChart} onClick={handleMarketPriceChart} style={{ display: 'none' }}></Button> */}
+            <TYPE.body fontWeight="500" fontSize={18}>
+              Market Price
+            </TYPE.body>
             {/* <Button isActive={!isMarketPriceChart} onClick={handleModalChart}>
               Price Modeling Prediction
             </Button> */}

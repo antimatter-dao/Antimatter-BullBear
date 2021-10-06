@@ -75,7 +75,7 @@ export default function SwapModalHeader({
           <TokenPanel>
             {optionCurrencyAmount && <CurrencyLogo currency={optionCurrencyAmount.currency} size={'20px'} />}
             <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'} flex={1}>
-              {currencyNameHelper(optionCurrencyAmount?.currency, 'Call Token')}
+              {currencyNameHelper(optionCurrencyAmount?.currency, 'Bull Token')}
             </TYPE.black>
             <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
               {optionCurrencyAmount && optionCurrencyAmount.toExact().toString()}
@@ -93,7 +93,7 @@ export default function SwapModalHeader({
           <TokenPanel>
             {payCurrencyAmount && <CurrencyLogo currency={payCurrencyAmount?.currency} size={'20px'} />}
             <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'} flex={1}>
-              {currencyNameHelper(payCurrencyAmount?.currency, 'Call Token')}
+              {currencyNameHelper(payCurrencyAmount?.currency, 'Bull Token')}
             </TYPE.black>
             <TYPE.black fontWeight={500} fontSize={14} marginLeft={'8px'}>
               {payCurrencyAmount && payCurrencyAmount.toExact().toString()}

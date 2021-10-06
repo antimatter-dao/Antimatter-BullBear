@@ -10,9 +10,9 @@ import { Wrapper } from '../../components/swap/styleds'
 const optionTypes = [
   {
     id: 'callOption',
-    option: 'Call OptionCard'
+    option: 'Bull OptionCard'
   },
-  { id: 'putOption', option: 'Put OptionCard' }
+  { id: 'putOption', option: 'Bear OptionCard' }
 ]
 
 export default function Exercise({ history }: RouteComponentProps) {
@@ -38,7 +38,7 @@ export default function Exercise({ history }: RouteComponentProps) {
           />
 
           <NumberInputPanel
-            label={'CALL Tokens Amount to Exercise'}
+            label={'BULL Tokens Amount to Exercise'}
             value={''}
             showMaxButton={true}
             onUserInput={() => {}}

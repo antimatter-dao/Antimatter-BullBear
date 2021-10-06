@@ -14,6 +14,7 @@ import { ButtonOutlined } from 'components/Button'
 import { TokenAmount } from '@uniswap/sdk'
 import { useHistory } from 'react-router'
 import { parseBalance } from 'utils/marketStrategyUtils'
+
 const TableButtonOutlined = styled(ButtonOutlined)`
   height: 40px;
   width: 100px;

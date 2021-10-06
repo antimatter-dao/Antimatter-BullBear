@@ -30,18 +30,20 @@ export const Tab = styled.button<{ selected: boolean }>`
 export default function SwitchTab({
   currentTab,
   onTabClick,
-  tabs
+  tabs,
+  tabStyle
 }: {
   currentTab: string
   onTabClick: (tab: string) => () => void
   tabs: { [key: string]: string }
+  tabStyle?: object
 }) {
   return (
     <SwitchTabWrapper>
       {Object.keys(tabs).map(tab => {
         const tabName = tabs[tab as keyof typeof tabs]
         return (
-          <Tab key={tab} onClick={onTabClick(tab)} selected={currentTab === tab}>
+          <Tab key={tab} onClick={onTabClick(tab)} selected={currentTab === tab} style={tabStyle}>
             {tabName}
           </Tab>
         )

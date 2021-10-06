@@ -28,8 +28,8 @@ export function useMyCreation() {
 }
 
 export enum MyPositionType {
-  Call = 'Call',
-  Put = 'Put'
+  Call = 'Bull',
+  Put = 'Bear'
 }
 export interface MyPositionProp {
   id: string
