@@ -51,8 +51,6 @@ export default function CurrencyLogo({
     return []
   }, [currency, uriLocations])
 
-  console.log(currency, currency?.symbol)
-
   if (currency === ETHER || currency?.symbol === 'WETH') {
     return <StyledEthereumLogo src={CircleEth} size={size} style={style} />
   }

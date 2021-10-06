@@ -1,18 +1,18 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
-import { ETHER, TokenAmount } from '@uniswap/sdk'
+import { TokenAmount } from '@uniswap/sdk'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
-import { ButtonError, ButtonPrimary, ButtonOutlined } from '../../components/Button'
+import { ButtonError, ButtonOutlined, ButtonPrimary } from '../../components/Button'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CallOrPutInputPanel from '../../components/CallOrPutInputPanel'
 import { MarketStrategyTabs } from '../../components/NavigationTabs'
 import { RowBetween } from '../../components/Row'
 import { useDerivedStrategyInfo, useOption } from '../../state/market/hooks'
-import { ANTIMATTER_ADDRESS } from '../../constants'
+import { ANTIMATTER_ADDRESS, Symbol } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import { useWalletModalToggle } from '../../state/application/hooks'
@@ -29,7 +29,8 @@ import { tryParseAmount } from '../../state/swap/hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useAntimatterContract } from '../../hooks/useContract'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
-import { parseBalance } from '../../utils/marketStrategyUtils'
+import { isNegative, parseBalance } from '../../utils/marketStrategyUtils'
+import { OptionField } from '../Swap'
 
 export default function Generate({
   match: {
@@ -59,19 +60,18 @@ export default function Generate({
   // const deadline = useTransactionDeadline() // custom from users settings
   const [txHash, setTxHash] = useState<string>('')
 
+  const parsedAmounts = {
+    [OptionField.CALL]: tryParseAmount(callTyped, option?.call?.token),
+    [OptionField.PUT]: tryParseAmount(putTyped, option?.put?.token)
+  }
+
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(
-    tryParseAmount(
-      delta?.totalUnd.toString(),
-      option?.underlying?.symbol === 'WETH' ? ETHER : option?.underlying ?? undefined
-    ),
+    tryParseAmount(delta?.totalUnd.toString(), option?.underlying ?? undefined),
     chainId ? ANTIMATTER_ADDRESS : undefined
   )
   const [approvalB, approveBCallback] = useApproveCallback(
-    tryParseAmount(
-      delta?.totalCur.toString(),
-      option?.currency?.symbol === 'WETH' ? ETHER : option?.currency ?? undefined
-    ),
+    tryParseAmount(delta?.totalCur.toString(), option?.currency ?? undefined),
     chainId ? ANTIMATTER_ADDRESS : undefined
   )
 
@@ -83,18 +83,29 @@ export default function Generate({
       return
     }
 
-    const estimate = antimatterContract?.estimateGas.mint
-    const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.mint
-    const value: string | undefined | null = null
-    const args = [delta.dUnd.toString(), delta.dCur.toString()]
+    const estimate = antimatterContract?.estimateGas.swap
+    const method: (...args: any) => Promise<TransactionResponse> = antimatterContract?.swap
+    let value: string | undefined | null = null
 
-    // if (selectedOptionType?.underlyingSymbol === 'ETH') {
-    //   value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
-    // }
-    //
-    // if (selectedOptionType?.currencySymbol === 'ETH') {
-    //   value = isNegative(delta.dCur) ? '0' : delta.dCur.toString()
-    // }
+    const args = [
+      option?.underlying?.address,
+      option?.currency?.address,
+      option?.priceFloor,
+      option?.priceCap,
+      parsedAmounts[OptionField.CALL]?.raw.toString(),
+      parsedAmounts[OptionField.PUT]?.raw.toString(),
+      delta.dUnd.toString(),
+      delta.dCur.toString(),
+      '0x'
+    ]
+    console.log('args--->', ...args)
+    if (option?.underlying?.symbol?.toUpperCase() === Symbol[chainId ?? 1]) {
+      value = isNegative(delta.dUnd) ? '0' : delta.dUnd.toString()
+    }
+
+    if (option?.currency?.symbol?.toUpperCase() === Symbol[chainId ?? 1]) {
+      value = isNegative(delta.dCur) ? '0' : delta.dCur.toString()
+    }
 
     setAttemptingTxn(true)
     if (estimate) {
