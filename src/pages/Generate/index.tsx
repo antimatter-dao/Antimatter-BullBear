@@ -95,6 +95,7 @@ export default function Generate({
       }
     }
     return null
+    /* eslint-disable react-hooks/exhaustive-deps*/
   }, [
     balanceA,
     balanceB,
@@ -104,6 +105,7 @@ export default function Generate({
     option?.putToken,
     option?.underlying?.symbol
   ])
+  /* eslint-disable react-hooks/exhaustive-deps*/
 
   const addTransaction = useTransactionAdder()
 
