@@ -37,7 +37,7 @@ import WelcomeSlider from 'components/WelcomeSlider'
 import FAQ from './FAQ'
 import OptionTrade from './OptionTrade'
 import OptionCreation from './OptionCreation'
-import OptionExercise from './OptionExercise'
+// import OptionExercise from './OptionExercise'
 import Stats from './Stats'
 import ComingSoon from './ComingSoon'
 import User from './User'
@@ -161,7 +161,7 @@ export default function App() {
                 <Route exact strict path="/option_trading" component={OptionTrade} />
                 <Route exact strict path="/calculator" component={Calculator} />
                 <Route exact strict path="/option_trading/:optionId" component={OptionTrade} />
-                <Route exact strict path="/option_exercise" component={OptionExercise} />
+                {/* <Route exact strict path="/option_exercise" component={OptionExercise} /> */}
                 <Route exact strict path="/generate/:optionTypeIndex" component={Generate} />
                 {/* <Route exact strict path="/redeem" component={Redeem} /> */}
                 {/*<Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />*/}

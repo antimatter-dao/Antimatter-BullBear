@@ -112,7 +112,7 @@ export function MarketStrategyTabs({ generation }: { generation: boolean }) {
     <Tabs>
       <RowBetween style={{ padding: '0rem 1rem 0 1rem' }}>
         <HistoryLink
-          to="/option_exercise"
+          to="/option_creation"
           onClick={() => {
             //adding && dispatch(resetMintState())
           }}
