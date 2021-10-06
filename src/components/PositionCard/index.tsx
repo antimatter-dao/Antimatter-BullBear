@@ -257,7 +257,7 @@ export default function FullPositionCard({ index }: { index: string }) {
             <RowBetween marginTop="10px">
               <ButtonOutlined
                 as={Link}
-                to={`/generate/${index}`}
+                to={`/liquidity/add/${index}`}
                 padding="4px"
                 width="48%"
                 style={{ color: theme.primary1, borderColor: theme.primary1 }}
@@ -266,7 +266,7 @@ export default function FullPositionCard({ index }: { index: string }) {
               </ButtonOutlined>
               <ButtonOutlined
                 as={Link}
-                to={`/generate/${index}`}
+                to={`/liquidity/remove/${index}`}
                 style={{ color: theme.primary1, borderColor: theme.primary1 }}
                 padding="4px"
                 width="48%"

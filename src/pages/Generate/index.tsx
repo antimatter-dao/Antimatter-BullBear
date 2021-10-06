@@ -95,15 +95,7 @@ export default function Generate({
       }
     }
     return null
-  }, [
-    balanceA,
-    balanceB,
-    delta,
-    option?.callToken,
-    option?.currency?.symbol,
-    option?.putToken,
-    option?.underlying?.symbol
-  ])
+  }, [balanceA, balanceB, delta, option])
 
   const addTransaction = useTransactionAdder()
 

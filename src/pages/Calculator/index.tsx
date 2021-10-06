@@ -95,7 +95,7 @@ export default function Calculator() {
         <AutoColumn gap="14px">
           <TYPE.smallHeader>Input</TYPE.smallHeader>
           <NumberInputPanel
-            label="Underlying Currency Price"
+            label="Underlying Target Currency Market Price"
             onUserInput={price => setPrice(limitDigits(price))}
             value={price}
             showMaxButton={false}

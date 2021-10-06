@@ -8,7 +8,6 @@ import { parseBalance } from '../../utils/marketStrategyUtils'
 import { ZERO_ADDRESS } from '../../constants'
 
 export function ConfirmRedeemModalBottom({
-  tokenType = '',
   delta,
   callTyped,
   putTyped,
@@ -16,7 +15,6 @@ export function ConfirmRedeemModalBottom({
   currencyB,
   onRedeem
 }: {
-  tokenType?: string
   delta?: DeltaData | undefined
   callTyped?: string
   putTyped?: string
@@ -35,7 +33,6 @@ export function ConfirmRedeemModalBottom({
         currency1={currencyB ?? undefined}
       />
       <GenerateBar
-        tokenType={tokenType}
         cardTitle={``}
         subTitle="Input Token"
         callTitle={'You will pay'}
