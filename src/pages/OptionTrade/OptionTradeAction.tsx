@@ -403,7 +403,7 @@ export function Info({
           </AutoColumn>
           <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
             <RowBetween>
-              <TYPE.darkGray>{'Bull Token Contact Address:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bull Token Contract Address:'}</TYPE.darkGray>
               <ExternalLink
                 href={option?.call && chainId ? getEtherscanLink(chainId, option?.call?.token.address, 'token') : ''}
               >
@@ -423,7 +423,7 @@ export function Info({
           </AutoColumn>
           <AutoColumn style={{ width: '100%' }} justify="center" gap="md">
             <RowBetween>
-              <TYPE.darkGray>{'Bear Token Contact Address:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Bear Token Contract Address:'}</TYPE.darkGray>
               <ExternalLink
                 href={option?.put && chainId ? getEtherscanLink(chainId, option?.put?.token.address, 'token') : ''}
               >

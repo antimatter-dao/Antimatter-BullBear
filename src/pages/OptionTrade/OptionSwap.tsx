@@ -222,7 +222,7 @@ export default function OptionSwap({
         tickMarkFormatter: (time: any) => {
           const date = new Date(time)
           const year = date.getUTCFullYear()
-          const month = date.getUTCMonth()
+          const month = date.getUTCMonth() + 1
           const day = date.getUTCDate()
           return year + '/' + month + '/' + day
         }
