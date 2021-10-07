@@ -39,7 +39,28 @@ export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C
 
 export const WUSDT = {
   [ChainId.MAINNET]: USDT,
-  [ChainId.ROPSTEN]: new Token(ChainId.MAINNET, '0x6ee856ae55b6e1a249f04cd3b947141bc146273c', 6, 'USDT', 'Tether USD')
+  [ChainId.ROPSTEN]: new Token(ChainId.MAINNET, '0x6ee856ae55b6e1a249f04cd3b947141bc146273c', 6, 'USDT', 'Tether USD'),
+  [ChainId.BSC]: new Token(
+    ChainId.BSC,
+    '0x55d398326f99059ff775485246999027b3197955',
+    18,
+    'BUSDT',
+    'Binance-Peg BSC-USD'
+  ),
+  [ChainId.Arbitrum]: new Token(
+    ChainId.Arbitrum,
+    '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    6,
+    'USDT',
+    'Tether USD'
+  ),
+  [ChainId.Avalanche]: new Token(
+    ChainId.Avalanche,
+    '0xc7198437980c041c805A1EDcbA50c1Ce5db95118',
+    6,
+    'USDT.e',
+    'Tether USD'
+  )
 }
 
 export const WDAI = {

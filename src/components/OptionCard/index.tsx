@@ -53,7 +53,7 @@ export function OptionCard({ optionType }: OptionCardProps) {
               as={Link}
               to={`/swap?inputCurrency=${optionType.callAddress}`}
             >
-              Trade
+              Trade/More Info
             </ButtonSecondary>
           </RowFixed>
         </RowBetween>
@@ -83,7 +83,7 @@ export function OptionCard({ optionType }: OptionCardProps) {
               as={Link}
               to={`/swap?inputCurrency=${optionType.putAddress}`}
             >
-              Trade
+              Trade/More Info
             </ButtonSecondary>
           </RowFixed>
         </RowBetween>

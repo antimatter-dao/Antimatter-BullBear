@@ -195,7 +195,9 @@ export default function OptionTrade({
                     optionId={optionId}
                     key={optionId}
                     buttons={
-                      <ButtonPrimary onClick={() => history.push(`/option_trading/${optionId}`)}>Trade</ButtonPrimary>
+                      <ButtonPrimary onClick={() => history.push(`/option_trading/${optionId}`)}>
+                        Trade/More Info
+                      </ButtonPrimary>
                     }
                   />
                 ) : (

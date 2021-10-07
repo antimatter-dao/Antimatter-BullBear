@@ -1,4 +1,4 @@
-import { ChainId, TokenAmount } from '@uniswap/sdk'
+import { ChainId } from '@uniswap/sdk'
 import React, { useCallback } from 'react'
 import { Check, ChevronDown } from 'react-feather'
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom'
@@ -6,7 +6,7 @@ import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
 import { useActiveWeb3React } from '../../hooks'
-import { useAggregateUniBalance } from '../../state/wallet/hooks'
+import { useETHBalances } from '../../state/wallet/hooks'
 import { ButtonText, ExternalHeaderLink, ExternalLink, HideMedium, StyledLink, TYPE } from '../../theme'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import Web3Status from '../Web3Status'
@@ -28,6 +28,7 @@ import { UserInfoTabRoute, UserInfoTabs } from 'pages/User'
 import { useWalletModalToggle } from 'state/application/hooks'
 import usePrevious from '../../hooks/usePrevious'
 import { CountUp } from 'use-count-up/lib'
+import { Symbol } from '../../constants'
 
 interface TabContent {
   title: string
@@ -621,9 +622,9 @@ const MobileHeader = styled.header`
 export default function Header() {
   const { account, chainId, library } = useActiveWeb3React()
 
-  const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
+  const aggregateBalance = useETHBalances([account ?? undefined])[account ?? '']
 
-  const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
+  const countUpValue = aggregateBalance?.toFixed(2) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   const history = useHistory()
@@ -781,7 +782,7 @@ export default function Header() {
                       />
                     </TYPE.gray>
                   )}
-                  MATTER
+                  {Symbol[chainId ?? 1]}
                 </UNIAmount>
               </UNIWrapper>
             )}

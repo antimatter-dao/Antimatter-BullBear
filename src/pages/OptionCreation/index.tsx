@@ -3,9 +3,8 @@ import styled from 'styled-components'
 import { ButtonOutlinedPrimary } from '../../components/Button'
 import { AutoColumn } from '../../components/Column'
 import { RowBetween } from '../../components/Row'
-//import Creation from './Creation'
+import Creation from './Creation'
 import Pool from '../Pool'
-import ComingSoon from '../ComingSoon'
 
 enum TAB {
   CREATION = 'Option Creation',
@@ -43,7 +42,7 @@ export default function OptionCreation() {
         </TabButton>
       </RowBetween>
 
-      {curTab === TAB.CREATION && <ComingSoon />}
+      {curTab === TAB.CREATION && <Creation />}
       {curTab === TAB.LIQUIDITY && <Pool />}
     </AutoColumn>
   )

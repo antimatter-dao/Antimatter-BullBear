@@ -396,8 +396,8 @@ export function Info({
             <RowBetween>
               <TYPE.darkGray>{'Underlying Asset Ratio:'}</TYPE.darkGray>
               <TYPE.main>
-                {undTotal ? undTotal.toSignificant(2).toString() + option?.underlying?.symbol : '-'} :{' '}
-                {curTotal ? curTotal.toSignificant(2).toString() + option?.currency?.symbol : '-'}
+                {undTotal ? undTotal.toFixed(2).toString() + option?.underlying?.symbol : '-'} :{' '}
+                {curTotal ? curTotal.toFixed(2).toString() + option?.currency?.symbol : '-'}
               </TYPE.main>
             </RowBetween>
           </AutoColumn>

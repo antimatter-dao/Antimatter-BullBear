@@ -14,7 +14,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { currencyNameHelper } from 'utils/marketStrategyUtils'
 import NumberInputPanel from 'components/NumberInputPanel'
 import { ButtonPrimary } from 'components/Button'
-import { WUSDT, WDAI, WUSDC } from '../../constants'
+import { WUSDT } from '../../constants'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
   TransactionErrorContent
@@ -30,7 +30,7 @@ const InputWrapper = styled(RowBetween)`
     width: 46%;
   }
 `
-const underlyingAssetList = [WUSDT, WDAI, WUSDC]
+const underlyingAssetList = [WUSDT]
 
 enum ERROR {
   CAP_TOO_LARGE = 'Price cap should not be larger than four times price floor',
@@ -329,7 +329,7 @@ export default function Creation() {
           <TYPE.body color={theme.primary1} fontSize={14} height={16}>
             {error}{' '}
           </TYPE.body>
-          <ButtonPrimary onClick={handleNext}>Create</ButtonPrimary>
+          <ButtonPrimary disabled onClick={handleNext}>Coming Soon</ButtonPrimary>
         </AutoColumn>
       </AppBody>
     </>
