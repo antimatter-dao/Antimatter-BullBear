@@ -371,7 +371,7 @@ export default function Swap({
     if (routerDelta?.isLoading) {
       return { ...defaultContent, disabled: true, text: 'Loading' }
     }
-    if (!payCurrency || !payFormattedAmount || !payBalance) {
+    if (!payFormattedAmount || !payBalance) {
       return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
     }
     if (payFormattedAmount[0] !== '-' && payCurrencyAmount?.greaterThan(payBalance)) {

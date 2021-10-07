@@ -74,11 +74,11 @@ export const tabs: Tab[] = [
 const NetworkInfo: {
   [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; selectedIcon?: JSX.Element }
 } = {
-  // [ChainId.MAINNET]: {
-  //   color: '#FFFFFF',
-  //   icon: <ETH />,
-  //   title: 'ETH'
-  // },
+  [ChainId.MAINNET]: {
+    color: '#FFFFFF',
+    icon: <ETH />,
+    title: 'ETH'
+  },
   [ChainId.ROPSTEN]: {
     color: '#FFFFFF',
     icon: <ETH />,
