@@ -4,11 +4,12 @@ import { Currency } from '@uniswap/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import CallPutToken from '../CurrencyLogo/CallPutToken'
-import { AutoRow } from '../Row'
+import { AutoRow, RowFixed } from '../Row'
 import { TYPE } from '../../theme'
 import { Input as NumericalInput } from '../NumericalInput'
 import { useActiveWeb3React } from '../../hooks'
 import useTheme from '../../hooks/useTheme'
+import { LabeledCard } from 'components/Card'
 
 const InputRow = styled.div<{ inputOnly: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -20,22 +21,22 @@ const InputRow = styled.div<{ inputOnly: boolean }>`
   height: 3rem;
 `
 
-const CurrencySelect = styled.div<{ selected: boolean }>`
-  align-items: center;
-  width: 48%;
-  height: 3rem;
-  line-height: 48px;
-  font-weight: 500;
-  background-color: transparent;
-  color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
-  border-radius: 14px;
-  box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
-  outline: none;
-  user-select: none;
-  border: none;
-  padding: 0 10px;
-  border: 1px solid transparent;
-`
+// const CurrencySelect = styled.div<{ selected: boolean }>`
+//   align-items: center;
+//   width: 48%;
+//   height: 3rem;
+//   line-height: 48px;
+//   font-weight: 500;
+//   background-color: transparent;
+//   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
+//   border-radius: 14px;
+//   box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
+//   outline: none;
+//   user-select: none;
+//   border: none;
+//   padding: 0 10px;
+//   border: 1px solid transparent;
+// `
 
 const CustomNumericalInput = styled(NumericalInput)`
   background: transparent;
@@ -153,17 +154,29 @@ export default function RedeemTokenPanel({
 
         <Aligner>
           {!inputOnly && (
-            <CurrencySelect selected={!!currency} className="open-currency-select-button">
-              <Aligner>
-                <Aligner>
+            <LabeledCard
+              style={{ width: '50%', marginRight: 15 }}
+              content={
+                <RowFixed>
                   {currency ? <CallPutToken currency={currency} isCall={isCall} /> : null}
                   <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
                     {/* {(currency && currency.symbol && label) || t('selectToken')} */}
                     {(currency && currency.symbol && label) || ''}
                   </StyledTokenName>
-                </Aligner>
-              </Aligner>
-            </CurrencySelect>
+                </RowFixed>
+              }
+            />
+            // <CurrencySelect selected={!!currency} className="open-currency-select-button">
+            //   <Aligner>
+            //     <Aligner>
+            //       {currency ? <CallPutToken currency={currency} isCall={isCall} /> : null}
+            //       <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
+            //         {/* {(currency && currency.symbol && label) || t('selectToken')} */}
+            //         {(currency && currency.symbol && label) || ''}
+            //       </StyledTokenName>
+            //     </Aligner>
+            //   </Aligner>
+            // </CurrencySelect>
           )}
           <InputRow inputOnly={!!inputOnly}>
             <CustomNumericalInput

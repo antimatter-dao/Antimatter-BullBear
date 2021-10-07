@@ -5,7 +5,7 @@ import { TokenAmount } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
-import { ButtonError, ButtonOutlined, ButtonPrimary } from '../../components/Button'
+import { ButtonError, /* ButtonOutlined,*/ ButtonPrimary } from '../../components/Button'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import RedeemTokenPanel from '../../components/MarketStrategy/RedeemTokenPanel'
@@ -42,7 +42,7 @@ export default function Redeem({
   const option = useOption(optionTypeIndex)
 
   const [callTypedAmount, setCallTypedAmount] = useState<string>('')
-  const [putTypedAmount, setPutTypedAmount] = useState<string>('')
+  // const [putTypedAmount, setPutTypedAmount] = useState<string>('')
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
@@ -63,18 +63,17 @@ export default function Redeem({
   const { delta } = useDerivedStrategyInfo(
     option,
     '-' + callTypedAmount ?? undefined,
-    '-' + putTypedAmount ?? undefined
+    '-' + callTypedAmount ?? undefined
   )
   const redeemError = useMemo(() => {
     if (
       userCallBalance &&
       userPutBalance &&
       (parsedGreaterThan(callTypedAmount, userCallBalance.raw.toString()) ||
-        parsedGreaterThan(putTypedAmount, userPutBalance.raw.toString()))
+        parsedGreaterThan(callTypedAmount, userPutBalance.raw.toString()))
     ) {
       return 'Insufficient Balance'
     }
-    console.log('amount', delta?.dUnd.toString(), delta?.dCur.toString())
 
     if (delta?.dUnd && !isNegative(delta.dUnd.toString()) && option?.underlying) {
       const undAmount = new TokenAmount(option.underlying, absolute(delta.dUnd.toString()))
@@ -85,7 +84,7 @@ export default function Redeem({
       if (userCurBalance?.lessThan(curAmount)) return 'Insufficient ' + option.currency?.symbol + ' balance'
     }
     return ''
-  }, [callTypedAmount, delta, option, putTypedAmount, userCallBalance, userCurBalance, userPutBalance, userUndBalance])
+  }, [callTypedAmount, delta, option, userCallBalance, userCurBalance, userPutBalance, userUndBalance])
 
   // txn values
   // const deadline = useTransactionDeadline() // custom from users settings
@@ -104,7 +103,7 @@ export default function Redeem({
 
   const parsedAmounts = {
     [OptionField.CALL]: tryParseAmount(callTypedAmount, option?.call?.token),
-    [OptionField.PUT]: tryParseAmount(putTypedAmount, option?.put?.token)
+    [OptionField.PUT]: tryParseAmount(callTypedAmount, option?.put?.token)
   }
 
   const optionName = useMemo(() => {
@@ -116,7 +115,7 @@ export default function Redeem({
   }, [option])
 
   async function onRedeem() {
-    if (!chainId || !library || !account || !callTypedAmount || !putTypedAmount || !delta) return
+    if (!chainId || !library || !account || !callTypedAmount || !delta) return
 
     const estimate = antimatterContract?.estimateGas.swap
 
@@ -152,7 +151,7 @@ export default function Redeem({
 
             setTxHash(response.hash)
             setCallTypedAmount('')
-            setPutTypedAmount('')
+            // setPutTypedAmount('')
           })
         )
         .catch(error => {
@@ -186,7 +185,7 @@ export default function Redeem({
           <ConfirmRedeemModalBottom
             delta={delta}
             callTyped={callTypedAmount}
-            putTyped={putTypedAmount}
+            putTyped={callTypedAmount}
             currencyA={option?.underlying}
             currencyB={option?.currency}
             onRedeem={onRedeem}
@@ -253,8 +252,8 @@ export default function Redeem({
             <Plus size="28" color={theme.text2} />
           </ColumnCenter>
           <RedeemTokenPanel
-            value={putTypedAmount ?? ''}
-            onUserInput={setPutTypedAmount}
+            value={callTypedAmount ?? ''}
+            onUserInput={setCallTypedAmount}
             label={'Bull token'}
             currency={option?.put?.token}
             negativeMarginTop="-25px"
@@ -309,26 +308,27 @@ export default function Redeem({
                   )}
                 </RowBetween>
               )}
-              {redeemError && <ButtonOutlined style={{ opacity: '0.5' }}>{redeemError}</ButtonOutlined>}
-              {!redeemError && (
-                <ButtonError
-                  onClick={() => {
-                    expertMode ? onRedeem() : setShowConfirm(true)
-                  }}
-                  disabled={
-                    !callTypedAmount ||
-                    !putTypedAmount ||
-                    !delta ||
-                    !!redeemError ||
-                    approval1 !== ApprovalState.APPROVED ||
-                    approval2 !== ApprovalState.APPROVED
-                  }
-                >
-                  <Text fontSize={16} fontWeight={500}>
-                    {'Redeem'}
-                  </Text>
-                </ButtonError>
-              )}
+              {/* {redeemError && <ButtonOutlined style={{ opacity: '0.5' }}>{redeemError}</ButtonOutlined>} */}
+              {/* {!redeemError && ( */}
+              <ButtonError
+                onClick={() => {
+                  expertMode ? onRedeem() : setShowConfirm(true)
+                }}
+                disabled={
+                  !callTypedAmount ||
+                  // !putTypedAmount ||
+                  !delta ||
+                  !!redeemError ||
+                  approval1 !== ApprovalState.APPROVED ||
+                  approval2 !== ApprovalState.APPROVED
+                }
+                error={!!redeemError}
+              >
+                <Text fontSize={16} fontWeight={500}>
+                  {redeemError ? redeemError : 'Redeem'}
+                </Text>
+              </ButtonError>
+              {/* )} */}
             </AutoColumn>
           )}
         </AutoColumn>

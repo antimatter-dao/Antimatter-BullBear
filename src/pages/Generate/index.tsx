@@ -299,7 +299,7 @@ export default function Generate({
                 currency1={option?.currency ?? undefined}
               />
             )}
-            <TYPE.body color={theme.red1}>{error}</TYPE.body>
+            {/* <TYPE.body color={theme.red1}>{error}</TYPE.body> */}
             {!option || !delta ? (
               <ButtonOutlined style={{ opacity: '0.5' }} disabled={true}>
                 <TYPE.main>Enter Amount</TYPE.main>
@@ -349,10 +349,10 @@ export default function Generate({
                     expertMode ? onGenerate() : setShowConfirm(true)
                   }}
                   disabled={approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED || !!error}
-                  error={!callTyped /*&& !putTyped*/}
+                  error={!callTyped || !!error /*&& !putTyped*/}
                 >
                   <Text fontSize={16} fontWeight={500}>
-                    {'Generate'}
+                    {error ? error : 'Generate'}
                   </Text>
                 </ButtonError>
               </AutoColumn>
