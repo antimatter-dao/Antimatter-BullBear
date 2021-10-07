@@ -85,7 +85,7 @@ export default function CurrencyLogo({
     return []
   }, [chainId, currency, uriLocations])
 
-  if (currency?.symbol === Symbol[chainId ?? 1]) {
+  if (currency?.symbol === Symbol[chainId ?? 1] || currency?.symbol === 'W' + Symbol[chainId ?? 1]) {
     return <StyledEthereumLogo src={LOGO[chainId ?? 1]} size={size} style={style} />
   }
 

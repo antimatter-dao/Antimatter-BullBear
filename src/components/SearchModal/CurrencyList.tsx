@@ -21,7 +21,7 @@ import { LightGreyCard } from 'components/Card'
 import TokenListLogo from '../../assets/svg/tokenlist.svg'
 import QuestionHelper from 'components/QuestionHelper'
 import useTheme from 'hooks/useTheme'
-import { Name, Symbol, ZERO_ADDRESS } from 'constants/index'
+import { MAIN_CURRENCY, Name, Symbol, ZERO_ADDRESS } from 'constants/index'
 
 function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
@@ -179,20 +179,20 @@ export default function CurrencyList({
   setImportToken: (token: Token) => void
   breakIndex: number | undefined
 }) {
+  const { chainId } = useActiveWeb3React()
+  const theme = useTheme()
+  const inactiveTokens: {
+    [address: string]: Token
+  } = useAllInactiveTokens()
+
   const itemData: (Currency | undefined)[] = useMemo(() => {
-    let formatted: (Currency | undefined)[] = showETH ? [Currency.ETHER, ...currencies] : currencies
+    const main = MAIN_CURRENCY[chainId ?? 1]
+    let formatted: (Currency | undefined)[] = showETH ? [main, ...currencies] : currencies
     if (breakIndex !== undefined) {
       formatted = [...formatted.slice(0, breakIndex), undefined, ...formatted.slice(breakIndex, formatted.length)]
     }
     return formatted
-  }, [breakIndex, currencies, showETH])
-
-  const { chainId } = useActiveWeb3React()
-  const theme = useTheme()
-
-  const inactiveTokens: {
-    [address: string]: Token
-  } = useAllInactiveTokens()
+  }, [breakIndex, chainId, currencies, showETH])
 
   const Row = useCallback(
     ({ data, index, style }) => {

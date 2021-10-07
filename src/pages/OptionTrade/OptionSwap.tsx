@@ -15,7 +15,7 @@ import { TYPE } from 'theme'
 
 const Wrapper = styled.div`
   display: flex;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
   flex-direction: column;
   gap: 20px
   `}
@@ -30,7 +30,7 @@ const GraphWrapper = styled.div`
   /* ${({ theme }) => theme.mediaWidth.upToMedium`
   max-width: 50%;
   `} */
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
   width: auto;
   margin: 20px 24px 20px 14px;
   max-width: unset
@@ -59,7 +59,7 @@ const ButtonGroup = styled.div`
   button:first-child {
     margin-right: 10px;
   }
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
   button{
     font-size: 14px
   }
@@ -85,7 +85,7 @@ const CurrentPrice = styled.div`
   font-weight: 400;
   font-family: Futura PT;
   color: ${({ theme }) => theme.text3};
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     white-space: pre-wrap;
     text-align: right;
     font-size: 14px;
