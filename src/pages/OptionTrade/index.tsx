@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Token } from '@uniswap/sdk'
 import AppBody from 'pages/AppBody'
 import { ButtonPrimary } from 'components/Button'
-import { /*AnimatedImg, AnimatedWrapper,*/ ExternalLink, TYPE } from 'theme'
+import { AnimatedImg, AnimatedWrapper, ExternalLink, TYPE } from 'theme'
 import { RowBetween, RowFixed } from 'components/Row'
 //import { OptionIcon } from 'components/Icons'
 import { AutoColumn } from 'components/Column'
@@ -13,7 +13,7 @@ import { AutoColumn } from 'components/Column'
 import OptionTradeAction from './OptionTradeAction'
 //import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
-// import Loader from 'assets/svg/antimatter_background_logo.svg'
+import Loader from 'assets/svg/antimatter_background_logo.svg'
 //import { useUSDTPrice } from 'utils/useUSDCPrice'
 import { XCircle } from 'react-feather'
 import { useNetwork } from 'hooks/useNetwork'
@@ -133,7 +133,7 @@ export default function OptionTrade({
   const [filteredIndexes, setFilteredIndexes] = useState<string[] | undefined>(undefined)
   const history = useHistory()
   const [searchParams, setSearchParams] = useState<SearchQuery>({})
-  const { page, data: currentIds } = useOptionList(searchParams)
+  const { page, data: currentIds, firstLoading } = useOptionList(searchParams)
 
   useEffect(() => {
     setFilteredIndexes(currentIds)
@@ -214,7 +214,11 @@ export default function OptionTrade({
               onChange={setPage}
             />
           )}
-          <AlternativeDisplay optionIndexes={optionTypeIndexes} filteredIndexes={filteredIndexes} />
+          <AlternativeDisplay
+            loading={firstLoading}
+            optionIndexes={optionTypeIndexes}
+            filteredIndexes={filteredIndexes}
+          />
         </Wrapper>
       )}
     </>
@@ -317,27 +321,33 @@ function OptionCardSkeleton() {
 
 export function AlternativeDisplay({
   optionIndexes,
-  filteredIndexes
+  filteredIndexes,
+  loading
 }: {
   optionIndexes: string[] | undefined
   filteredIndexes: string[] | undefined
+  loading: boolean
 }) {
   return (
     <AutoColumn justify="center" style={{ marginTop: 100 }}>
-      {optionIndexes && optionIndexes.length > 0 && filteredIndexes && filteredIndexes.length === 0 && (
-        <AutoColumn justify="center" gap="20px">
-          <XCircle size={40} strokeWidth={1} />
-          <TYPE.body>No results found</TYPE.body>
-          <TYPE.body>Please change your search query and try again</TYPE.body>
-        </AutoColumn>
-      )}
-      {/* {filteredIndexes === undefined && (
+      {loading ? (
         <AnimatedWrapper>
           <AnimatedImg>
             <img src={Loader} alt="loading-icon" />
           </AnimatedImg>
         </AnimatedWrapper>
-      )} */}
+      ) : (
+        optionIndexes &&
+        optionIndexes.length > 0 &&
+        filteredIndexes &&
+        filteredIndexes.length === 0 && (
+          <AutoColumn justify="center" gap="20px">
+            <XCircle size={40} strokeWidth={1} />
+            <TYPE.body>No results found</TYPE.body>
+            <TYPE.body>Please change your search query and try again</TYPE.body>
+          </AutoColumn>
+        )
+      )}
     </AutoColumn>
   )
 }
