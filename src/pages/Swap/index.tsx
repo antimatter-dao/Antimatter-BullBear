@@ -141,10 +141,13 @@ export default function Swap({
   // get custom setting values for user
   const [allowedSlippage] = useUserSlippageTolerance()
 
-  const parsedAmounts = {
-    [Field.OPTION]: tryParseAmount(optionTyped, optionCurrency),
-    [Field.PAY]: tryParseAmount(payTyped, payCurrency)
-  }
+  const parsedAmounts = useMemo(
+    () => ({
+      [Field.OPTION]: tryParseAmount(optionTyped, optionCurrency),
+      [Field.PAY]: tryParseAmount(payTyped, payCurrency)
+    }),
+    [optionCurrency, optionTyped, payCurrency, payTyped]
+  )
 
   //const { onSwitchTokens } = useSwapActionHandlers()
 
