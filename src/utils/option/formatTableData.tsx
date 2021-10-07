@@ -4,6 +4,7 @@ import { shortenAddress } from 'utils'
 import { parsePrice } from './utils'
 import { ButtonOutlinedPrimary } from 'components/Button'
 import { RowFixed } from 'components/Row'
+import { MyPositionType } from 'hooks/useUserFetch'
 
 export const formatMyCreation = (
   data: any[] | undefined,
@@ -92,6 +93,34 @@ export const formatMyPositionRow = (
       key={id}
       onClick={() => {
         historyPush(`/option_trading/${id}`)
+      }}
+      padding="12px"
+    >
+      Trade
+    </ButtonOutlinedPrimary>
+  ]
+}
+
+export const formatMyTransactionRow = (
+  { type, tradesAmount, price, priceFloor, priceCap, optionIndex }: any,
+  currencyDecimal: any,
+  underlyingSymbol: any,
+  tokenDecimal: any,
+  historyPush: (param: string) => void
+) => {
+  return [
+    `${type === MyPositionType.Call ? '+' : '-'}${underlyingSymbol}(${parsePrice(
+      priceFloor,
+      currencyDecimal
+    )}~${parsePrice(priceCap, currencyDecimal)})`,
+    type,
+    parsePrice(tradesAmount, tokenDecimal),
+    parsePrice(price, currencyDecimal),
+    tradesAmount.toString()[0] === '-' ? 'Buy' : 'Sell',
+    <ButtonOutlinedPrimary
+      key={optionIndex}
+      onClick={() => {
+        historyPush(`/option_trading/${optionIndex}`)
       }}
       padding="12px"
     >

@@ -4,10 +4,11 @@ import { SwitchTabWrapper, Tab } from '../../components/SwitchTab'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { AnimatedImg, AnimatedWrapper, HideSmall, ShowSmall } from '../../theme'
 import Loader from '../../assets/svg/antimatter_background_logo.svg'
-import Table, { UserTransactionTable } from '../../components/Table'
+import Table from '../../components/Table'
 import { useMyTransaction, useMyCreation, useMyPosition } from '../../hooks/useUserFetch'
 import Pagination from '../../components/Pagination'
 import useMediaWidth from 'hooks/useMediaWidth'
+import { useActiveWeb3React } from 'hooks'
 
 const Wrapper = styled.div`
   padding: 78px 0 88px;
@@ -16,9 +17,11 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  padding: 24px 0 40px;
+  `}
   ${({ theme }) => theme.mediaWidth.upToSmall`
   padding: 0 0 40px;
-  color: #ffffff
   width: 100%;
   `}
 `
@@ -81,6 +84,14 @@ export default function User() {
   const location = useLocation()
   const [currentTab, setCurrentTab] = useState(UserInfoTabs.POSITION)
   const isUptoSmall = useMediaWidth('upToSmall')
+  const { account } = useActiveWeb3React()
+
+  useEffect(() => {
+    if (!account) {
+      history.push('/')
+    }
+  }, [account, history])
+
   const handleTabClick = useCallback(
     tab => () => {
       setCurrentTab(tab)
@@ -109,7 +120,7 @@ export default function User() {
           currentTab={currentTab}
         />
         {(currentTab === UserInfoTabs.CREATION && myCreation === undefined) ||
-        (currentTab === UserInfoTabs.POSITION && myTransactionLoading) ||
+        (currentTab === UserInfoTabs.TRANSACTION && myTransactionLoading) ||
         (currentTab === UserInfoTabs.POSITION && !myPosition?.[0]?.[0]) ? (
           <>
             <HideSmall>
@@ -146,10 +157,7 @@ export default function User() {
 
             {currentTab === UserInfoTabs.TRANSACTION && (
               <>
-                <UserTransactionTable
-                  header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT ADDRESS', '']}
-                  data={myTransaction}
-                />
+                <Table header={['OPTION', 'TYPE', 'AMOUNT', 'PRICE', 'ACTION', '']} rows={myTransaction} />
                 {myTransactionPage.totalPages !== 0 && (
                   <Pagination
                     page={myTransactionPage.currentPage}

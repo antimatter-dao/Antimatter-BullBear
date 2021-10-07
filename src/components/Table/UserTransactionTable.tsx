@@ -4,9 +4,6 @@ import styled from 'styled-components'
 import { TableContainer, TableHead, TableCell, TableRow, TableBody } from '@material-ui/core'
 import { useOption } from '../../state/market/hooks'
 import { MyTransactionProp, MyPositionType } from 'hooks/useUserFetch'
-import Copy from 'components/AccountDetails/Copy'
-import { shortenAddress } from 'utils'
-import { RowFixed } from 'components/Row'
 import { ButtonOutlined } from 'components/Button'
 import { useHistory } from 'react-router'
 import { parseBalance } from 'utils/marketStrategyUtils'
@@ -81,10 +78,8 @@ function UserPositionTableCell({ data }: { data: MyTransactionProp }) {
       name,
       data.type,
       amount,
-      <RowFixed key={1}>
-        {shortenAddress(data.contract ?? '', 5)}
-        <Copy toCopy={data.contract}></Copy>
-      </RowFixed>,
+      '$$$',
+      '$$$',
       <TableButtonOutlined onClick={() => history.push('/option_trading/' + data.optionIndex)} key={2}>
         Trade
       </TableButtonOutlined>

@@ -23,6 +23,8 @@ export interface OptionTypeData {
   putAddress: string
   callBalance: string
   putBalance: string
+  callDecimals: number
+  putDecimals: number
   callTotal: string
   putTotal: string
   underlying: string
@@ -134,6 +136,12 @@ export function useAllOptionTypes() {
     account ?? undefined
   ])
 
+  const callDecimalsRes = useMultipleContractSingleData(callAddresses, CALL_OR_PUT_INTERFACE, 'decimals')
+
+  const putDecimalsRes = useMultipleContractSingleData(callAddresses, CALL_OR_PUT_INTERFACE, 'decimals')
+
+  // const decimals = useSingleCallResult(token ? undefined : tokenContract, 'decimals', undefined, NEVER_RELOAD)
+
   const underlyingAddresses = useMemo(() => {
     return allCalls
       .filter(item => {
@@ -194,6 +202,8 @@ export function useAllOptionTypes() {
           putAddress: putAddresses[index],
           callBalance: callBalancesRes[index]?.result?.[0],
           putBalance: putBalancesRes[index]?.result?.[0],
+          callDecimals: callDecimalsRes[index]?.result?.[0],
+          putDecimals: putDecimalsRes[index]?.result?.[0],
           callTotal: callTotalsRes[index]?.result?.[0],
           putTotal: putTotalsRes[index]?.result?.[0],
           underlying: item.result?.[0],
@@ -213,11 +223,13 @@ export function useAllOptionTypes() {
     allCalls,
     callAddresses,
     callBalancesRes,
+    callDecimalsRes,
     callTotalsRes,
     currencyDecimalsRes,
     currencySymbolRes,
     putAddresses,
     putBalancesRes,
+    putDecimalsRes,
     putTotalsRes,
     underlyingDecimalsRes,
     underlyingSymbolRes

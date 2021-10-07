@@ -6,7 +6,7 @@ import { ZERO_ADDRESS } from 'constants/index'
 import { DexTradeData } from './httpRequests'
 import { UTCTimestamp } from 'lightweight-charts'
 
-export const parsePrice = (price: string, decimals: string) =>
+export const parsePrice = (price: string, decimals: string | number) =>
   parseBalance({
     val: price,
     token: new Token(1, ZERO_ADDRESS, Number(decimals ?? '18'))

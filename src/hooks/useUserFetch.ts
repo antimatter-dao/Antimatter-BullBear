@@ -2,10 +2,12 @@ import JSBI from 'jsbi'
 import { useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { useAllOptionTypes } from 'state/market/hooks'
-import { formatMyCreation, formatMyPositionRow } from 'utils/option/formatTableData'
+import { formatMyCreation, formatMyPositionRow, formatMyTransactionRow } from 'utils/option/formatTableData'
 import { parsePrice } from 'utils/option/utils'
 import { useActiveWeb3React } from '.'
 import { Axios } from '../utils/option/axios'
+import ERC20_INTERFACE from 'constants/abis/erc20'
+import { useMultipleContractSingleData } from 'state/multicall/hooks'
 
 export function useMyCreation() {
   const { chainId, account } = useActiveWeb3React()
@@ -46,6 +48,9 @@ export interface MyTransactionProp {
   creater: string
   chainId: string
   optionIndex: string
+  price: string
+  priceFloor: string
+  priceCap: string
 }
 
 export function useMyTransaction(): {
@@ -55,13 +60,46 @@ export function useMyTransaction(): {
     currentPage: number
     setCurrentPage: (page: number) => void
   }
-  data: MyTransactionProp[]
+  data: any[]
 } {
   const { chainId, account } = useActiveWeb3React()
+  const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
+  const [underlyingAddresses, setUnderlyingAddresses] = useState<string[]>([])
+  const [currencyAddresses, setCurrencyAddresses] = useState<string[]>([])
   const [data, setData] = useState<MyTransactionProp[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(0)
+  const history = useHistory()
+
+  const tokenDecimalsRes = useMultipleContractSingleData(tokenAddresses, ERC20_INTERFACE, 'decimals')
+
+  const currencyDecimalsRes = useMultipleContractSingleData(currencyAddresses, ERC20_INTERFACE, 'decimals')
+
+  const underlyingSymbolRes = useMultipleContractSingleData(underlyingAddresses, ERC20_INTERFACE, 'symbol')
+
+  // 'OPTION', 'TYPE', 'AMOUNT', 'PRICE', 'ACTION', ''
+  const result = useMemo(() => {
+    if (!underlyingSymbolRes || !currencyDecimalsRes || !tokenDecimalsRes) {
+      return []
+    }
+    if (underlyingSymbolRes[0]?.loading || currencyDecimalsRes[0]?.loading || tokenDecimalsRes[0]?.loading) {
+      return []
+    }
+
+    try {
+      const list = data.map((item, idx) => {
+        const currencyDecimal = currencyDecimalsRes?.[idx]?.result?.[0]
+        const underlyingSymbol = underlyingSymbolRes?.[idx]?.result?.[0]
+        const tokenDecimal = tokenDecimalsRes?.[idx]?.result?.[0]
+        if (!underlyingSymbol || !currencyDecimal || !tokenDecimal) throw Error
+        return formatMyTransactionRow(item, currencyDecimal, underlyingSymbol, tokenDecimal, history.push)
+      })
+      setLoading(false)
+      return list
+    } catch (e) {}
+    return []
+  }, [underlyingSymbolRes, currencyDecimalsRes, tokenDecimalsRes, data, history.push])
 
   useEffect(() => {
     ;(async () => {
@@ -72,18 +110,25 @@ export function useMyTransaction(): {
       try {
         setLoading(true)
         const res = await Axios.get('getMyposition', { chainId, creator: account, pageNum: currentPage })
-        setLoading(false)
         if (res.data.code !== 200) {
           setData([])
           return
         }
-        console.debug(res.data.data.records)
+        const tokenAddressList: string[] = []
+        const underlyingAddressList: string[] = []
+        const currencyAddressList: string[] = []
         setData(
           res.data.data.records.map((item: any) => {
             item.type = item.type === '1' ? MyPositionType.Call : MyPositionType.Put
+            tokenAddressList.push(item.contract)
+            underlyingAddressList.push(item.underlying)
+            currencyAddressList.push(item.currency)
             return item
           })
         )
+        setTokenAddresses(tokenAddressList)
+        setUnderlyingAddresses(underlyingAddressList)
+        setCurrencyAddresses(currencyAddressList)
         setTotalPages(Number(res.data.data.pages))
       } catch (error) {
         setLoading(false)
@@ -93,10 +138,10 @@ export function useMyTransaction(): {
       }
     })()
   }, [chainId, account, currentPage])
-  const res = useMemo(() => ({ page: { totalPages, currentPage, setCurrentPage }, loading, data }), [
+  const res = useMemo(() => ({ page: { totalPages, currentPage, setCurrentPage }, loading, data: result }), [
     currentPage,
-    data,
     loading,
+    result,
     totalPages
   ])
   return res
@@ -120,7 +165,7 @@ export function useMyPosition() {
               {
                 option,
                 type: MyPositionType.Call,
-                amount: parsePrice(item.callBalance, '18'),
+                amount: parsePrice(item.callBalance, item.callDecimals ?? '18'),
                 address: item.callAddress,
                 id: item.id
               },
@@ -139,7 +184,7 @@ export function useMyPosition() {
               {
                 option,
                 type: MyPositionType.Put,
-                amount: parsePrice(item.putBalance, '18'),
+                amount: parsePrice(item.putBalance, item.putDecimals ?? '18'),
                 address: item.putAddress,
                 id: item.id
               },
