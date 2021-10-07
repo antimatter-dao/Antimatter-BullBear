@@ -116,7 +116,7 @@ function CurrencyRow({
   const selectedTokenList = useCombinedActiveList()
   const isOnSelectedList = isTokenOnList(selectedTokenList, currency)
   const customAdded = useIsUserAddedToken(currency)
-  const balance = useCurrencyBalance(account ?? undefined, currency)
+  const balance = useCurrencyBalance(account ?? undefined, currency === MAIN_CURRENCY[chainId ?? 1] ? ETHER : currency)
 
   // only show add or remove buttons if not on selected list
   return (
