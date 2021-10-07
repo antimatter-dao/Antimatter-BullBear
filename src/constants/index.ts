@@ -1,4 +1,4 @@
-import { ChainId, Currency, ETHER, JSBI, Percent, Token, WETH } from '@uniswap/sdk'
+import { ChainId, JSBI, Percent, Token, WETH } from '@uniswap/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
@@ -308,17 +308,17 @@ export const Name: { readonly [chainId in ChainId]?: string } = {
   [ChainId.Arbitrum]: 'ETHER'
 }
 
-class MainCurrency extends Currency {
-  //eslint-disable-next-line
-  constructor(decimals: number, symbol?: string, name?: string) {
-    super(decimals, symbol, name)
-  }
-}
+// class MainCurrency extends Currency {
+//   //eslint-disable-next-line
+//   constructor(decimals: number, symbol?: string, name?: string) {
+//     super(decimals, symbol, name)
+//   }
+// }
 
-export const MAIN_CURRENCY: { readonly [chainId in ChainId]?: Currency } = {
-  [ChainId.MAINNET]: ETHER,
-  [ChainId.ROPSTEN]: ETHER,
-  [ChainId.BSC]: new MainCurrency(8, Symbol[ChainId.BSC], Name[ChainId.BSC]),
-  [ChainId.Avalanche]: new MainCurrency(18, Symbol[ChainId.Avalanche], Name[ChainId.Avalanche]),
-  [ChainId.Arbitrum]: ETHER
-}
+// export const MAIN_CURRENCY: { readonly [chainId in ChainId]?: Currency } = {
+//   [ChainId.MAINNET]: ETHER,
+//   [ChainId.ROPSTEN]: ETHER,
+//   [ChainId.BSC]: new MainCurrency(8, Symbol[ChainId.BSC], Name[ChainId.BSC]),
+//   [ChainId.Avalanche]: new MainCurrency(18, Symbol[ChainId.Avalanche], Name[ChainId.Avalanche]),
+//   [ChainId.Arbitrum]: ETHER
+// }

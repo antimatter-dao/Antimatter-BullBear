@@ -15,6 +15,7 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import ButtonSelect from 'components/Button/ButtonSelect'
 import useTheme from 'hooks/useTheme'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { useActiveWeb3React } from 'hooks'
 
 export interface SearchQuery {
   optionIndex?: number | string
@@ -284,6 +285,7 @@ export default function Search({
   }, [onClear])
 
   const theme = useTheme()
+  const { chainId } = useActiveWeb3React()
 
   return (
     <>
@@ -301,7 +303,7 @@ export default function Search({
                 {assetTypeQuery && assetTypeQuery.symbol !== ALL.id && (
                   <CurrencyLogo currency={assetTypeQuery} size={'24px'} style={{ marginRight: 15 }} />
                 )}
-                {currencyNameHelper(assetTypeQuery, 'Select asset type')}
+                {currencyNameHelper(assetTypeQuery, 'Select asset type', chainId)}
               </RowFixed>
             </TYPE.body>
           </ButtonSelect>

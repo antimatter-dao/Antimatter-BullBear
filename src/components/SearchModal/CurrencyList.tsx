@@ -21,7 +21,7 @@ import { LightGreyCard } from 'components/Card'
 import TokenListLogo from '../../assets/svg/tokenlist.svg'
 import QuestionHelper from 'components/QuestionHelper'
 import useTheme from 'hooks/useTheme'
-import { MAIN_CURRENCY, Name, Symbol, ZERO_ADDRESS } from 'constants/index'
+import { Name, Symbol, ZERO_ADDRESS } from 'constants/index'
 
 function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
@@ -116,7 +116,7 @@ function CurrencyRow({
   const selectedTokenList = useCombinedActiveList()
   const isOnSelectedList = isTokenOnList(selectedTokenList, currency)
   const customAdded = useIsUserAddedToken(currency)
-  const balance = useCurrencyBalance(account ?? undefined, currency === MAIN_CURRENCY[chainId ?? 1] ? ETHER : currency)
+  const balance = useCurrencyBalance(account ?? undefined, currency)
 
   // only show add or remove buttons if not on selected list
   return (
@@ -186,13 +186,12 @@ export default function CurrencyList({
   } = useAllInactiveTokens()
 
   const itemData: (Currency | undefined)[] = useMemo(() => {
-    const main = MAIN_CURRENCY[chainId ?? 1]
-    let formatted: (Currency | undefined)[] = showETH ? [main, ...currencies] : currencies
+    let formatted: (Currency | undefined)[] = showETH ? [ETHER, ...currencies] : currencies
     if (breakIndex !== undefined) {
       formatted = [...formatted.slice(0, breakIndex), undefined, ...formatted.slice(breakIndex, formatted.length)]
     }
     return formatted
-  }, [breakIndex, chainId, currencies, showETH])
+  }, [breakIndex, currencies, showETH])
 
   const Row = useCallback(
     ({ data, index, style }) => {

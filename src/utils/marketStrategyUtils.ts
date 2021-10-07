@@ -1,6 +1,7 @@
-import { Currency, ETHER, JSBI, Token, TokenAmount } from '@uniswap/sdk'
+import { ChainId, Currency, ETHER, JSBI, Token, TokenAmount } from '@uniswap/sdk'
 import { tryParseAmount } from 'state/swap/hooks'
 import { absolute } from 'state/market/hooks'
+import { Symbol } from 'constants/index'
 
 export const isNegative = (val?: string): boolean => val?.toString()[0] === '-'
 
@@ -29,11 +30,13 @@ export const parsedGreaterThan = (userInput: string, balance: string) => {
   }
   return
 }
-export const currencyNameHelper = (currency?: Currency | null, defaultString?: string) =>
-  (currency && currency.symbol && currency.symbol.length > 20
-    ? currency.symbol.slice(0, 4) + '...' + currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-    : currency?.symbol === 'WETH'
-    ? 'WETH'
-    : currency?.symbol) ||
-  defaultString ||
-  ''
+export const currencyNameHelper = (currency?: Currency | null, defaultString?: string, chainId: ChainId = 1) => {
+  const symbol = currency === ETHER ? Symbol[chainId] : currency?.symbol
+  return (
+    (currency && symbol && symbol.length > 20
+      ? symbol.slice(0, 4) + '...' + symbol.slice(symbol.length - 5, symbol.length)
+      : symbol) ||
+    defaultString ||
+    ''
+  )
+}

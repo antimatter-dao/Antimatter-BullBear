@@ -42,6 +42,7 @@ import TradePrice from '../../components/swap/TradePrice'
 import { ClickableText } from '../Pool/styleds'
 import SettingsTab from '../../components/Settings'
 import QuestionHelper from '../../components/QuestionHelper'
+import { getCurrencySymbol } from 'utils/getCurrencySymbol'
 
 enum Field {
   OPTION = 'OPTION',
@@ -91,7 +92,7 @@ export default function Swap({
   setParentTXHash: (hash: string) => void
 }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
 
   const theme = useTheme()
 
@@ -374,26 +375,33 @@ export default function Swap({
       return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
     }
     if (payFormattedAmount[0] !== '-' && payCurrencyAmount?.greaterThan(payBalance)) {
-      return { ...defaultContent, disabled: true, text: `Insufficient ${payCurrency.symbol} balance` }
+      return {
+        ...defaultContent,
+        disabled: true,
+        text: `Insufficient ${getCurrencySymbol(payCurrency, chainId)} balance`
+      }
     }
     if (noRoute || undPriceImpactSeverity > 3 || curPriceImpactSeverity > 3) {
       return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
     }
     return defaultContent
+    /* eslint-disable*/
   }, [
-    routerDelta,
     optionTyped,
     auction,
     parsedAmounts,
     optionBalance,
     payCurrency,
+    routerDelta?.isLoading,
     payFormattedAmount,
     payBalance,
     payCurrencyAmount,
     noRoute,
     undPriceImpactSeverity,
-    curPriceImpactSeverity
+    curPriceImpactSeverity,
+    chainId
   ])
+  /* eslint-disable */
 
   return (
     <>
