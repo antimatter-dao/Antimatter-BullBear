@@ -73,7 +73,7 @@ const SwapAppBody = styled(BodyWrapper)`
   border-color: ${({ theme }) => theme.text4};
   min-height: 100%;
   margin: -1px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
   max-width: unset
   width: calc(100% + 2px)
   `}
@@ -141,10 +141,13 @@ export default function Swap({
   // get custom setting values for user
   const [allowedSlippage] = useUserSlippageTolerance()
 
-  const parsedAmounts = {
-    [Field.OPTION]: tryParseAmount(optionTyped, optionCurrency),
-    [Field.PAY]: tryParseAmount(payTyped, payCurrency)
-  }
+  const parsedAmounts = useMemo(
+    () => ({
+      [Field.OPTION]: tryParseAmount(optionTyped, optionCurrency),
+      [Field.PAY]: tryParseAmount(payTyped, payCurrency)
+    }),
+    [optionCurrency, optionTyped, payCurrency, payTyped]
+  )
 
   //const { onSwitchTokens } = useSwapActionHandlers()
 

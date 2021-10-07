@@ -388,7 +388,7 @@ export function Info({
               </TYPE.main>
             </RowBetween>
             <RowBetween>
-              <TYPE.darkGray>{'Underlying Asset:'}</TYPE.darkGray>
+              <TYPE.darkGray>{'Underlying Assets:'}</TYPE.darkGray>
               <TYPE.main>
                 {(option && option?.underlying?.symbol) ?? placeholder}, {option && option?.currency?.symbol}
               </TYPE.main>

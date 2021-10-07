@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Percent, Token, WETH } from '@uniswap/sdk'
+import { ChainId, Currency, ETHER, JSBI, Percent, Token, WETH } from '@uniswap/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
@@ -255,7 +255,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
 export const NetworkContextName = 'NETWORK'
 
 // default allowed slippage, in bips
-export const INITIAL_ALLOWED_SLIPPAGE = 100
+export const INITIAL_ALLOWED_SLIPPAGE = 50
 // 20 minutes, denominated in seconds
 export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20
 
@@ -306,4 +306,19 @@ export const Name: { readonly [chainId in ChainId]?: string } = {
   [ChainId.BSC]: 'Binance Coin',
   [ChainId.Avalanche]: 'Avalanche',
   [ChainId.Arbitrum]: 'ETHER'
+}
+
+class MainCurrency extends Currency {
+  //eslint-disable-next-line
+  constructor(decimals: number, symbol?: string, name?: string) {
+    super(decimals, symbol, name)
+  }
+}
+
+export const MAIN_CURRENCY: { readonly [chainId in ChainId]?: Currency } = {
+  [ChainId.MAINNET]: ETHER,
+  [ChainId.ROPSTEN]: ETHER,
+  [ChainId.BSC]: new MainCurrency(8, Symbol[ChainId.BSC], Name[ChainId.BSC]),
+  [ChainId.Avalanche]: new MainCurrency(18, Symbol[ChainId.Avalanche], Name[ChainId.Avalanche]),
+  [ChainId.Arbitrum]: ETHER
 }
