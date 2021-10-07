@@ -14,12 +14,15 @@ export function useOptionList(
     setCurrentPage: (page: number) => void
   }
   data: string[]
+  firstLoading: boolean
 } {
   const [totalPages, setTotalPages] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const { chainId } = useActiveWeb3React()
   const [ids, setIds] = useState([])
   const blockNumber = useBlockNumber()
+  const [firstLoading, setFirstLoading] = useState(true)
+
   const {
     httpHandlingFunctions: { errorFunction }
   } = useNetwork()
@@ -38,6 +41,7 @@ export function useOptionList(
         errorFunction()
         throw new Error(e)
       })
+      setFirstLoading(false)
       setTotalPages(r.data.data.pages)
       setIds(r.data.data.list.map(({ optionIndex }: { optionIndex: string }) => optionIndex))
     })()
@@ -45,6 +49,7 @@ export function useOptionList(
 
   return {
     data: ids,
+    firstLoading,
     page: {
       totalPages,
       currentPage,
