@@ -103,7 +103,7 @@ export default function SwapModalHeader({
           </TokenPanel>
         </AutoColumn>
       </OutlineCard>
-      {showAcceptChanges ? (
+      {showAcceptChanges && false ? (
         <SwapShowAcceptChanges justify="flex-start" gap={'0px'}>
           <RowBetween>
             <RowFixed>
