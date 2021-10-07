@@ -79,7 +79,6 @@ const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }
 
 const SlippageEmojiContainer = styled.span`
   color: #f3841e;
-  font-size: 14px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;  
   `}
@@ -164,6 +163,15 @@ export default function SlippageTabs({
           <Option
             onClick={() => {
               setSlippageInput('')
+              setRawSlippage(10)
+            }}
+            active={rawSlippage === 10}
+          >
+            0.1%
+          </Option>
+          <Option
+            onClick={() => {
+              setSlippageInput('')
               setRawSlippage(50)
             }}
             active={rawSlippage === 50}
@@ -179,16 +187,7 @@ export default function SlippageTabs({
           >
             1%
           </Option>
-          <Option
-            onClick={() => {
-              setSlippageInput('')
-              setRawSlippage(200)
-            }}
-            active={rawSlippage === 200}
-          >
-            2%
-          </Option>
-          <OptionCustom active={![50, 100, 200].includes(rawSlippage)} warning={!slippageInputIsValid} tabIndex={-1}>
+          <OptionCustom active={![10, 50, 100].includes(rawSlippage)} warning={!slippageInputIsValid} tabIndex={-1}>
             <RowBetween>
               {!!slippageInput &&
               (slippageError === SlippageError.RiskyLow || slippageError === SlippageError.RiskyHigh) ? (
@@ -213,25 +212,21 @@ export default function SlippageTabs({
             </RowBetween>
           </OptionCustom>
         </RowBetween>
-
-        <RowBetween
-          style={{
-            fontSize: '14px',
-            paddingTop: '7px',
-            minHeight: 23,
-            color: slippageError === SlippageError.InvalidInput ? 'red' : '#F3841E'
-          }}
-        >
-          {!!slippageError && (
-            <>
-              {slippageError === SlippageError.InvalidInput
-                ? 'Enter a valid slippage percentage'
-                : slippageError === SlippageError.RiskyLow
-                ? 'Your transaction may fail'
-                : 'Your transaction may be frontrun'}
-            </>
-          )}
-        </RowBetween>
+        {!!slippageError && (
+          <RowBetween
+            style={{
+              fontSize: '14px',
+              paddingTop: '7px',
+              color: slippageError === SlippageError.InvalidInput ? 'red' : '#F3841E'
+            }}
+          >
+            {slippageError === SlippageError.InvalidInput
+              ? 'Enter a valid slippage percentage'
+              : slippageError === SlippageError.RiskyLow
+              ? 'Your transaction may fail'
+              : 'Your transaction may be frontrun'}
+          </RowBetween>
+        )}
       </AutoColumn>
 
       {!onlySlippage && (
