@@ -33,6 +33,7 @@ import { OptionField } from '../Swap'
 import { useTokenBalance } from 'state/wallet/hooks'
 import { LabeledCard } from 'components/Card'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { isMobile } from 'react-device-detect'
 
 export default function Generate({
   match: {
@@ -204,7 +205,7 @@ export default function Generate({
 
   return (
     <>
-      <AppBody maxWidth="560px">
+      <AppBody maxWidth="560px" style={{ marginTop: isMobile ? 40 : 100, marginBottom: isMobile ? 100 : 0 }}>
         <MarketStrategyTabs generation />
         <TYPE.darkGray fontSize={14} style={{ padding: '4px 16px 30px' }}>
           In this section you can generate both call and put tokens at the same time. You need to generate equal amount

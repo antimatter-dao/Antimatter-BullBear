@@ -17,12 +17,21 @@ const TabButton = styled(ButtonOutlinedPrimary)<{ active?: boolean }>`
   width: 264px;
   height: 48px;
 `
+const Wrapper = styled(AutoColumn)`
+  margin-top: 100px;
+  width: 560px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-top: 60px;
+    width: 100%;
+    margin-bottom: 100px;
+  `}
+`
 
 export default function OptionCreation() {
   const [curTab, setCurTab] = useState(TAB.CREATION)
 
   return (
-    <AutoColumn gap={'28px'} style={{ marginTop: 100, width: 560 }}>
+    <Wrapper gap={'28px'}>
       <RowBetween>
         <TabButton
           onClick={() => {
@@ -44,6 +53,6 @@ export default function OptionCreation() {
 
       {curTab === TAB.CREATION && <Creation />}
       {curTab === TAB.LIQUIDITY && <Pool />}
-    </AutoColumn>
+    </Wrapper>
   )
 }
