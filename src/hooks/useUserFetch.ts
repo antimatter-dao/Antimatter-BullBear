@@ -77,6 +77,7 @@ export function useMyTransaction(): {
           setData([])
           return
         }
+        console.debug(res.data.data.records)
         setData(
           res.data.data.records.map((item: any) => {
             item.type = item.type === '1' ? MyPositionType.Call : MyPositionType.Put

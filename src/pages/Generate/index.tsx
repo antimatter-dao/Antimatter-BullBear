@@ -43,7 +43,7 @@ export default function Generate({
   const option = useOption(optionTypeIndex)
   // const [optionType, setOptionType] = useState('')
   const [callTyped, setCallTyped] = useState<string>()
-  const [putTyped, setPutTyped] = useState<string>()
+  // const [putTyped, setPutTyped] = useState<string>()
 
   const theme = useContext(ThemeContext)
 
@@ -53,7 +53,7 @@ export default function Generate({
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
   const expertMode = useIsExpertMode()
 
-  const { delta } = useDerivedStrategyInfo(option, callTyped ?? undefined, putTyped ?? undefined)
+  const { delta } = useDerivedStrategyInfo(option, callTyped ?? undefined, callTyped ?? undefined)
 
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -65,7 +65,7 @@ export default function Generate({
 
   const parsedAmounts = {
     [OptionField.CALL]: tryParseAmount(callTyped, option?.call?.token),
-    [OptionField.PUT]: tryParseAmount(putTyped, option?.put?.token)
+    [OptionField.PUT]: tryParseAmount(callTyped, option?.put?.token)
   }
 
   // check whether the user has approved the router on the tokens
@@ -82,21 +82,31 @@ export default function Generate({
   const balanceB = useTokenBalance(account ?? undefined, option?.put?.token)
 
   const error = useMemo(() => {
-    if (balanceA && balanceB && delta && option?.underlying && option?.currency) {
-      const callAmount = new TokenAmount(option.underlying, delta.dUnd)
-      const putAmount = new TokenAmount(option.currency, delta.dCur)
-      if (balanceA.lessThan(callAmount)) {
+    if (balanceA && balanceB && delta && option?.callToken && option?.putToken) {
+      const callAmount = delta.dUnd.toString()[0] === '-' ? undefined : new TokenAmount(option.callToken, delta.dUnd)
+      const putAmount = delta.dCur.toString()[0] === '-' ? undefined : new TokenAmount(option.putToken, delta.dCur)
+      if (callAmount && putAmount && balanceA.lessThan(callAmount) && balanceB.lessThan(putAmount)) {
+        return `Insufficient ${option.underlying?.symbol} and ${option.currency?.symbol} balance`
+      }
+      if (callAmount && balanceA.lessThan(callAmount)) {
         return 'Insufficient ' + option.underlying?.symbol + ' balance'
       }
-      if (balanceB.lessThan(putAmount)) {
+      if (putAmount && balanceB.lessThan(putAmount)) {
         return 'Insufficient ' + option.currency?.symbol + ' balance'
-      }
-      if (balanceA.lessThan(callAmount) || balanceB.lessThan(putAmount)) {
-        return `Insufficient ${option.underlying?.symbol} and ${option.currency?.symbol} balance`
       }
     }
     return null
-  }, [balanceA, balanceB, delta, option])
+    /* eslint-disable react-hooks/exhaustive-deps*/
+  }, [
+    balanceA,
+    balanceB,
+    delta,
+    option?.callToken,
+    option?.currency?.symbol,
+    option?.putToken,
+    option?.underlying?.symbol
+  ])
+  /* eslint-disable react-hooks/exhaustive-deps*/
 
   const addTransaction = useTransactionAdder()
 
@@ -137,7 +147,7 @@ export default function Generate({
             ...(value ? { value } : {}),
             gasLimit: calculateGasMargin(estimatedGasLimit)
           }).then(response => {
-            setPutTyped(undefined)
+            // setPutTyped(undefined)
             setCallTyped(undefined)
             setAttemptingTxn(false)
             addTransaction(response, {
@@ -174,7 +184,7 @@ export default function Generate({
           <ConfirmGenerationModalBottom
             delta={delta}
             callTyped={callTyped}
-            putTyped={putTyped}
+            putTyped={callTyped}
             currencyA={option?.underlying}
             currencyB={option?.currency}
             onGenerate={onGenerate}
@@ -250,13 +260,14 @@ export default function Generate({
               defaultSymbol={option?.call?.token.symbol}
               halfWidth={true}
               isCall={true}
+              underlying={option?.underlying}
             />
             <ColumnCenter>
               <Plus size="28" color={theme.text2} />
             </ColumnCenter>
             <CallOrPutInputPanel
-              value={putTyped ?? ''}
-              onUserInput={setPutTyped}
+              value={callTyped ?? ''}
+              onUserInput={setCallTyped}
               currency={option?.put?.token || undefined}
               id="generate-output-token"
               showCommonBases
@@ -264,6 +275,7 @@ export default function Generate({
               defaultSymbol={option?.put?.token.symbol}
               negativeMarginTop={'-20px'}
               isCall={false}
+              underlying={option?.underlying}
             />
             {option?.call?.token && option?.put?.token && delta?.dUnd && delta.dCur && (
               <GenerateBar
@@ -337,7 +349,7 @@ export default function Generate({
                     expertMode ? onGenerate() : setShowConfirm(true)
                   }}
                   disabled={approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED || !!error}
-                  error={!callTyped && !putTyped}
+                  error={!callTyped /*&& !putTyped*/}
                 >
                   <Text fontSize={16} fontWeight={500}>
                     {'Generate'}

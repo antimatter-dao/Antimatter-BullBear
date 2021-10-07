@@ -1,4 +1,4 @@
-import { Currency } from '@uniswap/sdk'
+import { Currency, Token } from '@uniswap/sdk'
 import React from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
@@ -83,6 +83,7 @@ interface CallOrPutInputPanelProps {
   negativeMarginTop?: string
   defaultSymbol?: string
   isCall?: boolean
+  underlying?: Token | null | undefined
 }
 
 export default function CallOrPutInputPanel({
@@ -95,7 +96,8 @@ export default function CallOrPutInputPanel({
   halfWidth,
   defaultSymbol,
   negativeMarginTop,
-  isCall
+  isCall,
+  underlying
 }: CallOrPutInputPanelProps) {
   const theme = useTheme()
 
@@ -116,7 +118,7 @@ export default function CallOrPutInputPanel({
             style={{ width: halfWidth ? '50%' : '100%', marginRight: 15 }}
             content={
               <Aligner>
-                <CurrencyLogo currency={currency} size={'24px'} />
+                <CurrencyLogo currency={underlying ?? undefined} size={'24px'} />
                 <CallOrPutIcon src={isCall ? CallIcon : PutIcon} />
                 <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
                   {defaultSymbol

@@ -8,6 +8,7 @@ import { WrappedTokenInfo } from '../../state/lists/hooks'
 import Logo from '../Logo'
 import { useActiveWeb3React } from '../../hooks'
 import { Symbol } from '../../constants'
+import unknownUrl from 'assets/svg/circle_unknown.svg'
 
 export const getTokenLogoURL = (address: string) =>
   `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
@@ -52,7 +53,7 @@ const LOGO: { readonly [chainId in ChainId]?: string } = {
   [ChainId.Arbitrum]: CircleEth
 }
 
-const unknown = 'https://raw.githubusercontent.com/sushiswap/icons/master/token/unknown.png'
+// const unknown = 'https://raw.githubusercontent.com/sushiswap/icons/master/token/unknown.png'
 
 export default function CurrencyLogo({
   currency,
@@ -68,7 +69,7 @@ export default function CurrencyLogo({
 
   const srcs: string[] = useMemo(() => {
     if (!currency) {
-      return [unknown]
+      return [unknownUrl]
     }
 
     if (currency === ETHER) {
@@ -84,7 +85,11 @@ export default function CurrencyLogo({
     return []
   }, [chainId, currency, uriLocations])
 
-  if (currency === ETHER || currency?.symbol === Symbol[chainId ?? 1]) {
+  if (currency?.symbol === Symbol[chainId ?? 1]) {
+    return <StyledEthereumLogo src={LOGO[chainId ?? 1]} size={size} style={style} />
+  }
+
+  if (currency === ETHER || currency?.symbol === 'WETH') {
     return <StyledEthereumLogo src={LOGO[chainId ?? 1]} size={size} style={style} />
   }
 
