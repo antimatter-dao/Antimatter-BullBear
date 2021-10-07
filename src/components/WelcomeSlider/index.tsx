@@ -7,6 +7,7 @@ import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import { ButtonWhite } from 'components/Button'
 import { AutoColumn } from 'components/Column'
 import useTheme from 'hooks/useTheme'
+import useMediaWidth from 'hooks/useMediaWidth'
 // import { useOnClickOutside } from 'hooks/useOnClickOutside'
 // import { useActiveWeb3React } from 'hooks'
 
@@ -84,6 +85,7 @@ export default function WelcomeSlider() {
   const isEndPage = page === pageContent.length - 1
   // const node = useRef<HTMLDivElement>()
   const theme = useTheme()
+  const upToSmall = useMediaWidth('upToSmall')
   // useOnClickOutside(node, () => setIsOpen(false))
   useEffect(() => {
     window && window.localStorage.setItem('visited', 'true')
@@ -103,7 +105,7 @@ export default function WelcomeSlider() {
 
   return (
     <StyledDialogOverlay
-      isOpen={isOpen}
+      isOpen={upToSmall ? false : isOpen}
       style={{ alignItems: 'flex-end', justifyContent: 'flex-start', padding: '30px' }}
     >
       <StyledDialogContent

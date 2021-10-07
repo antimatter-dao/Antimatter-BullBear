@@ -1,5 +1,5 @@
 import { ChainId } from '@uniswap/sdk'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { Check, ChevronDown } from 'react-feather'
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
@@ -621,7 +621,7 @@ const MobileHeader = styled.header`
 
 export default function Header() {
   const { account, chainId, library } = useActiveWeb3React()
-
+  const [, setChain] = useState<any>(undefined)
   const aggregateBalance = useETHBalances([account ?? undefined])[account ?? '']
 
   const countUpValue = aggregateBalance?.toFixed(2) ?? '0'
@@ -633,6 +633,16 @@ export default function Header() {
     history.push('/profile')
     return
   }, [history])
+
+  useEffect(() => {
+    setChain((prev: any) => {
+      if (prev && prev !== chainId) {
+        window.location.reload()
+        return chainId
+      }
+      return prev
+    })
+  }, [chainId])
 
   return (
     <HeaderFrame>

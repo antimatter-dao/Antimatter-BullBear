@@ -116,15 +116,15 @@ export const formatMyTransactionRow = (
     type,
     parsePrice(tradesAmount, tokenDecimal),
     parsePrice(price, currencyDecimal),
-    tradesAmount.toString()[0] === '-' ? 'Buy' : 'Sell',
-    <ButtonOutlinedPrimary
-      key={optionIndex}
-      onClick={() => {
-        historyPush(`/option_trading/${optionIndex}`)
-      }}
-      padding="12px"
-    >
-      Trade
-    </ButtonOutlinedPrimary>
+    tradesAmount.toString()[0] === '-' ? 'Buy' : 'Sell'
+    //   <ButtonOutlinedPrimary
+    //     key={optionIndex}
+    //     onClick={() => {
+    //       historyPush(`/option_trading/${optionIndex}`)
+    //     }}
+    //     padding="12px"
+    //   >
+    //     Trade
+    //   </ButtonOutlinedPrimary>
   ]
 }

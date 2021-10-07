@@ -157,7 +157,7 @@ export default function User() {
 
             {currentTab === UserInfoTabs.TRANSACTION && (
               <>
-                <Table header={['OPTION', 'TYPE', 'AMOUNT', 'PRICE', 'ACTION', '']} rows={myTransaction} />
+                <Table header={['OPTION', 'TYPE', 'AMOUNT', 'PRICE', 'ACTION']} rows={myTransaction} />
                 {myTransactionPage.totalPages !== 0 && (
                   <Pagination
                     page={myTransactionPage.currentPage}
