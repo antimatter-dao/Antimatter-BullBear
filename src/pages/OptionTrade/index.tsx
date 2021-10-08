@@ -236,7 +236,7 @@ export function OptionCard({ optionId, buttons }: { optionId: string; buttons: J
   }
   const details = {
     'Option Range': option ? `$${range.floor?.toExact().toString()}~$${range.cap?.toExact().toString()}` : '',
-    'Underlying Asset': option ? `${option.underlying?.symbol}, ${option.currency?.symbol}` : '-',
+    'Underlying Assets': option ? `${option.underlying?.symbol}, ${option.currency?.symbol}` : '-',
     'Current Bull Issuance': option ? callTotalSupply?.toFixed(2).toString() : '-',
     'Current Bear Issuance': option ? putTotalSupply?.toFixed(2).toString() : '-'
   }

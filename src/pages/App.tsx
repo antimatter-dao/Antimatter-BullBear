@@ -73,9 +73,9 @@ const HeaderWrapper = styled.div`
   flex-direction: column;
   ${({ theme }) => theme.flexRowNoWrap}
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  height:0;
+  height: 0;
   // overflow: hidden
-  min-width: auto;
+  min-width: 0;
   `}
 `
 
@@ -99,6 +99,7 @@ const BodyWrapper = styled.div`
   padding-bottom: 0;
   min-width: auto;
   margin-top: ${({ theme }) => theme.mobileHeaderHeight}
+  min-height: calc(100vh - ${theme.headerHeight + ' - ' + theme.mobileHeaderHeight}); 
   `};
 `
 const Feedback = styled(ExternalLink)`

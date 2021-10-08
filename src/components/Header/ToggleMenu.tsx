@@ -120,7 +120,7 @@ export default function ToggleMenu({ padding = '6px 14px 18px 14px' }: { padding
                             {title}
                           </SubTabMobile>
                         ) : (
-                          <TabMobile key={title} to={`/${route}`} onClick={() => setIsOpen(!isOpen)} issub={+true}>
+                          <TabMobile key={title} to={`${route}`} onClick={() => setIsOpen(!isOpen)} issub={+true}>
                             {titleContent ?? title}
                           </TabMobile>
                         )
