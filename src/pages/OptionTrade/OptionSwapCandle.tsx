@@ -7,9 +7,10 @@ import { Option, OptionPrice } from '../../state/market/hooks'
 import SwitchTab from 'components/SwitchTab'
 import { Axios } from 'utils/option/axios'
 import { useActiveWeb3React } from 'hooks'
+import { DexTradeData } from 'utils/option/httpRequests'
 import { useNetwork } from 'hooks/useNetwork'
 // import { ButtonOutlinedPrimary } from 'components/Button'
-import { formatDexTradeLineData, DexTradeLineData } from 'utils/option/utils'
+import { formatDexTradeData } from 'utils/option/utils'
 import { TYPE } from 'theme'
 
 const Wrapper = styled.div`
@@ -112,11 +113,11 @@ export default function OptionSwap({
   const transactions = useSelector((store: any) => store.transactions)
   const { chainId } = useActiveWeb3React()
   const [currentTab, setCurrentTab] = useState<keyof typeof Tabs>('CALL')
-  const [lineSeries, setLineSeries] = useState<ISeriesApi<'Line'> | undefined>(undefined)
+  const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
   // const [isMarketPriceChart, setIsMarketPriceChart] = useState(true)
   const [chart, setChart] = useState<IChartApi | undefined>(undefined)
-  const [callChartData, setCallChartData] = useState<DexTradeLineData[] | undefined>(undefined)
-  const [putChartData, setPutChartData] = useState<DexTradeLineData[] | undefined>(undefined)
+  const [callChartData, setCallChartData] = useState<DexTradeData[] | undefined>(undefined)
+  const [putChartData, setPutChartData] = useState<DexTradeData[] | undefined>(undefined)
   const [graphLoading, setGraphLoading] = useState(true)
   const [txHash, setTxHash] = useState('')
   const [refresh, setRefresh] = useState(0)
@@ -153,7 +154,7 @@ export default function OptionSwap({
         .then(r => {
           complete.call = true
           if (r.data) {
-            setCallChartData(formatDexTradeLineData(r.data.data))
+            setCallChartData(formatDexTradeData(r.data.data))
           }
           if (complete.put) {
             pendingCompleteFunction()
@@ -167,7 +168,7 @@ export default function OptionSwap({
         .then(r => {
           complete.put = true
           if (r.data) {
-            setPutChartData(formatDexTradeLineData(r.data.data))
+            setPutChartData(formatDexTradeData(r.data.data))
           }
           if (complete.call) {
             pendingCompleteFunction()
@@ -246,32 +247,31 @@ export default function OptionSwap({
     }
     window.addEventListener('resize', resizeFunction)
     setChart(chart)
-    const lineSeries = chart.addLineSeries({
-      color: '#33E74F',
-      lineWidth: 2,
-      // downColor: '#FF0000',
-      // wickVisible: false,
+    const candlestickSeries = chart.addCandlestickSeries({
+      upColor: '#33E74F',
+      downColor: '#FF0000',
+      wickVisible: false,
       priceFormat: {
         type: 'price',
         precision: 2
       }
     })
-    setLineSeries(lineSeries)
+    setCandlestickSeries(candlestickSeries)
     return () => window.removeEventListener('resize', resizeFunction)
   }, [])
 
   useEffect(() => {
-    if (lineSeries) {
+    if (candlestickSeries) {
       if (currentTab === 'CALL') {
-        callChartData && lineSeries.setData(callChartData)
+        callChartData && candlestickSeries.setData(callChartData)
       } else {
-        putChartData && lineSeries.setData(putChartData)
+        putChartData && candlestickSeries.setData(putChartData)
       }
     }
     if (chart) {
       chart.timeScale().fitContent()
     }
-  }, [lineSeries, chart, currentTab, putChartData, callChartData])
+  }, [candlestickSeries, chart, currentTab, putChartData, callChartData])
 
   // const handleMarketPriceChart = useCallback(() => setIsMarketPriceChart(true), [])
   // const handleModalChart = useCallback(() => setIsMarketPriceChart(false), [])

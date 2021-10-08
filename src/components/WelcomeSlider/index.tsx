@@ -11,7 +11,12 @@ import useMediaWidth from 'hooks/useMediaWidth'
 // import { useOnClickOutside } from 'hooks/useOnClickOutside'
 // import { useActiveWeb3React } from 'hooks'
 
-const WelcomeCard = styled(GradientCard)``
+const WelcomeCard = styled(GradientCard)`
+  width: 580px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  width: auto;
+  `}
+`
 
 function List({ list }: { list: string[] }) {
   return (
@@ -105,14 +110,14 @@ export default function WelcomeSlider() {
 
   return (
     <StyledDialogOverlay
-      isOpen={upToSmall ? false : isOpen}
-      style={{ alignItems: 'flex-end', justifyContent: 'flex-start', padding: '30px' }}
+      isOpen={isOpen}
+      // isOpen={upToSmall ? false : isOpen}
+      style={{ alignItems: upToSmall ? 'flex-end' : 'center' }}
     >
       <StyledDialogContent
-        minHeight={20}
-        minWidth={580}
+        maxWidth="580"
         border={'1px solid ' + theme.bg4}
-        style={{ alignSelf: 'unset' }}
+        style={{ alignSelf: 'unset', width: 'auto' }}
       >
         <WelcomeCard>
           <AutoColumn gap="20px" style={{ padding: '12px 24px' }}>
