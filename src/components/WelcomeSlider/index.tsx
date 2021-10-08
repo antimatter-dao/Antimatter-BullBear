@@ -33,7 +33,8 @@ function List({ list }: { list: string[] }) {
                   border: '1px solid #FFFFFF',
                   borderRadius: '50%',
                   marginRight: '24px',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  flexShrink: 0
                 }}
               >
                 {idx}
