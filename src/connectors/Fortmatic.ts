@@ -3,13 +3,7 @@ import { FortmaticConnector as FortmaticConnectorCore } from '@web3-react/fortma
 
 export const OVERLAY_READY = 'OVERLAY_READY'
 
-type FormaticSupportedChains =
-  | ChainId
-  | ChainId.ROPSTEN
-  | ChainId.MAINNET
-  | ChainId.BSC
-  | ChainId.Arbitrum
-  | ChainId.Avalanche
+type FormaticSupportedChains = ChainId | ChainId.ROPSTEN
 
 const CHAIN_ID_NETWORK_ARGUMENT: { readonly [chainId in FormaticSupportedChains]: string | undefined } = {
   [ChainId.MAINNET]: '',
