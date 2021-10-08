@@ -636,11 +636,10 @@ export default function Header() {
 
   useEffect(() => {
     setChain((prev: any) => {
-      if (prev && prev !== chainId) {
-        window.location.reload()
-        return chainId
+      if (prev !== undefined && prev !== chainId) {
+        window.location.replace('/')
       }
-      return prev
+      return chainId
     })
   }, [chainId])
 
