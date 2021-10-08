@@ -52,18 +52,18 @@ const pageContent = [
   {
     title: 'Welcome to Antimatter',
     content:
-      'Understand Antimatter in one minute \n' +
-      '\n' +
-      'What Antimatter creates is decentralized Bull and Bear tokens, which are leverage embedded and non-expiry.\n' +
-      '\n' +
-      'The bull token price will increase more than the underlying target asset when there is a price appreciation of.\n' +
-      '\n' +
-      'The bear token price will act in reverse to underlying target asset. When the underlying target asset increases in price, the bear tokens price will decrease.\n' +
-      '\n' +
-      'It is simple as it is, leveraged tokens.\n' +
-      '\n' +
-      'Bullish and want to have more price exposure? Buy bull\n' +
-      'Bearish and want to have some hedge? Buy bear'
+      'Understand Antimatter in one minute  \n' +
+      ' \n' +
+      'What Antimatter creates is decentralized Bull and Bear Tokens, which are leverage embedded and non-expiry. \n' +
+      ' \n' +
+      'When the Underlying Asset price increases, the Bull Token price will increase more. \n' +
+      ' \n' +
+      'When the Underlying Asset price, the bear token price will decrease more. \n' +
+      ' \n' +
+      'It is simple as it is, leveraged tokens. \n' +
+      ' \n' +
+      'Bullish and want to have more price exposure? Buy Bull Token. \n' +
+      'Bearish and want to have some hedge? Buy Bear Token.'
   },
   {
     title: 'What is option? ',
