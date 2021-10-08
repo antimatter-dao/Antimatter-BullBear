@@ -51,7 +51,18 @@ const pageContent = [
   {
     title: 'Welcome to Antimatter',
     content:
-      'Antimatter is a simple light weight onchain defi derivative protocol. You can now trade and conduct market strategies for onchain perpetual options.'
+      'Understand Antimatter in one minute \n' +
+      '\n' +
+      'What Antimatter creates is decentralized Bull and Bear tokens, which are leverage embedded and non-expiry.\n' +
+      '\n' +
+      'The bull token price will increase more than the underlying target asset when there is a price appreciation of.\n' +
+      '\n' +
+      'The bear token price will act in reverse to underlying target asset. When the underlying target asset increases in price, the bear tokens price will decrease.\n' +
+      '\n' +
+      'It is simple as it is, leveraged tokens.\n' +
+      '\n' +
+      'Bullish and want to have more price exposure? Buy bull\n' +
+      'Bearish and want to have some hedge? Buy bear'
   },
   {
     title: 'What is option? ',
@@ -126,16 +137,13 @@ export default function WelcomeSlider() {
               <CloseIcon onClick={handleClose} />
             </RowBetween>
             <TYPE.body style={{ whiteSpace: 'pre-wrap' }}>{pageContent[page].content}</TYPE.body>
-            <RowFixed style={{ marginTop: '20px' }}>
+            <RowFixed style={{ marginTop: '20px', width: '100%' }}>
               {!isEndPage && (
-                <ButtonWhite style={{ padding: '9px', marginRight: '20px', width: '160px' }} onClick={handleClose}>
+                <ButtonWhite style={{ padding: '9px', marginRight: '20px' }} onClick={handleClose}>
                   <TYPE.main fontSize={14}>Skip </TYPE.main>
                 </ButtonWhite>
               )}
-              <ButtonWhite
-                style={{ padding: '9px', backgroundColor: '#FFFFFF', width: '160px' }}
-                onClick={handleNextClick}
-              >
+              <ButtonWhite style={{ padding: '9px', backgroundColor: '#FFFFFF' }} onClick={handleNextClick}>
                 <TYPE.main fontSize={14} color="#000000">
                   {!isEndPage && (page === 0 ? 'Show Tutorial' : 'Next')}
                   {isEndPage && 'Begin to trade'}
