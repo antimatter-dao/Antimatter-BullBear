@@ -116,7 +116,7 @@ export const formatMyTransactionRow = (
     type,
     parsePrice(tradesAmount, tokenDecimal),
     parsePrice(price, currencyDecimal),
-    tradesAmount.toString()[0] === '-' ? 'Buy' : 'Sell'
+    tradesAmount.toString()[0] === '-' ? 'Sell' : 'Buy'
     //   <ButtonOutlinedPrimary
     //     key={optionIndex}
     //     onClick={() => {
