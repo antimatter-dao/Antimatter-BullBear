@@ -194,9 +194,9 @@ export function useMyPosition() {
         }
         return acc
       }, [] as any[][])
-      return call
+      return { data: call, loading: !(all && all.length > 0) }
     } catch (e) {
-      return [] as any[][]
+      return { data: [] as any[][], loading: true }
     }
   }, [all, history.push])
 

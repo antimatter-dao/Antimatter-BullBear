@@ -109,7 +109,7 @@ export default function User() {
 
   const myCreation = useMyCreation()
 
-  const myPosition = useMyPosition()
+  const { data: myPosition, loading: myPositionLoading } = useMyPosition()
 
   return (
     <Wrapper>
@@ -121,7 +121,7 @@ export default function User() {
         />
         {(currentTab === UserInfoTabs.CREATION && myCreation === undefined) ||
         (currentTab === UserInfoTabs.TRANSACTION && myTransactionLoading) ||
-        (currentTab === UserInfoTabs.POSITION && !myPosition?.[0]?.[0]) ? (
+        (currentTab === UserInfoTabs.POSITION && myPositionLoading) ? (
           <>
             <HideSmall>
               <AnimatedWrapper style={{ marginTop: -100 }}>
@@ -143,6 +143,9 @@ export default function User() {
             {currentTab === UserInfoTabs.POSITION && (
               <>
                 <Table header={['OPTION', 'TYPE', 'AMOUNT', 'CONTRACT \nADDRESS', '']} rows={myPosition} />
+                {myPosition !== undefined && !myPosition.length && (
+                  <p style={{ margin: 50 }}>You have no position at the moment</p>
+                )}
               </>
             )}
             {currentTab === UserInfoTabs.CREATION && (
