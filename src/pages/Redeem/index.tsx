@@ -208,7 +208,7 @@ export default function Redeem({
     <AppBody maxWidth="560px" style={{ marginTop: isMobile ? 40 : 100, marginBottom: isMobile ? 100 : 0 }}>
       <MarketStrategyTabs generation={false} />
       <TYPE.darkGray fontSize={14} style={{ padding: '4px 16px 30px' }}>
-        In this section you can remove both call and put tokens at the same time.
+        In this section you can remove both bull and bear tokens at the same time.
       </TYPE.darkGray>
       <Wrapper>
         <TransactionConfirmationModal
