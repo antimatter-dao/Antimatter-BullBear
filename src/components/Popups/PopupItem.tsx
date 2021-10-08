@@ -11,7 +11,7 @@ import TransactionPopup from './TransactionPopup'
 export const StyledClose = styled(X)`
   position: absolute;
   right: 10px;
-  top: 10px;
+  top: 1.1em;
   color: ${({ theme }) => theme.text2};
 
   :hover {
