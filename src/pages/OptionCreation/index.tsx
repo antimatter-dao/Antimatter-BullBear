@@ -21,9 +21,14 @@ const Wrapper = styled(AutoColumn)`
   margin-top: 100px;
   width: 560px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-top: 60px;
+    margin-top: 20px
     width: 100%;
-    margin-bottom: 100px;
+    margin-bottom: 0
+    height: calc(100vh - ${({ theme }) => theme.headerHeight} - ${({ theme }) => theme.mobileHeaderHeight});
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between
   `}
 `
 
