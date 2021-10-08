@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect /*, useContext*/ } from 'react'
-// import { X } from 'react-feather'
+import { X } from 'react-feather'
 import { useSpring } from 'react-spring/web'
 import styled /*, { ThemeContext }*/ from 'styled-components'
 import { animated } from 'react-spring'
@@ -8,15 +8,16 @@ import { useRemovePopup } from '../../state/application/hooks'
 import ListUpdatePopup from './ListUpdatePopup'
 import TransactionPopup from './TransactionPopup'
 
-// export const StyledClose = styled(X)`
-//   position: absolute;
-//   right: 10px;
-//   top: 10px;
+export const StyledClose = styled(X)`
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  color: ${({ theme }) => theme.text2};
 
-//   :hover {
-//     cursor: pointer;
-//   }
-// `
+  :hover {
+    cursor: pointer;
+  }
+`
 export const Popup = styled.div`
   display: inline-block;
   width: 100%;
@@ -92,7 +93,7 @@ export default function PopupItem({
 
   return (
     <Popup>
-      {/* <StyledClose color={theme.text2} onClick={removeThisPopup} /> */}
+      <StyledClose onClick={removeThisPopup} />
       {popupContent}
       {removeAfterMs !== null ? <AnimatedFader style={faderStyle} /> : null}
     </Popup>
