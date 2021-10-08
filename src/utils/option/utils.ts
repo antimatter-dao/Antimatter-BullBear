@@ -110,19 +110,26 @@ export const formatDexTradeData = (data: DexTradeDataInput | undefined): DexTrad
     }
   )
 }
+export interface DexTradeLineData {
+  time: UTCTimestamp
+  value: number
+}
 
-// return data.reduce((acc, { time, close, high, low, open }) => {
-//   return [
-//     {
-//       time: +time as UTCTimestamp,
-//       close: parseFloat(close),
-//       open: parseFloat(open),
-//       low: parseFloat(low),
-//       high: parseFloat(high)
-//     },
-//     ...acc
-//   ]
-// }, [] as any[])
+export const formatDexTradeLineData = (data: DexTradeDataInput | undefined): DexTradeLineData[] | undefined => {
+  if (!data) return undefined
+  // let prevClose = 0
+  const list = Object.keys(data).map(
+    (timestamp): DexTradeLineData => {
+      // const { time, price } = data[timestamp as keyof typeof data]
+      const [{ time, price }] = data[timestamp as keyof typeof data]
+      return {
+        time: +time as UTCTimestamp,
+        value: parseFloat(price)
+      }
+    }
+  )
+  return list
+}
 
 export interface Underlying {
   underlying: string

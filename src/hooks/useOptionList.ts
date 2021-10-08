@@ -39,11 +39,11 @@ export function useOptionList(
       ).catch(e => {
         console.error(e)
         errorFunction()
-        throw new Error(e)
+        // throw new Error(e)
       })
       setFirstLoading(false)
-      setTotalPages(r.data.data.pages)
-      setIds(r.data.data.list.map(({ optionIndex }: { optionIndex: string }) => optionIndex))
+      setTotalPages(r?.data?.data?.pages)
+      setIds(r?.data?.data?.list?.map(({ optionIndex }: { optionIndex: string }) => optionIndex))
     })()
   }, [chainId, currentPage, searchParams, blockNumber, errorFunction])
 
