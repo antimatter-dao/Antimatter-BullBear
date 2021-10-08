@@ -386,7 +386,7 @@ export default function WarningModal() {
 
             <AutoRow style={{ cursor: 'pointer', width: '100%' }}>
               <Checkbox
-                disabled={!enableCheck}
+                // disabled={!enableCheck}
                 name="confirmed"
                 type="checkbox"
                 checked={confirmed}
@@ -397,14 +397,15 @@ export default function WarningModal() {
                 fontSize="16px"
                 color={enableCheck ? theme.primary1 : theme.primary4}
                 fontWeight={500}
+                onClick={() => setConfirmed(!confirmed)}
               >
                 I agree
               </TYPE.body>
             </AutoRow>
 
-            <TYPE.small style={{ marginTop: -20 }} color={enableCheck ? 'transparent' : theme.red1}>
+            {/* <TYPE.small style={{ marginTop: -20 }} color={enableCheck ? 'transparent' : theme.red1}>
               Please read all and scroll down to bottom to confirm{' '}
-            </TYPE.small>
+            </TYPE.small> */}
 
             <ButtonPrimary disabled={!confirmed} onClick={handleClose}>
               Next
