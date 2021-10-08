@@ -79,11 +79,6 @@ const NetworkInfo: {
     icon: <ETH />,
     title: 'ETH'
   },
-  [ChainId.ROPSTEN]: {
-    color: '#FFFFFF',
-    icon: <ETH />,
-    title: 'Ropsten'
-  },
   [ChainId.BSC]: {
     color: '#F0B90B',
     icon: <BSCInvert />,
