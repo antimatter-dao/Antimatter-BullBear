@@ -165,7 +165,9 @@ export function useSwapCallback(
                   : ''
               } ${
                 putAmount !== '0'
-                  ? tryFormatAmount(absolute(putAmount), option.put?.token)?.toExact() ?? '' + option.put?.token.symbol
+                  ? (tryFormatAmount(absolute(putAmount), option.put?.token)
+                      ?.toExact()
+                      .toString() ?? '') + option.put?.token.symbol
                   : ''
               }`
             })
