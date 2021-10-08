@@ -43,8 +43,7 @@ import ComingSoon from './ComingSoon'
 import User from './User'
 import Calculator from './Calculator'
 import WarningModal from 'components/Modal/WarningModal'
-import Helper from '../assets/svg/helper.svg'
-import { ExternalLink } from '../theme'
+import ButtonFeedback from 'components/Button/ButtonFeedback'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -96,28 +95,11 @@ const BodyWrapper = styled.div`
   min-height: calc(100vh - ${theme.headerHeight + ' - ' + theme.mobileHeaderHeight}); 
   `} */
   ${({ theme }) => theme.mediaWidth.upToSmall`
+  margin-bottom: ${theme.headerHeight};
   padding-bottom: 0;
   min-width: auto;
   margin-top: ${({ theme }) => theme.mobileHeaderHeight}
   min-height: calc(100vh - ${theme.headerHeight + ' - ' + theme.mobileHeaderHeight}); 
-  `};
-`
-const Feedback = styled(ExternalLink)`
-  z-index: 9;
-  position: fixed;
-  right: 50px;
-  bottom: 50px;
-  img {
-    width: 24px;
-    height: 24px;
-  }
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    right:14px
-    bottom: 38px;
-    img {
-      width: 26px;
-      height: 26px;
-    }
   `};
 `
 
@@ -134,13 +116,7 @@ export const Marginer = styled.div`
 export default function App() {
   return (
     <Suspense fallback={null}>
-      <Feedback
-        href={
-          'https://docs.google.com/forms/d/e/1FAIpQLSfyWq7xlI_ro72-n9rM-disc7extCoVw5oUiOQND7fnh1c80g/viewform?usp=pp_url'
-        }
-      >
-        <img alt="" src={Helper} />
-      </Feedback>
+      <ButtonFeedback />
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper id="app">

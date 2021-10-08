@@ -3,12 +3,12 @@ import React from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import CurrencyLogo from '../CurrencyLogo'
-import { AutoRow } from '../Row'
+import { AutoRow, RowBetween } from '../Row'
 import { TYPE } from '../../theme'
 import { Input as NumericalInput } from '../NumericalInput'
 import CallIcon from '../../assets/svg/call_icon.svg'
 import PutIcon from '../../assets/svg/put_icon.svg'
-
+import useMediaWidth from 'hooks/useMediaWidth'
 import useTheme from '../../hooks/useTheme'
 import { LabeledCard } from 'components/Card'
 
@@ -68,6 +68,19 @@ const CallOrPutIcon = styled.img`
   margin-left: 16px;
 `
 
+const RowWrapper = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column;
+  gap: 20px;
+  & >div:first-child{
+    margin-right: 0
+  };
+  &>div{
+    width: 100%
+  }
+`}
+`
+
 interface CallOrPutInputPanelProps {
   value: string
   onUserInput: (value: string) => void
@@ -100,6 +113,7 @@ export default function CallOrPutInputPanel({
   underlying
 }: CallOrPutInputPanelProps) {
   const theme = useTheme()
+  const upToSmall = useMediaWidth('upToSmall')
 
   return (
     <InputPanel id={id} negativeMarginTop={negativeMarginTop}>
@@ -113,9 +127,9 @@ export default function CallOrPutInputPanel({
             </AutoRow>
           </LabelRow>
         )}
-        <Aligner>
+        <RowWrapper>
           <LabeledCard
-            style={{ width: halfWidth ? '50%' : '100%', marginRight: 15 }}
+            style={{ width: halfWidth ? (upToSmall ? '100%' : '50%') : '100%', marginRight: upToSmall ? 0 : 15 }}
             content={
               <Aligner>
                 <CurrencyLogo currency={underlying ?? undefined} size={'24px'} />
@@ -146,7 +160,7 @@ export default function CallOrPutInputPanel({
               </>
             )}
           </InputRow>
-        </Aligner>
+        </RowWrapper>
       </Container>
     </InputPanel>
   )

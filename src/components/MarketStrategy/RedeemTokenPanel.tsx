@@ -10,6 +10,7 @@ import { Input as NumericalInput } from '../NumericalInput'
 import { useActiveWeb3React } from '../../hooks'
 import useTheme from '../../hooks/useTheme'
 import { LabeledCard } from 'components/Card'
+import useMediaWidth from 'hooks/useMediaWidth'
 
 const InputRow = styled.div<{ inputOnly: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -60,6 +61,19 @@ const Aligner = styled.span`
   display: flex;
   align-items: center;
   justify-content: space-between;
+`
+
+const RowWrapper = styled(Aligner)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column;
+  gap: 20px;
+  & >div:first-child{
+    margin-right: 0
+  };
+  &>div{
+    width: 100%
+  }
+`}
 `
 
 const InputPanel = styled.div<{ hideInput?: boolean; negativeMarginTop?: string }>`
@@ -122,6 +136,7 @@ export default function RedeemTokenPanel({
   // const { t } = useTranslation()
 
   const { account } = useActiveWeb3React()
+  const isUpToSmall = useMediaWidth('upToSmall')
   const theme = useTheme()
   const handleOnMax = useCallback(() => onUserInput(currencyBalance ?? ''), [currencyBalance, onUserInput])
   return (
@@ -152,10 +167,10 @@ export default function RedeemTokenPanel({
           </AutoRow>
         </LabelRow>
 
-        <Aligner>
+        <RowWrapper>
           {!inputOnly && (
             <LabeledCard
-              style={{ width: '50%', marginRight: 15 }}
+              style={{ width: isUpToSmall ? '100%' : '50%', marginRight: isUpToSmall ? 0 : 15 }}
               content={
                 <RowFixed>
                   {currency ? <CallPutToken currency={currency} isCall={isCall} /> : null}
@@ -188,7 +203,7 @@ export default function RedeemTokenPanel({
             />
             {account && currency && <StyledBalanceMax onClick={handleOnMax}>Max</StyledBalanceMax>}
           </InputRow>
-        </Aligner>
+        </RowWrapper>
       </div>
     </InputPanel>
   )

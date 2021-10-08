@@ -18,6 +18,10 @@ const Tabs = styled.div`
   align-items: center;
   border-radius: 3rem;
   justify-content: space-evenly;
+  padding: 0rem 1rem 0 1rem;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding:0
+  `}
 `
 
 const activeClassName = 'ACTIVE'
@@ -110,7 +114,7 @@ export function MarketStrategyTabs({ generation }: { generation: boolean }) {
 
   return (
     <Tabs>
-      <RowBetween style={{ padding: '0rem 1rem 0 1rem' }}>
+      <RowBetween>
         <HistoryLink
           to="/option_creation"
           onClick={() => {

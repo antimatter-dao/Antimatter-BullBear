@@ -3,7 +3,7 @@ import { Plus } from 'react-feather'
 import { RouteComponentProps } from 'react-router'
 import { TokenAmount } from '@uniswap/sdk'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import { TransactionResponse } from '@ethersproject/providers'
 import { ButtonError, /* ButtonOutlined,*/ ButtonPrimary } from '../../components/Button'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
@@ -15,7 +15,6 @@ import { useActiveWeb3React } from '../../hooks'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useIsExpertMode } from '../../state/user/hooks'
 import AppBody from '../AppBody'
-import { Wrapper } from '../Pool/styleds'
 import { ConfirmRedeemModalBottom } from './ConfirmRedeemModalBottom'
 import { GenerateBar } from '../../components/MarketStrategy/GenerateBar'
 import { absolute, useDerivedStrategyInfo, useOption } from '../../state/market/hooks'
@@ -33,6 +32,28 @@ import { LabeledCard } from '../../components/Card'
 import CurrencyLogo from '../../components/CurrencyLogo'
 import { TYPE } from '../../theme'
 import { isMobile } from 'react-device-detect'
+import useMediaWidth from 'hooks/useMediaWidth'
+
+export const Wrapper = styled.div`
+  position: relative;
+  padding: 1rem;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding: 1rem 0;
+  `}
+`
+
+const RowWrapper = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column;
+  gap: 20px;
+  & >div:first-child{
+    margin-right: 0
+  };
+  &>div{
+    width: 100%
+  }
+`}
+`
 
 export default function Redeem({
   match: {
@@ -40,6 +61,7 @@ export default function Redeem({
   }
 }: RouteComponentProps<{ optionTypeIndex?: string }>) {
   const option = useOption(optionTypeIndex)
+  const isUpToSmall = useMediaWidth('upToSmall')
 
   const [callTypedAmount, setCallTypedAmount] = useState<string>('')
   // const [putTypedAmount, setPutTypedAmount] = useState<string>('')
@@ -205,9 +227,12 @@ export default function Redeem({
   }, [txHash])
 
   return (
-    <AppBody maxWidth="560px" style={{ marginTop: isMobile ? 40 : 100, marginBottom: isMobile ? 100 : 0 }}>
+    <AppBody
+      maxWidth="560px"
+      style={{ marginTop: isMobile ? 40 : 100, mmarginBottom: 0, paddingBottom: isUpToSmall ? 30 : 0 }}
+    >
       <MarketStrategyTabs generation={false} />
-      <TYPE.darkGray fontSize={14} style={{ padding: '4px 16px 30px' }}>
+      <TYPE.darkGray fontSize={14} style={{ padding: isUpToSmall ? '10px 24px' : '4px 16px 30px' }}>
         In this section you can remove both bull and bear tokens at the same time.
       </TYPE.darkGray>
       <Wrapper>
@@ -228,8 +253,12 @@ export default function Redeem({
         />
 
         <AutoColumn gap="24px">
-          <RowBetween>
-            <LabeledCard label="Option ID" content={optionTypeIndex ?? ''} style={{ marginRight: 15 }} />
+          <RowWrapper>
+            <LabeledCard
+              label="Option ID"
+              content={optionTypeIndex ?? ''}
+              style={{ marginRight: isUpToSmall ? 0 : 15 }}
+            />
             <LabeledCard
               label="Option Type"
               content={
@@ -239,7 +268,7 @@ export default function Redeem({
                 </RowFixed>
               }
             />
-          </RowBetween>
+          </RowWrapper>
           <RedeemTokenPanel
             value={callTypedAmount ?? ''}
             onUserInput={setCallTypedAmount}
@@ -254,7 +283,7 @@ export default function Redeem({
           <RedeemTokenPanel
             value={callTypedAmount ?? ''}
             onUserInput={setCallTypedAmount}
-            label={'Bull token'}
+            label={'Bear token'}
             currency={option?.put?.token}
             negativeMarginTop="-25px"
             currencyBalance={userPutBalance?.toExact().toString()}

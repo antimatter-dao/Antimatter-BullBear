@@ -9,6 +9,7 @@ import { AutoColumn } from '../Column'
 import styled from 'styled-components'
 import CurrencyLogo from '../CurrencyLogo'
 import { currencyNameHelper, isNegative } from 'utils/marketStrategyUtils'
+import useMediaWidth from 'hooks/useMediaWidth'
 
 const TokenPanel = styled.div`
   flex: 1;
@@ -19,6 +20,19 @@ const TokenPanel = styled.div`
   border-radius: 14px;
   padding: 0 16px;
   display: flex;
+`
+
+const RowWrapper = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column;
+  gap: 20px;
+  & >div:first-child{
+    margin-right: 0
+  };
+  &>div{
+    width: 100%
+  }
+`}
 `
 
 export function GenerateBar({
@@ -41,6 +55,7 @@ export function GenerateBar({
   subTitle?: string
 }) {
   const theme = useTheme()
+  const isUpToSmall = useMediaWidth('upToSmall')
 
   return (
     <AutoColumn>
@@ -52,8 +67,8 @@ export function GenerateBar({
         </RowBetween>
       )}
       <OutlineCard style={{ backgroundColor: 'rgba(0,0,0,.2)', padding: '16px 20px' }}>
-        <RowBetween>
-          <AutoColumn style={{ flex: 1, maxWidth: '45%' }} gap={'8px'}>
+        <RowWrapper>
+          <AutoColumn style={{ flex: 1, maxWidth: isUpToSmall ? '100%' : '45%' }} gap={'8px'}>
             <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
               {(!subTitle || callTitle) && callTitle}
               {!callTitle && (subTitle && isNegative(callVol) ? 'You will receive' : 'You will Pay')}
@@ -69,9 +84,9 @@ export function GenerateBar({
             </TokenPanel>
           </AutoColumn>
 
-          <Plus size="24" color={theme.text2} style={{ margin: '24px 10px 0' }} />
+          <Plus size="24" color={theme.text2} style={{ margin: isUpToSmall ? 0 : '24px 10px 0' }} />
 
-          <AutoColumn style={{ flex: 1, maxWidth: '45%' }} gap={'8px'}>
+          <AutoColumn style={{ flex: 1, maxWidth: isUpToSmall ? '100%' : '45%' }} gap={'8px'}>
             <TYPE.subHeader fontWeight={500} fontSize={14} color={theme.text3}>
               {(!subTitle || putTitle) && putTitle}
               {!putTitle && (subTitle && isNegative(putVol) ? 'You will receive' : 'You will Pay')}
@@ -86,7 +101,7 @@ export function GenerateBar({
               </TYPE.black>
             </TokenPanel>
           </AutoColumn>
-        </RowBetween>
+        </RowWrapper>
       </OutlineCard>
     </AutoColumn>
   )

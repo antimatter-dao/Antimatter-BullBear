@@ -4,7 +4,7 @@ import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonOutlined, ButtonPrimary } from '../../components/Button'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
@@ -33,7 +33,21 @@ import { OptionField } from '../Swap'
 import { useTokenBalance } from 'state/wallet/hooks'
 import { LabeledCard } from 'components/Card'
 import CurrencyLogo from 'components/CurrencyLogo'
+import useMediaWidth from 'hooks/useMediaWidth'
 import { isMobile } from 'react-device-detect'
+
+const RowWrapper = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  flex-direction: column;
+  gap: 20px;
+  & >div:first-child{
+    margin-right: 0
+  };
+  &>div{
+    width: 100%
+  }
+`}
+`
 
 export default function Generate({
   match: {
@@ -46,6 +60,7 @@ export default function Generate({
   // const [putTyped, setPutTyped] = useState<string>()
 
   const theme = useContext(ThemeContext)
+  const isUpToSmall = useMediaWidth('upToSmall')
 
   const { account, chainId, library } = useActiveWeb3React()
 
@@ -215,11 +230,14 @@ export default function Generate({
 
   return (
     <>
-      <AppBody maxWidth="560px" style={{ marginTop: isMobile ? 40 : 100, marginBottom: isMobile ? 100 : 0 }}>
+      <AppBody
+        maxWidth="560px"
+        style={{ marginTop: isMobile ? 20 : 100, marginBottom: 0, paddingBottom: isUpToSmall ? 30 : 0 }}
+      >
         <MarketStrategyTabs generation />
-        <TYPE.darkGray fontSize={14} style={{ padding: '4px 16px 30px' }}>
-          In this section you can generate both call and put tokens at the same time. You need to generate equal amount
-          of call and put tokens.
+        <TYPE.darkGray fontSize={14} style={{ padding: isUpToSmall ? '10px 24px' : '4px 16px 30px' }}>
+          In this section you can generate both bull and bear tokens at the same time. You need to generate equal amount
+          of bull and bear tokens.
         </TYPE.darkGray>
         <Wrapper>
           <TransactionConfirmationModal
@@ -238,8 +256,12 @@ export default function Generate({
             pendingText="Generating"
           />
           <AutoColumn gap="20px">
-            <RowBetween>
-              <LabeledCard label="Option ID" content={optionTypeIndex ?? ''} style={{ marginRight: 15 }} />
+            <RowWrapper>
+              <LabeledCard
+                label="Option ID"
+                content={optionTypeIndex ?? ''}
+                style={{ marginRight: isUpToSmall ? 0 : 15 }}
+              />
               <LabeledCard
                 label="Option Type"
                 content={
@@ -249,7 +271,7 @@ export default function Generate({
                   </RowFixed>
                 }
               />
-            </RowBetween>
+            </RowWrapper>
 
             <CallOrPutInputPanel
               value={callTyped ?? ''}

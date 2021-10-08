@@ -43,6 +43,7 @@ export default function OptionCreation() {
             setCurTab(TAB.CREATION)
           }}
           active={curTab === TAB.CREATION}
+          style={{ marginRight: 10 }}
         >
           {TAB.CREATION}
         </TabButton>
