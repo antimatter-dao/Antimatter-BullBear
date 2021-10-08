@@ -8,6 +8,14 @@ export const ARBITRUM: { [key: string]: Token } = {
   WBTC: new Token(ChainId.Arbitrum, '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f', 8, 'WBTC', 'Wrapped Bitcoin')
 }
 
+export const BSC: { [key: string]: Token } = {
+  WBNB: new Token(ChainId.BSC, '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', 18, 'WBNB', 'Wrapped BNB')
+}
+
+export const AVAX: { [key: string]: Token } = {
+  WAVAX: new Token(ChainId.Avalanche, '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7', 18, 'WAVAX', 'Wrapped AVAX')
+}
+
 export const ROUTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
   [ChainId.ROPSTEN]: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
@@ -146,9 +154,9 @@ const WETH_ONLY: ChainTokenList = {
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, COMP, WBTC],
-  [ChainId.BSC]: [...WETH_ONLY[ChainId.BSC], WUSDT[ChainId.BSC]],
+  [ChainId.BSC]: [...WETH_ONLY[ChainId.BSC], WUSDT[ChainId.BSC], BSC.WBNB],
   [ChainId.Arbitrum]: [...WETH_ONLY[ChainId.Arbitrum], WUSDT[ChainId.Arbitrum], ARBITRUM.USDC],
-  [ChainId.Avalanche]: [...WETH_ONLY[ChainId.Avalanche], WUSDT[ChainId.Avalanche]]
+  [ChainId.Avalanche]: [...WETH_ONLY[ChainId.Avalanche], WUSDT[ChainId.Avalanche], AVAX.WAVAX]
 }
 
 /**
