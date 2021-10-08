@@ -177,149 +177,271 @@
       "logoURI": "https://bscscan.com/token/images/binaryx_32.png"
     },
     {
-      "name": "SushiToken",
-      "address": "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2",
-      "symbol": "SUSHI",
-      "decimals": 18,
-      "chainId": 42161,
-      "logoURI": "https://etherscan.io/token/images/sushitoken_32.png"
-    },{
-      "name": "USD Coin",
-      "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-      "symbol": "USDC",
-      "decimals": 6,
-      "chainId": 42161,
-      "logoURI": "https://etherscan.io/token/images/centre-usdc_28.png"
-    },
-    {
-      "name": "Wrapped BTC",
-      "address": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
-      "symbol": "WBTC",
-      "decimals": 8,
-      "chainId": 42161,
-      "logoURI": "https://etherscan.io/token/images/wbtc_28.png?v=1"
-    },
-    {
-      "name": "Tether USD",
-      "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
-      "symbol": "USDT",
-      "decimals": 8,
-      "chainId": 42161,
-      "logoURI": "https://etherscan.io/token/images/tether_32.png"
-    },
-    {
       "name": "Wrapped Ether",
-      "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
       "symbol": "WETH",
       "decimals": 18,
       "chainId": 42161,
-      "logoURI": "https://etherscan.io/token/images/weth_28.png"
-    },{
-      "name": "Dai Stablecoin",
-      "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
-      "symbol": "DAI",
-      "decimals": 18,
-      "chainId": 42161,
-      "logoURI": "https://etherscan.io/token/images/MCDDai_32.png"
-    },{
-      "name": "BitDAO",
-      "address": "0x1a4b46696b2bb4794eb3d4c26f1c55f9170fa4c5",
-      "symbol": "BIT",
-      "decimals": 18,
-      "chainId": 42161,
-      "logoURI": "https://etherscan.io/token/images/bitdao_32.png"
-    },{
-      "name": "Olympus",
-      "address": "0x383518188c0c6d7730d91b2c03a03c837814a899",
-      "symbol": "OHM",
-      "decimals": 9,
-      "chainId": 42161,
-      "logoURI": "https://etherscan.io/token/images/olympusdao2_32.png"
-    },{
-      "name": "Illuvium",
-      "address": "0x767fe9edc9e0df98e07454847909b5e959d7ca0e",
-      "symbol": "ILV",
-      "decimals": 18,
-      "chainId": 42161,
-      "logoURI": "https://etherscan.io/token/images/illuvium_32.png"
-    },{
-      "name": "yearn.finance",
-      "address": "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e",
-      "symbol": "YFI",
-      "decimals": 18,
-      "chainId": 42161,
-      "logoURI": "https://etherscan.io/token/images/yfi_32.png"
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/eth.jpg"
     },
     {
-      "name": "Wrapped AVAX",
-      "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
-      "symbol": "WAVAX",
+      "name": "Antimatter.Finance Governance Token",
+      "address": "0xaaa62d9584cbe8e4d68a43ec91bff4ff1fadb202",
+      "symbol": "MATTER",
       "decimals": 18,
-      "chainId": 43114,
-      "logoURI": ""
-    },{
-      "name": "Pangolin",
-      "address": "0x60781C2586D68229fde47564546784ab3fACA982",
-      "symbol": "PNG",
-      "decimals": 18,
-      "chainId": 43114,
-      "logoURI": ""
-    },{
-      "name": "Wrapped Ether",
-      "address": "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB",
-      "symbol": "WETH.e",
-      "decimals": 18,
-      "chainId": 43114,
-      "logoURI": ""
-    },{
+      "chainId": 42161,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/eth.jpg"
+    },
+    {
+      "address": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+      "chainId": 42161,
       "name": "Tether USD",
-      "address": "0xc7198437980c041c805A1EDcbA50c1Ce5db95118",
-      "symbol": "USDT.e",
+      "symbol": "USDT",
       "decimals": 6,
-      "chainId": 43114,
-      "logoURI": ""
-    },{
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/usdt.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0x0e15258734300290a651FdBAe8dEb039a8E7a2FA",
+      "name": "Alchemy",
+      "symbol": "ALCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/alch.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0x040d1EdC9569d4Bab2D15287Dc5A4F10F56a56B8",
+      "name": "Balancer",
+      "symbol": "BAL",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/bal.jpg"
+    },
+
+
+    {
+      "chainId": 42161,
+      "address": "0x3a8B787f78D775AECFEEa15706D4221B40F345AB",
+      "name": "CelerToken",
+      "symbol": "CELR",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/celr.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0x354A6dA3fcde098F8389cad84b0182725c6C91dE",
+      "name": "Compound",
+      "symbol": "COMP",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/comp.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0xf4D48Ce3ee1Ac3651998971541bAdbb9A14D7234",
+      "name": "Cream",
+      "symbol": "CREAM",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/cream.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978",
+      "name": "Curve DAO Token",
+      "symbol": "CRV",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/crv.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0x69Eb4FA4a2fbd498C257C57Ea8b7655a2559A581",
+      "name": "DODO bird",
+      "symbol": "DODO",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/dodo.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37",
+      "name": "DXdao",
+      "symbol": "DXD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/dxd.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0x969131D8ddC06C2Be11a13e6E7fACF22CF57d95e",
+      "name": "dForce EUR",
+      "symbol": "EUX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/eux.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0xa0b862F60edEf4452F25B4160F177db44DeB6Cf1",
+      "name": "Gnosis Token",
+      "symbol": "GNO",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/gno.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0x23A941036Ae778Ac51Ab04CEa08Ed6e2FE103614",
+      "name": "Graph Token",
+      "symbol": "GRT",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/grt.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
+      "name": "ChainLink Token",
+      "symbol": "LINK",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/link.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0x2e9a6Df78E42a30712c10a9Dc4b1C8656f8F2879",
+      "name": "Maker",
+      "symbol": "MKR",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/mkr.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
+      "name": "SushiToken",
+      "symbol": "SUSHI",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/sushi.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0x955b9fe60a5b5093df9Dc4B1B18ec8e934e77162",
+      "name": "Swapr",
+      "symbol": "SWPR",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/swpr.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0",
+      "name": "Uniswap",
+      "symbol": "UNI",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/uni.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
       "name": "USD Coin",
-      "address": "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
-      "symbol": "USDC.e",
+      "symbol": "USDC",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/usdc.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
+      "name": "Wrapped BTC",
+      "symbol": "WBTC",
+      "decimals": 8,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/btc.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0xcAFcD85D8ca7Ad1e1C6F82F651fA15E33AEfD07b",
+      "name": "Wootrade Network",
+      "symbol": "WOO",
       "decimals": 18,
-      "chainId": 43114,
-      "logoURI": ""
-    },{
-      "name": "TSD Stablecoin",
-      "address": "0x4fbf0429599460D327BD5F55625E30E4fC066095",
-      "symbol": "TSD",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/woo.jpg"
+    },
+
+    {
+      "chainId": 42161,
+      "address": "0x82e3A8F066a6989666b031d916c43672085b1582",
+      "name": "yearn.finance",
+      "symbol": "YFI",
       "decimals": 18,
-      "chainId": 43114,
-      "logoURI": ""
-    },{
-      "name": "BENQI",
-      "address": "0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5",
-      "symbol": "QI",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/yfi.jpg"
+    },
+    {
+      "chainId": 42161,
+      "address": "0xA970AF1a584579B618be4d69aD6F73459D112F95",
+      "name": "Synth sUSD",
+      "symbol": "sUSD",
       "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/susd.jpg"
+    },
+    {
       "chainId": 43114,
-      "logoURI": ""
-    },{
-      "name": "Dai Stablecoin",
+      "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+      "decimals": 18,
+      "name": "Wrapped AVAX",
+      "symbol": "WAVAX",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/avax.jpg"
+    },
+    {
+      "chainId": 43114,
+      "address": "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB",
+      "decimals": 18,
+      "name": "Wrapped Ether",
+      "symbol": "WETH",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/eth.jpg"
+    },
+    {
+      "chainId": 43114,
+      "address": "0x63a72806098Bd3D9520cC43356dD78afe5D386D9",
+      "decimals": 18,
+      "name": "Aave Token",
+      "symbol": "AAVE",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/aave.jpg"
+    },
+    {
+      "chainId": 43114,
+      "address": "0x5947BB275c521040051D82396192181b413227A3",
+      "decimals": 18,
+      "name": "ChainLink Token",
+      "symbol": "LINK",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/link.jpg"
+    },
+    {
+      "chainId": 43114,
       "address": "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70",
-      "symbol": "DAI.e",
       "decimals": 18,
+      "name": "Dai Stablecoin",
+      "symbol": "DAI",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/dai.jpg"
+    },
+    {
       "chainId": 43114,
-      "logoURI": ""
-    },{
-      "name": "Avalaunch",
-      "address": "0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4",
-      "symbol": "XAVA",
+      "address": "0x37B608519F91f70F2EeB0e5Ed9AF4061722e4F76",
       "decimals": 18,
+      "name": "SushiToken",
+      "symbol": "SUSHI",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/sushi.jpg"
+    },
+    {
       "chainId": 43114,
-      "logoURI": ""
-    },{
-      "name": "PenguinToken ",
-      "address": "0xe896CDeaAC9615145c0cA09C8Cd5C25bced6384c",
-      "symbol": "PEFI",
-      "decimals": 18,
+      "address": "0xc7198437980c041c805A1EDcbA50c1Ce5db95118",
+      "decimals": 6,
+      "name": "Tether USD",
+      "symbol": "USDT",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/usdt.jpg"
+    },
+    {
       "chainId": 43114,
-      "logoURI": ""
+      "address": "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+      "decimals": 6,
+      "name": "USD Coin",
+      "symbol": "USDC",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/usdc.jpg"
+    },
+    {
+      "chainId": 43114,
+      "address": "0x50b7545627a5162F82A992c33b87aDc75187B218",
+      "decimals": 8,
+      "name": "Wrapped BTC",
+      "symbol": "WBTC",
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/btc.jpg"
     }
   ],
   "version": {

@@ -368,10 +368,10 @@ export default function Swap({
         text: `Select a token`
       }
     }
-    if (routerDelta?.isLoading) {
+    if (routerDelta?.isLoading || !payBalance) {
       return { ...defaultContent, disabled: true, text: 'Loading' }
     }
-    if (!payFormattedAmount || !payBalance) {
+    if (!payFormattedAmount) {
       return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
     }
     if (payFormattedAmount[0] !== '-' && payCurrencyAmount?.greaterThan(payBalance)) {
@@ -385,14 +385,13 @@ export default function Swap({
       return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
     }
     return defaultContent
-    /* eslint-disable*/
   }, [
     optionTyped,
     auction,
     parsedAmounts,
     optionBalance,
     payCurrency,
-    routerDelta?.isLoading,
+    routerDelta,
     payFormattedAmount,
     payBalance,
     payCurrencyAmount,
@@ -401,7 +400,6 @@ export default function Swap({
     curPriceImpactSeverity,
     chainId
   ])
-  /* eslint-disable */
 
   return (
     <>
