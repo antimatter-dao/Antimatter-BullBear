@@ -49,7 +49,7 @@ export const WUSDT = {
   ),
   [ChainId.Arbitrum]: new Token(
     ChainId.Arbitrum,
-    '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
     6,
     'USDT',
     'Tether USD'
