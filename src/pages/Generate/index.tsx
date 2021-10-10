@@ -277,21 +277,21 @@ export default function Generate({
               isCall={false}
               underlying={option?.underlying}
             />
-            {option?.call?.token && option?.put?.token && delta?.dUnd && delta.dCur && (
+            {option?.underlying && option?.currency && delta?.dUnd && delta.dCur && (
               <GenerateBar
                 cardTitle={``}
                 callVol={
                   delta &&
                   parseBalance({
                     val: delta.dUnd,
-                    token: option?.call?.token
+                    token: option?.underlying
                   })
                 }
                 putVol={
                   delta &&
                   parseBalance({
                     val: delta.dCur,
-                    token: option?.put?.token
+                    token: option?.currency
                   })
                 }
                 subTitle="Output Token"
