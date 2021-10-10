@@ -171,7 +171,7 @@ export default function Calculator() {
             </AutoColumn>
             <AutoColumn gap="4px">
               <TYPE.main color={theme.text3} fontSize={14}>
-                Price of Bull token
+                Price of Bear token
               </TYPE.main>
               <Card
                 style={{
