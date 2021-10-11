@@ -381,7 +381,6 @@ export default function WarningModal() {
                   </li>
                 </ul>
               </TYPE.body>
-              <TYPE.body>The project is in beta, use at your own risk.</TYPE.body>
             </Card>
 
             <AutoRow style={{ cursor: 'pointer', width: '100%' }}>
