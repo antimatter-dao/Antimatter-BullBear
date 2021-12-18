@@ -9,7 +9,7 @@ import { useActiveWeb3React } from '../../hooks'
 const StyledPolling = styled.div`
   position: fixed;
   display: flex;
-  right: 0;
+  left: 0;
   bottom: 0;
   padding: 1rem;
   color: white;
