@@ -126,11 +126,14 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
     "@material-ui/core": "^4.12.3",
     "@material-ui/lab": "^4.0.0-alpha.60",
+    "@mui/material": "^5.2.7",
     "@uniswap/default-token-list": "^2.0.0",
+    "@uniswap/sdk": "antimatter-finance/sdk.git",
     "axios": "^0.21.4",
-    "lightweight-charts": "^3.3.0",
-    "@uniswap/sdk": "antimatter-finance/sdk.git"
+    "lightweight-charts": "^3.3.0"
   }
 }
