@@ -216,7 +216,7 @@ function LocatoinVerification({ resource, children }: { resource: { read(): any 
 
   return (
     <Suspense fallback={<Spinner size={100} />}>
-      {!isDev && (location === 'US' || location === 'CN' || !location) ? <NoService /> : children}
+      {!isDev && (location === 'US' || location === 'CN' || !location) && false ? <NoService /> : children}
       {/*{location === 'US' || location === 'CN' || !location || location === 'Not found' ? children : children}*/}
     </Suspense>
   )
