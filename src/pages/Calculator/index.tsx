@@ -160,7 +160,7 @@ export default function Calculator() {
                   backgroundColor: theme.bg2,
                   width: '100%',
                   padding: '1rem',
-                  height: '3rem',
+                  // height: '3rem',
                   borderRadius: '14px'
                 }}
               >
@@ -178,11 +178,11 @@ export default function Calculator() {
                   backgroundColor: theme.bg2,
                   width: '100%',
                   padding: '1rem',
-                  height: '3rem',
+                  // height: '3rem',
                   borderRadius: '14px'
                 }}
               >
-                <RowBetween style={{ height: '100%' }}>
+                <RowBetween style={{ height: '100%', wordBreak: 'break-all' }}>
                   {pricePut ? pricePut : <span style={{ color: theme.text3 }}>0.000000</span>} <span>USDT</span>
                 </RowBetween>
               </Card>
