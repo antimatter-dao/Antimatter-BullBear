@@ -32,7 +32,8 @@ const GraphWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
   width: auto;
   margin: 20px 24px 20px 14px;
-  max-width: unset
+  max-width: unset;
+  padding-bottom: ${({ theme }) => theme.mobileHeaderHeight}
   `}
 `
 
