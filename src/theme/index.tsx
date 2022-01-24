@@ -41,37 +41,37 @@ export function colors(darkMode: boolean): Colors {
     black,
 
     // text
-    text1: darkMode ? '#FFFFFF' : '#000000',
-    text2: darkMode ? '#CCCCCC' : '#565A69',
-    text3: darkMode ? '#999999' : '#888D9B',
-    text4: darkMode ? '#727272' : '#C3C5CB',
-    text5: darkMode ? '#333333' : '#EDEEF2',
+    text1: '#FFFFFF',
+    text2: '#CCCCCC',
+    text3: '#999999',
+    text4: '#727272',
+    text5: '#333333',
 
     // backgrounds / greys
-    bg1: darkMode ? '#000000' : '#FFFFFF',
-    bg2: darkMode ? '#191919' : '#F7F8FA',
-    bg3: darkMode ? '#252525' : '#EDEEF2',
-    bg4: darkMode ? '#303030' : '#CED0D9',
-    bg5: darkMode ? '#A1A1A1' : '#888D9B',
+    bg1: '#000000',
+    bg2: '#191919',
+    bg3: '#252525',
+    bg4: '#303030',
+    bg5: '#A1A1A1',
 
     //specialty colors
-    modalBG: darkMode ? 'rgba(0,0,0,.7)' : 'rgba(0,0,0,0.3)',
-    advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
+    modalBG: 'rgba(0,0,0,.7)',
+    advancedBG: 'rgba(0,0,0,0.1)',
 
     //primary colors
-    primary1: darkMode ? '#B2F355' : '#FF007A',
-    primary2: darkMode ? '#B2F355' : '#FF8CC3',
-    primary3: darkMode ? '#B2F355' : '#FF99C9',
-    primary4: darkMode ? '#739A3B' : '#F6DDE8',
-    primary5: darkMode ? '#2B3A14' : '#FDEAF1',
+    primary1: '#B2F355',
+    primary2: '#B2F355',
+    primary3: '#B2F355',
+    primary4: '#739A3B',
+    primary5: '#2B3A14',
 
     // color text
-    primaryText1: darkMode ? '#B2F355' : '#ff007a',
+    primaryText1: '#B2F355',
 
     // secondary colors
-    secondary1: darkMode ? '#739A3B' : '#ff007a',
-    secondary2: darkMode ? '#191919' : '#F6DDE8',
-    secondary3: darkMode ? '#252525' : '#FDEAF1',
+    secondary1: '#739A3B',
+    secondary2: '#191919',
+    secondary3: '#252525',
 
     // other
     red1: '#FF0000',
