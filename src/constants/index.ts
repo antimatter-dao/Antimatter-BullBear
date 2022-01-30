@@ -41,12 +41,11 @@ type ChainTokenList = {
 
 const UNI_ADDRESS = '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F'
 
-export const Matter = new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'MATTER', 'Antimatter.Finance Governance Token')
+export const Matter = new Token(ChainId.MAINNET, ANTIMATTER_ADDRESS, 18, 'MATTER', 'Antimatter.Finance Governance Token')
 export const DAI = new Token(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18, 'DAI', 'Dai Stablecoin')
 export const USDC = new Token(ChainId.MAINNET, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'USDC', 'USDC')
 export const USDT = new Token(ChainId.MAINNET, '0xdAC17F958D2ee523a2206206994597C13D831ec7', 6, 'USDT', 'Tether USD')
 export const COMP = new Token(ChainId.MAINNET, '0xc00e94Cb662C3520282E6f5717214004A7f26888', 18, 'COMP', 'Compound')
-export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2', 18, 'MKR', 'Maker')
 export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth')
 export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC')
 
@@ -76,22 +75,6 @@ export const WUSDT = {
   )
 }
 
-export const WDAI = {
-  [ChainId.MAINNET]: DAI,
-  [ChainId.ROPSTEN]: new Token(
-    ChainId.MAINNET,
-    '0xad6d458402f60fd3bd25163575031acdce07538d',
-    18,
-    'DAI',
-    'Dai Stablecoin'
-  )
-}
-
-export const WUSDC = {
-  [ChainId.MAINNET]: USDC,
-  [ChainId.ROPSTEN]: USDC
-}
-
 export const ETH_CALL = new Token(
   ChainId.MAINNET,
   '0x3843a61f2960108287A51806c683fc854dC00354',
@@ -116,8 +99,6 @@ export const MATTER_CALL = new Token(
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 13
-export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320
-export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LENGTH_IN_BLOCKS
 
 export const GOVERNANCE_ADDRESS = '0x78fC5460737EB07Ce9e7d954B294ecA7E6203D19'
 
@@ -323,18 +304,3 @@ export const Name: { readonly [chainId in ChainId]?: string } = {
   [ChainId.Avalanche]: 'Avalanche',
   [ChainId.Arbitrum]: 'ETHER'
 }
-
-// class MainCurrency extends Currency {
-//   //eslint-disable-next-line
-//   constructor(decimals: number, symbol?: string, name?: string) {
-//     super(decimals, symbol, name)
-//   }
-// }
-
-// export const MAIN_CURRENCY: { readonly [chainId in ChainId]?: Currency } = {
-//   [ChainId.MAINNET]: ETHER,
-//   [ChainId.ROPSTEN]: ETHER,
-//   [ChainId.BSC]: new MainCurrency(8, Symbol[ChainId.BSC], Name[ChainId.BSC]),
-//   [ChainId.Avalanche]: new MainCurrency(18, Symbol[ChainId.Avalanche], Name[ChainId.Avalanche]),
-//   [ChainId.Arbitrum]: ETHER
-// }

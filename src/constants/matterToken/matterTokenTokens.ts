@@ -32,12 +32,6 @@ export enum LPT_TYPE {
   MATTER_CALL_MATTER = '+MATTER($1)/MATTER LP Pool'
 }
 
-export enum LPT_CYCLE_REWARDS {
-  ETH_CALL_DAI = 1000,
-  ETH_PUT_DAI = 1000,
-  MATTER_ETH = 1000
-}
-
 export const LPT_PAIRS: {
   [chainId in ChainId]?: {
     [lptType in LPT_TYPE]: { title: string; currencyA: Token | undefined; currencyB: Token | undefined }
@@ -87,11 +81,4 @@ export const LPT_PAIRS: {
       currencyB: currencies[ChainId.ROPSTEN]?.ETHER
     }
   }
-}
-
-export const LPT_RewardPerDay = {
-  [LPT_TYPE.ETH_CALL_DAI]: '1000',
-  [LPT_TYPE.ETH_PUT_DAI]: '1000',
-  [LPT_TYPE.MATTER_ETH]: '1000',
-  [LPT_TYPE.MATTER_CALL_MATTER]: '333'
 }
