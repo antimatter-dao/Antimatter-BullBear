@@ -11,10 +11,7 @@ import { Symbol } from '../../constants'
 import unknownUrl from 'assets/svg/circle_unknown.svg'
 
 export const getTokenLogoURL = (address: string) =>
-  `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
-
-export const getAntimatterTokenLogoURL = (address: string) =>
-  `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
+  `https://raw.githubusercontent.com/antimatter/assets/master/blockchains/ethereum/assets/${address}/logo.png`
 
 const StyledEthereumLogo = styled.img<{ size: string }>`
   width: ${({ size }) => size};
@@ -91,6 +88,14 @@ export default function CurrencyLogo({
 
   if (currency === ETHER || currency?.symbol === 'WETH') {
     return <StyledEthereumLogo src={LOGO[chainId ?? 1]} size={size} style={style} />
+  }
+
+  if (currency === ETHER || currency?.symbol === 'WBNB') {
+    return <StyledEthereumLogo src={LOGO[chainId ?? 56]} size={size} style={style} />
+  }
+
+  if (currency === ETHER || currency?.symbol === 'WAVAX') {
+    return <StyledEthereumLogo src={LOGO[chainId ?? 43114]} size={size} style={style} />
   }
 
   return <StyledLogo size={size} srcs={srcs} alt={`${currency?.symbol ?? 'token'} logo`} style={style} />
