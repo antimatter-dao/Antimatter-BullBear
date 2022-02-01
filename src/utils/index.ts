@@ -28,38 +28,6 @@ const explorers = {
     }
   },
 
-  blockscout: (link: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
-    switch (type) {
-      case 'transaction':
-        return `${link}/tx/${data}`
-      case 'token':
-        return `${link}/tokens/${data}`
-      default:
-        return `${link}/${type}/${data}`
-    }
-  },
-
-  harmony: (link: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
-    switch (type) {
-      case 'transaction':
-        return `${link}/tx/${data}`
-      case 'token':
-        return `${link}/address/${data}`
-      default:
-        return `${link}/${type}/${data}`
-    }
-  },
-
-  okex: (link: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
-    switch (type) {
-      case 'transaction':
-        return `${link}/tx/${data}`
-      case 'token':
-        return `${link}/tokenAddr/${data}`
-      default:
-        return `${link}/${type}/${data}`
-    }
-  }
 }
 
 interface ChainObject {
