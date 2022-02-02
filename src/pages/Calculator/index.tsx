@@ -61,9 +61,11 @@ export default function Calculator() {
     }
 
     let error = ''
-    if (+price < +priceFloor || +price > +priceCap) error = ERROR.PRICE_EXCEEDS_PRICE_RANGE
-    if (+priceFloor > +priceCap) error = ERROR.LARGER_FLOOR_THAN_CAP
+    if (+price <= +priceFloor || +price > +priceCap) error = ERROR.PRICE_EXCEEDS_PRICE_RANGE
+    if (+priceFloor >= +priceCap) error = ERROR.LARGER_FLOOR_THAN_CAP
+    if (!(totalPut === 0)) error = ERROR.EMPTY_TOTAL_PUT
     if (!totalPut) error = ERROR.EMPTY_TOTAL_PUT
+    if (!(totalCall === 0)) error = ERROR.EMPTY_TOTAL_CALL
     if (!totalCall) error = ERROR.EMPTY_TOTAL_CALL
     if (!priceFloor || +priceFloor === 0) error = ERROR.EMPTY_PRICE_FLOOR
     if (!priceCap || +priceCap === 0) error = ERROR.EMPTY_PRICE_CAP
