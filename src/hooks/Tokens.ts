@@ -1,9 +1,9 @@
-import { TokenAddressMap, useDefaultTokenList, useUnsupportedTokenList } from './../state/lists/hooks'
+import {TokenAddressMap, useDefaultTokenList, useUnsupportedTokenList, WrappedTokenInfo} from './../state/lists/hooks'
 import { parseBytes32String } from '@ethersproject/strings'
 import { Currency, ETHER, Token, currencyEquals } from '@uniswap/sdk'
 import { useMemo } from 'react'
 import { useCombinedActiveList, useCombinedInactiveList } from '../state/lists/hooks'
-import { NEVER_RELOAD, useSingleCallResult } from '../state/multicall/hooks'
+import {NEVER_RELOAD, useMultipleContractSingleData, useSingleCallResult} from '../state/multicall/hooks'
 import { useUserAddedTokens } from '../state/user/hooks'
 import { isAddress } from '../utils'
 
@@ -11,6 +11,8 @@ import { useActiveWeb3React } from './index'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 import { filterTokens } from '../components/SearchModal/filtering'
 import { arrayify } from 'ethers/lib/utils'
+import ERC20_INTERFACE from "../constants/abis/erc20";
+import { TokenInfo } from '@uniswap/token-lists'
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
@@ -241,4 +243,34 @@ export function useMarketCurrency(currencyId: string | undefined): Currency | nu
   const isETH = currencyId?.toUpperCase() === 'ETH'
   const token = useMarketToken(isETH ? undefined : currencyId)
   return isETH ? ETHER : token
+}
+
+export function useWrappedTokenInfos(tokenAddress: string[]): undefined | (WrappedTokenInfo | undefined)[] {
+  const { chainId } = useActiveWeb3React()
+
+  const tokenNames = useMultipleContractSingleData(tokenAddress, ERC20_INTERFACE, 'name')
+  const symbols = useMultipleContractSingleData(tokenAddress, ERC20_INTERFACE, 'symbol')
+  const decimalss = useMultipleContractSingleData(tokenAddress, ERC20_INTERFACE, 'decimals')
+
+  return useMemo(() => {
+    if (!tokenAddress) return undefined
+    if (!tokenNames.length || !symbols.length || !decimalss.length || !chainId) return undefined
+    if (tokenNames[0].loading || symbols[0].loading || decimalss[0].loading) return undefined
+
+    return tokenAddress.map((address, index) => {
+      const symbol = symbols[index].result
+      const tokenName = tokenNames[index].result
+      const decimal = decimalss[index].result
+      if (!symbol || !tokenName || !decimal) return undefined
+      const tokenInfo: TokenInfo = {
+        chainId: chainId,
+        address: address,
+        name: tokenName[0],
+        decimals: decimal[0],
+        symbol: symbol[0]
+      }
+      return new WrappedTokenInfo(tokenInfo, [])
+      // return new Token(chainId, address, decimal[0], symbol[0], tokenName[0])
+    })
+  }, [chainId, decimalss, symbols, tokenAddress, tokenNames])
 }

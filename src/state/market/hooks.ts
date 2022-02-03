@@ -152,6 +152,7 @@ export function useAllOptionTypes() {
       })
   }, [allCalls])
 
+
   const currencyAddresses = useMemo(() => {
     return allCalls
       .filter(item => {
