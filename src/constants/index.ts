@@ -49,6 +49,11 @@ export const COMP = new Token(ChainId.MAINNET, '0xc00e94Cb662C3520282E6f57172140
 export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth')
 export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC')
 
+export const BSCDAI = new Token(ChainId.BSC, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
+export const BSCUSDC = new Token(ChainId.BSC, '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', 18, 'USDC', 'Binance-Peg USD Coin')
+export const CAKE = new Token(ChainId.BSC, '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82', 18, 'Cake', 'PancakeSwap Token')
+
+
 export const WUSDT = {
   [ChainId.MAINNET]: USDT,
   [ChainId.ROPSTEN]: new Token(ChainId.MAINNET, '0x6ee856ae55b6e1a249f04cd3b947141bc146273c', 6, 'USDT', 'Tether USD'),
@@ -135,7 +140,7 @@ const WETH_ONLY: ChainTokenList = {
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, COMP, WBTC],
-  [ChainId.BSC]: [...WETH_ONLY[ChainId.BSC], WUSDT[ChainId.BSC], BSC.WBNB],
+  [ChainId.BSC]: [...WETH_ONLY[ChainId.BSC], WUSDT[ChainId.BSC], BSC.WBNB, BSCDAI, BSCUSDC, CAKE],
   [ChainId.Arbitrum]: [...WETH_ONLY[ChainId.Arbitrum], WUSDT[ChainId.Arbitrum], ARBITRUM.USDC],
   [ChainId.Avalanche]: [...WETH_ONLY[ChainId.Avalanche], WUSDT[ChainId.Avalanche], AVAX.WAVAX]
 }
