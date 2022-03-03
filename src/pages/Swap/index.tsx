@@ -1,6 +1,5 @@
 import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-// import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
@@ -11,14 +10,9 @@ import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { AutoRow, RowBetween } from '../../components/Row'
-//import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
-//import BetterTradeLink, { DefaultVersionLink } from '../../components/swap/BetterTradeLink'
-//import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee'
 import { BottomGrouping, SwapCallbackError, Wrapper } from '../../components/swap/styleds'
-//import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
-// import SwapHeader from '../../components/swap/SwapHeader'
 import useTheme from 'hooks/useTheme'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
@@ -33,7 +27,6 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import { BodyWrapper } from '../AppBody'
 import Loader from '../../components/Loader'
-//import { isTradeBetter } from 'utils/trades'
 import { Option, OptionPrice, usePayCurrencyAmount, useSwapInfo } from '../../state/market/hooks'
 import { TypeRadioButton } from '../../components/MarketStrategy/TypeRadioButton'
 import { ANTIMATTER_ROUTER_ADDRESS, INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
@@ -88,7 +81,6 @@ export default function Swap({
 }: {
   option: Option | undefined
   optionPrice: OptionPrice | undefined
-  // handleOptionType: (option: string) => void
   setParentTXHash: (hash: string) => void
 }) {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -96,7 +88,6 @@ export default function Swap({
 
   const theme = useTheme()
 
-  // for expert mode
   const toggleSettings = useToggleSettingsMenu()
 
   const [optionCurrency, setOptionCurrency] = useState<Currency>()
@@ -150,8 +141,6 @@ export default function Swap({
     [optionCurrency, optionTyped, payCurrency, payTyped]
   )
 
-  //const { onSwitchTokens } = useSwapActionHandlers()
-
   const handleTypeInput = useCallback(
     (value: string) => {
       setOptionTyped(value)
@@ -168,7 +157,6 @@ export default function Swap({
   // reset if they close warning without tokens in params
   const handleDismissTokenWarning = useCallback(() => {
     setDismissTokenWarning(true)
-    // history.push('/swap/')
   }, [])
 
   // modal and loading
@@ -192,16 +180,11 @@ export default function Swap({
   }
 
   const [callAmount, putAmount] = useMemo(() => {
-    if (auction === Auction.BUY && optionType === OptionField.CALL) {
-      return [tryParseAmount(optionTyped, optionCurrency)?.raw.toString(), '0']
-    } else if (auction === Auction.BUY && optionType === OptionField.PUT) {
-      return ['0', tryParseAmount(optionTyped, optionCurrency)?.raw.toString()]
-    } else if (auction === Auction.SELL && optionType === OptionField.CALL) {
-      return ['-' + tryParseAmount(optionTyped, optionCurrency)?.raw.toString(), '0']
-    } else if (auction === Auction.SELL && optionType === OptionField.PUT) {
-      return ['0', '-' + tryParseAmount(optionTyped, optionCurrency)?.raw.toString()]
+    if (auction === Auction.BUY) {
+      return optionType === OptionField.CALL ? [tryParseAmount(optionTyped, optionCurrency)?.raw.toString(), '0'] : ['0', tryParseAmount(optionTyped, optionCurrency)?.raw.toString()]
+    }else {
+      return optionType === OptionField.CALL? ['-' + tryParseAmount(optionTyped, optionCurrency)?.raw.toString(), '0'] : ['0', '-' + tryParseAmount(optionTyped, optionCurrency)?.raw.toString()]
     }
-    return ['0', '0']
   }, [auction, optionCurrency, optionTyped, optionType])
 
   // check if user has gone through approval process, used to show two step buttons, reset on token change
@@ -209,8 +192,6 @@ export default function Swap({
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(optionBalance)
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.OPTION]?.equalTo(maxAmountInput))
-
-  //const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 
@@ -223,10 +204,6 @@ export default function Swap({
       setPayTyped('')
     }
   }, [attemptingTxn, setPayTyped, setOptionTyped, swapErrorMessage, tradeToConfirm, txHash])
-
-  // const handleAcceptChanges = useCallback(() => {
-  //   setSwapState({ tradeToConfirm: trade, swapErrorMessage, txHash, attemptingTxn, showConfirm })
-  // }, [attemptingTxn, showConfirm, swapErrorMessage, trade, txHash])
 
   const handleInputSelect = useCallback(
     inputCurrency => {
@@ -244,14 +221,6 @@ export default function Swap({
 
   const underlying = option?.underlying
   const currency = option?.currency
-
-  // const { undTrade: underlyingTrade, curTrade: currencyTrade } = useOptionSwapInfo(
-  //   delta?.dUnd.toString(),
-  //   delta?.dCur.toString(),
-  //   underlying,
-  //   currency,
-  //   payCurrency
-  // )
 
   useEffect(() => {
     setOptionCurrency(optionType === OptionField.CALL ? option?.call?.currency : option?.put?.currency)
@@ -618,15 +587,8 @@ export default function Swap({
               </Column>
             )}
             {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-            {/*{betterTradeLinkV2 && !swapIsUnsupported && toggledVersion === Version.v1 ? (*/}
-            {/*  <BetterTradeLink version={betterTradeLinkV2} />*/}
-            {/*) : toggledVersion !== DEFAULT_VERSION && defaultTrade ? (*/}
-            {/*  <DefaultVersionLink />*/}
-            {/*) : null}*/}
           </BottomGrouping>
         </Wrapper>
-
-        {/*<AdvancedSwapDetailsDropdown undTrade={underlyingTrade} curTrade={currencyTrade} />*/}
       </SwapAppBody>
     </>
   )
