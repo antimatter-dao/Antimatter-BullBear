@@ -317,59 +317,6 @@ export default function Swap({
       })
   }, [swapCallback, tradeToConfirm, showConfirm, setParentTXHash, singleHopOnly])
 
-  const statusButton = useMemo(() => {
-    const defaultContent = { disabled: false, text: '' }
-    if (!optionTyped) {
-      return { ...defaultContent, disabled: true, text: 'Enter amount' }
-    }
-    if (
-      auction === Auction.SELL &&
-      parsedAmounts[Field.OPTION] &&
-      optionBalance &&
-      parsedAmounts[Field.OPTION]?.greaterThan(optionBalance)
-    ) {
-      return { ...defaultContent, disabled: true, text: 'Insufficient balance' }
-    }
-    if (!payCurrency) {
-      return {
-        ...defaultContent,
-        disabled: true,
-        text: `Select a token`
-      }
-    }
-    if (routerDelta?.isLoading || !payBalance) {
-      return { ...defaultContent, disabled: true, text: 'Loading' }
-    }
-    if (!payFormattedAmount) {
-      return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
-    }
-    if (payFormattedAmount[0] !== '-' && payCurrencyAmount?.greaterThan(payBalance)) {
-      return {
-        ...defaultContent,
-        disabled: true,
-        text: `Insufficient ${getCurrencySymbol(payCurrency, chainId)} balance`
-      }
-    }
-    if (noRoute || undPriceImpactSeverity > 3 || curPriceImpactSeverity > 3) {
-      return { ...defaultContent, disabled: true, text: 'Insufficient liquidity for this trade' }
-    }
-    return defaultContent
-  }, [
-    optionTyped,
-    auction,
-    parsedAmounts,
-    optionBalance,
-    payCurrency,
-    routerDelta,
-    payFormattedAmount,
-    payBalance,
-    payCurrencyAmount,
-    noRoute,
-    undPriceImpactSeverity,
-    curPriceImpactSeverity,
-    chainId
-  ])
-
   return (
     <>
       <TokenWarningModal
@@ -501,7 +448,7 @@ export default function Swap({
               <ButtonPrimary onClick={toggleWalletModal} borderRadius="49px">
                 Connect Wallet
               </ButtonPrimary>
-            ) : statusButton.disabled ? (
+            ) : swapCallbackError ? (
               <OutlineCard
                 style={{
                   textAlign: 'center',
@@ -512,7 +459,7 @@ export default function Swap({
                 }}
               >
                 <TYPE.main color={theme.primary1} mb="4px">
-                  {statusButton.text}
+                  {swapCallbackError}
                 </TYPE.main>
               </OutlineCard>
             ) : showApproveFlow ? (
