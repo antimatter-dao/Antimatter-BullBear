@@ -15,6 +15,7 @@ import { useAntimatterRouterContract } from './useContract'
 import { RouteDelta, tryFormatAmount } from '../state/swap/hooks'
 import { absolute, Option } from '../state/market/hooks'
 import { Currency, JSBI } from '@uniswap/sdk'
+import {getCurrencySymbol} from "../utils/getCurrencySymbol";
 
 export enum SwapCallbackState {
   INVALID,
@@ -122,6 +123,17 @@ export function useSwapCallback(
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const contract = useAntimatterRouterContract(true)
+
+  if (!payCurrency) {
+    return { state: SwapCallbackState.INVALID, callback: null, error: 'Select a token' }
+  }
+  if (routeDelta?.isLoading) {
+    return { state: SwapCallbackState.INVALID, callback: null, error: 'Loading' }
+  }
+  if (!callAmount) {
+    return { state: SwapCallbackState.INVALID, callback: null, error: 'Insufficient liquidity for this trade' }
+  }
+
   return useMemo(() => {
     if (
       !option ||
