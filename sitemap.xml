@@ -5,3 +5,61 @@
     <lastmod>2020-06-04</lastmod>
   </url>
 </urlset>
+
+
+https://www.google.com/ping?sitemap=https://raw.githubusercontent.com/antimatter-dao/Antimatter-BullBear/master/sitemap.xml
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+   <url>
+
+      <loc>https://antimatter.finance/</loc>
+
+      <lastmod>2021-01-01</lastmod>
+
+      <changefreq>monthly</changefreq>
+
+      <priority>0.8</priority>
+
+   </url>
+
+   <url>
+
+      <loc>https://antimatter.finance/ecosystem</loc>
+
+      <changefreq>weekly</changefreq>
+
+   </url>
+
+   <url>
+
+      <loc>https://explorer-test.antimatter.finance/</loc>
+
+      <lastmod>2021-12-23</lastmod>
+
+      <changefreq>weekly</changefreq>
+
+   </url>
+
+   <url>
+
+      <loc>http://bas-node.antimatter.finance:5000/</loc>
+
+      <lastmod>20202104-12-23T18:00:15+00:00</lastmod>
+
+      <priority>0.3</priority>
+
+   </url>
+
+   <url>
+
+      <loc>https://docs.antimatter.finance/introduction/antimatter-overview</loc>
+
+      <lastmod>2004-11-23</lastmod>
+
+   </url>
+
+</urlset>
